@@ -1,0 +1,26 @@
+citHeader("To cite the adegenet package:")
+
+citEntry(
+entry="Article",
+title = "adegenet: a R package for the multivariate analysis of genetic markers",
+journal= "Bioinformatics",
+year = "2008",
+author = "T. Jombart",
+volume = "24",
+pages = "1403-1405",
+doi = "10.1093/bioinformatics/btn129",
+textVersion = "Jombart, T. (2008) adegenet: a R package for the multivariate analysis of genetic markers. Bioinformatics 24: 1403-1405. doi: 10.1093/bioinformatics/btn129"
+)
+
+
+citEntry(
+entry="Article",
+title = "adegenet 1.3-1: new tools for the analysis of genome-wide SNP data",
+journal= "Bioinformatics",
+year = "2011",
+author = "T. Jombart and I. Ahmed",
+volume = "",
+pages = "",
+doi = "10.1093/bioinformatics/btr521",
+textVersion = "Jombart T. and Ahmed I. (2011) adegenet 1.3-1: new tools for the analysis of genome-wide SNP data. Bioinformatics. doi: 10.1093/bioinformatics/btr521"
+)

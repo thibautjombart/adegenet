@@ -1,0 +1,8 @@
+	loc1	loc2	loc3	loc4
+indA	1	0	1	1
+indB	0	1	1	1
+indC	1	1	0	1
+indD	0	NA	1	NA
+indE	1	1	0	0
+indF	1	0	1	1
+indG	0	1	1	0

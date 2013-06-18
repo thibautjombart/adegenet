@@ -1,0 +1,11 @@
+1. Put any C/Fortran code in src/ 
+2. If you have compiled code, add a .First.lib() function in R/
+   to load the shared library
+3. Edit the help file skeletons in man/.
+4. Run R CMD build to create INDEX and data/00Index
+5. (Optionally) edit INDEX and data/O0Index
+6. Run R CMD check to check the package
+7. Run R CMD build to make the package file
+
+
+ Read "Writing R Extensions" for more information.

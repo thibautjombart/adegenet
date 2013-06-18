@@ -1,0 +1,539 @@
+			CHANGES IN ADEGENET VERSION 1.3-8
+
+NEW FEATURES
+
+	o new palettes: azur, wasp
+
+	o new function any2col translates (numeric, factor, character)
+	vectors into colors, also providing information for a legend
+
+	o new function xvalDapc which performs cross-validation for a dapc
+	analysis.
+
+
+	
+			CHANGES IN ADEGENET VERSION 1.3-7
+
+NEW FEATURES
+
+	o entirely new version of DNAbin2genind, much faster than before
+	and suitable for large alignments
+
+
+
+			CHANGES IN ADEGENET VERSION 1.3-6
+
+NEW FEATURES
+
+	o findMutations: a new procedure to identify the location and
+	nature of mutations between pairs of DNA sequences
+
+	o graphMutations: a graphical representation for findMutations
+
+	o improved graphics for gengraph
+
+
+
+			CHANGES IN ADEGENET VERSION 1.3-5
+
+NEW FEATURES
+
+	o seqTrack and haploGen now have export functions to igraph class.
+
+	o seqTrack and haploGen now have default plot methods relying on
+	igraph conversion.
+
+	o fstat and gstat.randtest have been restored.
+
+	o gengraph implements graph-based approaches for representing
+	genetic diversity (e-burst type of approaches for any time of
+	genetic data).
+
+
+BUG FIXES
+
+	o mutation rates have been fixed in haploGen
+
+	o calls to printf replaced by Rprintf in C procedures
+
+	o seqTrack example fixed (conversion to graphNEL removed, now
+	using igraph)
+
+	o DLL is now loaded within the NAMESPACE, .First.lib is no longer
+	used.
+
+
+
+			CHANGES IN ADEGENET VERSION 1.3-3
+
+BUG FIXES
+
+	o fixed a bug of propShared, which gave wrong results under weird
+	circumstances. The new implementation is entirely different, uses
+	C code, and is now applicable to data with any level of ploidy.
+
+	o tried making the package smaller by removing unnecessary files.
+
+
+
+
+			CHANGES IN ADEGENET VERSION 1.3-2
+
+BUG FIXES
+
+	o replaced calls to multicore:::detectCores with
+	parallel:::detectCores (the former gives unexpected results on
+	some platforms).
+
+	o documentation update: fstat function is no longer available due
+	to removal of hierfstat package from CRAN. An example shows how to
+	use Fst function from the pegas package instead.
+
+	o documentation update: doc now specifies that read.genepop and
+	read.fstat are meant for diploid data only, with guidelines for
+	haploid data.
+
+
+
+			CHANGES IN ADEGENET VERSION 1.3-1
+
+BUG FIXES
+
+	o removed all dependency with graph package, which was still
+	causing errors on some systems - whenever Bioconductor was not by
+	default one of the accessible repositories (used to be FAQ #4).
+
+NEW FEATURES
+
+	o legend in scatter.dapc now matches to the type and size of
+	symbols used in the plot.
+
+	o the package has been made smaller (from 20MB to 8.5MB).
+
+	o a warning has been added to read.structure: the function is made
+	for diploid data only.
+
+
+
+			CHANGES IN ADEGENET VERSION 1.3-0
+
+BUG FIXES
+
+	o fixed broken dependencies with hierfstat and graph packages
+	(used to be FAQ #4).
+
+	o fixed a minor bug in loadingplot regarding possible label errors.
+
+NEW FEATURES
+
+	o genome-wide SNP data support using the new class genlight,
+	supported by compiled C routines and parallelized computations on
+	multicore architectures.
+
+	o dedicated find.clusters and dapc methods for genlight objects.
+
+	o read.PLINK to read SNP data with PLINK format into genlight
+	objects.
+
+	o read.snp to read SNP data with adegenet's own format into genlight
+	objects.
+
+	o fasta2genlight to extract SNP from FASTA files into genlight
+	objects.
+
+	o new method 'predict' for DAPC objects, allowing for using
+	supplementary individuals.
+
+	o many new options of DAPC scatterplots (scatter.dapc).
+
+	o new plotting method 'compoplot' for DAPC objects, displaying
+	group memberships in a STRUCTURE-like way... only prettier.
+
+	o many new accessors for the classes genind and genpop.
+
+	o 4 new tutorial vignettes: adegenet-basics, adegenet-dapc,
+	adegenet-spca, adegenet-genomics.
+
+	o last but not least: Ismail Ahmed has joined the project as a
+	developper.
+
+
+
+			CHANGES IN ADEGENET VERSION 1.2-8
+
+BUG FIXES
+
+	o fixed a major issue in the conversion of genind objects to
+	hierfstat data format. In some cases, this issue biased the
+	results of the wrapper function "fstat".
+
+
+
+			CHANGES IN ADEGENET VERSION 1.2-7
+
+
+NEW FEATURES
+
+	o dapc and find.clusters are now stable versions for the published methods.
+
+	o a.score and optim.a.score are released in their beta versions.
+
+	o scatter.dapc is now adapted to representation 1-dimensional DAPC results.
+	
+
+BUG FIXES
+
+	o fixed a major issue in the ape package causing haploGen to
+	bug. This is a temporary replacement, waiting for ape to implement
+	the changes (currently, adegenet replaces ape's as.list.DNAbin
+	function with a corrected version).
+
+
+
+			CHANGES IN ADEGENET VERSION 1.2-6
+
+
+NEW FEATURES
+
+	o pairwise.fst: computes Nei's pairwise Fst between populations
+
+	o alignment2genind: extract polymorphism from nucleic and proteic
+	aligned sequences with the 'alignment' format, returning a genind object.
+
+
+BUG FIXES
+
+	o fixed a minor issue in Hs, occuring in fixed loci for a given population.
+
+
+
+			CHANGES IN ADEGENET VERSION 1.2-5
+
+
+NEW FEATURES
+
+	o SeqTrack, an algorithm for the reconstruction of genealogies, is
+	now fully implemented and documented.
+
+	o haploGen, a system for simulating genealogies, is now fully
+	implemented and documented.
+
+
+BUG FIXES
+
+	o summary methods for genind and genpop are fixed (again) for the
+	new R version 2.11.1.
+
+
+
+			CHANGES IN ADEGENET VERSION 1.2-4
+
+
+NEW FEATURES
+
+	o Hs computes the theoretical heterozygosity by populations for
+	genpop object
+
+	o propShared is now available for haploid data
+
+	o Discriminant Analysis of Principal Component (DAPC) is
+	implemented by the function DAPC, although the method itself is
+	still under review.
+
+	o The SeqTrack algorithm for reconstructing genealogies is
+	implemented by the function seqTrack, although the method itself
+	is still under review.
+
+	o Pre-release of new simulation tools, still undocumented
+	(haploPop and haploGen).
+
+	o New datasets eHGDP and H3N2
+
+
+BUG FIXES
+
+	o minor bug fixes in df2genind, propShared, and seploc
+
+	o summary issue arised in certain conditions, depending on which
+	package was loaded before adegenet; in some cases, the summary
+	procedure was not found for genind/genpop objects. Fixed now.
+
+
+
+			CHANGES IN ADEGENET VERSION 1.2-3
+
+
+NEW FEATURES
+
+	o implement handling of presence/absence markers. genind and
+	genpop object now have a 'type' attribute to differentiate between
+	codominant markers (e.g. microsatellite), which is the default
+	type, and presence/absence data (e.g. AFLP). Functions in adegenet
+	now behave according to the type of markers being used.
+
+	o SNP can now be obtained from sequence data, stored as DNAbin
+	(see E. Paradis's package 'ape'). They can be selected to verify
+	any given degree of polymorphism.
+
+	o 'hybridize' can now be used for genotypes having any even degree
+	of ploidy (e.g. tetraploid genotypes).
+
+	o the new function 'isPoly' checks which loci are polymorphic, or
+	which alleles contribute to polymorphism.
+
+	o the new function 'pop' can be used to retrieve and set the pop
+	slot of genind object.
+
+	o the new function 'selPopSize' allows one to select a subset of
+	genotypes belonging to well-sampled populations, as defined by a
+	threshold sample size.
+
+	o the new accessor 'locNames' can be used to retrieve real labels
+	of markers and/or alleles.
+
+	o the loadingplot has been modified to allow specifying x axis, so
+	that scoring SNPs along their sequence is now possible. 
+
+
+BUG FIXES
+
+	o no bug to fix this version!
+
+
+
+			CHANGES IN ADEGENET VERSION 1.2-2
+
+
+NEW FEATURES
+
+	o implement different levels of ploidy in genind / genpop objects
+	(new slot @ploidy). Now, any level of ploidy can be handled by
+	input function df2genind, which has been recoded almost
+	entierely. Different levels of ploidy are now handled by different
+	functions.
+	
+	o a "sep" argument is now handled by df2genind: this allows
+	reading many data formats.
+
+	o implemented a method "scaleGen" for genind / genpop objects,
+	which scales allelic data using different methods.
+
+	o  colorplot: a generic function, with a method for spca
+	objects. Represents up to three principal components based on RGB
+	representation of Cavalli-Sforza.
+
+	o loadingplot for plotting loadings of one axis
+
+	o adegenetTutorial function which opens the online tutorials
+
+	o allow for the use of na.replace and scaleGen in spca function
+
+	o added rupica dataset
+
+	o enable reading data from URL (import2genind, read.[...])
+
+	o permit specification of a matrix of spatial weights in spca 
+	
+
+BUG FIXES
+
+	o fixed bug 1.2-2.01 (read.structure issue): was due to the
+	default of "onerowperind" argument.
+	
+	o fixed bug 1.2-2.02 (read.genetix issue): was due to an
+	error in the data file (wrong nloc); now read.genetix corrects
+	that automatically and issues a warning.
+	
+	o fixed bug 1.2-2.03 (monmonier issue): was a non-detected
+	code 2 due to intersection check with previously drawn segment
+	(was not always removed).
+	
+	o fixed bug 1.2-2.05 (a few fixes/improvement for monmonier)
+
+
+
+			CHANGES IN ADEGENET VERSION 1.2-1
+
+
+NEW FEATURES
+
+	o documentation of scaleGen provides an example of usefulness of
+	an appropriate scaling in PCA
+
+BUG FIXES
+
+	o fixed the recognition of NAs in df2genind
+
+	o fixed the call to inherits in spca (returned value changes in R-devel)
+
+
+
+			CHANGES IN ADEGENET VERSION 1.2-0
+
+
+NEW FEATURES
+
+	o implement different levels of ploidy in genind / genpop
+	objects. Make necessary adaptations throughout the package.
+
+	o put some stop where needed when ploidy!=2 is not handled.
+
+	o implement a "sep" argument in df2genind.
+
+	o implement accessor for genind/genpop: nLoc.
+
+	o implement "scaleGen" for genind/genpop, which allows for
+	different types of scaling.
+
+	o added several coercion methods, from genind/genpop to
+	data.frame, matrix and ktab objects.
+
+	o implemented propTyped, a function giving the proportion of
+	non-missing data in different ways.
+
+BUG FIXES
+
+	o missing data indicated in summary corrected (loci with more
+	alleles had more weight in the computations).
+
+
+
+
+			CHANGES IN ADEGENET VERSION 1.1-3
+
+
+NEW FEATURES
+
+	o 'as' methods for genind/genpop objects to matrix, data.frame,
+	and ktab objects. Now, ordination implemented as dudi functions in
+	ade4 (like dudi.pca) can be performed directly using genind/genpop
+	as inputs.
+
+
+
+
+			CHANGES IN ADEGENET VERSION 1.1-2
+
+
+NEW FEATURES
+
+	o significant improvement in the speed of genind2df (more than
+	twice as fast as before).
+
+	o function propShared added: computes the proportion of shared
+	alleles among a set of genotypes (core computations in C).
+
+	o A warning is issued when NAs exist in the input of sPCA.
+
+	o improvement of the validity checking for genind/genpop:
+	validObject now detects duplicates in any kind of names (ind.names,
+	pop.names, etc.) and prints the corresponding items.
+
+BUG FIXES
+
+	o genind2df does now handles the pop argument correctly.
+
+	o df2genind does no longer bug when there is an entirely non-typed
+	locus.
+
+
+
+			CHANGES IN ADEGENET VERSION 1.1-1
+
+
+NEW FEATURES
+
+	o I/O: df2genind no longer fails when entirely non-type
+	individuals exist.
+
+	o Monmonier: optimize.monmonier now computes the 'best'
+	boundary only once instead of twice. The whole code was re-thought
+	and optimized for speed. Monmonier's boundaries can now form
+	loops. Instead of stoping at a given threshold, it is also
+	possible to ask for a given length of boundary (argument
+	bd.length).
+
+	o The function chooseCN has a new option to return a list of
+	spatial weights defined as the inverse of spatial distances, at a
+	given exponent.
+
+	o A wrapper for glob.varcomp has been implemented for genind
+	objects, through the new function fstat.
+
+	o The elements of the @other slot are now proceeded wisely when
+	objects are subsetted using the '[' operator.
+
+
+BUG FIXES
+
+	o I/O: df2genind no longer fails when entirely non-type
+	individuals exist.
+
+	o monmonier no longer fails when coordinates are drawn from a
+	regular grid. The matched call of the returned object has been
+	fixed.
+
+
+
+			CHANGES IN ADEGENET VERSION 1.1-0
+
+NEW FEATURES
+	o Data representation: S4 classes in replacement of old S3
+	classes.
+
+	o Spatial genetics: the spatial Principal Component Analysis
+	(Jombart et al, 2008, Heredity), two multivariate spatial
+	tests, and new functionalities for Monmonier's algorithm.
+
+	o I/O: functions to import data are now 'read' functions;
+	available for formats of GENETIX, Fstat, Genepop, STRUCTURE and
+	from data.frames of genotypes. Export from genind to data.frame of
+	genotypes.
+
+	o Data: five new simulated geo-referenced datasets
+
+	o Simulations: a hybridize function, which creates hybrids from
+	two parent datasets. Can output to STRUCTURE format.
+
+	o Data manipulation: new function to separate data by
+	population. Accessors to genind and genpop object like with
+	matrices using 'foo[ chosenGenotypes, chosenAlleles]'.
+
+
+
+			CHANGES IN ADEGENET VERSION 1.0-2
+
+NEW FEATURES
+
+	o adegenetWeb is a simple function opening the adegenet website in
+	the default web browser.
+
+	o sim2pop is a dataset obtained by simulation using the software
+	Easypop. It contains 130 georeferenced genotypes sampled from two
+	distinct populations.
+
+	o monmonier documentation was improved by adding a genetic
+	example, using sim2pop data.
+
+BUG FIXES
+
+	o some bugs corrected in optimize.monmonier
+
+
+			CHANGES IN ADEGENET VERSION 1.0-1
+
+NEW FEATURES
+
+	o chooseCN is a simple interactive tool for choosing and building
+	a connection network from spatial coordinates. This tool is called
+	by monmonier function.
+
+	o monmonier, optimize.monmonier, plot.monmonier and print.monmonier
+	implement the Monmonier algorithm. While not restrained to genetic
+	data analysis, this method can be used to find genetic boundaries
+	among individuals or populations based on their allelic
+	frequencies and spatial coordinates.
+
+BUG FIXES
+
+	o several bugs fixed in I/O functions

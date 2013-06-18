@@ -1,0 +1,55 @@
+>>>> begin comments - do not remove this line <<<<
+Here is a description of the format.
+Any information is stored on two lines, the first for the type of information, the second for the content.
+
+
+=== Lines starting with ">>" ===
+They store generic information about the loci or the individuals.
+They are all optional.
+Character strings following the ">>" can match:
+- "position": the following line contains integers giving the position of the SNPs on the sequence
+- "allele": the following line contains a vector of two alleles separated by "/"
+- "population": population, or more generally a grouping factor for the individuals
+- "ploidy": the ploidy of each individual given as an integer; alternatively, one single integer if
+all individuals have the same ploidy
+- "chromosome": the chromosome where the SNP are located
+
+Elements are separated by a space, and their length must match exactly the number of loci
+(position, allele, chromosome) or individuals (population, ploidy). Therefore, no space is allowed
+for the names of these items (especially chromosomes or populations).
+
+
+=== Lines starting with ">" ===
+They store individual genotypes.
+The character string following the sign ">" is the label of the individual. Spaces before and after
+are ignored.
+The following line contains integers without separators, each representing the number of copies of
+the second allele.
+Missing values are to be coded by a single non-integer character (by default, "-").
+
+For instance, in the following toy dataset:
+- foo ("1020") is "at" at position 1, "gg" at position 8, "cc" at position 11, and "tt" at position
+43.
+- bar ("0012") is "aa", "gg", "ac" and "aa"
+- toto ("10-0") is "at", "gg", not typed (NA) and "tt"
+
+
+>>>> end comments - do not remove this line <<<<
+>> position
+1 8 11 43
+>> allele
+a/t g/c a/c t/a
+>> population
+Brit Brit Fren monster NA
+>> ploidy
+2
+> foo
+1020
+> bar
+0012
+> toto
+10-0
+> Nyarlathotep
+0120
+> an even longer label but OK since on a single line
+1100
