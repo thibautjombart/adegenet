@@ -96,7 +96,9 @@ setMethod("seploc", signature(x="genind"), function(x,truenames=TRUE,res.type=c(
 
     prevcall <- match.call()
     if(res.type=="genind"){
-        kX <- lapply(kX, genind, pop=x@pop, prevcall=prevcall)
+        ## ploidy bug fixed by Zhian N. Kamvar
+        ##kX <- lapply(kX, genind, pop=x@pop, prevcall=prevcall)
+        kX <- lapply(kX, genind, pop=x@pop, prevcall=prevcall, ploidy=x@ploidy, type=x@type)
         for(i in 1:length(kX)){
             kX[[i]]@other <- x@other
         }
@@ -148,7 +150,7 @@ setMethod("seploc", signature(x="genpop"), function(x,truenames=TRUE,res.type=c(
 
     prevcall <- match.call()
     if(res.type=="genpop"){
-        kX <- lapply(kX, genpop, prevcall=prevcall)
+        kX <- lapply(kX, genpop, prevcall=prevcall, ploidy=x@ploidy, type=x@type)
         for(i in 1:length(kX)){
             kX[[i]]@other <- x@other
         }
