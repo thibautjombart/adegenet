@@ -13,7 +13,10 @@ n.pcaF <- as.factor(xval$n.pca)
 successV <- as.vector(xval$success)
 pca.success <- tapply(successV,n.pcaF,mean)
 n.opt <- which.max(tapply(successV,n.pcaF,mean))
-n.pca <- n.opt
+##deleted: n.pca <- n.opt
+##added:
+n.pca <- as.integer(names(n.opt)) 
+
 
 ## SHOW CROSS VALIDATION RESULTS ##
 
