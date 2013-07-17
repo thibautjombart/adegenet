@@ -17,9 +17,26 @@ xvalDapc.data.frame <- function(x, grp, n.pca.max, n.da=NULL, training.set = 0.9
         n.da <- length(levels(grp))-1
     }
 
+    ##added:
+    if(missing(training.set)){
+      training.set <- 0.9}
+    else{
+      training.set <- training.set}
+
     ## GET TRAINING SET SIZE ##
     N <- nrow(x)
-    N.training <- round(N*training.set)
+    
+    ##deleted: N.training <- round(N*training.set)
+    ##added: 
+    groups <- levels(grp)
+    if(all(lapply(groups, function(e) sum(as.vector(unclass(grp==e))))>=10)==TRUE){
+      N.training <- round(N*training.set)}
+    else{
+      groups1 <- (levels(grp))[(as.vector(which.min((lapply(groups, function(e) sum(as.vector(unclass(grp==e))))))))]
+      popmin <- length(which(grp%in%groups1))
+      training.set2 <- ((popmin - 1)/popmin)
+      N.training <- round(N*training.set2)}
+    
 
     ## GET FULL PCA ##
     if(missing(n.pca.max)) n.pca.max <- min(dim(x))
@@ -34,11 +51,16 @@ xvalDapc.data.frame <- function(x, grp, n.pca.max, n.da=NULL, training.set = 0.9
 
     ## FUNCTION GETTING THE % OF ACCURATE PREDICTION FOR ONE NUMBER OF PCA PCs ##
     ## n.pca is a number of retained PCA PCs
-    VOID.GRP <- FALSE # will be TRUE if empty group happened
+    ##deleted: VOID.GRP <- FALSE # will be TRUE if empty group happened
     get.prop.pred <- function(n.pca){
         f1 <- function(){
-            toKeep <- sample(1:N, N.training)
-            if(!(all(table(grp[toKeep])>0) & all(table(grp[-toKeep])>0))) VOID.GRP <<- TRUE
+            ##added:
+                  if(all(lapply(groups, function(e) sum(as.vector(unclass(grp==e))))>=10)==TRUE){
+                    toKeep <- unlist(lapply(groups, function(e) sample(which(grp==e), size=(round(training.set*sum(as.vector(unclass(grp==e))))))))}
+                  else{
+                    toKeep <- unlist(lapply(groups, function(e) sample(which(grp==e), size=(round(training.set2*sum(as.vector(unclass(grp==e))))))))}
+            ##deleted: toKeep <- sample(1:N, N.training)
+            ##deleted: if(!(all(table(grp[toKeep])>0) & all(table(grp[-toKeep])>0))) VOID.GRP <<- TRUE
             temp.pca <- pcaX
             temp.pca$li <- temp.pca$li[toKeep,,drop=FALSE]
             temp.dapc <- suppressWarnings(dapc(x[toKeep,,drop=FALSE], grp[toKeep], n.pca=n.pca, n.da=n.da, dudi=temp.pca))
@@ -57,7 +79,7 @@ xvalDapc.data.frame <- function(x, grp, n.pca.max, n.da=NULL, training.set = 0.9
 
     ## GET %SUCCESSFUL OF ACCURATE PREDICTION FOR ALL VALUES ##
     res.all <- unlist(lapply(n.pca, get.prop.pred))
-    if(VOID.GRP) warning("At least one group was absent from the training / validating sets.\nTry using smaller training sets.")
+    ##deleted: if(VOID.GRP) warning("At least one group was absent from the training / validating sets.\nTry using smaller training sets.")
     res <- data.frame(n.pca=rep(n.pca, each=n.rep), success=res.all)
     return(res)
 } # end xvalDapc.data.frame
