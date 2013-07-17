@@ -39,16 +39,17 @@ snpzip <- function(snps,phen,plot=TRUE,pca.plot=FALSE,method=c("complete","singl
   The contributions of alleles to the DAPC are then submitted to \code{hclust}, 
   where they define a distance matrix upon which hierarchical clustering is carried out.
   To complete the procedure, \code{snpzip} uses \code{cutree} to automatically 
-  subdivide the set of SNPs fed into the analysis into two groups: those which contribute 
-  significantly to the phenotypic structure of interest, and those which do not.   
+  subdivide the set of SNPs fed into the analysis into two groups: 
+  those which contribute significantly to the phenotypic structure of interest, 
+  and those which do not.   
 }
 
 \value{
   A \code{list} with four items: 
   the first cites the number of principal components (PCs) of PCA retained in the DAPC, 
   the second indicates the number of structural and non-structural SNPs identified by 
-  \code{snpzip}, the third provides a list of the structuring alleles, 
-  and the fourth item details the contributions of these structuring alleles to the DAPC.
+  \code{snpzip}, the third provides a list of the structuring alleles, and the 
+  fourth item details the contributions of these structuring alleles to the DAPC.
   
   If \code{plot=TRUE}, a scatter plot will provide a visualization of the DAPC results.
   
