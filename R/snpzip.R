@@ -2,6 +2,7 @@
 ## snpzip ##
 ############
 
+
 snpzip <- function(snps,phen,plot=TRUE,pca.plot=FALSE,method=c("complete","single","average","centroid","mcquitty","median","ward")) {
 
 ## DETERMINE N.DA & N.PCA ##
@@ -26,7 +27,7 @@ print(names(n.opt))
 random <- replicate(300,mean(tapply(sample(phen)==phen,phen,mean)))
 q.phen <- quantile(random,c(0.025,0.5,0.975))
 print(q.phen)
-smoothScatter(xval$n.pca,successV,nrpoint=Inf,pch=20,col=transp("black"),xlab="Number of PCA axes retained",ylab="Proportion of successful outcome prediction")
+smoothScatter(xval$n.pca,successV,nrpoints=Inf,pch=20,col=transp("black"),xlab="Number of PCA axes retained",ylab="Proportion of successful outcome prediction")
 abline(h=q.phen,lty=c(2,1,2))}
 
 ## GET DAPC ##
