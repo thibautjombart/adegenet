@@ -5,8 +5,8 @@
 \alias{xvalDapc.matrix}
 \title{Cross-validation for Discriminant Analysis of Principal Components (DAPC)}
 \description{
-  The function \code{xvalDapc} performs cross-validation of DAPC using
-  varying numbers of PCs (and keeping the number of discriminant
+  The function \code{xvalDapc} performs stratified cross-validation of DAPC 
+  using varying numbers of PCs (and keeping the number of discriminant
   functions fixed); \code{xvalDapc} is a generic with methods for
   \code{data.frame} and \code{matrix}.\cr
 }
@@ -31,7 +31,9 @@ xvalDapc(x, \dots)
   \item{n.da}{an \code{integer} indicating the number of axes retained in the
     Discriminant Analysis step. If \code{NULL}, interactive selection is triggered.}
   \item{training.set}{the proportion of data (individuals) to be used
-    for the training set; defaults to one half.}
+    for the training set; defaults to 0.9, if all groups have >= 10 members; otherwise,
+    training.set scales automatically to the largest proportion that still 
+    ensures all groups will be present in both training and validation sets.}
   \item{result}{a character string; "groupMean" for group-wise assignment
     sucess, or  "overall" for an overall mean assignment success; see details.}
   \item{center}{a \code{logical} indicating whether variables should be centred to
@@ -51,14 +53,14 @@ xvalDapc(x, \dots)
   The Discriminant Analysis of Principal Components (DAPC) relies on
   dimension reduction of the data using PCA followed by a linear
   discriminant analysis. How many PCA axes to retain is often a
-  non-trivial question. Cross validation provides an object way to
+  non-trivial question. Cross validation provides an objective way to
   decide how many axes to retain: different numbers are tried and the
   quality of the corresponding DAPC is assessed by cross-validation:
   DAPC is performed on a training set, typically made of 90\% of the
-  observations, and then used to predict the groups of the 10\%
-  remaining observation. Current method uses the average prediction
-  success per group (result="groupMean"), or the overall prediction
-  success (result="overall").
+  observations (comprising 90\% of the observations in each subpopulation)
+  , and then used to predict the groups of the 10\% of remaining observations. 
+  The current method uses the average prediction success per group (result="groupMean"), 
+  or the overall prediction success (result="overall").
 }
 \value{
  A \code{data.frame} with two columns, the first giving the proportion
@@ -73,7 +75,8 @@ xvalDapc(x, \dots)
 \seealso{
   \code{\link{dapc}}
 }
-\author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
+\authors{ Thibaut Jombart \email{t.jombart@imperial.ac.uk}, 
+Caitlin Collins \email{caitlin.collins12@imperial.ac.uk} }
 \examples{
 \dontrun{
 ## CROSS-VALIDATION ##
