@@ -13,7 +13,7 @@
   of alleles: structural SNPs and non-structural SNPs.
 }
 \usage{
-snpzip <- function(snps,phen,plot=TRUE,pca.plot=FALSE,method=c("complete","single",
+snpzip(snps,phen,plot=TRUE,pca.plot=FALSE,method=c("complete","single",
 "average","centroid","mcquitty","median","ward"), \dots)
 }
 \arguments{
@@ -27,7 +27,7 @@ snpzip <- function(snps,phen,plot=TRUE,pca.plot=FALSE,method=c("complete","singl
     (an unambiguous abbreviation of) one of \code{"complete", "single", "average", 
     "centroid", "mcquitty", "median",} or \code{"ward"}.} 
   \item{\dots}{further arguments.}
-    ## not sure I have any further arguments?
+    %not sure I have any further arguments?
 }
 
 \details{
