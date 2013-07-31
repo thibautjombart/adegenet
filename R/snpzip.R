@@ -8,15 +8,20 @@ snpzip <- function(snps,phen,plot=TRUE,pca.plot=FALSE,method=c("complete","singl
 ## DETERMINE N.DA & N.PCA ##
 
 n.da <- nlevels(phen)-1
-xval <- xvalDapc(snps,phen,70,n.da=n.da,training.set=0.8,result=c("groupMean"),n.pca=NULL,n.rep=30)
+xval <- xvalDapc(snps,phen,70,n.da=n.da,training.set=0.9,result=c("groupMean"),n.pca=NULL,n.rep=30)
   ## xvalDapc will be changed to sxvalDapc & training.set to be removed from argument list)
 n.pcaF <- as.factor(xval$n.pca)
 successV <- as.vector(xval$success)
 pca.success <- tapply(successV,n.pcaF,mean)
 n.opt <- which.max(tapply(successV,n.pcaF,mean))
-##deleted: n.pca <- n.opt
+n.opt <- as.integer(names(n.opt)) 
+
 ##added:
-n.pca <- as.integer(names(n.opt)) 
+if(n.opt >= ((nrow(snps))/3)){
+n.pca <- n.opt}
+else{
+n.pca <- round((nrow(snps))/3)}
+
 
 
 ## SHOW CROSS VALIDATION RESULTS ##
