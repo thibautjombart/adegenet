@@ -18,9 +18,9 @@ n.opt <- as.integer(names(n.opt))
 
 ##added:
 if(n.opt >= ((nrow(snps))/3)){
-n.pca <- n.opt}
-else{
 n.pca <- round((nrow(snps))/3)}
+else{
+n.pca <- n.opt}
 
 
 
