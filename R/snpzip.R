@@ -15,7 +15,7 @@ successV <- as.vector(xval$success)
 pca.success <- tapply(successV,n.pcaF,mean)
 n.opt <- which.max(tapply(successV,n.pcaF,mean))
 n.opt <- as.integer(names(n.opt)) 
-
+n.pca<-n.opt
 ##deleted this option for now, assuming xvalDapc results override N/3 rule:
 #if(n.opt >= ((nrow(snps))/3)){
 #n.pca <- round((nrow(snps))/3)}
