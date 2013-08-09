@@ -21,7 +21,7 @@
 
 
 \newcommand{\code}[1]{{{\tt #1}}}
-\title{A tutorial for Discriminant Analysis of Principal Components (DAPC) using \textit{adegenet} 1.3-7}
+\title{A tutorial for Discriminant Analysis of Principal Components (DAPC) using \textit{adegenet} 1.4-0}
 \author{Thibaut Jombart}
 \date{\today}
 
@@ -254,14 +254,14 @@ NULL
 \end{Sinput}
 \begin{Soutput}
 001 002 003 004 005 006 007 008 009 010 
-  6   6   6   2   6   6   6   6   6   6 
+  3   3   3   1   3   3   3   3   3   3 
 Levels: 1 2 3 4 5 6
 \end{Soutput}
 \begin{Sinput}
 > grp$size
 \end{Sinput}
 \begin{Soutput}
-[1]  97 105 102  99  99  98
+[1] 105  99  98  99  97 102
 \end{Soutput}
 \end{Schunk}
 
@@ -276,12 +276,12 @@ Actual groups are accessed using \texttt{pop}:
 \end{Sinput}
 \begin{Soutput}
       1   2   3   4   5   6
-  1   0   3   0   0   0  97
-  2   0   1   0   0  99   0
-  3   2   0   0  98   0   0
-  4   0   0 100   0   0   0
-  5  95   2   2   0   0   1
-  6   0  99   0   1   0   0
+  1   3   0  97   0   0   0
+  2   1   0   0  99   0   0
+  3   0  98   0   0   2   0
+  4   0   0   0   0   0 100
+  5   2   0   1   0  95   2
+  6  99   1   0   0   0   0
 \end{Soutput}
 \begin{Sinput}
 > table.value(table(pop(x), grp$grp), col.lab=paste("inf", 1:6), row.lab=paste("ori", 1:6))
@@ -702,13 +702,13 @@ They are stored in \texttt{dapc} objects in the slot \texttt{posterior}:
 > round(head(dapc1$posterior),3)
 \end{Sinput}
 \begin{Soutput}
-    1     2 3 4 5     6
-001 0 0.000 0 0 0 1.000
-002 0 0.000 0 0 0 1.000
-003 0 0.000 0 0 0 1.000
-004 0 0.984 0 0 0 0.016
-005 0 0.000 0 0 0 1.000
-006 0 0.000 0 0 0 1.000
+        1 2     3 4 5 6
+001 0.000 0 1.000 0 0 0
+002 0.000 0 1.000 0 0 0
+003 0.000 0 1.000 0 0 0
+004 0.984 0 0.016 0 0 0
+005 0.000 0 1.000 0 0 0
+006 0.000 0 1.000 0 0 0
 \end{Soutput}
 \end{Schunk}
 Each row corresponds to an individual, each column to a group.
@@ -729,17 +729,17 @@ $assign.prop
 
 $assign.per.pop
         1         2         3         4         5         6 
-1.0000000 0.9904762 0.9901961 1.0000000 1.0000000 1.0000000 
+0.9904762 1.0000000 1.0000000 1.0000000 1.0000000 0.9901961 
 
 $prior.grp.size
 
   1   2   3   4   5   6 
- 97 105 102  99  99  98 
+105  99  98  99  97 102 
 
 $post.grp.size
 
   1   2   3   4   5   6 
- 97 105 101  99  99  99 
+105  99  99  99  97 101 
 \end{Soutput}
 \end{Schunk}
 The slot \texttt{assign.per.pop} indicates the proportions of successful reassignment (based on

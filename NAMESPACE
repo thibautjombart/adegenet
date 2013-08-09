@@ -12,14 +12,14 @@ importFrom(stats, "kmeans")
 importFrom(MASS, "lda")
 
 ## CURRENTLY DOES NOT WORK - as.DNAbin methods not exported - sent email to E.P.
-## importFrom(ape, "as.character.DNAbin", "as.DNAbin", "as.DNAbin.alignment", "as.DNAbin.character",
-##            "as.DNAbin.list", "as.list.DNAbin", "as.matrix.DNAbin", "cbind.DNAbin", "c.DNAbin",
-##            "[.DNAbin", "labels.DNAbin", "print.DNAbin", "rbind.DNAbin", "dist.dna")
+importFrom(ape, "as.character.DNAbin", "as.DNAbin", "as.DNAbin.alignment", "as.DNAbin.character",
+           "as.DNAbin.list", "as.list.DNAbin", "as.matrix.DNAbin", "cbind.DNAbin", "c.DNAbin",
+           "[.DNAbin", "labels.DNAbin", "print.DNAbin", "rbind.DNAbin", "dist.dna")
 
 importFrom(igraph, "graph.data.frame", "V", "V<-", "E", "E<-", "layout.fruchterman.reingold",
            "as.igraph", "plot.igraph", "print.igraph", "graph.adjacency", "clusters")
 
-import(methods,ade4,ape)
+import(methods,ade4)
 
 ## Declare S3 methods
 S3method(scatter, dapc)

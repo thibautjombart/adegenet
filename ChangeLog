@@ -1,3 +1,12 @@
+			CHANGES IN ADEGENET VERSION 1.3-9.2
+FIXES
+	o fixed NAMESPACE to get rid of a warning due to conflicting
+	imports in ape and igraph
+
+	o fixed seploc and seppop, which were loosing some of the
+	attributes of the objects (ploidy, type)
+
+
 			CHANGES IN ADEGENET VERSION 1.3-8
 
 NEW FEATURES
@@ -11,7 +20,6 @@ NEW FEATURES
 	analysis.
 
 
-	
 			CHANGES IN ADEGENET VERSION 1.3-7
 
 NEW FEATURES

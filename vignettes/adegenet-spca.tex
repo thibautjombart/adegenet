@@ -22,7 +22,7 @@
 
 
 \newcommand{\code}[1]{{{\tt #1}}}
-\title{A tutorial for the spatial Analysis of Principal Components (sPCA) using \textit{adegenet} 1.3-0}
+\title{A tutorial for the spatial Analysis of Principal Components (sPCA) using \textit{adegenet} 1.4-0}
 \author{Thibaut Jombart}
 \date{\today}
 
@@ -157,6 +157,7 @@ denoted $\m{X}$ exactly corresponds to the \texttt{@tab} slot of \texttt{genind}
 \texttt{genpop} objects:
 \begin{Schunk}
 \begin{Sinput}
+> library(ade4)
 > library(adegenet)
 > library(adehabitat)
 > data(spcaIllus)
@@ -189,7 +190,7 @@ Optionnal contents:
 @other: a list containing: xy 
 \end{Soutput}
 \begin{Sinput}
-> head(truenames(obj[loc = "L01"])$tab)
+> head(truenames(obj[loc="L01"])$tab)
 \end{Sinput}
 \begin{Soutput}
      L01.1 L01.2 L01.3 L01.4 L01.5 L01.6 L01.7 L01.8 L01.9
@@ -215,10 +216,9 @@ analysis (see \texttt{?spca} for further information):
 \end{Sinput}
 \begin{Soutput}
 function (obj, xy = NULL, cn = NULL, matWeight = NULL, scale = FALSE, 
-    scale.method = c("sigma", "binom"), scannf = TRUE, nfposi = 1, 
-    nfnega = 1, type = NULL, ask = TRUE, plot.nb = TRUE, edit.nb = FALSE, 
-    truenames = TRUE, d1 = NULL, d2 = NULL, k = NULL, a = NULL, 
-    dmin = NULL) 
+    scannf = TRUE, nfposi = 1, nfnega = 1, type = NULL, ask = TRUE, 
+    plot.nb = TRUE, edit.nb = FALSE, truenames = TRUE, d1 = NULL, 
+    d2 = NULL, k = NULL, a = NULL, dmin = NULL) 
 NULL
 \end{Soutput}
 \end{Schunk}
@@ -239,8 +239,18 @@ Hence, we can use the following command to run the sPCA (\texttt{ask} and \textt
 are set to FALSE to avoid interactivity):
 \begin{Schunk}
 \begin{Sinput}
-> mySpca <- spca(obj, ask = FALSE, type = 1, scannf = FALSE)
+> mySpca <- spca(obj, ask=FALSE, type=1, scannf=FALSE)
 \end{Sinput}
+\begin{Soutput}
+     PLEASE NOTE:  The components "delsgs" and "summary" of the 
+     object returned by deldir() are now DATA FRAMES rather than 
+     matrices (as they were prior to release 0.0-18). 
+     See help("deldir").
+ 
+     PLEASE NOTE: The process that deldir() uses for determining
+     duplicated points has changed from that used in version
+     0.0-9 of this package (and previously). See help("deldir").
+\end{Soutput}
 \end{Schunk}
 ~\\
 
@@ -262,7 +272,7 @@ for \texttt{chooseCN}: \texttt{type}, \texttt{ask}, \texttt{plot.nb},
 For instance, the command:
 \begin{Schunk}
 \begin{Sinput}
-> mySpca <- spca(obj, type = 1, ask = FALSE, scannf = FALSE)
+> mySpca <- spca(obj,type=1,ask=FALSE,scannf=FALSE)
 \end{Sinput}
 \end{Schunk}
 \noindent performs a sPCA using the Delaunay triangulation as
@@ -270,7 +280,7 @@ connection network (\texttt{type=1}, see \texttt{?chooseCN}), while
 the command:
 \begin{Schunk}
 \begin{Sinput}
-> mySpca <- spca(obj, type = 5, d1 = 0, d2 = 2, scannf = FALSE)
+> mySpca <- spca(obj,type=5,d1=0,d2=2,scannf=FALSE)
 \end{Sinput}
 \end{Schunk}
 \noindent computes a sPCA using a connection network which defines
@@ -285,7 +295,7 @@ network (\texttt{nb} object) or a list of spatial weights
 For instance:
 \begin{Schunk}
 \begin{Sinput}
-> myCn <- chooseCN(obj$other$xy, type = 6, k = 10, plot = FALSE)
+> myCn <- chooseCN(obj$other$xy, type=6, k=10, plot=FALSE)
 > myCn
 \end{Sinput}
 \begin{Soutput}
@@ -302,7 +312,7 @@ Average number of links: 11.65
 [1] "nb"
 \end{Soutput}
 \begin{Sinput}
-> mySpca2 <- spca(obj, cn = myCn, scannf = FALSE)
+> mySpca2 <- spca(obj,cn=myCn,scannf=FALSE)
 \end{Sinput}
 \end{Schunk}
 \noindent produces a sPCA using \texttt{myCn} ($k=10$ nearest
@@ -317,11 +327,10 @@ For the object \texttt{mySpca}, this barplot would be (here we
 indicate in red the retained eigenvalue):
 \begin{Schunk}
 \begin{Sinput}
-> barplot(mySpca$eig, main = "Eigenvalues of sPCA", col = rep(c("red", 
-+     "grey"), c(1, 100)))
+> barplot(mySpca$eig,main="Eigenvalues of sPCA", col=rep(c("red","grey"),c(1,100)))
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-009}
+\includegraphics{spca-008}
 
 \noindent Positive eigenvalues (on the left) correspond to global
 structures, while negative eigenvalues (on the right) indicate local patterns.
@@ -346,8 +355,7 @@ Let us consider a \texttt{spca} object resulting from the analysis of
 the object \texttt{obj}, using a Delaunay triangulation (\texttt{type=1}) as connection network:
 \begin{Schunk}
 \begin{Sinput}
-> mySpca <- spca(obj, type = 1, scannf = FALSE, plot.nb = FALSE, 
-+     nfposi = 1, nfnega = 0)
+> mySpca <- spca(obj,type=1,scannf=FALSE,plot.nb=FALSE,nfposi=1,nfnega=0)
 > class(mySpca)
 \end{Sinput}
 \begin{Soutput}
@@ -414,15 +422,13 @@ First, eigenvalues of the analysis are stored inside the
 [1] 79
 \end{Soutput}
 \begin{Sinput}
-> myPal <- colorRampPalette(c("red", "grey", "blue"))
-> barplot(mySpca$eig, main = "A variant of the plot\n of sPCA eigenvalues", 
-+     col = myPal(length(mySpca$eig)))
-> legend("topright", fill = c("red", "blue"), leg = c("Global structures", 
-+     "Local structures"))
-> abline(h = 0, col = "grey")
+> myPal <- colorRampPalette(c("red","grey","blue"))
+> barplot(mySpca$eig, main="A variant of the plot\n of sPCA eigenvalues", col=myPal(length(mySpca$eig)))
+> legend("topright", fill=c("red","blue"), leg=c("Global structures", "Local structures"))
+> abline(h=0,col="grey")
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-011}
+\includegraphics{spca-010}
 
 \noindent The axes of the analysis, denoted $\m{v}$ in eq. (4) \cite{tjart04}
 are stored as columns inside the \texttt{\$c1} component.
@@ -434,7 +440,7 @@ Each column contains loadings for all the alleles:
 \begin{Soutput}
              Axis 1
 L01.1  1.268838e-02
-L01.2  2.220446e-16
+L01.2  1.665335e-16
 L01.3 -1.119979e-01
 L01.4 -4.440892e-16
 L01.5 -2.766095e-02
@@ -573,7 +579,7 @@ The corresponding function is \texttt{screeplot}, and can be used on any
 > screeplot(mySpca)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-screeplot}
+\includegraphics{spca-screeplot}
 
 \noindent The resulting figure represents eigenvalues of sPCA (denoted
 $\lambda_i$ with $i=1,\ldots,r$, where $\lambda_1$ is the highest
@@ -602,7 +608,7 @@ Each test can detect the presence of one kind of structure.
 We can apply them to the object \texttt{obj}, used in our sPCA:
 \begin{Schunk}
 \begin{Sinput}
-> myGtest <- global.rtest(obj$tab, mySpca$lw, nperm = 99)
+> myGtest <- global.rtest(obj$tab,mySpca$lw,nperm=99)
 > myGtest
 \end{Sinput}
 \begin{Soutput}
@@ -616,13 +622,13 @@ Simulated p-value: 0.01
 Alternative hypothesis: greater 
 
      Std.Obs  Expectation     Variance 
-3.986172e+00 1.289255e-02 8.562127e-07 
+5.223009e+00 1.272760e-02 5.443175e-07 
 \end{Soutput}
 \begin{Sinput}
 > plot(myGtest)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-globalrtest}
+\includegraphics{spca-globalrtest}
 
 \noindent The produced object is a \texttt{randtest} object (see
 \texttt{?randtest}), which is the class of objects for Monte-Carlo
@@ -642,7 +648,7 @@ The same can be done with the local test, which here we do not expect
 to be significant:
 \begin{Schunk}
 \begin{Sinput}
-> myLtest <- local.rtest(obj$tab, mySpca$lw, nperm = 99)
+> myLtest <- local.rtest(obj$tab,mySpca$lw,nperm=99)
 > myLtest
 \end{Sinput}
 \begin{Soutput}
@@ -652,17 +658,17 @@ Call: local.rtest(X = obj$tab, listw = mySpca$lw, nperm = 99)
 Observation: 0.01397349 
 
 Based on 99 replicates
-Simulated p-value: 0.18 
+Simulated p-value: 0.12 
 Alternative hypothesis: greater 
 
      Std.Obs  Expectation     Variance 
-8.138443e-01 1.329193e-02 7.013349e-07 
+1.030445e+00 1.319383e-02 5.724859e-07 
 \end{Soutput}
 \begin{Sinput}
 > plot(myLtest)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-localrtest}
+\includegraphics{spca-localrtest}
 ~\\
 
 
@@ -675,7 +681,7 @@ The first, most simple approach is through the function plot (see \texttt{?plot.
 > plot(mySpca)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-plotspca}
+\includegraphics{spca-plotspca}
 
 
 \noindent This figure displays various information, that we detail from
@@ -720,10 +726,10 @@ more than one score on a single map, we can use it to represent the
 first global structure that was retained in \texttt{mySpca}:
 \begin{Schunk}
 \begin{Sinput}
-> colorplot(mySpca, cex = 3, main = "colorplot of mySpca, first global score")
+> colorplot(mySpca,cex=3,main="colorplot of mySpca, first global score")
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-colorplot}
+\includegraphics{spca-colorplot}
 
 \noindent See examples in \texttt{?colorplot} and \texttt{?spca}
 for more examples of applications of colorplot to represent sPCA scores.
@@ -737,45 +743,44 @@ Interpolation is easy to realize using \texttt{interp} from the \texttt{akima} p
 \begin{Schunk}
 \begin{Sinput}
 > library(akima)
-> x <- other(obj)$xy[, 1]
-> y <- other(obj)$xy[, 2]
+> x <- other(obj)$xy[,1]
+> y <- other(obj)$xy[,2]
 \end{Sinput}
 \end{Schunk}
 \begin{Schunk}
 \begin{Sinput}
-> temp <- interp(x, y, mySpca$li[, 1])
+> temp <- interp(x, y, mySpca$li[,1])
 > image(temp)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-022}
+\includegraphics{spca-021}
 
 \noindent Note that for better clarity, we can use the lagged principal scores (\texttt{\$ls})
 rather than the original scores (\texttt{\$li}); we also achieve a better resolution using specific
 interpolated coordinates:
 \begin{Schunk}
 \begin{Sinput}
-> interpX <- seq(min(x), max(x), le = 200)
-> interpY <- seq(min(y), max(y), le = 200)
-> temp <- interp(x, y, mySpca$ls[, 1], xo = interpX, yo = interpY)
+> interpX <- seq(min(x),max(x),le=200)
+> interpY <- seq(min(y),max(y),le=200)
+> temp <- interp(x, y, mySpca$ls[,1], xo=interpX, yo=interpY)
 > image(temp)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-023}
+\includegraphics{spca-022}
 
 \noindent Alternatively, \texttt{filled.contour} can be used for the display, and a customized color
 palette can be specified:
 \begin{Schunk}
 \begin{Sinput}
 > myPal <- colorRampPalette(c("firebrick2", "white", "lightslateblue"))
-> annot <- function() {
+> annot <- function(){
 +     title("sPCA - interpolated map of individual scores")
-+     points(x, y)
++     points(x,y)
 + }
-> filled.contour(temp, color.pal = myPal, nlev = 50, key.title = title("lagged \nscore 1"), 
-+     plot.title = annot())
+> filled.contour(temp, color.pal=myPal, nlev=50, key.title=title("lagged \nscore 1"), plot.title=annot())
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-024}
+\includegraphics{spca-023}
 ~\\
 
 
@@ -787,13 +792,14 @@ of sPCA, using the function \texttt{loadingplot} (see \texttt{?loadingplot} for
 a description of the arguments):
 \begin{Schunk}
 \begin{Sinput}
-> myLoadings <- mySpca$c1[, 1]^2
+> myLoadings <- mySpca$c1[,1]^2
 > names(myLoadings) <- rownames(mySpca$c1)
-> loadingplot(myLoadings, xlab = "Alleles", ylab = "Weight of the alleles", 
-+     main = "Contribution of alleles \n to the first sPCA axis")
+> loadingplot(myLoadings, xlab="Alleles",
++             ylab="Weight of the alleles",
++             main="Contribution of alleles \n to the first sPCA axis")
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-025}
+\includegraphics{spca-024}
 
 \noindent See \texttt{?loadingplot} for more information about this
 function, in particular for the definition of the threshold value
@@ -808,10 +814,10 @@ For instance, to identify the 5\% of alleles with the greatest
 contributions to the first global structure in \texttt{mySpca}, we need:
 \begin{Schunk}
 \begin{Sinput}
-> temp <- loadingplot(myLoadings, threshold = quantile(myLoadings, 
-+     0.95), xlab = "Alleles", ylab = "Weight of the alleles", 
-+     main = "Contribution of alleles \n to the first sPCA axis", 
-+     fac = obj$loc.fac, cex.fac = 0.6)
+> temp <- loadingplot(myLoadings, threshold=quantile(myLoadings, 0.95),
++                     xlab="Alleles",ylab="Weight of the alleles",
++                     main="Contribution of alleles \n to the first sPCA axis",
++                     fac=obj$loc.fac, cex.fac=0.6)
 > temp
 \end{Sinput}
 \begin{Soutput}
@@ -834,18 +840,17 @@ $var.values
 0.05793290 0.08246000 0.02368209 
 \end{Soutput}
 \end{Schunk}
-\includegraphics{figs/spca-026}
+\includegraphics{spca-025}
 
 But to assess the average contribution of each marker, the
 boxplot probably is a better tool:
 \begin{Schunk}
 \begin{Sinput}
-> boxplot(myLoadings ~ obj$loc.fac, las = 3, ylab = "Contribution", 
-+     xlab = "Marker", main = "Contributions by markers \nto the first global score", 
-+     col = "grey")
+> boxplot(myLoadings~obj$loc.fac, las=3, ylab="Contribution", xlab="Marker",
++         main="Contributions by markers \nto the first global score", col="grey")
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-boxplot}
+\includegraphics{spca-boxplot}
 
 
 
@@ -924,10 +929,10 @@ The spatial distribution of the sampling can be displayed as follows:
 \begin{Schunk}
 \begin{Sinput}
 > rupica$other$showBauges()
-> points(rupica$other$xy, col = "red", pch = 20)
+> points(rupica$other$xy, col="red",pch=20)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-029}
+\includegraphics{spca-028}
 
 \noindent This spatial distribution is clearly not random, but seems arranged into
 loose clusters.
@@ -937,11 +942,11 @@ issue.
 \begin{Schunk}
 \begin{Sinput}
 > rupica$other$showBauges()
-> s.kde2d(rupica$other$xy, add.plot = TRUE)
-> points(rupica$other$xy, col = "red", pch = 20)
+> s.kde2d(rupica$other$xy,add.plot=TRUE)
+> points(rupica$other$xy, col="red",pch=20)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-030}
+\includegraphics{spca-029}
 
 Unfortunately, geographical clustering is not strong enough to assign unambiguously each individual to a group.
 Therefore, we need to carry all analyses at the individual level, which precludes the use of most
@@ -994,27 +999,27 @@ L1 L2 L3 L4 L5 L6 L7 L8 L9
 0.4070709 
 \end{Soutput}
 \begin{Sinput}
-> plot(rupica.smry$Hobs, rupica.smry$Hexp, main = "Observed vs expected heterozygosity")
-> abline(0, 1, col = "red")
+> plot(rupica.smry$Hobs, rupica.smry$Hexp, main="Observed vs expected heterozygosity")
+> abline(0,1,col="red")
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-031}
+\includegraphics{spca-030}
 
 \noindent The red line indicate identity between both quantities.
 Observed heterozygosity do not seem to deviate massively from theoretical expectations.
 This is confirmed by a classical pairwise $t$-test::
 \begin{Schunk}
 \begin{Sinput}
-> t.test(rupica.smry$Hexp, rupica.smry$Hobs, paired = TRUE, var.equal = TRUE)
+> t.test(rupica.smry$Hexp, rupica.smry$Hobs,paired=TRUE,var.equal=TRUE)
 \end{Sinput}
 \begin{Soutput}
 	Paired t-test
 
-data:  rupica.smry$Hexp and rupica.smry$Hobs 
+data:  rupica.smry$Hexp and rupica.smry$Hobs
 t = 0.9461, df = 8, p-value = 0.3718
-alternative hypothesis: true difference in means is not equal to 0 
+alternative hypothesis: true difference in means is not equal to 0
 95 percent confidence interval:
- -0.01025068  0.02451318 
+ -0.01025068  0.02451318
 sample estimates:
 mean of the differences 
             0.007131251 
@@ -1026,21 +1031,20 @@ We can seek a global picture of the genetic diversity among genotypes
 using a Principal Component Analysis (PCA, function \texttt{dudi.pca} in the \texttt{ade4}
 package).
 The analysis is performed on a table of standardized alleles
-frequencies, obtained by \texttt{scaleGen} (use the binomial scaling option).
+frequencies, obtained by \texttt{scaleGen}.
 Note that we disable the scaling option when performing the PCA, which would otherwise re-scale the
 data and therefore erase the previous scaling of \texttt{scaleGen}.
 The function \texttt{dudi.pca} displays a barplot of
 eigenvalues and asks for a number of retained principal components:
 \begin{Schunk}
 \begin{Sinput}
-> rupica.X <- scaleGen(rupica, method = "binom")
-> rupica.pca1 <- dudi.pca(rupica.X, cent = FALSE, scale = FALSE, 
-+     scannf = FALSE, nf = 2)
-> barplot(rupica.pca1$eig, main = "Rupica dataset - PCA eigenvalues", 
-+     col = heat.colors(length(rupica.pca1$eig)))
+> rupica.X <- scaleGen(rupica)
+> rupica.pca1 <- dudi.pca(rupica.X, cent=FALSE, scale=FALSE, scannf=FALSE, nf=2)
+> barplot(rupica.pca1$eig, main="Rupica dataset - PCA eigenvalues",
++         col=heat.colors(length(rupica.pca1$eig)))
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-033}
+\includegraphics{spca-032}
 
 \noindent The output produced by \texttt{dudi.pca} is a \texttt{dudi} object.
 A \texttt{dudi} object contains various information; in the case of
@@ -1089,11 +1093,11 @@ assessment of the distribution of the genotypes onto the principal axes:
 \begin{Schunk}
 \begin{Sinput}
 > s.label(rupica.pca1$li)
-> s.kde2d(rupica.pca1$li, add.p = TRUE, cpoint = 0)
-> add.scatter.eig(rupica.pca1$eig, 2, 1, 2)
+> s.kde2d(rupica.pca1$li, add.p=TRUE, cpoint=0)
+> add.scatter.eig(rupica.pca1$eig,2,1,2)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-035}
+\includegraphics{spca-034}
 
 \noindent This scatterplot shows that the only structure identified by PCA points to a few outliers.
 \texttt{loadingplot} confirms that this corresponds to the possession of a few original alleles:
@@ -1102,7 +1106,7 @@ assessment of the distribution of the genotypes onto the principal axes:
 > loadingplot(rupica.pca1$c1^2)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-036}
+\includegraphics{spca-035}
 
 \noindent We can go back to the genotypes for the concerned markers (e.g.,
 Bm203) to check whether the highlighted genotypes are uncommon.
@@ -1123,7 +1127,7 @@ Bm203) to check whether the highlighted genotypes are uncommon.
 [1] 335  55
 \end{Soutput}
 \begin{Sinput}
-> bm203.221 <- X[, "Bm203.221"]
+> bm203.221 <- X[,"Bm203.221"]
 > table(bm203.221)
 \end{Sinput}
 \begin{Soutput}
@@ -1137,7 +1141,7 @@ corresponds to a replaced missing data).
 Which individuals are they?
 \begin{Schunk}
 \begin{Sinput}
-> rownames(X)[bm203.221 == 0.5]
+> rownames(X)[bm203.221==0.5]
 \end{Sinput}
 \begin{Soutput}
    001    019    029    276 
@@ -1163,11 +1167,11 @@ white squares of variable size for positive and negative values.
 To give a legend for this type of representation:
 \begin{Schunk}
 \begin{Sinput}
-> s.value(cbind(1:11, rep(1, 11)), -5:5, cleg = 0)
-> text(1:11, rep(1, 11), -5:5, col = "red", cex = 1.5)
+> s.value(cbind(1:11,rep(1,11)), -5:5, cleg=0)
+> text(1:11,rep(1,11), -5:5, col="red",cex=1.5)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-svaluedem}
+\includegraphics{spca-svaluedem}
 
 \noindent We apply this graphical representation to the first
 two PCs of the PCA:
@@ -1175,20 +1179,20 @@ two PCs of the PCA:
 \begin{Sinput}
 > showBauges <- rupica$other$showBauges
 > showBauges()
-> s.value(rupica$other$xy, rupica.pca1$li[, 1], add.p = TRUE, cleg = 0.5)
-> title("PCA - first PC", col.main = "yellow", line = -2, cex.main = 2)
+> s.value(rupica$other$xy, rupica.pca1$li[,1], add.p=TRUE, cleg=0.5)
+> title("PCA - first PC",col.main="yellow" ,line=-2, cex.main=2)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-040}
+\includegraphics{spca-039}
 
 \begin{Schunk}
 \begin{Sinput}
 > showBauges()
-> s.value(rupica$other$xy, rupica.pca1$li[, 2], add.p = TRUE, csize = 0.7)
-> title("PCA - second PC", col.main = "yellow", line = -2, cex.main = 2)
+> s.value(rupica$other$xy, rupica.pca1$li[,2], add.p=TRUE, csize=0.7)
+> title("PCA - second PC",col.main="yellow" ,line=-2, cex.main=2)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-041}
+\includegraphics{spca-040}
 
 
 \noindent As we can see, none of these PCs seems to display a particular spatial pattern.
@@ -1201,8 +1205,7 @@ individuals, modelled as disks with a radius of 1150m.
 \texttt{chooseCN} is used to create the corresponding connection network:
 \begin{Schunk}
 \begin{Sinput}
-> rupica.graph <- chooseCN(rupica$other$xy, type = 5, d1 = 0, d2 = 2300, 
-+     plot = FALSE, res = "listw")
+> rupica.graph <- chooseCN(rupica$other$xy,type=5,d1=0,d2=2300, plot=FALSE, res="listw")
 \end{Sinput}
 \end{Schunk}
 The connection network should ressemble this:
@@ -1228,26 +1231,26 @@ W 335 112225 335 15.04311 1352.07
 > title("rupica.graph")
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-043}
+\includegraphics{spca-042}
 
 We perform Moran's test for the first two PCs, and plot the results.
 \begin{Schunk}
 \begin{Sinput}
-> pc1.mctest <- moran.mc(rupica.pca1$li[, 1], rupica.graph, 999)
+> pc1.mctest <- moran.mc(rupica.pca1$li[,1], rupica.graph, 999)
 > plot(pc1.mctest)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-044}
+\includegraphics{spca-043}
 
 \noindent This result is surprisingly significant. Why is this?
 Moran's plot (\texttt{moran.plot}) represents the tested variable against its lagged vector; we
 apply it to the first PC:
 \begin{Schunk}
 \begin{Sinput}
-> moran.plot(rupica.pca1$li[, 1], rupica.graph)
+> moran.plot(rupica.pca1$li[,1], rupica.graph)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-045}
+\includegraphics{spca-044}
 
 \noindent Positive autocorrelation corresponds to a positive correlation between a variable
 and its lag vector.
@@ -1257,11 +1260,11 @@ This is therefore a fairly trivial and uninteresting pattern.
 Results obtained on the second PC are less surprisingly non-significant:
 \begin{Schunk}
 \begin{Sinput}
-> pc2.mctest <- moran.mc(rupica.pca1$li[, 2], rupica.graph, 999)
+> pc2.mctest <- moran.mc(rupica.pca1$li[,2], rupica.graph, 999)
 > plot(pc2.mctest)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-046}
+\includegraphics{spca-045}
 
 
 
@@ -1283,10 +1286,10 @@ Perform Mantel test, using the scaled genetic data you used before in PCA, and t
 \begin{Schunk}
 \begin{Sinput}
 > mtest <- mantel.randtest(dist(rupica.X), dist(rupica$other$xy))
-> plot(mtest, nclass = 30)
+> plot(mtest, nclass=30)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-047}
+\includegraphics{spca-046}
 
 \noindent Interestingly, this test turns out to be marginally significant, and would encourage us to
 look for spatial patterns. This is the role of the spatial Principal Component Analysis.
@@ -1303,13 +1306,11 @@ We apply an sPCA to the \texttt{rupica} dataset, using the connection network us
 Moran's $I$ tests:
 \begin{Schunk}
 \begin{Sinput}
-> rupica.spca1 <- spca(rupica, cn = rupica.graph, scannf = FALSE, 
-+     nfposi = 2, nfnega = 0)
-> barplot(rupica.spca1$eig, col = rep(c("red", "grey"), c(2, 1000)), 
-+     main = "rupica dataset - sPCA eigenvalues")
+> rupica.spca1 <- spca(rupica, cn=rupica.graph,scannf=FALSE, nfposi=2,nfnega=0)
+> barplot(rupica.spca1$eig, col=rep(c("red","grey"), c(2,1000)), main="rupica dataset - sPCA eigenvalues")
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-048}
+\includegraphics{spca-047}
 
 \noindent The principal components associated with the first two
 positive eigenvalues (in red) shall be retained.
@@ -1359,7 +1360,7 @@ The function \texttt{screeplot} allows to display this information graphically:
 > screeplot(rupica.spca1)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-050}
+\includegraphics{spca-049}
 
 \noindent While $\lambda_1$ indicates with no doubt a structure, the
 second eigenvalue, $\lambda_2$ is less clearly distinct from the
@@ -1374,12 +1375,11 @@ We map the sPCA results using \texttt{s.value} and lagged scores (\texttt{\$ls})
 \begin{Schunk}
 \begin{Sinput}
 > showBauges()
-> s.value(rupica$other$xy, rupica.spca1$ls[, 1], add.p = TRUE, 
-+     csize = 0.7)
-> title("sPCA - first PC", col.main = "yellow", line = -2, cex.main = 2)
+> s.value(rupica$other$xy, rupica.spca1$ls[,1], add.p=TRUE, csize=0.7)
+> title("sPCA - first PC",col.main="yellow" ,line=-2, cex.main=2)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-051}
+\includegraphics{spca-050}
 
 \noindent This first PC shows a remarkably clear structure opposing two high-altitude areas
 separated by a valley, which is thought to be an obstacle to the dispersal of Chamois (due to higher
@@ -1389,12 +1389,11 @@ The second PC of sPCA shows an equally interesting structure:
 \begin{Schunk}
 \begin{Sinput}
 > showBauges()
-> s.value(rupica$other$xy, rupica.spca1$ls[, 2], add.p = TRUE, 
-+     csize = 0.7)
-> title("sPCA - second PC", col.main = "yellow", line = -2, cex.main = 2)
+> s.value(rupica$other$xy, rupica.spca1$ls[,2], add.p=TRUE, csize=0.7)
+> title("sPCA - second PC",col.main="yellow" ,line=-2, cex.main=2)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-052}
+\includegraphics{spca-051}
 
 \noindent The smaller clusters appearing on this map correspond to social units identified by
 direct observation in the field.
@@ -1407,16 +1406,14 @@ The final figure should ressemble this (although colors may change from one comp
 \begin{Schunk}
 \begin{Sinput}
 > showBauges()
-> colorplot(rupica$other$xy, rupica.spca1$ls, axes = 1:2, transp = TRUE, 
-+     add = TRUE, cex = 3)
-> title("sPCA - colorplot of PC 1 and 2\n(lagged scores)", col.main = "yellow", 
-+     line = -2, cex = 2)
+> colorplot(rupica$other$xy, rupica.spca1$ls, axes=1:2, transp=TRUE, add=TRUE, cex=3)
+> title("sPCA - colorplot of PC 1 and 2\n(lagged scores)", col.main="yellow", line=-2, cex=2)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{figs/spca-053}
+\includegraphics{spca-052}
 
 %% \begin{center}
-%% \includegraphics[width=.6\textwidth]{figs/rupicacolors.png}
+%% \includegraphics[width=.6\textwidth]{rupicacolors.png}
 %% \end{center}
 
 

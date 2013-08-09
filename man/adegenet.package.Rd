@@ -190,18 +190,18 @@
   \tabular{ll}{
     Package: \tab adegenet\cr
     Type: \tab Package\cr
-    Version: \tab 1.3-9\cr
-    Date: \tab 2013-06-04 \cr
+    Version: \tab 1.3-9.2\cr
+    Date: \tab 2013-08-05 \cr
     License: \tab GPL (>=2)
   } 
 }
 \author{
   Thibaut Jombart <t.jombart@imperial.ac.uk>\cr
-  Developers: Ismail Ahmed <ismail.ahmed@inserm.fr>, Federico Calboli
-  <f.calboli@imperial.ac.uk>, Tobias Erik Reiners, Peter Solymos, Anne Cori\cr
-  and contributed datasets from: Katayoun Moazami-Goudarzi, Denis Laloë,
-  Dominique Pontier, Daniel Maillard, Francois Balloux.
-}
+  Developers: Caitlin Collins <caitiecollins17@gmail.com> Ismail Ahmed
+  <ismail.ahmed@inserm.fr>, Federico Calboli <f.calboli@imperial.ac.uk>,
+  Tobias Erik Reiners, Peter Solymos, Anne Cori\cr
+  Contributed datasets from: Katayoun Moazami-Goudarzi, Denis Laloë,
+  Dominique Pontier, Daniel Maillard, Francois Balloux.  }
 \references{
   Jombart T. (2008) adegenet: a R package for the multivariate analysis
   of genetic markers \emph{Bioinformatics} 24: 1403-1405. doi:
