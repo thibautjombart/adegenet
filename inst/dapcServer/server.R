@@ -26,9 +26,6 @@ shinyServer(function(input, output) {
             out <- get(input$dataset)
         }
 
-        print(input$datatype)
-        print(input$datafile)
-
         if(input$datatype=="file" && !is.null(input$datafile)){
             ## need to rename input file
             oldName <- input$datafile$datapath
@@ -108,7 +105,6 @@ shinyServer(function(input, output) {
 
             compoplot(dapc1, col=myCol, lab=input$compo.lab, legend=input$compo.legend)
 
-            print(input$data.type)
         }
     })
 
