@@ -106,7 +106,7 @@ xvalDapc.data.frame <- function(x, grp, n.pca.max = 200, n.da = NULL,
   # DAPC
   n.pca <- as.integer(best.n.pca)
   n.da <- nlevels(grp)-1
-  dapc1 <- dapc(x, grp, n.pca=n.pca, n.da=n.da)
+  dapc1 <- suppressWarnings(dapc(x, grp, n.pca=n.pca, n.da=n.da))
   
   # PLOT CROSS-VALIDATION RESULTS
   snps <- x
