@@ -85,7 +85,7 @@ xvalDapc(x, \dots)
 \seealso{
   \code{\link{dapc}}
 }
-\authors{ Thibaut Jombart \email{t.jombart@imperial.ac.uk}, 
+\author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk}, 
 Caitlin Collins \email{caitlin.collins12@imperial.ac.uk} }
 \examples{
 \dontrun{
