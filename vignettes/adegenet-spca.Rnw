@@ -95,7 +95,7 @@ Spatial information is stored inside a spatial weighting matrix
 $\m{L}$ which contains positive terms corresponding to some measurement
 (often binary) of spatial proximity among entities.
 Most often, these terms can be derived from a connection network built
-upon a given algorithm (for instance, pp.572-576 in \cite{tj88}).
+upon a given algorithm (for instance, pp.752-756 in \cite{tj88}).
 This matrix is row-standardized (\textit{i.e.}, each of its rows sums
 to one), and all its diagonal terms are zero.
 $\m{L}$ can be used to compute the spatial autocorrelation of a
