@@ -246,7 +246,9 @@ summary.spca <- function (object, ..., printres=TRUE) {
   n <- nrow(X)
   I0 <- -1/(n-1)
   L <- listw2mat(lw)
-  eigL <- eigen(0.5*(L+t(L)))$values
+  ## use 'as.numeric' to avoid possible bug with large matrices,
+  ## returning complex numbers with zero imaginary parts
+  eigL <- suppressWarnings(as.numeric(eigen(0.5*(L+t(L)))$values))
   Imin <- min(eigL)
   Imax <- max(eigL)
   Ival <- data.frame(I0=I0,Imin=Imin,Imax=Imax)
