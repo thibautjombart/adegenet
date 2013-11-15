@@ -4,18 +4,49 @@
 ##############
 
 
-snpzip <- function(snps,phen,plot=TRUE,pca.plot=FALSE,loading.plot=FALSE,
-                    method=c("complete","single","average","centroid",
-                    "mcquitty","median","ward"), ...) {
+snpzip <- function(x, phen, plot=TRUE, xval.plot=FALSE, loading.plot=FALSE,
+                   method=c("complete","single","average","centroid",
+                            "mcquitty","median","ward"), ...) {
+  
+  ## dapc input prompts only SNP selection function
+  if(class(x)=="dapc"){ 
 
+    dapc1 <- x
+    
+    if(missing(phen)){
+    phen <- 0  
+    }
+    else{
+      warning("phen not required when x is a dapc object; phen argument ignored")
+    }
+    
+    if(xval.plot==TRUE){
+      warning("cross-validation not performed when x is a dapc object; xval.plot will not be shown")
+      xval.plot=FALSE
+    }
+  }
+  
+  ## snps, phen input prompts cross-validation, DAPC, and SNP selection functions
+  else{
+    
+    snps <- x
+    
+   if(missing(phen)){
+      stop("phen argument needed")
+     }
 
+  }
+  
+  
+  if(class(x)!="dapc"){
+  
   ################################################
   ######## Stratified Cross-Validation ###########
   ################################################
-
+  
   xvalDapc <- function(x, grp, n.pca.max = 200, n.da = NULL, 
-           training.set = 0.9, result = "groupMean", 
-           center = TRUE, scale = FALSE, n.pca = NULL, n.rep = 30, ...){
+                       training.set = 0.9, result = "groupMean", 
+                       center = TRUE, scale = FALSE, n.pca = NULL, n.rep = 30, ...){
     
     ## CHECKS ##
     grp <- factor(grp)
@@ -38,7 +69,7 @@ snpzip <- function(snps,phen,plot=TRUE,pca.plot=FALSE,loading.plot=FALSE,
       N.training <- round(N*training.set)}
     else{
       groups1 <- (levels(grp))[(as.vector(which.min((lapply(groups, 
-        function(e) sum(as.vector(unclass(grp==e))))))))]
+                                                            function(e) sum(as.vector(unclass(grp==e))))))))]
       popmin <- length(which(grp%in%groups1))
       training.set2 <- ((popmin - 1)/popmin)
       N.training <- round(N*training.set2)}
@@ -66,10 +97,10 @@ snpzip <- function(snps,phen,plot=TRUE,pca.plot=FALSE,loading.plot=FALSE,
       f1 <- function(){
         if(all(lapply(groups, function(e) sum(as.vector(unclass(grp==e))))>=10)==TRUE){
           toKeep <- unlist(lapply(groups, function(e) sample(which(grp==e), 
-               size=(round(training.set*sum(as.vector(unclass(grp==e))))))))}
+                                                             size=(round(training.set*sum(as.vector(unclass(grp==e))))))))}
         else{
           toKeep <- unlist(lapply(groups, function(e) sample(which(grp==e), 
-               size=(round(training.set2*sum(as.vector(unclass(grp==e))))))))}
+                                                             size=(round(training.set2*sum(as.vector(unclass(grp==e))))))))}
         temp.pca <- pcaX
         temp.pca$li <- temp.pca$li[toKeep,,drop=FALSE]
         temp.dapc <- suppressWarnings(dapc(x[toKeep,,drop=FALSE], grp[toKeep], 
@@ -113,7 +144,7 @@ snpzip <- function(snps,phen,plot=TRUE,pca.plot=FALSE,loading.plot=FALSE,
     names(RMSE) <- xval$n.pca[temp]
     best.n.pca <- names(which.min(RMSE))
     
-  
+    
     
     ################################################
     #################  DAPC  #######################
@@ -133,9 +164,9 @@ snpzip <- function(snps,phen,plot=TRUE,pca.plot=FALSE,loading.plot=FALSE,
   
   x <- snps
   grp <- phen
-
+  
   XVAL <- xvalDapc(x, grp, n.da=NULL, training.set=0.9, result="groupMean",
-               center=TRUE, scale=FALSE, n.pca=NULL, n.rep=30)
+                   center=TRUE, scale=FALSE, n.pca=NULL, ...)
   n.da <- XVAL[[1]]
   n.pca <- XVAL[[2]]
   dapc1 <- XVAL[[3]]
@@ -143,26 +174,25 @@ snpzip <- function(snps,phen,plot=TRUE,pca.plot=FALSE,loading.plot=FALSE,
   successV <- XVAL[[5]]
   RMSE <- XVAL[[6]]
   best.n.pca <- XVAL[[7]]
-
-
+  
+  
   ################################################
   ######## Show Cross-Validation Results #########
   ################################################
   snps <- x
   phen <- grp
-
-if(pca.plot==TRUE){
-  par(ask=TRUE)
-  random <- replicate(300, mean(tapply(sample(phen)==phen, phen, mean)))
-  q.phen <- quantile(random, c(0.025,0.5,0.975))
-  smoothScatter(xval$n.pca, successV, nrpoints=Inf, pch=20, col=transp("black"),
-                ylim=c(0,1), xlab="Number of PCA axes retained",
-                ylab="Proportion of successful outcome prediction", 
-                main="DAPC Cross-Validation")
+  
+  if(xval.plot==TRUE){
+    par(ask=TRUE)
+    random <- replicate(300, mean(tapply(sample(phen)==phen, phen, mean)))
+    q.phen <- quantile(random, c(0.025,0.5,0.975))
+    smoothScatter(xval$n.pca, successV, nrpoints=Inf, pch=20, col=transp("black"),
+                  ylim=c(0,1), xlab="Number of PCA axes retained",
+                  ylab="Proportion of successful outcome prediction", 
+                  main="DAPC Cross-Validation")
     abline(h=q.phen,lty=c(2,1,2))
     
-
-  xvalResults <- list(xval, q.phen, pca.success, (names(n.opt)), RMSE, best.n.pca)
+    xvalResults <- list(xval, q.phen, pca.success, (names(n.opt)), RMSE, best.n.pca)
     names(xvalResults)[[1]] <- "Cross-Validation Results"
     names(xvalResults)[[2]] <- "Median and Confidence Interval for Random Chance"
     names(xvalResults)[[3]] <- "Mean Successful Assignment by Number of PCs of PCA"
@@ -171,61 +201,92 @@ if(pca.plot==TRUE){
     names(xvalResults)[[6]] <- "Number of PCs Achieving Lowest MSE"
     print(xvalResults)
   }
-
+  
+  } # end of snps, phen section
+  
+  
   ################################################
   #############  Plot DAPC Results   #############
   ################################################
-
+  
   if(plot==TRUE){
     myCol <- colorRampPalette(c("blue", "gold", "red"))
     scatter(dapc1, bg="white", scree.da=FALSE, scree.pca=TRUE, posi.pca="topright",
-             col=myCol((nlevels(phen))), legend=TRUE, posi.leg="topleft")
+            col=myCol((dapc1$n.da)+1), legend=TRUE, posi.leg="topleft")
     title("DAPC")}
-
+  
   ################################################
   ###### Select Cluster of Structural SNPS #######
   ################################################
-
+  
   if(missing(method)){
     method <- "ward"
-    }
+  }
   else{ 
-  method <- method}
+    method <- method}
   
   z <- dapc1$var.contr
+  xTotal <- dapc1$var.contr
+  toto <- which(xTotal%in%tail(sort(xTotal), 2000))
+  z <- sapply(toto, function(e) xTotal[e])
+  
   D <- dist(z)
   clust <- hclust(D,method)
   pop <- factor(cutree(clust,k=2,h=NULL))
   m <- which.max(tapply(z,pop,mean))
   maximus <- which(pop==m)
+  maximus <- as.vector(unlist(sapply(maximus, function(e) toto[e])))
   popvect <- as.vector(unclass(pop))
   n.snp.selected <- sum(popvect==m)
   sel.snps <- snps[,maximus]
 
+  colnames<-colnames(snps,do.NULL=FALSE,prefix=NULL)
+  snpsV<-as.integer(colnames)
+  snp.struc<-as.integer(tail(snpsV,n.snp.struc))
+  mV<-as.vector(maximus)
+  
+  selection <- c(ncol(snps[,maximus]), ncol(snps[,-maximus]))
+#  names(selection) <- c("selected", "unselected")
+  
   ################################################
   #### Loading Plot Delineating SNP Clusters  ####
   ################################################
-
+  
   if(loading.plot==TRUE){
     par(ask=TRUE)
-    decimus <- abs(z[maximus][(which.min(z[maximus]))])-0.000001
+    decimus <- abs(dapc1$var.contr[maximus][(which.min(dapc1$var.contr[maximus]))])-0.000001
     meridius <- loadingplot(dapc1$var.contr[,1], threshold=c(decimus))
   }
-
+  
   ################################################
   ########## Return snpzip Results  ##############
   ################################################
-
-  answer <- list(best.n.pca,table(pop),which(pop==m),
-                 dimnames(sel.snps)[[2]], dapc1$var.contr[pop==m])
+  
+  if(class(x)=="dapc"){
+    
+    answer <- list(dapc1$n.pca, selection, maximus,
+                   dimnames(sel.snps)[[2]], dapc1$var.contr[maximus])
+    names(answer)[[1]] <- "Number of PCs of PCA retained"
+#    names(answer)[[2]] <- "Number of alleles by feature selection outcome"
+    names(answer)[[2]] <- "Number of selected vs. unselected alleles"
+    names(answer)[[3]] <- "List of selected alleles"
+    names(answer)[[4]] <- "Names of selected alleles"
+    names(answer)[[5]] <- "Contributions of selected alleles to DAPC"
+    return(answer) 
+  }
+  
+  else{ 
+  answer <- list(best.n.pca, selection, maximus,
+                 dimnames(sel.snps)[[2]], dapc1$var.contr[maximus])
   names(answer)[[1]] <- "Number of PCs of PCA retained"
-  names(answer)[[2]] <- "Number of alleles in groups defined by contribution to DAPC"
-  names(answer)[[3]] <- "List of structuring alleles"
-  names(answer)[[4]] <- "Names of structuring alleles"
-  names(answer)[[5]] <- "Contributions of structuring alleles to DAPC"
+  #    names(answer)[[2]] <- "Number of alleles by feature selection outcome"
+  names(answer)[[2]] <- "Number of selected vs. unselected alleles"
+  names(answer)[[3]] <- "List of selected alleles"
+  names(answer)[[4]] <- "Names of selected alleles"
+  names(answer)[[5]] <- "Contributions of selected alleles to DAPC"
   return(answer)
+  }
 } # end snpzip
-
 
 
 
