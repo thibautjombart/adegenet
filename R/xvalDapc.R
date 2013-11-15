@@ -1,14 +1,12 @@
 
 ##############
-## xvalDapc ##
+## xval: temp xvalDapc ##
 ##############
 
 
-xvalDapc <- function (x, ...) UseMethod("xvalDapc")
-
-xvalDapc.data.frame <- function(x, grp, n.pca.max = 200, n.da = NULL, 
-                                training.set = 0.9, result = "groupMean", 
-                                center = TRUE, scale = FALSE, n.pca = NULL, n.rep = 30, ...){
+xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9, 
+                 result = "groupMean", center = TRUE, scale = FALSE, 
+                 n.pca = NULL, n.rep = 30, xvalPlot=FALSE, ...){
   
   ## CHECKS ##
   grp <- factor(grp)
@@ -22,7 +20,7 @@ xvalDapc.data.frame <- function(x, grp, n.pca.max = 200, n.da = NULL,
     n.rep<-30}
   else{
     n.rep<-n.rep}
-    
+  
   
   ## GET TRAINING SET SIZE ##
   N <- nrow(x)
@@ -58,14 +56,14 @@ xvalDapc.data.frame <- function(x, grp, n.pca.max = 200, n.da = NULL,
     f1 <- function(){
       if(all(lapply(groups, function(e) sum(as.vector(unclass(grp==e))))>=10)==TRUE){
         toKeep <- unlist(lapply(groups, function(e) sample(which(grp==e), 
-          size=(round(training.set*sum(as.vector(unclass(grp==e))))))))}
+                                                           size=(round(training.set*sum(as.vector(unclass(grp==e))))))))}
       else{
         toKeep <- unlist(lapply(groups, function(e) sample(which(grp==e), 
-          size=(round(training.set2*sum(as.vector(unclass(grp==e))))))))}
+                                                           size=(round(training.set2*sum(as.vector(unclass(grp==e))))))))}
       temp.pca <- pcaX
       temp.pca$li <- temp.pca$li[toKeep,,drop=FALSE]
       temp.dapc <- suppressWarnings(dapc(x[toKeep,,drop=FALSE], grp[toKeep], 
-        n.pca=n.pca, n.da=n.da, dudi=temp.pca))
+                                         n.pca=n.pca, n.da=n.da, dudi=temp.pca))
       temp.pred <- predict.dapc(temp.dapc, newdata=x[-toKeep,,drop=FALSE])
       if(result=="overall"){
         out <- mean(temp.pred$assign==grp[-toKeep])
@@ -102,7 +100,7 @@ xvalDapc.data.frame <- function(x, grp, n.pca.max = 200, n.da = NULL,
   RMSE <- sqrt(FTW)
   names(RMSE) <- xval$n.pca[temp]
   best.n.pca <- names(which.min(RMSE))
-   
+  
   # DAPC
   n.pca <- as.integer(best.n.pca)
   n.da <- nlevels(grp)-1
@@ -113,11 +111,14 @@ xvalDapc.data.frame <- function(x, grp, n.pca.max = 200, n.da = NULL,
   phen <- grp
   random <- replicate(300, mean(tapply(sample(phen)==phen, phen, mean)))
   q.phen <- quantile(random, c(0.025,0.5,0.975))
+  
+  if(xvalPlot==TRUE){
   smoothScatter(xval$n.pca, successV, nrpoints=Inf, pch=20, col=transp("black"),
                 ylim=c(0,1), xlab="Number of PCA axes retained",
                 ylab="Proportion of successful outcome prediction", 
                 main="DAPC Cross-Validation")
   print(abline(h=q.phen, lty=c(2,1,2)))
+  }
   
   
   # RESULTS
@@ -132,7 +133,7 @@ xvalDapc.data.frame <- function(x, grp, n.pca.max = 200, n.da = NULL,
   
   
   return(xvalResults)
-
+  
 } # end xvalDapc.data.frame
 
 
@@ -140,4 +141,4 @@ xvalDapc.matrix <- xvalDapc.data.frame
 
 
 
-    
+
