@@ -1,11 +1,13 @@
 
 
 simNeutralSNPs <- function(n.ind, n.all, pop.freq=1, LD=TRUE, ploidy=1,
-                           block.minsize=10, block.maxsize=1000, sort.pop=FALSE){
+                           block.minsize=10, block.maxsize=1000, theta=NULL,
+                           sort.pop=FALSE){
     ## CHECKS ##
     ## force population frequencies to 1
     pop.freq <- pop.freq/sum(pop.freq)
     K <- length(pop.freq)
+    if(!is.null(theta) && theta<1e-14) theta <- NULL
 
 
     ## GET POPULATION FACTOR ##
@@ -34,24 +36,55 @@ simNeutralSNPs <- function(n.ind, n.all, pop.freq=1, LD=TRUE, ploidy=1,
 
 
     ## this function simulates a block of allele frequencies for K pop
-    ## without linkage
+    ## with linkage
     ## nbAll is a number of alleles to simulate
     ## 'pop' is a factor indicating populations
-    simBlock.LD <- function(nbAll, pop){
-        ## get master allele ##
-        f.ori <- runif(K)
-        names(f.ori) <- unique(pop)
-        prob.ori <- f.ori[pop]
 
-        ## function to simulate one allele ##
-        simOneAll <- function(){
-            return(rbinom(n=n.ind, prob=prob.ori, size=ploidy))
+    if(is.null(theta)){
+        ## FUNCTION WITHOUT THETA ##
+        simBlock.LD <- function(nbAll, pop){
+            ## get master allele ##
+            f.ori <- runif(K)
+            names(f.ori) <- unique(pop)
+            prob.ori <- f.ori[pop]
+
+            ## function to simulate one allele ##
+            simOneAll <- function(){
+                return(rbinom(n=n.ind, prob=prob.ori, size=ploidy))
+            }
+            ## simulate all allele frequencies ##
+            out <- replicate(nbAll, simOneAll())
+            out <- matrix(out, ncol=nbAll)
+            return(new("genlight", out))
+        } # end simBlock.LD
+    } else {
+        ## FUNCTION WITH THETA ##
+        ## function to alter frequencies ##
+        tweak.freq <- function(f){
+            f[f<.5] <- f[f<.5] + runif(n.ind, 0, theta)
+            f[f>.5] <- f[f>.5] - runif(n.ind, 0, theta)
+            f[f<0] <- 0
+            f[f>1] <- 1
+            return(f)
         }
-        ## simulate all allele frequencies ##
-        out <- replicate(nbAll, simOneAll())
-        out <- matrix(out, ncol=nbAll)
-        return(new("genlight", out))
-    } # end simBlock.LD
+
+        simBlock.LD <- function(nbAll, pop){
+            ## get master allele ##
+            f.ori <- runif(K)
+            names(f.ori) <- unique(pop)
+            prob.ori <- f.ori[pop]
+
+            ## function to simulate one allele ##
+            simOneAll <- function(){
+                return(rbinom(n=n.ind, prob=tweak.freq(prob.ori), size=ploidy))
+            }
+
+            ## simulate all allele frequencies ##
+            out <- replicate(nbAll, simOneAll())
+            out <- matrix(out, ncol=nbAll)
+            return(new("genlight", out))
+        }
+    } # end function with theta
 
 
     ## SIMULATE ALL DATA ##
@@ -71,7 +104,7 @@ simNeutralSNPs <- function(n.ind, n.all, pop.freq=1, LD=TRUE, ploidy=1,
 
         ## put blocks together ##
         out <- temp[[1]]
-        if(length(temp)>2){
+        if(length(temp)>1){
             for(i in 2:length(temp)){
                 out <- cbind(out, temp[[i]])
             }
