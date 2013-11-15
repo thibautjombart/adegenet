@@ -1,5 +1,5 @@
 
-library(adegenet)
+
 
 ##########
 ## glSim
