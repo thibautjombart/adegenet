@@ -93,7 +93,7 @@ inbreeding <- function(x, pop=NULL, truenames=TRUE, res.type=c("sample","functio
     ## CHECKS ##
     if(!is.genind(x)) stop("x is not a valid genind object")
     checkType(x)
-    res.type <- match.arg(res.type)
+    res.type <- match.arg(res.type)[1]
 
     ## if(x$ploidy != 2) stop("this inbreeding coefficient is designed for diploid genotypes only")
     PLO <- ploidy(x)
@@ -185,6 +185,11 @@ inbreeding <- function(x, pop=NULL, truenames=TRUE, res.type=c("sample","functio
     getSample <- function(f){ # f is a vectorized density function
         x <- runif(M, 0, 1)
         fx <- f(x)
+        fx <- fx - min(fx)
+        if(sum(fx)<1e-14) {
+            warning("Likelihood uniformly zero likely reflecting precision issue\nreturning uniformly distributed sample")
+            return(runif(N))
+        }
         fx <- fx/sum(fx)
         return(sample(x, size=N, prob=fx))
     }
