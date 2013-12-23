@@ -57,6 +57,9 @@ snpposi.test(\dots)
 
   \item{alpha}{the alpha level to be used for transparency (density curve).}
 
+  \item{codon}{a logical indicating if codon position should be
+  indicated (TRUE, default) or not.}
+
   \item{n.sim}{an integer indicating the number of randomizations to be
     used in the Monte Carlo test.}
 
@@ -76,11 +79,13 @@ snpposi.test(\dots)
   Thibaut Jombart \email{t.jombart@imperial.ac.uk}.
  }
 \examples{
-\dontrun{
 data(woodmouse)
+snpposi.plot(woodmouse, codon=FALSE)
+snpposi.plot(woodmouse)
 
-snpposi.test(woodmouse)
-
+\dontrun{
 snpposi.test(c(1,3,4,5), 100)
+snpposi.test(woodmouse)
 }
 }
+

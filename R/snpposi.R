@@ -78,11 +78,28 @@ snpposi.plot <- function(...){
 
 
 ## METHOD FOR INTEGER - BASIC METHOD
-snpposi.plot.integer <- function(x, genome.size, smooth=0.1, col="royalblue", alpha=.2, ...){
-    ## make ggplot output ##
-    out <- ggplot(data.frame(x=x), aes(x=x))
-    out <- out + geom_density(adjust=smooth, fill=transp(col,alpha=alpha), colour=col) + geom_rug(colour=col,alpha=.7)
-    out <- out + labs(x="Nucleotide position", title="Distribution of SNPs in the genome")
+snpposi.plot.integer <- function(x, genome.size, smooth=0.1, col="royalblue", alpha=.2,
+                                 codon=TRUE, start.at=1, ...){
+    if(codon){
+        ## define base positions (1/2/3) ##
+        fac <- rep(1:3, length=genome.size)
+        if(start.at==2) fac <- c(2:3,fac)[1:genome.size]
+        if(start.at==3) fac <- c(3,fac)[1:genome.size]
+        fac <- factor(fac, levels=1:3)
+        fac <- fac[x]
+
+        ## make ggplot output ##
+        out <- ggplot(data.frame(x=x, base=fac), aes(x=x)) + xlim(0, genome.size)
+        out <- out + geom_density(adjust=smooth, aes(fill=base, colour=base),alpha=I(alpha)) + geom_rug(aes(colour=base),alpha=.7)
+        out <- out + labs(x="Nucleotide position", title="Distribution of SNPs in the genome")
+        out <- out + guides(fill=guide_legend(title="Base position"), colour=guide_legend(title="Base position"))
+    } else {
+        ## make ggplot output ##
+        out <- ggplot(data.frame(x=x), aes(x=x)) + xlim(0, genome.size)
+        out <- out + geom_density(adjust=smooth, fill=transp(col,alpha=alpha), colour=col) + geom_rug(colour=col,alpha=.7)
+        out <- out + labs(x="Nucleotide position", title="Distribution of SNPs in the genome")
+    }
+
 
     ## return ##
     return(out)

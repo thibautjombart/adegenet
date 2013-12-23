@@ -1,7 +1,8 @@
 
 ## Export all classes
 exportPattern("^[^\\.]")
-export(.rmspaces, .readExt, .genlab, .dapcServer)
+export(.rmspaces, .readExt, .genlab)
+#export(.rmspaces, .readExt, .genlab, .dapcServer)
 
 ## Import all packages listed as Imports or Depends
 
@@ -22,6 +23,8 @@ importFrom(igraph, "graph.data.frame", "V", "V<-", "E", "E<-", "layout.fruchterm
 import(methods,ade4)
 
 importFrom(shiny, "runApp")
+
+importFrom(ggplot2, "ggplot", "geom_density", "geom_rug", "labs")
 
 ## Declare S3 methods
 S3method(scatter, dapc)
