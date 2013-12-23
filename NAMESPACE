@@ -24,7 +24,8 @@ import(methods,ade4)
 
 importFrom(shiny, "runApp")
 
-importFrom(ggplot2, "ggplot", "geom_density", "geom_rug", "labs")
+importFrom(ggplot2, "ggplot", "geom_density", "geom_rug", "labs", "aes", "xlim",
+           "guides", "guide_legend")
 
 ## Declare S3 methods
 S3method(scatter, dapc)

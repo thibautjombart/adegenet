@@ -80,6 +80,7 @@ snpposi.plot <- function(...){
 ## METHOD FOR INTEGER - BASIC METHOD
 snpposi.plot.integer <- function(x, genome.size, smooth=0.1, col="royalblue", alpha=.2,
                                  codon=TRUE, start.at=1, ...){
+    ## IF WE REPRESENT DENSITY PER CODON POSITION ##
     if(codon){
         ## define base positions (1/2/3) ##
         fac <- rep(1:3, length=genome.size)
@@ -89,11 +90,12 @@ snpposi.plot.integer <- function(x, genome.size, smooth=0.1, col="royalblue", al
         fac <- fac[x]
 
         ## make ggplot output ##
-        out <- ggplot(data.frame(x=x, base=fac), aes(x=x)) + xlim(0, genome.size)
-        out <- out + geom_density(adjust=smooth, aes(fill=base, colour=base),alpha=I(alpha)) + geom_rug(aes(colour=base),alpha=.7)
+        out <- ggplot(data.frame(x=x, codon=fac), aes(x=x)) + xlim(0, genome.size)
+        out <- out + geom_density(adjust=smooth, aes(fill=codon, colour=codon),alpha=I(alpha)) + geom_rug(aes(colour=codon),alpha=.7)
         out <- out + labs(x="Nucleotide position", title="Distribution of SNPs in the genome")
-        out <- out + guides(fill=guide_legend(title="Base position"), colour=guide_legend(title="Base position"))
+        out <- out + guides(fill=guide_legend(title="Codon position"), colour=guide_legend(title="Codon position"))
     } else {
+        ## OTHERWISE, JUST ONE DENSITY ##
         ## make ggplot output ##
         out <- ggplot(data.frame(x=x), aes(x=x)) + xlim(0, genome.size)
         out <- out + geom_density(adjust=smooth, fill=transp(col,alpha=alpha), colour=col) + geom_rug(colour=col,alpha=.7)
