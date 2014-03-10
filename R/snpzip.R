@@ -238,7 +238,7 @@ snpzip <- function(snps, y, plot=TRUE, xval.plot=FALSE, loading.plot=FALSE,
     n.snp.selected <- sum(popvect==m)
     sel.snps <- snps[,maximus]
     
-    selection <- c(ncol(snps[,maximus]), ncol(snps[,-maximus]))
+    selection <- c((ncol(snps)-ncol(snps[,-maximus])), ncol(snps[,-maximus]))
     
     resultat <- list(selection, maximus, dimnames(sel.snps)[[2]], dapc1$var.contr[maximus, dimension])
     
