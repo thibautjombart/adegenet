@@ -1,13 +1,12 @@
 
 
-
 ##########
 ## glSim
 ##########
-glSim <- function(n.ind, n.snp.nonstruc, n.snp.struc=0, grp.size=round(n.ind/2), 
-                    pop.freq=1, ploidy=1, alpha=0, parallel=FALSE,
-                    LD=TRUE, block.minsize=10, block.maxsize=1000, theta=NULL,
-                    sort.pop=FALSE, ...){
+glSim <- function(n.ind, n.snp.nonstruc, n.snp.struc = 0, grp.size = c(0.5, 0.5), k = NULL,
+                    pop.freq = NULL, ploidy = 1, alpha = 0, parallel = FALSE,
+                    LD = TRUE, block.minsize = 10, block.maxsize = 1000, theta = NULL,
+                    sort.pop = FALSE, ...){
   
   
   
@@ -23,10 +22,33 @@ glSim <- function(n.ind, n.snp.nonstruc, n.snp.struc=0, grp.size=round(n.ind/2),
     warning("alpha cannot be lower than 0 - changing the value to 0 (no forced asymmetry)")
   }
   
-  ## handle group sizes
-  grpA.size <- grp.size
+  ## handle group sizes  
+  if(length(grp.size)!=2) stop("grp.size should be a vector of length 2")
+  grp.size <- grp.size/sum(grp.size)
+  grpA.size <- grp.size[[1]]*n.ind
   if(grpA.size >= n.ind) stop("grpA.size is >= n.ind")
   grpB.size <- n.ind - grpA.size
+  
+  
+  # handle pop.freq for k populations
+  if(is.null(k) & is.null(pop.freq)){
+    pop.freq <- 1
+  }
+  if(!is.null(k) & !is.null(pop.freq)){
+    if(k != length(pop.freq)){
+      warning("k != length(pop.freq), length(pop.freq) will be taken as k")
+    }
+  }
+  if(!is.null(k) & is.null(pop.freq)){
+    warning("pop.freq will be the result of randomly assorting individuals into k pops")
+    pops <-c(1:k) 
+    popBaseline <- rep(pops, c(10))
+    popBaseline <- factor(sample(popBaseline, length(popBaseline)))
+    popExtra <- factor(sample(pops, (n.ind - length(popBaseline)), replace=TRUE))
+    pop <- c(popBaseline, popExtra)
+    pop <- factor(pop)
+    pop.freq <- as.vector(unlist(sapply(pops, function(e) sum(pop==e)))) 
+  }
   
   
   n.all <- n.snp.nonstruc
@@ -90,7 +112,7 @@ glSim <- function(n.ind, n.snp.nonstruc, n.snp.struc=0, grp.size=round(n.ind/2),
         ## simulate all allele frequencies ##
         out <- replicate(nbAll, simOneAll())
         out <- matrix(out, ncol=nbAll)
-        return(new("genlight", out, parallel=parallel))
+        return(out)
       } # end simBlock.LD
     } else {
       ## FUNCTION WITH THETA ##
@@ -117,7 +139,7 @@ glSim <- function(n.ind, n.snp.nonstruc, n.snp.struc=0, grp.size=round(n.ind/2),
         ## simulate all allele frequencies ##
         out <- replicate(nbAll, simOneAll())
         out <- matrix(out, ncol=nbAll)
-        return(new("genlight", out, parallel=parallel))
+        return(out)
       }
     } # end function with theta
     
@@ -144,6 +166,7 @@ glSim <- function(n.ind, n.snp.nonstruc, n.snp.struc=0, grp.size=round(n.ind/2),
           out <- cbind(out, temp[[i]])
         }
       }
+      out <- new("genlight", out, parallel=parallel)
     }
     out@other <- list(factor(pop))
     names(out@other) <- "ancestral.pops"
@@ -184,13 +207,13 @@ glSim <- function(n.ind, n.snp.nonstruc, n.snp.struc=0, grp.size=round(n.ind/2),
     struct <- new("genlight", struct, ploidy=ploidy, parallel=FALSE)
     struct@pop <- phen
   }  # end snp.struc
-
-
+  
+  
   pop <- res.ns[[2]]
   res.ns <- res.ns[[1]]
   if(n.snp.struc>0){
-  res <- cbind(res.ns, struct)
-  res@pop <- phen
+    res <- cbind(res.ns, struct)
+    res@pop <- phen
   }
   else{
     res <- res.ns
@@ -200,4 +223,3 @@ glSim <- function(n.ind, n.snp.nonstruc, n.snp.struc=0, grp.size=round(n.ind/2),
   return(res)
 }   
 # 
-
