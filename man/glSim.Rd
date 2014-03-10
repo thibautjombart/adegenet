@@ -5,8 +5,8 @@
 \description{
   The function \code{glSim} simulates simple SNP data with the
   possibility of contrasted structures between two groups
-  as well as background ancestral population structure. Returned
-  objects are instances of the class \linkS4class{genlight}.
+  as well as background ancestral population structure. 
+  Returned objects are instances of the class \linkS4class{genlight}.
 }
 \usage{
 glSim(n.ind, n.snp.nonstruc, n.snp.struc = 0, grp.size = c(0.5, 0.5), k = NULL,
