@@ -5,7 +5,7 @@
 
 
 xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9, 
-                     result = "groupMean", center = TRUE, scale = FALSE, 
+                     result = c("groupMean", "overall"), center = TRUE, scale = FALSE, 
                      n.pca = NULL, n.rep = 30, xval.plot = TRUE, ...){
   
   ## CHECKS ##
