@@ -5,8 +5,8 @@
 
 
 xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9, 
-                 result = "groupMean", center = TRUE, scale = FALSE, 
-                 n.pca = NULL, n.rep = 30, xvalPlot=FALSE, ...){
+                     result = "groupMean", center = TRUE, scale = FALSE, 
+                     n.pca = NULL, n.rep = 30, xval.plot=FALSE, ...){
   
   ## CHECKS ##
   grp <- factor(grp)
@@ -17,9 +17,9 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
   else{
     training.set <- training.set}
   if(missing(n.rep)){
-    n.rep<-30}
+    n.rep <- 30}
   else{
-    n.rep<-n.rep}
+    n.rep <- n.rep}
   
   
   ## GET TRAINING SET SIZE ##
@@ -43,7 +43,7 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
   if(n.pca.max < 10){
     runs <- n.pca.max}
   else{
-    runs<- 10}
+    runs <- 10}
   
   if(is.null(n.pca)){
     n.pca <- round(pretty(1:n.pca.max, runs))
@@ -112,12 +112,12 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
   random <- replicate(300, mean(tapply(sample(phen)==phen, phen, mean)))
   q.phen <- quantile(random, c(0.025,0.5,0.975))
   
-  if(xvalPlot==TRUE){
-  smoothScatter(xval$n.pca, successV, nrpoints=Inf, pch=20, col=transp("black"),
-                ylim=c(0,1), xlab="Number of PCA axes retained",
-                ylab="Proportion of successful outcome prediction", 
-                main="DAPC Cross-Validation")
-  print(abline(h=q.phen, lty=c(2,1,2)))
+  if(xval.plot==TRUE){
+    smoothScatter(xval$n.pca, successV, nrpoints=Inf, pch=20, col=transp("black"),
+                  ylim=c(0,1), xlab="Number of PCA axes retained",
+                  ylab="Proportion of successful outcome prediction", 
+                  main="DAPC Cross-Validation")
+    print(abline(h=q.phen, lty=c(2,1,2)))
   }
   
   
@@ -138,7 +138,5 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
 
 
 xvalDapc.matrix <- xvalDapc.data.frame
-
-
 
 

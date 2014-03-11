@@ -59,7 +59,7 @@ glSim <- function(n.ind, n.snp.nonstruc, n.snp.struc = 0, grp.size = c(0.5, 0.5)
   
   simNeutralSNPs <- function(n.ind, n.all, pop.freq=1, LD=TRUE, ploidy=1,
                              block.minsize=10, block.maxsize=1000, theta=NULL,
-                             sort.pop=FALSE, parallel=FALSE){
+                             sort.pop=FALSE, parallel=parallel){
     ## CHECKS ##
     ## force population frequencies to 1
     pop.freq <- pop.freq/sum(pop.freq)
