@@ -13,16 +13,18 @@
   of alleles: structural SNPs and non-structural SNPs.
 }
 \usage{
-snpzip(x, phen, plot=TRUE, xval.plot=FALSE, loading.plot=FALSE,
-method=c("complete","single", "average","centroid","mcquitty","median","ward"), \dots)
+snpzip(snps, y, plot = TRUE, xval.plot = FALSE, loading.plot = FALSE,
+          method = c("complete", "single", "average", "centroid", 
+          "mcquitty", "median", "ward"), \dots)
 }
 \arguments{
-  \item{x}{either a snps \code{matrix} used as input of DAPC, or a dapc object.}
-  \item{phen}{a \code{factor} indicating the group membership of individuals, iff x is a snps \code{matrix}.}
+  \item{snps}{a snps \code{matrix} used as input of DAPC.}
+  \item{y}{either a \code{factor} indicating the group membership of individuals, 
+  or a dapc object.}
   \item{plot}{a \code{logical} indicating whether a graphical representation of the 
     DAPC results should be displayed.}
   \item{xval.plot}{a \code{logical} indicating whether the results of the 
-    cross-validation step should be displayed.}
+    cross-validation step should be displayed (iff \code{y} is a factor).}
   \item{loading.plot}{a \code{logical} indicating whether a loading.plot displaying 
     the SNP selection threshold should be displayed.}
   \item{method}{the clustering method to be used. This should be 
@@ -47,12 +49,21 @@ method=c("complete","single", "average","centroid","mcquitty","median","ward"), 
 }
 
 \value{
-  A \code{list} with five items: 
-  the first cites the number of principal components (PCs) of PCA retained in the DAPC, 
-  the second indicates the number of structural and non-structural SNPs identified by 
-  \code{snpzip}, the third provides a list of the structuring alleles, the fourth
-  gives the names of the selected alleles, and the fifth item details the 
+  A \code{list} with four items if \code{y} is a factor, or two items if
+  \code{y} is a dapc object: 
+  The first cites the number of principal components (PCs) of PCA retained in the DAPC. 
+  
+  The second item is an embedded list which
+  first indicates the number of structural and non-structural SNPs identified by 
+  \code{snpzip}, second provides a list of the structuring alleles, third
+  gives the names of the selected alleles, and fourth details the 
   contributions of these structuring alleles to the DAPC.
+  
+  The optional third item provides measures of discrimination success both overall 
+  and by group.
+  
+  The optional fourth item contains the dapc object generated if \code{y} was a factor.
+  
   
   If \code{plot=TRUE}, a scatter plot will provide a visualization of the DAPC results.
   
@@ -73,7 +84,24 @@ BMC Genetics11:94. doi:10.1186/1471-2156-11-94
 \author{ Caitlin Collins \email{caitlin.collins12@imperial.ac.uk} }
 \examples{
 \dontrun{
-## Not sure what examples I can usefully provide here. 
+simpop <- glSim(100, 10000, n.snp.struc = 10, grp.size = c(0.3,0.7), 
+                    LD = FALSE, alpha = 0.4, k = 4)
+snps <- as.matrix(simpop)
+phen <- simpop@pop
+
+outcome <- snpzip(snps, phen, method = "centroid")
+outcome
+}
+\dontrun{
+simpop <- glSim(100, 10000, n.snp.struc = 10, grp.size = c(0.3,0.7), 
+                    LD = FALSE, alpha = 0.4, k = 4)
+snps <- as.matrix(simpop)
+phen <- simpop@pop
+
+dapc1 <- dapc(snps, phen, n.da = 1, n.pca = 30)
+
+features <- snpzip(dapc1, loading.plot = TRUE, method = "average")
+features
 }
 }
 \keyword{multivariate}
