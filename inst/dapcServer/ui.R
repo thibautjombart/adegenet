@@ -31,11 +31,15 @@ shinyUI(
                                      uiOutput("npca"),
 
                                      ## select number of DA axes
-                                     sliderInput("nda", "Number of discriminant functions retained:", min=1, max=100, value=1),
+                                     ##sliderInput("nda", "Number of discriminant functions retained:", min=1, max=100, value=1),
+                                     uiOutput("nda"),
 
                                      ## select color palette
                                      selectInput("col.pal", "Indicate a color palette to be used",
                                                  choices=c("funky","spectral","seasun","azur","wasp")),
+
+                                     ## select transparency
+                                     sliderInput("alpha", "Choose transparency", min=0, max=1, step=0.05, value=0.5),
 
                                      ## inputs specific of scatterplot tab
                                      conditionalPanel(
@@ -48,13 +52,26 @@ shinyUI(
                                                       ## select second axis to plot
                                                       numericInput("yax", "Indicate the y axis", value=1, min=1),
 
+                                                      ## symbol size
+                                                      sliderInput("pointsize", "Size of the points", value=1, min=0, max=10, step=0.2),
+
+                                                      ## label size
+                                                      sliderInput("labelsize", "Size of the labels", value=1, min=0, max=10, step=0.2),
+
                                                       ## add screeplot of PCA?
                                                       selectInput("scree.pca", "Position of the PCA screeplot:",
                                                                   choices=c("none","bottomright","bottomleft","topright","topleft")),
 
                                                       ## add screeplot of DA?
                                                       selectInput("scree.da", "Position of the DA screeplot:",
-                                                                  choices=c("none","bottomright","bottomleft","topright","topleft"))
+                                                                  choices=c("none","bottomright","bottomleft","topright","topleft")),
+
+                                                      ## plot ellipses?
+                                                      checkboxInput("ellipses", "Show inertia ellipses?", value=TRUE),
+
+                                                      ## plot minimum spanning tree?
+                                                      checkboxInput("mstree", "Show minimum spanning tree?", value=FALSE)
+
                                                       ),
 
                                      ## input specific of compoplot tab

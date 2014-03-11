@@ -56,15 +56,24 @@ shinyServer(function(input, output) {
     output$npca <- renderUI({
         if(!is.null(x <- getData())) {
             nmax <- min(dim(x@tab))
-            print(x)
-            print(nmax)
             def <- min(10, nmax)
-            ##sliderInput("", "Number of PCA axes retained:", min=1, max=nmax, value=def,step=1)
         } else {
             nmax <- 1000
             def <- 1
         }
         sliderInput("npca", "Number of PCA axes retained:", min=1, max=nmax, value=def,step=1)
+    })
+
+    ## SELECTION OF DA AXES
+    output$nda <- renderUI({
+        if(!is.null(x <- getData())) {
+            nmax <- length(levels(pop(x)))-1
+            def <- min(2, nmax)
+        } else {
+            nmax <- 100
+            def <- 1
+        }
+        sliderInput("nda", "Number of DA axes retained:", min=1, max=nmax, value=def,step=1)
     })
 
 
@@ -100,10 +109,13 @@ shinyServer(function(input, output) {
             ## get screeplot info
             scree.pca <- ifelse(input$scree.pca=="none", FALSE, TRUE)
             scree.da <- ifelse(input$scree.da=="none", FALSE, TRUE)
-
+            cellipse <- ifelse(input$ellipses, 1.5, 0)
+            cstar <- ifelse(input$ellipses, 1, 0)
             scatter(dapc1, xax=input$xax, yax=input$yax, col=myCol,
                     scree.pca=scree.pca, scree.da=scree.da,
-                    posi.pca=input$scree.pca, posi.da=input$scree.da)
+                    posi.pca=input$scree.pca, posi.da=input$scree.da,
+                    cellipse=cellipse, cstar=cstar, mstree=input$mstree,
+                    cex=input$pointsize, clabel=input$labelsize, solid=1-input$alpha)
         }
     })
 
@@ -123,7 +135,7 @@ shinyServer(function(input, output) {
             ## get colors
             K <- length(levels(dapc1$grp))
             myCol <- get(input$col.pal)(K)
-
+            ##myCol <- transp(myCol, 1-input$alpha)
             compoplot(dapc1, col=myCol, lab=input$compo.lab, legend=input$compo.legend)
 
         }
