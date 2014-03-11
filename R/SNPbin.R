@@ -166,7 +166,7 @@ setMethod("initialize", "SNPbin", function(.Object, ...) {
 setMethod("initialize", "genlight", function(.Object, ..., parallel=require("parallel"), n.cores=NULL) {
     if(parallel && !require(parallel)) stop("parallel package requested but not installed")
     if(parallel && is.null(n.cores)){
-        n.cores <- parallel:::detectCores()
+        n.cores <- parallel::detectCores()
     }
 
     x <- .Object

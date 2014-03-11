@@ -729,7 +729,7 @@ read.snp <- function(file, quiet=FALSE, chunkSize=1000,
     if(!quiet) cat("\n Reading biallelic SNP data file into a genlight object... \n\n")
     if(parallel && !require(parallel)) stop("parallel package requested but not installed")
     if(parallel && is.null(n.cores)){
-        n.cores <- parallel:::detectCores()
+        n.cores <- parallel::detectCores()
     }
 
     call <- match.call()
@@ -931,7 +931,7 @@ read.PLINK <- function(file, map.file=NULL, quiet=FALSE, chunkSize=1000,
     if(!quiet) cat("\n Reading PLINK raw format into a genlight object... \n\n")
     if(parallel && !require(parallel)) stop("parallel package requested but not installed")
     if(parallel && is.null(n.cores)){
-        n.cores <- parallel:::detectCores()
+        n.cores <- parallel::detectCores()
     }
 
 
@@ -1045,7 +1045,7 @@ fasta2genlight <- function(file, quiet=FALSE, chunkSize=1000, saveNbAlleles=FALS
     if(!quiet) cat("\n Converting FASTA alignment into a genlight object... \n\n")
     if(parallel && !require(parallel)) stop("parallel package requested but not installed")
     if(parallel && is.null(n.cores)){
-        n.cores <- parallel:::detectCores()
+        n.cores <- parallel::detectCores()
     }
 
 

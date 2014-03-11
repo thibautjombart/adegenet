@@ -178,7 +178,7 @@ glDotProd <- function(x, center=FALSE, scale=FALSE, alleleAsUnit=FALSE,
     ## SOME CHECKS ##
     if(parallel && !require(parallel)) stop("parallel package requested but not installed")
     if(parallel && is.null(n.cores)){
-        n.cores <- parallel:::detectCores()
+        n.cores <- parallel::detectCores()
     }
 
 
@@ -302,7 +302,7 @@ glPca <- function(x, center=TRUE, scale=FALSE, nf=NULL, loadings=TRUE, alleleAsU
         if(!useC){
             if(parallel && !require(parallel)) stop("parallel package requested but not installed")
             if(parallel && is.null(n.cores)){
-                n.cores <- parallel:::detectCores()
+                n.cores <- parallel::detectCores()
             }
 
 
