@@ -6,9 +6,8 @@
 ## function starting a web-server
 ## for adegenet tools
 adegenetServer <- function(what=c("DAPC")){
-    what <- tolower(what)
     what <- match.arg(what)
-    if(what=="dapc"){
+    if(what=="DAPC"){
         .dapcServer()
     }
 
