@@ -95,8 +95,8 @@ xvalDapc(x, grp, n.pca.max = 300, n.da = NULL,
 \seealso{
   \code{\link{dapc}}
 }
-\author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk}, 
-Caitlin Collins \email{caitlin.collins12@imperial.ac.uk} }
+\author{ Caitlin Collins \email{caitlin.collins12@imperial.ac.uk},
+Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
 \dontrun{
 ## CROSS-VALIDATION ##

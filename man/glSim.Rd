@@ -101,8 +101,8 @@ glSim(n.ind, n.snp.nonstruc, n.snp.struc = 0, grp.size = c(0.5, 0.5), k = NULL,
 
   - \code{\link{glPca}}: PCA for \linkS4class{genlight} objects.
 }
-\author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} 
-Caitlin Collins \email{caitlin.collins12@imperial.ac.uk}}
+\author{ Caitlin Collins \email{caitlin.collins12@imperial.ac.uk},
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}}
 \examples{
 \dontrun{
 ## no structure
