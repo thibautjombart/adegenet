@@ -155,12 +155,10 @@ In \textit{adegenet}, the matrix of alleles frequencies previously
 denoted $\m{X}$ exactly corresponds to the \texttt{@tab} slot of \texttt{genind} or
 \texttt{genpop} objects:
 <<print=FALSE,echo=FALSE,results=hide>>=
-library(ade4)
 library(adehabitat)
 library(spdep)
 @
 <<>>=
-library(ade4)
 library(adegenet)
 library(adehabitat)
 data(spcaIllus)

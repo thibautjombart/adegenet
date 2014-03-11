@@ -50,7 +50,6 @@ obj <- genind2genpop(microbov)
 X1 <- scaleGen(obj)
 X2 <- scaleGen(obj,met="bin")
 
-if(require(ade4)){
 ## compute PCAs
 pcaObj <- dudi.pca(obj,scale=FALSE,scannf=FALSE) # pca with no scaling
 pcaX1 <- dudi.pca(X1,scale=FALSE,scannf=FALSE,nf=100) # pca with usual scaling
@@ -73,7 +72,7 @@ barplot(pcaX1$eig,main="Eigenvalues\n usual scaling")
 barplot(pcaX2$eig,main="Eigenvalues\n 'binomial' scaling")
 # differences between loadings of alleles
 s.match(pro1$scor1,pro1$scor2,clab=0,sub="usual -> binom (procustean rotation)")
-}
+
 }
 }
 \keyword{methods}

@@ -572,7 +572,6 @@ objNoNa@tab
 
 \noindent Now the PCA is performed and plotted:
 <<pcaaflp,fig=TRUE>>=
-library(ade4)
 pca1 <- dudi.pca(objNoNa,scannf=FALSE,scale=FALSE)
 temp <- as.integer(pop(objNoNa))
 myCol <- transp(c("blue","red"),.7)[temp]
@@ -774,7 +773,6 @@ having the form '[marker].[allele]'.
 
 Here is an example for \texttt{genpop} using a dataset from \textit{ade4}:
 <<>>=
-library(ade4)
 data(microsatt)
 microsatt$tab[10:15,12:15]
 @
@@ -1046,7 +1044,6 @@ As a consequence, \emph{adegenet} has lost a few functionalities, namely general
 %% Is the structure between populations significant?
 %% This question can be addressed using the G-statistic test \cite{tj511}; it is implemented for \texttt{genind} objects and produces a \texttt{randtest} object (package ade4).
 %% <<fig=TRUE>>=
-%% library(ade4)
 %% toto <- gstat.randtest(nancycats,nsim=99)
 %% toto
 %% plot(toto)
@@ -1437,7 +1434,6 @@ group separation (\textit{adegenet-dapc}).
 %% It can be analyzed, for instance, using an inter-class PCA.
 %% This analyzis provides a typology of individuals having maximal inter-colonies variance.
 %% <<fig=T,png=F,pdf=T>>=
-%% library(ade4)
 
 %% pcaX <- dudi.pca(X,cent=T,scale=F,scannf=FALSE)
 %% pcabetX <- between(pcaX,nancycats$pop,scannf=FALSE)
@@ -1662,7 +1658,6 @@ Yes, if we get rid of the random noise.
 This can be achieved using a simple ordination method such as Principal Coordinates Analysis.
 
 <<mon6,fig=TRUE>>=
-library(ade4)
 pco1 <- dudi.pco(D,scannf=FALSE,nf=1)
 barplot(pco1$eig,main="Eigenvalues")
 @

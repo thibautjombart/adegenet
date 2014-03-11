@@ -51,7 +51,7 @@ colorplot(xy,df,cex=10,main="colorplot: toy example")
 
 \dontrun{
 # a genetic example using a sPCA
-if(require(spdep) & require(ade4)){
+if(require(spdep)){
 data(spcaIllus)
 dat3 <- spcaIllus$dat3
 spca3 <- spca(dat3,xy=dat3$other$xy,ask=FALSE,type=1,plot=FALSE,scannf=FALSE,nfposi=1,nfnega=1)

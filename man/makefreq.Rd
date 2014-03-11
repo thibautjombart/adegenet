@@ -41,7 +41,6 @@ obj2 <- genind2genpop(obj1)
 
 Xfreq <- makefreq(obj2,missing="mean")
 
-if(require(ade4)){
 
 # perform a correspondance analysis on counts data
 
@@ -54,7 +53,6 @@ add.scatter.eig(ca1$eig,nf=2,xax=1,yax=2,posi="topleft")
 pca1 <- dudi.pca(Xfreq$tab,scale=FALSE,scannf=FALSE)
 s.label(pca1$li,sub="Principal Component Analysis",csub=1.2)
 add.scatter.eig(pca1$eig,nf=2,xax=1,yax=2,posi="top")
-}
 }
 }
 \keyword{manip}

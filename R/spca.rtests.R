@@ -13,16 +13,15 @@
 # global.rtest
 ###############
 global.rtest <- function(X, listw, k=1, nperm=499){
-  ## if (!require(ade4)) stop("Package ade4 is required.")
   if (!require(spdep)) stop("Package spdep is required.")
   if (!inherits(listw, "listw")) stop("object of class 'listw' expected")
   if (listw$style != "W") stop("object of class 'listw' with style 'W' expected")
   if(any(is.na(X))) stop("NA entries in X")
-  
+
   n <- nrow(X)
   X <- scalewt(X)
-  
-  # computation of U+   
+
+  # computation of U+
   temp <- orthobasis.listw(listw)
   val <- attr(temp,"values")
   U <- as.matrix(temp)
@@ -31,7 +30,7 @@ global.rtest <- function(X, listw, k=1, nperm=499){
   # test statistic
   calcstat <- function(X,k){
     R <- ( t(X) %*% Upos ) / n
-    R2 <- R*R  
+    R2 <- R*R
     temp <- sort(apply(R2,2,mean),decreasing=TRUE)
     stat <- sum(temp[1:k])
     return(stat)
@@ -43,7 +42,7 @@ global.rtest <- function(X, listw, k=1, nperm=499){
 
   res <- as.randtest(sim=sim, obs=ini, alter="greater")
   res$call <- match.call()
-  
+
   return(res)
 } #end global.rtest
 
@@ -55,15 +54,14 @@ global.rtest <- function(X, listw, k=1, nperm=499){
 # local.rtest
 ###############
 local.rtest <- function(X, listw, k=1, nperm=499){
-  ## if (!require(ade4)) stop("Package ade4 is required.")
   if (!require(spdep)) stop("Package spdep is required.")
   if (!inherits(listw, "listw")) stop("object of class 'listw' expected")
   if (listw$style != "W") stop("object of class 'listw' with style 'W' expected")
   if(any(is.na(X))) stop("NA entries in X")
-  
+
   n <- nrow(X)
   X <- scalewt(X)
- 
+
   # computation of U-
   temp <- orthobasis.listw(listw)
   val <- attr(temp,"values")
@@ -75,7 +73,7 @@ local.rtest <- function(X, listw, k=1, nperm=499){
   # test statistic
   calcstat <- function(X,k){
     R <- ( t(X) %*% Uneg ) / n
-    R2 <- R*R  
+    R2 <- R*R
     temp <- sort(apply(R2,2,mean),decreasing=TRUE)
     stat <- sum(temp[1:k])
     return(stat)
@@ -87,7 +85,7 @@ local.rtest <- function(X, listw, k=1, nperm=499){
 
   res <- as.randtest(sim=sim, obs=ini, alter="greater")
   res$call <- match.call()
-  
+
   return(res)
 } #end local.rtest
 

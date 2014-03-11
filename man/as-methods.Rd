@@ -58,7 +58,6 @@ as(x[1:3],"data.frame")
 
 ## dudi functions attempt to convert their first argument
 ## to a data.frame; so they can be used on genind/genpop objects.
-if(require(ade4)){
 ## perform a PCA
 pca1 <- dudi.pca(x, scale=FALSE, scannf=FALSE)
 pca1
@@ -70,7 +69,7 @@ class(x)
 statis1 <- statis(x, scannf=FALSE)
 statis1
 plot(statis1)
-}
+
 }
 }
 \keyword{methods}

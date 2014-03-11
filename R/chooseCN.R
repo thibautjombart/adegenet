@@ -110,7 +110,6 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
 
     ## type 4: Minimum spanning tree
     if(type==4){
-      if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
       cn <- ade4::mstree(dist(xy)) # there is also a spdep::mstree
       cn <- neig2nb(cn)
     }

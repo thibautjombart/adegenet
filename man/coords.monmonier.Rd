@@ -31,7 +31,7 @@ coords.monmonier(x)
 \examples{
 
 \dontrun{
-if(require(spdep) & require(ade4)){
+if(require(spdep)){
 
 load(system.file("files/mondata1.rda",package="adegenet"))
 cn1 <- chooseCN(mondata1$xy,type=2,ask=FALSE)

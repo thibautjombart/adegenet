@@ -39,7 +39,7 @@ Daniel Maillard, 'Office National de la Chasse et de la Faune Sauvage'
   social factors? submitted to \emph{Molecular Ecology}.
 }
 \examples{
-if(require(ade4) & require(adehabitat) & require(spdep)){
+if(require(adehabitat) && require(spdep)){
 
 data(rupica)
 rupica

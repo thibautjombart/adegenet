@@ -62,7 +62,6 @@ obj2 <- genind2genpop(obj1)
 obj2
 
 \dontrun{
-if(require(ade4)){
 data(microsatt)
 # use as.genpop to convert convenient count tab to genpop
 obj3 <- as.genpop(microsatt$tab)
@@ -77,7 +76,7 @@ obj4 <- genind2genpop(obj1,missing="chi2")
 ca1 <- dudi.coa(as.data.frame(obj4@tab),scannf=FALSE)
 s.label(ca1$li,sub="Correspondance Analysis",csub=2)
 add.scatter.eig(ca1$eig,2,xax=1,yax=2,posi="top")
-}
+
 }
 }
 \keyword{classes}

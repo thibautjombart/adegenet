@@ -106,7 +106,6 @@ and documentation by Anne B. Dufour \email{dufour@biomserv.univ-lyon1.fr}
 }
 \examples{
 \dontrun{
-if(require(ade4)){
 data(microsatt)
 obj <- as.genpop(microsatt$tab)
 
@@ -116,7 +115,7 @@ listPco <- lapply(listDist, dudi.pco,scannf=FALSE)
 
 par(mfrow=c(2,3))
 for(i in 1:5) {scatter(listPco[[i]],sub=paste("Dist:", i))}
-}
+
 }
 }
 \keyword{multivariate}

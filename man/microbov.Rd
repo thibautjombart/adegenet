@@ -47,12 +47,11 @@ nsamp <- temp$nobs
 
 # perform 1 PCA per marker 
 
-if(require(ade4)){
 kX <- ktab.data.frame(data.frame(X),Y@loc.nall)
 
 kpca <- list()
 for(i in 1:30) {kpca[[i]] <- dudi.pca(kX[[i]],scannf=FALSE,nf=2,center=TRUE,scale=FALSE)}
-}
+
 
 sel <- sample(1:30,4)
 col = rep('red',15)

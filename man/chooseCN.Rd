@@ -70,7 +70,7 @@ chooseCN(xy, ask = TRUE, type = NULL, result.type = "nb", d1 = NULL,
 \examples{
 \dontrun{
 data(nancycats)
-if(require(spdep) & require(ade4)){
+if(require(spdep)){
 
 par(mfrow=c(2,2))
 cn1 <- chooseCN(nancycats@other$xy,ask=FALSE,type=1)

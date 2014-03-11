@@ -41,7 +41,7 @@ multivariate method. \emph{Heredity}, \bold{101}, 92--103.
   genetics simulations \emph{Journal of Heredity}, \bold{92}: 301-302
 }
 \examples{
-if(require(spdep) & require(ade4)){
+if(require(spdep)){
 
 data(spcaIllus)
 attach(spcaIllus)

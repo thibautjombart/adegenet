@@ -145,7 +145,6 @@ void GLsumFreq(unsigned char *gen, int *nbvecperind, int *byteveclength, int *nb
 ## === DOT PRODUCTS ALLELE COUNTS === ##
 
 library(adegenet)
-library(ade4)
 dat <- rbind("a"=c(1,0,0), "b"=c(1,2,1), "c"=c(1,0,1))
 x <- new("genlight",dat)
 
@@ -178,7 +177,6 @@ all(abs(res1-res2)<1e-10)
 
 ## TEST WITH NAs
 library(adegenet)
-library(ade4)
 dat <- list(a=c(1,NA,0,0,2), b=c(1,2,3,4,0), c=c(NA,0,1,NA,2))
 x <- new("genlight", dat) # conversion
 x
@@ -195,7 +193,6 @@ res1
 ## === DOT PRODUCTS ALLELE FREQUENCIES === ##
 
 library(adegenet)
-library(ade4)
 
 
 ## RANDOM DATA
@@ -227,7 +224,6 @@ all(abs(res1-res2)<1e-10)
 
 ## TEST WITH NAs
 library(adegenet)
-library(ade4)
 dat <- list(a=c(1,NA,0,0,2), b=c(1,2,3,4,0), c=c(NA,0,1,NA,2))
 x <- new("genlight", dat) # conversion
 x

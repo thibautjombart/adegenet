@@ -88,14 +88,13 @@ plot(gtest)
 }
 
 # perform a between-class PCA
-if(require(ade4)){
 pca1 <- dudi.pca(obj@tab,scannf=FALSE,scale=FALSE)
 pcabet1 <- between(pca1,obj@pop,scannf=FALSE)
 pcabet1
 
 s.class(pcabet1$ls,obj@pop,sub="Inter-class PCA",possub="topleft",csub=2)
 add.scatter.eig(pcabet1$eig,2,xax=1,yax=2)
-}
+
 }
 }
 \keyword{classes}
