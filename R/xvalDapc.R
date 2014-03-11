@@ -6,7 +6,7 @@
 
 xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9, 
                      result = "groupMean", center = TRUE, scale = FALSE, 
-                     n.pca = NULL, n.rep = 30, xval.plot=FALSE, ...){
+                     n.pca = NULL, n.rep = 30, xval.plot = TRUE, ...){
   
   ## CHECKS ##
   grp <- factor(grp)
@@ -137,6 +137,8 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
 } # end xvalDapc.data.frame
 
 
+xvalDapc.data.frame <- xvalDapc
 xvalDapc.matrix <- xvalDapc.data.frame
+
 
 

@@ -12,20 +12,20 @@
 }
 \usage{
 xvalDapc(x, grp, n.pca.max = 300, n.da = NULL,
-              training.set = 0.9, result = c("groupMean","overall"),
+              training.set = 0.9, result = "groupMean",
               center = TRUE, scale = FALSE,
-              n.pca=NULL, n.rep = 30, xval.plot=TRUE, \dots)
+              n.pca=NULL, n.rep = 30, xval.plot = TRUE, \dots)
 
 
 \method{xvalDapc}{data.frame}(x, grp, n.pca.max = 300, n.da = NULL,
-              training.set = 0.9, result = c("groupMean","overall"),
+              training.set = 0.9, result = "groupMean",
               center = TRUE, scale = FALSE,
-              n.pca=NULL, n.rep = 30, xval.plot=TRUE, \dots)
+              n.pca=NULL, n.rep = 30, xval.plot = TRUE, \dots)
 
 \method{xvalDapc}{matrix}(x, grp, n.pca.max = 300, n.da = NULL,
-              training.set = 0.9, result = c("groupMean","overall"),
+              training.set = 0.9, result = "groupMean"),
               center = TRUE, scale = FALSE,
-              n.pca=NULL, n.rep = 30, xval.plot=TRUE, \dots)
+              n.pca=NULL, n.rep = 30, xval.plot = TRUE, \dots)
 }
 \arguments{
   \item{x}{\code{a data.frame} or a \code{matrix} used as input of DAPC.}
