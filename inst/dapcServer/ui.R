@@ -16,21 +16,22 @@ shinyUI(
                                      ## choice of dataset if source is an example
                                      conditionalPanel(condition = "input.datatype=='expl'",
                                                       selectInput("dataset", "Select an example dataset:",
-                                                                  choices=c("sim2pop", "microbov"))
+                                                                  choices=c("microbov","sim2pop","nancycats"))
                                                       ),
 
                                      ## choice of dataset if source is a file
                                      conditionalPanel(condition = "input.datatype=='file'",
                                                       fileInput('datafile', 'Choose input file',
-                                                                accept=c('gtx/gen/dat/RData/', 'GENETIX/genepop/Fstat/R data')),
+                                                                accept=c('gtx/gen/dat/GTX/GEN/DAT/RData/Rdata/Rda/rda', 'GENETIX/genepop/Fstat/R data')),
                                                       tags$hr()
                                                       ),
 
                                      ## select number of PCA axes
-                                     sliderInput("n.pca", "Number of PCA axes retained:", min=1, max=1000, value=10),
+                                     ##sliderInput("npca", "Number of PCA axes retained:", min=1, max=1000, value=10),
+                                     uiOutput("npca"),
 
                                      ## select number of DA axes
-                                     sliderInput("n.da", "Number of discriminant functions retained:", min=1, max=100, value=1),
+                                     sliderInput("nda", "Number of discriminant functions retained:", min=1, max=100, value=1),
 
                                      ## select color palette
                                      selectInput("col.pal", "Indicate a color palette to be used",

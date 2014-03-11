@@ -1,5 +1,5 @@
 library(shiny)
-##library(adegenet)
+library(adegenet)
 
 
 ## DEFINE THE SERVER SIDE OF THE APPLICATION
@@ -21,8 +21,9 @@ shinyServer(function(input, output) {
         out <- NULL
 
         if(input$datatype=="expl"){
-            if(input$dataset=="sim2pop") data(sim2pop)
-            if(input$dataset=="microbov") data(microbov)
+            if(input$dataset=="microbov") data("microbov", package="adegenet", envir=environment())
+            if(input$dataset=="sim2pop") data("sim2pop", package="adegenet", envir=environment())
+            if(input$dataset=="nancycats") data("nancycats", package="adegenet", envir=environment())
             out <- get(input$dataset)
         }
 
@@ -38,7 +39,7 @@ shinyServer(function(input, output) {
                 out <- import2genind(newName)
             }
 
-            if(extension %in% c("RData","Rdata","Rda","RDA")){
+            if(extension %in% c("RData","Rdata","Rda","rda")){
                 out <- get(load(newName))
             }
 
@@ -50,12 +51,32 @@ shinyServer(function(input, output) {
     })
 
 
+    ## DYNAMIC UI COMPONENTS ##
+    ## SELECTION OF PCA AXES
+    output$npca <- renderUI({
+        if(!is.null(x <- getData())) {
+            nmax <- min(dim(x@tab))
+            print(x)
+            print(nmax)
+            def <- min(10, nmax)
+            ##sliderInput("", "Number of PCA axes retained:", min=1, max=nmax, value=def,step=1)
+        } else {
+            nmax <- 1000
+            def <- 1
+        }
+        sliderInput("npca", "Number of PCA axes retained:", min=1, max=nmax, value=def,step=1)
+    })
+
+
     ## PERFORM THE DAPC ##
     getDapc <- reactive({
         out <- NULL
         ## eval(bquote(data(input$dataset))) # not sure why this isn't working
         x <- getData()
-        if(!is.null(x)) out <- dapc(x, n.pca=input$n.pca, n.da=input$n.da)
+        npca <- nda <- 1
+        if(!is.null(input$npca)) npca <- input$npca
+        if(!is.null(input$nda)) nda <- input$nda
+        if(!is.null(x)) out <- dapc(x, n.pca=npca, n.da=nda)
         return(out)
     })
 
