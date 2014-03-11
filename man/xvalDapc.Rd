@@ -11,17 +11,21 @@
   \code{data.frame} and \code{matrix}.\cr
 }
 \usage{
-xvalDapc(x, \dots)
-
-\method{xvalDapc}{data.frame}(x, grp, n.pca.max = 200, n.da = NULL,
+xvalDapc(x, grp, n.pca.max = 300, n.da = NULL,
               training.set = 0.9, result = c("groupMean","overall"),
               center = TRUE, scale = FALSE,
-              n.pca=NULL, n.rep = 30, \dots)
+              n.pca=NULL, n.rep = 30, xval.plot=TRUE, \dots)
 
-\method{xvalDapc}{matrix}(x, grp, n.pca.max = 200, n.da = NULL,
+
+\method{xvalDapc}{data.frame}(x, grp, n.pca.max = 300, n.da = NULL,
               training.set = 0.9, result = c("groupMean","overall"),
               center = TRUE, scale = FALSE,
-              n.pca=NULL, n.rep = 30, \dots)
+              n.pca=NULL, n.rep = 30, xval.plot=TRUE, \dots)
+
+\method{xvalDapc}{matrix}(x, grp, n.pca.max = 300, n.da = NULL,
+              training.set = 0.9, result = c("groupMean","overall"),
+              center = TRUE, scale = FALSE,
+              n.pca=NULL, n.rep = 30, xval.plot=TRUE, \dots)
 }
 \arguments{
   \item{x}{\code{a data.frame} or a \code{matrix} used as input of DAPC.}
@@ -48,6 +52,8 @@ xvalDapc(x, \dots)
     validation; if \code{NULL}, this will be dertermined automatically.}
   \item{n.rep}{the number of replicates to be carried out at each level of
     PC retention; defaults to 30.}
+  \item{xval.plot}{a logical indicating whether a plot of the cross-validation
+    results should be generated.}
   \item{\dots}{further arguments to be passed to other methods.}
 }
 \details{
@@ -76,6 +82,10 @@ xvalDapc(x, \dots)
  The sixth indicates which number of PCs is associated with the lowest MSE. 
  The seventh item contains the DAPC carried out with the optimal number of PCs, 
  determined with reference to MSE.  
+ 
+ If \code{xval.plot=TRUE} a scatterplot of the results of cross-validation 
+ will be displayed. 
+ 
 }
 \references{
   Jombart T, Devillard S and Balloux F  (2010) Discriminant analysis of
