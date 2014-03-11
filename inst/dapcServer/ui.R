@@ -27,19 +27,98 @@ shinyUI(
                                                       ),
 
                                      ## select number of PCA axes
+                                     
+                                     ## CROSS-VALIDATION ##############
+                                     
+                                     # n.pca.max slider
+                                     conditionalPanel(
+                                       ## condition
+                                       "$('li.active a').first().html()=='Cross-Validation'",
+                                       h3("Cross-validation"),
+                                       sliderInput("n.pca.max",
+                                                   "Max. number of PCs:",
+                                                   min = 1,
+                                                   max = 500,
+                                                   value = 200)
+                                     ),
+                                     
+                                     # n.rep slider
+                                     conditionalPanel(
+                                       ## condition
+                                       "$('li.active a').first().html()=='Cross-Validation'",
+                                       sliderInput("n.rep",
+                                                   "Number of repetitions:",
+                                                   min = 1,
+                                                   max = 100,
+                                                   value = 3)
+                                     ),
+                                     
+                                     # training.set slider
+                                     conditionalPanel(
+                                       ## condition
+                                       "$('li.active a').first().html()=='Cross-Validation'",
+                                       sliderInput("training.set",
+                                                   "Training set size:",
+                                                   min = 0.1,
+                                                   max = 0.95,
+                                                   value = 0.9)
+                                     ),
+                                     
+                                     
+                                     # result type
+                                     conditionalPanel(
+                                       ## condition
+                                       "$('li.active a').first().html()=='Cross-Validation'",
+                                       radioButtons("result", "Assess by:",
+                                                    list("Group" = "groupMean",
+                                                         "Overall" = "overall"))
+                                     ),
+                                     
+                                     # Select Output variable:
+#                                      conditionalPanel(
+                                       # condition
+#                                        "$('li.active a').first().html()!='Cross-Validation'",
+                                       checkboxInput("Scale.n.pca", "Use suggested n.pca", FALSE)
+#                                      )
+                                     ,
+                                     
+#                                      conditionalPanel(
+#                                        ## condition
+#                                        "$('li.active a').first().html()=='Cross-Validation'",
+#                                        checkboxInput("Scale.n.da", "Use suggested n.da", TRUE)
+#                                      ),
+                                     
+                                     
+                                     ###########
+                                     
+                                     # how to only show these 2 sliders when above options are FALSE?
+                                     
+                                     # OR select n.pca by hand
+                                     
                                      ##sliderInput("npca", "Number of PCA axes retained:", min=1, max=1000, value=10),
                                      uiOutput("npca"),
-
+                                     
                                      ## select number of DA axes
                                      ##sliderInput("nda", "Number of discriminant functions retained:", min=1, max=100, value=1),
                                      uiOutput("nda"),
-
+                                     
+                                     
+                                     
                                      ## select color palette
-                                     selectInput("col.pal", "Indicate a color palette to be used",
-                                                 choices=c("funky","spectral","seasun","azur","wasp")),
-
+                                     conditionalPanel(
+                                       ## condition
+                                       "$('li.active a').first().html()!='Cross-Validation'",
+                                       selectInput("col.pal", "Indicate a color palette to be used",
+                                                   choices=c("funky","spectral","seasun","azur","wasp"))
+                                     ),
+                                     
+                                     
                                      ## select transparency
-                                     sliderInput("alpha", "Choose transparency", min=0, max=1, step=0.05, value=0.5),
+                                     conditionalPanel(
+                                       ## condition
+                                       "$('li.active a').first().html()!='Cross-Validation'",
+                                       sliderInput("alpha", "Choose transparency", min=0, max=1, step=0.05, value=0.5)
+                                     ),
 
                                      ## inputs specific of scatterplot tab
                                      conditionalPanel(
@@ -90,11 +169,26 @@ shinyUI(
                         ## MAIN PANEL
                         mainPanel(
                                   tabsetPanel(
-                                              tabPanel("Scatterplot",plotOutput("scatterplot")),
-
-                                              tabPanel("Summary", verbatimTextOutput("summary")),
-
-                                              tabPanel("Compoplot", plotOutput("compoplot"))
+                                  
+                                    tabPanel("Scatterplot",plotOutput("scatterplot")),
+                                    
+                                    tabPanel("Summary", verbatimTextOutput("summary")),
+                                    
+                                    tabPanel("Compoplot", plotOutput("compoplot")),
+                                    
+                                    tabPanel("Cross-Validation", plotOutput("xvalPlot"),
+                                             h3("Mean success by n.pca"),
+                                             verbatimTextOutput("xvalResults3"),
+                                             h3("n.pca with highest mean"),
+                                             verbatimTextOutput("xvalResults4"),
+                                             h3("RMSE by n.pca"),
+                                             verbatimTextOutput("xvalResults5"),
+                                             h3("n.pca with lowest RMSE"),
+                                             verbatimTextOutput("xvalResults6"),
+                                             h3("Cross-validation results"),
+                                             verbatimTextOutput("xvalResults1"),
+                                             h3("Median and CI for random chance"),
+                                             verbatimTextOutput("xvalResults2"))
                                               ) # end tabsetPanel
                                   ) # end mainPanel
                         ) # end pageWithSidebar
