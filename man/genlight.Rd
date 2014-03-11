@@ -58,7 +58,7 @@
   The class \code{genlight} is a formal (S4) class for storing a genotypes
   of binary SNPs in a compact way, using a bit-level coding scheme.
   This storage is most efficient with haploid data, where the memory
-  taken to represent data can reduced more than 50 times. However,
+  taken to represent data can be reduced more than 50 times. However,
   \code{genlight} can be used for any level of ploidy, and still remain an
   efficient storage mode.
 
@@ -66,7 +66,7 @@
   giving the number of the second allele for each locus and each
   individual (see 'Objects of the class genlight' below).
 
-  \code{genlight} stores a multiple genotypes. Each genotype is stored
+  \code{genlight} stores multiple genotypes. Each genotype is stored
   as a \linkS4class{SNPbin} object.
 }
 \section{Objects from the class genlight}{
