@@ -70,7 +70,7 @@ shinyServer(function(input, output) {
     output$nda <- renderUI({
         if(!is.null(x <- getData())) {
             nmax <- max(length(levels(pop(x)))-1,2)
-            def <- min(1, nmax)
+            def <- length(levels(pop(x)))-1
         } else {
             nmax <- 100
             def <- 1
@@ -107,6 +107,19 @@ shinyServer(function(input, output) {
     output$doxval <- renderUI({
         checkboxInput("useoptimnpca", "Perform cross validation (computer intensive)?", input$useoptimnpca)
     })
+   
+   ## DYNAMIC SLIDER FOR MAX NPCA SELECTION
+   output$npcaMax <- renderUI({
+     if(!is.null(x <- getData())) {
+       nmax <- min(dim(x@tab))
+       def <- nmax
+     } else {
+       nmax <- 1000
+       def <- 1
+     }
+     sliderInput("npcaMax", "Maximum number of PCs:", min=1, max=nmax, value=def,step=1)
+   })
+   
 
     ## CROSS-VALIDATION FUNCTION
     xvaldapc <- reactive({
@@ -119,9 +132,14 @@ shinyServer(function(input, output) {
             n.pca.max <- input$n.pca.max
             result <- input$result
             n.rep <- input$nrep
+            nda <- 1
+            if(!is.null(input$nda)) nda <- input$nda
             training.set <- input$trainingset
-            out <- xvalDapc(mat, grp, n.pca.max=n.pca.max,
-                            result=result, n.rep=n.rep, n.da=n.da, training.set=training.set)
+            npcaMax <- 1
+            if(!is.null(input$npcaMax)) npcaMax <- input$npcaMax
+            out <- xvalDapc(mat, grp, n.pca.max=npcaMax,
+                            result=result, n.rep=n.rep, n.da=nda, training.set=training.set,
+                            xval.plot=FALSE)
         }
         else{
             out <- NULL
@@ -202,7 +220,7 @@ shinyServer(function(input, output) {
         ## n.pca determined by xval or slider?
         if(input$useoptimnpca){
             xval1 <- xvaldapc()
-            n.pca <- as.integer(xval1[[6]])
+            npca <- as.integer(xval1[[6]])
         } else {
             if(!is.null(input$npca)) npca <- input$npca
         }
