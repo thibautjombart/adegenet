@@ -103,12 +103,12 @@ shinyServer(function(input, output) {
     ## XVALPLOT
     output$xvalPlot <- renderPlot({
         xval1 <- xvaldapc()
-        if(!is.null(XVAL1)){
+        if(!is.null(xval1)){
             x <- getData()
             mat <- as.matrix(na.replace(x, method="mean"))
             grp <- pop(x)
             xval2 <- xval1[[1]]
-            successV <-as.vector(XVAL2$success)
+            successV <-as.vector(xval2$success)
             random <- replicate(300, mean(tapply(sample(grp)==grp, grp, mean)))
             q.GRP <- quantile(random, c(0.025,0.5,0.975))
             smoothScatter(xval2$n.pca, successV, nrpoints=Inf, pch=20, col=transp("black"),
@@ -120,7 +120,21 @@ shinyServer(function(input, output) {
     })
 
     ## XVAL OUTPUT
-    output$xvalResults3 <-renderPrint({
+    output$xvalResults1 <-renderPrint({
+        xval1 <- xvaldapc()
+        if(!is.null(xval1)){
+            print(xval1[[1]])
+        }
+
+    })
+    output$xvalResults2 <-renderPrint({
+        xval1 <- xvaldapc()
+        if(!is.null(xval1)){
+            print(xval1[[2]])
+        }
+
+    })
+   output$xvalResults3 <-renderPrint({
         xval1 <- xvaldapc()
         if(!is.null(xval1)){
             print(xval1[[3]])
@@ -147,21 +161,6 @@ shinyServer(function(input, output) {
         }
 
     })
-    output$xvalResults1 <-renderPrint({
-        xval1 <- xvaldapc()
-        if(!is.null(xval1)){
-            print(xval1[[1]])
-        }
-
-    })
-    output$xvalResults2 <-renderPrint({
-        xval1 <- xvaldapc()
-        if(!is.null(xval1)){
-            print(xval1[[2]])
-        }
-
-    })
-
 
 
     ## PERFORM THE DAPC ##
@@ -174,14 +173,10 @@ shinyServer(function(input, output) {
         if(input$useoptimnpca){
             xval1 <- xvaldapc()
             n.pca <- as.integer(xval1[[6]])
-        } else{
+        } else {
             if(!is.null(input$npca)) npca <- input$npca
         }
-
-        ## n.da determined by xval or slider?
-        xval1 <- xvaldapc()
-        dapc1 <- xval1[[7]]
-        n.da <- dapc1$n.da
+        if(!is.null(input$nda)) nda <- input$nda
 
         if(!is.null(x)) out <- dapc(x, n.pca=npca, n.da=nda, parallel=FALSE)
         return(out)

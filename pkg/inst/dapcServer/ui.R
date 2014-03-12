@@ -74,7 +74,7 @@ shinyUI(
                                      ),
 
                                      ## Select Output variable:
-                                       checkboxInput("useoptimnpca", "Use suggested n.pca", FALSE)
+                                       checkboxInput("useoptimnpca", "Use suggested number of PCA components?", FALSE)
                                      ,
 
 
