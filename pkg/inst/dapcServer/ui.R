@@ -31,15 +31,16 @@ shinyUI(
                                      ## CROSS-VALIDATION
                                      # n.pca.max slider
                                      conditionalPanel(
-                                       ## condition
-                                       "$('li.active a').first().html()=='Cross-Validation'",
-                                       h3("Cross-validation"),
-                                       sliderInput("n.pca.max",
-                                                   "Max. number of PCs:",
-                                                   min = 1,
-                                                   max = 500,
-                                                   value = 200)
-                                     ),
+                                                      ## condition
+                                                      "$('li.active a').first().html()=='Cross-Validation'",
+                                                      h3("Cross-validation"),
+                                                      uiOutput("doxval"),
+                                                      sliderInput("n.pca.max",
+                                                                  "Max. number of PCs:",
+                                                                  min = 1,
+                                                                  max = 500,
+                                                                  value = 200)
+                                                      ),
 
                                      ## nrep slider
                                      conditionalPanel(
@@ -90,8 +91,8 @@ shinyUI(
                                      conditionalPanel(
                                        ## condition
                                        "$('li.active a').first().html()!='Cross-Validation'",
-                                       selectInput("col.pal", "Indicate a color palette to be used",
-                                                   choices=c("funky","spectral","seasun","azur","wasp"))
+                                                      selectInput("col.pal", "Indicate a color palette to be used",
+                                                                  choices=c("funky","spectral","seasun","azur","wasp"))
                                      ),
 
 

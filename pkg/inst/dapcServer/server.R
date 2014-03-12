@@ -103,8 +103,16 @@ shinyServer(function(input, output) {
     })
 
     ## CROSS-VALIDATION
+    ## DYNAMIC TICKBOX (TICKED IF OPTIMNPCA CHOSEN)
+    output$doxval <- renderUI({
+        checkboxInput("useoptimnpca", "Perform cross validation (computer intensive)?", input$useoptimnpca)
+    })
+
+    ## CROSS-VALIDATION FUNCTION
     xvaldapc <- reactive({
-        if(input$useoptimnpca){
+        doxval <- FALSE
+        if(!is.null(input$doxval)) doxval <- input$doxval
+        if(input$useoptimnpca || doxval){
             x <- getData()
             mat <- as.matrix(na.replace(x, method="mean"))
             grp <- pop(x)
