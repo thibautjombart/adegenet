@@ -57,8 +57,14 @@ shinyServer(function(input, output) {
     ## SELECTION OF PCA AXES
     output$npca <- renderUI({
         if(!is.null(x <- getData())) {
-            nmax <- min(dim(x@tab))
-            def <- min(10, nmax)
+          nmax <- min(dim(x@tab))
+          def <- min(10, nmax)
+           
+          if(input$useoptimnpca){
+            xval1 <- xvaldapc()
+            npca <- as.integer(xval1[[6]])
+            def <- npca}
+           
         } else {
             nmax <- 1000
             def <- 1
