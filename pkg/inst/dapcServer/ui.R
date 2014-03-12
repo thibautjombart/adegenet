@@ -41,22 +41,22 @@ shinyUI(
                                                    value = 200)
                                      ),
 
-                                     # n.rep slider
+                                     ## nrep slider
                                      conditionalPanel(
                                        ## condition
                                        "$('li.active a').first().html()=='Cross-Validation'",
-                                       sliderInput("n.rep",
+                                       sliderInput("nrep",
                                                    "Number of repetitions:",
                                                    min = 1,
                                                    max = 100,
                                                    value = 3)
                                      ),
 
-                                     # training.set slider
+                                     ## trainingset slider
                                      conditionalPanel(
                                        ## condition
                                        "$('li.active a').first().html()=='Cross-Validation'",
-                                       sliderInput("training.set",
+                                       sliderInput("trainingset",
                                                    "Training set size:",
                                                    min = 0.1,
                                                    max = 0.95,

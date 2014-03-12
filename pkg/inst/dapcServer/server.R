@@ -88,8 +88,8 @@ shinyServer(function(input, output) {
             grp <- pop(x)
             n.pca.max <- input$n.pca.max
             result <- input$result
-            n.rep <- input$n.rep
-            training.set <- input$training.set
+            n.rep <- input$nrep
+            training.set <- input$trainingset
             out <- xvalDapc(mat, grp, n.pca.max=n.pca.max,
                             result=result, n.rep=n.rep, n.da=n.da, training.set=training.set)
         }
