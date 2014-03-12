@@ -27,9 +27,9 @@ shinyUI(
                                                       ),
 
                                      ## select number of PCA axes
-                                     
+
                                      ## CROSS-VALIDATION ##############
-                                     
+
                                      # n.pca.max slider
                                      conditionalPanel(
                                        ## condition
@@ -41,7 +41,7 @@ shinyUI(
                                                    max = 500,
                                                    value = 200)
                                      ),
-                                     
+
                                      # n.rep slider
                                      conditionalPanel(
                                        ## condition
@@ -52,7 +52,7 @@ shinyUI(
                                                    max = 100,
                                                    value = 3)
                                      ),
-                                     
+
                                      # training.set slider
                                      conditionalPanel(
                                        ## condition
@@ -63,8 +63,8 @@ shinyUI(
                                                    max = 0.95,
                                                    value = 0.9)
                                      ),
-                                     
-                                     
+
+
                                      # result type
                                      conditionalPanel(
                                        ## condition
@@ -73,37 +73,37 @@ shinyUI(
                                                     list("Group" = "groupMean",
                                                          "Overall" = "overall"))
                                      ),
-                                     
+
                                      # Select Output variable:
 #                                      conditionalPanel(
                                        # condition
 #                                        "$('li.active a').first().html()!='Cross-Validation'",
-                                       checkboxInput("Scale.n.pca", "Use suggested n.pca", FALSE)
+                                       checkboxInput("scalenpca", "Use suggested n.pca", FALSE)
 #                                      )
                                      ,
-                                     
+
 #                                      conditionalPanel(
 #                                        ## condition
 #                                        "$('li.active a').first().html()=='Cross-Validation'",
 #                                        checkboxInput("Scale.n.da", "Use suggested n.da", TRUE)
 #                                      ),
-                                     
-                                     
+
+
                                      ###########
-                                     
+
                                      # how to only show these 2 sliders when above options are FALSE?
-                                     
+
                                      # OR select n.pca by hand
-                                     
+
                                      ##sliderInput("npca", "Number of PCA axes retained:", min=1, max=1000, value=10),
                                      uiOutput("npca"),
-                                     
+
                                      ## select number of DA axes
                                      ##sliderInput("nda", "Number of discriminant functions retained:", min=1, max=100, value=1),
                                      uiOutput("nda"),
-                                     
-                                     
-                                     
+
+
+
                                      ## select color palette
                                      conditionalPanel(
                                        ## condition
@@ -111,8 +111,8 @@ shinyUI(
                                        selectInput("col.pal", "Indicate a color palette to be used",
                                                    choices=c("funky","spectral","seasun","azur","wasp"))
                                      ),
-                                     
-                                     
+
+
                                      ## select transparency
                                      conditionalPanel(
                                        ## condition
@@ -169,13 +169,13 @@ shinyUI(
                         ## MAIN PANEL
                         mainPanel(
                                   tabsetPanel(
-                                  
+
                                     tabPanel("Scatterplot",plotOutput("scatterplot")),
-                                    
+
                                     tabPanel("Summary", verbatimTextOutput("summary")),
-                                    
+
                                     tabPanel("Compoplot", plotOutput("compoplot")),
-                                    
+
                                     tabPanel("Cross-Validation", plotOutput("xvalPlot"),
                                              h3("Mean success by n.pca"),
                                              verbatimTextOutput("xvalResults3"),
