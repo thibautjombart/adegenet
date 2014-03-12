@@ -90,9 +90,11 @@ shinyServer(function(input, output) {
 
    output$yax <- renderUI({
        def <- 1
+       nda <- 1
+       if(!is.null(input$nda)) nda <- input$nda
        if(!is.null(x <- getData())) {
             nmax <- min(dim(x@tab))
-            if(input$nda>1 && length(levels(pop(x)))>1) def <- 2
+            if(nda>1 && length(levels(pop(x)))>1) def <- 2
         } else {
             nmax <- 1000
         }
@@ -229,6 +231,8 @@ shinyServer(function(input, output) {
                     posi.pca=input$screepca, posi.da=input$screeda,
                     cellipse=cellipse, cstar=cstar, mstree=input$mstree,
                     cex=input$pointsize, clabel=input$labelsize, solid=1-input$alpha)
+        } else {
+            NULL
         }
     })
 
