@@ -35,7 +35,11 @@
 \begin{document}
 
 
-\SweaveOpts{prefix.string = base, echo=TRUE, eval=TRUE, fig = FALSE, eps = FALSE, pdf = TRUE}
+
+<<include=FALSE>>=
+opts_chunk$set(fig.path='base', echo=TRUE, eval=TRUE, fig.keep='none', dev='pdf')
+@
+
 
 
 \definecolor{Soutput}{rgb}{0,0,0.56}
@@ -127,7 +131,7 @@ install.packages("adegenet", dep=TRUE)
 @
 
 We can now load the package using:
-<<echo=FALSE,print=FALSE, results=hide>>=
+<<echo=FALSE, results='hide'>>=
 library(ape)
 library(seqinr)
 library(genetics)
@@ -571,7 +575,7 @@ objNoNa@tab
 @
 
 \noindent Now the PCA is performed and plotted:
-<<pcaaflp,fig=TRUE>>=
+<<pcaaflp>>=
 pca1 <- dudi.pca(objNoNa,scannf=FALSE,scale=FALSE)
 temp <- as.integer(pop(objNoNa))
 myCol <- transp(c("blue","red"),.7)[temp]
@@ -736,7 +740,7 @@ D
 This matrix of distances is small enough for one to interprete the raw numbers.
 However, it is also very straightforward to represent these distances as a tree or in a reduced space.
 We first build a Neighbor-Joining tree using the \emph{ape} package:
-<<njAA, fig=TRUE>>=
+<<njAA>>=
 library(ape)
 tre <- nj(D)
 par(xpd=TRUE)
@@ -747,7 +751,7 @@ edgelabels(tex=round(tre$edge.length,1), bg=rgb(.8,.8,1,.8))
 The best possible planar representation of these Euclidean distances is achieved by Principal
 Coordinate Analyses (PCoA), which in this case will give identical results to PCA of the original
 (centred, non-scaled) data:
-<<fig=TRUE>>=
+<<>>=
 pco1 <- dudi.pco(D, scannf=FALSE,nf=2)
 scatter(pco1, posi="bottomright")
 title("Principal Coordinate Analysis\n-based on proteic distances-")
@@ -960,7 +964,7 @@ Done !
 Both \texttt{genind} and \texttt{genpop} objects have a summary providing basic information about data.
 Informations are both printed and invisibly returned as a list.
 
-<<sumry,fig=TRUE,png=FALSE,pdf=TRUE>>=
+<<sumry,dev='pdf'>>=
 toto <- summary(nancycats)
 names(toto)
 
@@ -1155,7 +1159,7 @@ values are obtained for all individuals using \texttt{sapply}:
 <<>>=
 Fbar <- sapply(temp, mean)
 @
-<<fig=TRUE>>=
+<<>>=
 hist(Fbar, col="firebrick", main="Average inbreeding in Salers cattles")
 @
 
@@ -1168,7 +1172,7 @@ F
 @
 The output object \texttt{F} can seem a bit cryptic: it is an function embedded within a hidden environment.
 This does not matter, however, since it is easily represented:
-<<fig=TRUE>>=
+<<>>=
 plot(F$FRBTSAL9266, main=paste("Inbreeding of individual",names(F)), xlab="Inbreeding (F)", ylab="Probability density")
 @
 
@@ -1322,7 +1326,7 @@ The output object \texttt{pca1} is a list containing various information; of par
 \end{itemize}
 
 The basic scatterplot for this analysis can be obtained by:
-<<fig=TRUE>>=
+<<>>=
 s.label(pca1$li)
 title("PCA of microbov dataset\naxes 1-2")
 add.scatter.eig(pca1$eig[1:20], 3,1,2)
@@ -1350,7 +1354,7 @@ add.scatter.eig(pca1$eig[1:20],nf=3,xax=1,yax=3)
 However, we can yet improve these scatterplots, which are fortunately easy to customize.
 For instance, we can remove the grid, choose different colors for the groups, use larger dots and transparency to
 better assess the density of points, and remove internal segments of the ellipses:
-<<fig=TRUE>>=
+<<>>=
 col <- rainbow(length(levels(pop(microbov))))
 s.class(pca1$li, pop(microbov),xax=1,yax=3, col=transp(col,.6), axesell=FALSE, cstar=0, cpoint=3, grid=FALSE)
 @
@@ -1361,7 +1365,7 @@ Let us now assume that we ignore the group memberships.
 We can still use color in an informative way.
 For instance, we can recode the principal components represented in the scatterplot on the RGB
 scale:
-<<fig=TRUE>>=
+<<>>=
 colorplot(pca1$li, pca1$li, transp=TRUE, cex=3, xlab="PC 1", ylab="PC 2")
 title("PCA of microbov dataset\naxes 1-2")
 abline(v=0,h=0,col="grey", lty=2)
@@ -1374,7 +1378,7 @@ genetically different).
 \\
 
 We can represent the diversity on the third axis similarly:
-<<fig=TRUE>>=
+<<>>=
 colorplot(pca1$li[c(1,3)], pca1$li, transp=TRUE, cex=3, xlab="PC 1", ylab="PC 3")
 title("PCA of microbov dataset\naxes 1-3")
 abline(v=0,h=0,col="grey", lty=2)
@@ -1419,7 +1423,11 @@ group separation (\textit{adegenet-dapc}).
 
 
 
-\SweaveOpts{eval=FALSE}
+
+<<include=FALSE>>=
+opts_chunk$set(eval=FALSE)
+@
+
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% \subsection{Analyzing a single locus}
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1463,7 +1471,11 @@ group separation (\textit{adegenet-dapc}).
 
 
 
-\SweaveOpts{eval=TRUE}
+
+<<include=FALSE>>=
+opts_chunk$set(eval=TRUE)
+@
+
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1497,7 +1509,7 @@ Dgeo <- dist(nancycats$other$xy)
 ibd <- mantel.randtest(Dgen,Dgeo)
 ibd
 @
-<<fig=TRUE>>=
+<<>>=
 plot(ibd)
 @
 
@@ -1518,7 +1530,7 @@ Dgeo <- dist(other(x)$xy)
 ibd <- mantel.randtest(Dgen,Dgeo)
 ibd
 @
-<<fig=TRUE>>=
+<<>>=
 plot(ibd)
 @
 
@@ -1534,7 +1546,7 @@ Classical IBD would result in continuous clines of genetic differentiation and c
 However, distant and differentiated populations would also result in such a pattern.
 These are slightly different processes and we would like to be able to disentangle them.
 A very simple first approach is simply plotting both distances:
-<<fig=TRUE>>=
+<<>>=
 plot(Dgeo, Dgen)
 abline(lm(Dgen~Dgeo), col="red",lty=2)
 @
@@ -1583,7 +1595,7 @@ Indeed, the very purpose of this tutorial is simply to show how it can be used o
 Let's take the example from the function's manpage and detail it.
 The dataset used is \texttt{sim2pop}.
 
-<<mon1,fig=TRUE>>=
+<<mon1>>=
 data(sim2pop)
 sim2pop
 summary(sim2pop$pop)
@@ -1614,7 +1626,7 @@ D <- dist(sim2pop$tab)
 Routines for building such networks are scattered over several packages, but all made available
 through the function \texttt{chooseCN}.
 Here, we disable the interactivity of the function (\texttt{ask=FALSE}) and select the second type of graph which is the graph of Gabriel (\texttt{type=2}).
-<<mon4,fig=TRUE>>=
+<<mon4>>=
 gab <- chooseCN(sim2pop$other$xy,ask=FALSE,type=2)
 @
 
@@ -1657,7 +1669,7 @@ Can Monmonier's algorithm find a boundary between the two populations?
 Yes, if we get rid of the random noise.
 This can be achieved using a simple ordination method such as Principal Coordinates Analysis.
 
-<<mon6,fig=TRUE>>=
+<<mon6>>=
 pco1 <- dudi.pco(D,scannf=FALSE,nf=1)
 barplot(pco1$eig,main="Eigenvalues")
 @
@@ -1702,13 +1714,13 @@ the two 'parent' points, that is, the points whose barycenter is the
 point of the barrier.
 
 Finally, you can plot very simply the obtained boundary using the method \texttt{plot}:
-<<fig=TRUE>>=
+<<>>=
 plot(mon1)
 @
 
 \noindent see arguments in \texttt{?plot.monmonier} to customize this representation.
 Last, we can compare the infered boundary with the actual distribution of populations:
-<<fig=TRUE>>=
+<<>>=
 plot(mon1,add.arrows=FALSE,bwd=8)
 temp <- sim2pop$pop
 levels(temp) <- c(3,5)

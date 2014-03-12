@@ -35,7 +35,11 @@
 \begin{document}
 
 
-\SweaveOpts{prefix.string = dapc, echo=TRUE, eval=TRUE, fig = FALSE, eps = FALSE, pdf = TRUE}
+
+<<include=FALSE>>=
+opts_chunk$set(fig.path='dapc', echo=TRUE, eval=TRUE, fig.keep='none', dev='pdf')
+@
+
 
 
 \definecolor{Soutput}{rgb}{0,0,0.56}
@@ -206,7 +210,7 @@ $k$ (slot \texttt{Kstat}), the selected number of clusters and the associated BI
 \texttt{stat}), the group memberships (slot \texttt{grp}) and the group sizes (slot \texttt{size}).
 Here, since we know the actual groups, we can check how well they have been retrieved by the procedure.
 Actual groups are accessed using \texttt{pop}:
-<<fig=TRUE>>=
+<<>>=
 table(pop(x), grp$grp)
 table.value(table(pop(x), grp$grp), col.lab=paste("inf", 1:6), row.lab=paste("ori", 1:6))
 @
@@ -337,7 +341,7 @@ Contributions of the alleles to each discriminant function are stored in the slo
 Eigenvalues, corresponding to the ratio of the variance between groups over the variance within
 groups for each discriminant function, are stored in \texttt{eig}.
 Basic scatterplots can be obtained using the function \texttt{scatterplot}:
-<<fig=TRUE>>=
+<<>>=
 scatter(dapc1)
 @
 
@@ -366,13 +370,13 @@ groups) more easily, it is not so pretty and is probably better removed for publ
 We also move the inset to a more appropriate place where it does not cover individuals, and use
 different symbols for the groups.
 
-<<fig=TRUE>>=
+<<>>=
 scatter(dapc1, posi.da="bottomright", bg="white", pch=17:22)
 @
 
 \noindent This is still not entirely satisfying: we need to define other colors more visible over a white
 background, and we can remove the segments linking the points to their ellipses:
-<<fig=TRUE>>=
+<<>>=
 myCol <- c("darkblue","purple","green","orange","red","blue")
 scatter(dapc1, posi.da="bottomright",  bg="white", pch=17:22, cstar=0, col=myCol, scree.pca=TRUE, posi.pca="bottomleft")
 @
@@ -380,7 +384,7 @@ scatter(dapc1, posi.da="bottomright",  bg="white", pch=17:22, cstar=0, col=myCol
 \noindent Another possibility is remove the labels within the ellipses and add a legend to the
 plot. We also use the same symbol for all individuals, but use bigger dots and transparent colours
 to have a better feel for the density of individuals on the factorial plane.
-<<fig=TRUE>>=
+<<>>=
 scatter(dapc1, scree.da=FALSE, bg="white", pch=20,  cell=0, cstar=0, col=myCol, solid=.4,
         cex=3,clab=0, leg=TRUE, txt.leg=paste("Cluster",1:6))
 @
@@ -393,7 +397,7 @@ We also indicate the centre of each group with crosses.
 Lastly, we remove the DAPC eigenvalues, not very useful in this case, and replace them manually by a graph of
 PCA eigenvalues retained in dimension-reduction step (retained eigenvalues in black, similar to
 using \texttt{scree.pca=TRUE}).
-<<fig=TRUE>>=
+<<>>=
 scatter(dapc1, ratio.pca=0.3, bg="white", pch=20,  cell=0, cstar=0, col=myCol, solid=.4,
         cex=3, clab=0, mstree=TRUE, scree.da=FALSE,
         posi.pca="bottomright", leg=TRUE, txt.leg=paste("Cluster",1:6))
@@ -417,7 +421,7 @@ Lastly, note that \texttt{scatter} can also represent a single discriminant func
 especially useful when only one of these has been retained (e.g. in the case $k=2$).
 This is achieved by plotting the densities of individuals on a given discriminant function with
 different colors for different groups:
-<<fig=TRUE>>=
+<<>>=
 scatter(dapc1,1,1, col=myCol, bg="white", scree.da=FALSE, legend=TRUE, solid=.4)
 @
 
@@ -448,13 +452,13 @@ dapc.flu <- dapc(H3N2, n.pca=30,n.da=10)
 
 The first discriminant function shows the temporal evolution of the influenza virus, while the
 second one shows the originality of 2006 strains.
-<<fig=TRUE>>=
+<<>>=
 myPal <- colorRampPalette(c("blue","gold","red"))
 scatter(dapc.flu, col=transp(myPal(6)), scree.da=FALSE, cell=1.5, cex=2, bg="white",cstar=0)
 @
 
 We can assess which alleles most highlight the originality of 2006 using \texttt{loadingplot}:
-<<fig=TRUE>>=
+<<>>=
 set.seed(4)
 contrib <- loadingplot(dapc.flu$var.contr, axis=2, thres=.07, lab.jitter=1)
 @
@@ -463,7 +467,7 @@ contrib <- loadingplot(dapc.flu$var.contr, axis=2, thres=.07, lab.jitter=1)
 contributing alleles (i.e., contributions above a given threshold -- argument \texttt{threshold}).
 In this case, SNPs \texttt{906} and \texttt{399} reflect most the temporal evolution of the virus.
 We can look into their allele frequencies over 2002-2006:
-<<echo=TRUE,fig=TRUE>>=
+<<echo=TRUE>>=
 temp <- seploc(H3N2)
 snp906 <- truenames(temp[["906"]])$tab
 snp399 <- truenames(temp[["399"]])$tab
@@ -518,7 +522,7 @@ clusters, while low values suggest admixed groups.
 
 This information can also be visualized using \texttt{assignplot} (see \texttt{?assignplot} for display
 options); here, we choose to represent only the first 50 individuals to make the figure readable:
-<<fig=TRUE>>=
+<<>>=
 assignplot(dapc1, subset=1:50)
 @
 
@@ -536,19 +540,19 @@ or misclassified individuals.
 Note that this information can also be plotted in a STRUCTURE-like (!) way using \texttt{compoplot}
 (see \code{?compoplot} to customize the plot).
 We can plot information of all individuals to have a global picture of the clusters composition.
-<<fig=TRUE>>=
+<<>>=
 compoplot(dapc1, posi="bottomright", txt.leg=paste("Cluster", 1:6), lab="", ncol=1, xlab="individuals")
 @
 
 \noindent We can also have a closer look at a subset of individuals; for instance, for the first 50 individuals:
-<<fig=TRUE>>=
+<<>>=
 compoplot(dapc1, subset=1:50, posi="bottomright", txt.leg=paste("Cluster", 1:6), lab="", ncol=2, xlab="individuals")
 @
 
 Obviously, we can use the power of R to lead our investigation further. For instance, which are the
 most 'admixed' individuals?
 Let us consider as admixed individuals having no more than 90\% of probability of membership in a single cluster:
-<<fig=TRUE>>=
+<<>>=
 temp <- which(apply(dapc1$posterior,1, function(e) all(e<0.9)))
 temp
 compoplot(dapc1, subset=temp, posi="bottomright", txt.leg=paste("Cluster", 1:6),  ncol=2)
@@ -588,7 +592,7 @@ data(microbov)
 microbov
 temp <- summary(dapc(microbov, n.da=100, n.pca=3))$assign.per.pop*100
 @
-<<fig=TRUE>>=
+<<>>=
 par(mar=c(4.5,7.5,1,1))
 barplot(temp, xlab="% of reassignment to actual breed", horiz=TRUE, las=1)
 @
@@ -601,7 +605,7 @@ We repeat the analysis, this time keeping 300 PCs:
 <<>>=
 temp <- summary(dapc(microbov, n.da=100, n.pca=300))$assign.per.pop*100
 @
-<<fig=TRUE>>=
+<<>>=
 par(mar=c(4.5,7.5,1,1))
 barplot(temp, xlab="% of reassignment to actual breed", horiz=TRUE, las=1)
 @
@@ -616,7 +620,7 @@ x <- microbov
 pop(x) <- sample(pop(x))
 temp <- summary(dapc(x, n.da=100, n.pca=300))$assign.per.pop*100
 @
-<<fig=TRUE>>=
+<<>>=
 par(mar=c(4.5,7.5,1,1))
 barplot(temp, xlab="% of reassignment to actual breed", horiz=TRUE, las=1)
 @
@@ -672,14 +676,14 @@ We perform the analysis with 20 PCs retained, and then map the membership probab
 dapc3 <- dapc(microbov, n.da=100, n.pca=20)
 myCol <- rainbow(15)
 @
-<<fig=TRUE>>=
+<<>>=
 par(mar=c(5.1,4.1,1.1,1.1), xpd=TRUE)
 compoplot(dapc3, lab="", posi=list(x=12,y=-.01), cleg=.7)
 @
 
 And as before, we can investigate further admixed individuals, which we arbitrarily define as those
 having no more than 0.5 probability of membership to any group:
-<<fig=TRUE>>=
+<<>>=
 temp <- which(apply(dapc3$posterior,1, function(e) all(e<0.5)))
 temp
 lab <- pop(microbov)
@@ -756,7 +760,7 @@ to groups; \texttt{ind.scores} contains the coordinates of the new individuals o
 functions; \texttt{posterior} contains the posterior membership probabilities.
 We can visualize the information by different ways.
 First, we can represent the new individuals using a scatterplot:
-<<fig=TRUE>>=
+<<>>=
 col <- rainbow(length(levels(pop(x))))
 col.points <- transp(col[as.integer(pop(x))],.2)
 scatter(dapc4, col=col, bg="white", scree.da=0, pch="", cstar=0, clab=0, xlim=c(-10,10), legend=TRUE)
@@ -777,7 +781,7 @@ Around \Sexpr{round(100*mean(as.character(pred.sup$assign)==as.character(pop(x.s
 individuals have been assigned to their actual cluster.
 For more details about which breed was assigned to which cluster, we can display the contingency
 table of the actual cluster \textit{vs} the inferred one:
-<<fig=TRUE>>=
+<<>>=
 table.value(table(pred.sup$assign, pop(x.sup)), col.lab=levels(pop(x.sup)))
 @
 

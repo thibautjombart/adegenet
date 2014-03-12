@@ -22,7 +22,11 @@
 
 \begin{document}
 
-\SweaveOpts{prefix.string = genomics, echo=TRUE, eval=TRUE, fig = FALSE, eps = FALSE, pdf = TRUE}
+
+<<include=FALSE>>=
+opts_chunk$set(fig.path='genomics', echo=TRUE, eval=TRUE, fig.keep='none', dev='pdf')
+@
+
 
 
 
@@ -599,7 +603,7 @@ head(locNames(flu), 20)
 
 \noindent It is usually informative to assess the position of the polymorphic sites within the
 genome; this is very easily done in R, using \texttt{density} with an appropriate bandewidth:
-<<fig=TRUE,keep.source=TRUE>>=
+<<tidy=FALSE>>=
 temp <- density(position(flu), bw=10)
 plot(temp, type="n", xlab="Position in the alignment", main="Location of the SNPs",
      xlim=c(0,1701))
@@ -631,7 +635,7 @@ About \Sexpr{round(100*mean(unlist(other(flu))>1))}\% of the sites are polymorph
 This is not entirely surprising, given that the HA segment of influenza is known for its high
 mutation rate.
 What is the nature of this polymorphism?
-<<fig=TRUE>>=
+<<>>=
 temp <- table(unlist(other(flu)))
 barplot(temp, main="Distribution of the number \nof alleles per loci",
         xlab="Number of alleles", ylab="Number of sites", col=heat.colors(4))
@@ -745,7 +749,7 @@ They are (see \texttt{?glMean}):
   possible centring and scaling.
 \end{itemize}
 For instance, one can easily derive the distributiong of allele frequencies using:
-<<fig=TRUE,keep.source=TRUE>>=
+<<tidy=FALSE>>=
 myFreq <- glMean(flu)
 hist(myFreq, proba=TRUE, col="gold", xlab="Allele frequencies",
      main="Distribution of (second) allele frequencies")
@@ -756,7 +760,7 @@ lines(temp$x, temp$y*1.8,lwd=3)
 \noindent In biallelic loci, one allele is always entirely redundant with the other, so it is generally
 sufficient to analyse a single allele per loci.
 However, the distribution of allele frequencies may be more interpretable by restoring its native symmetry:
-<<fig=TRUE,keep.source=TRUE>>=
+<<tidy=FALSE>>=
 myFreq <- glMean(flu)
 myFreq <- c(myFreq, 1-myFreq)
 hist(myFreq, proba=TRUE, col="darkseagreen3", xlab="Allele frequencies",
@@ -782,7 +786,7 @@ they would be more frequent in grindcore events than in classical heavy metal sh
 
 Besides these considerations, we can also map missing data across loci as we have done for SNP positions in the
 US influenza dataset (see previous section) using \texttt{glNA} and \texttt{density}:
-<<keep.source=TRUE>>=
+<<tidy=FALSE>>=
 head(glNA(flu),20)
 temp <- density(glNA(flu), bw=10)
 plot(temp, type="n", xlab="Position in the alignment", main="Location of the missing values (NAs)",
@@ -841,7 +845,7 @@ The general distance matrix is obtained by summing these:
 D <- Reduce("+", lD)
 @
 And we could now carry on further analyses, such as a neighbor-joining tree using the \textit{ape} package:
-<<fig=TRUE>>=
+<<>>=
 library(ape)
 plot(nj(D), type="fan")
 title("A simple NJ tree of simulated genlight data")
@@ -950,7 +954,7 @@ In addition to usual graphics, \texttt{glPca} object can displayed using \texttt
 a scatterplot of the principal components (PCs)) and \texttt{loadingplot} (plots the allele contributions,
 i.e. squared loadings).
 The scatterplot is obtained by:
-<<fig=TRUE>>=
+<<>>=
 scatter(pca1, posi="bottomright")
 title("PCA of the US influenza data\n axes 1-2")
 @
@@ -968,13 +972,13 @@ title("NJ tree of the US influenza data")
 
 The correspondance between both analyses can be better assessed using colors based on PCs; this is
 achieved by \texttt{colorplot}:
-<<fig=TRUE>>=
+<<>>=
 myCol <- colorplot(pca1$scores,pca1$scores, transp=TRUE, cex=4)
 abline(h=0,v=0, col="grey")
 add.scatter.eig(pca1$eig[1:40],2,1,2, posi="topright", inset=.05, ratio=.3)
 @
 
-<<fig=TRUE>>=
+<<>>=
 plot(tre, typ="fan", show.tip=FALSE)
 tiplabels(pch=20, col=myCol, cex=4)
 title("NJ tree of the US influenza data")
@@ -1012,13 +1016,13 @@ load("Robjects/x.dapc1.RData")
 For the last 10 structured SNPs (located at the end of the alignment), the two groups of individuals have different (random) distribution of
 allele frequencies, while they share the same distributions in other loci.
 DAPC can still make some decent discrimination:
-<<fig=TRUE,keep.source=TRUE>>=
+<<tidy=FALSE>>=
 scatter(dapc1,scree.da=FALSE, bg="white", posi.pca="topright", legend=TRUE,
         txt.leg=paste("group", 1:2), col=c("red","blue"))
 @
 
 \noindent While the composition plot confirms that groups are not entirely disentangled...
-<<fig=TRUE>>=
+<<>>=
 compoplot(dapc1, col=c("red","blue"),lab="", txt.leg=paste("group", 1:2), ncol=2)
 @
 
