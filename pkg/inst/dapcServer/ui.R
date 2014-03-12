@@ -108,10 +108,12 @@ shinyUI(
                                                       "$('li.active a').first().html()==='Scatterplot'",
 
                                                       ## select first axis to plot
-                                                      numericInput("xax", "Indicate the x axis", value=1, min=1),
+                                                      ##numericInput("xax", "Indicate the x axis", value=1, min=1),
+                                                      uiOutput("xax"),
 
                                                       ## select second axis to plot
-                                                      numericInput("yax", "Indicate the y axis", value=1, min=1),
+                                                      ##numericInput("yax", "Indicate the y axis", value=1, min=1),
+                                                      uiOutput("yax"),
 
                                                       ## symbol size
                                                       sliderInput("pointsize", "Size of the points", value=1, min=0, max=10, step=0.2),
@@ -129,6 +131,9 @@ shinyUI(
 
                                                       ## plot ellipses?
                                                       checkboxInput("ellipses", "Show inertia ellipses?", value=TRUE),
+
+                                                      ## plot stars?
+                                                      checkboxInput("stars", "Link points to their centre?", value=TRUE),
 
                                                       ## plot minimum spanning tree?
                                                       checkboxInput("mstree", "Show minimum spanning tree?", value=FALSE)

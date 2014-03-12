@@ -78,7 +78,27 @@ shinyServer(function(input, output) {
         sliderInput("nda", "Number of DA axes retained:", min=1, max=nmax, value=def,step=1)
     })
 
+    ## SELECTION OF PLOTTED AXES
+    output$xax <- renderUI({
+        if(!is.null(x <- getData())) {
+            nmax <- min(dim(x@tab))
+        } else {
+            nmax <- 1000
+        }
+        numericInput("xax", "Indicate the x axis", value=1, min=1, max=nmax)
+    })
 
+   output$yax <- renderUI({
+       def <- 1
+       if(!is.null(x <- getData())) {
+            nmax <- min(dim(x@tab))
+            if(input$nda>1 && length(levels(pop(x)))>1) def <- 2
+        } else {
+            nmax <- 1000
+        }
+
+        numericInput("yax", "Indicate the y axis", value=def, min=1, max=nmax)
+    })
 
     ## CROSS-VALIDATION
     xvaldapc <- reactive({
@@ -203,7 +223,7 @@ shinyServer(function(input, output) {
             scree.pca <- ifelse(input$screepca=="none", FALSE, TRUE)
             scree.da <- ifelse(input$screeda=="none", FALSE, TRUE)
             cellipse <- ifelse(input$ellipses, 1.5, 0)
-            cstar <- ifelse(input$ellipses, 1, 0)
+            cstar <- ifelse(input$stars, 1, 0)
             scatter(dapc1, xax=input$xax, yax=input$yax, col=myCol,
                     scree.pca=scree.pca, scree.da=scree.da,
                     posi.pca=input$screepca, posi.da=input$screeda,
