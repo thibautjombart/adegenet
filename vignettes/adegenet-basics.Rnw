@@ -1,53 +1,52 @@
-\documentclass{article}
-% \VignettePackage{dapc}
-% \VignetteIndexEntry{An introduction to the adegenet package}
-
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
 \usepackage{graphicx}
-\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
-\usepackage{array}
 \usepackage{color}
-
-\usepackage[utf8]{inputenc} % for UTF-8/single quotes from sQuote()
-
-
-% for bold symbols in mathmode
+\definecolor{blue1}{RGB}{0,102,204}
+%% \usepackage[colorlinks=true,linkcolor=blue1,citecolor=blue1,urlcolor=blue1]{hyperref}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{array}
+\usepackage[english]{babel}
+\usepackage{amsfonts}
+\usepackage{url}
 \usepackage{bm}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[affil-it]{authblk}
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\beq}{\begin{equation}}
 \newcommand{\eeq}{\end{equation}}
 \newcommand{\m}[1]{\mathbf{#1}}
-
-
-
+\newcommand{\rcmd}[1]{\textcolor{red}{\texttt{#1}}}
 \newcommand{\code}[1]{{{\tt #1}}}
+\newcommand{\Rlogo}{\includegraphics[width=0.05\textwidth]{figs/Rlogo.pdf}}
+
 \title{An introduction to \textit{adegenet} \Sexpr{packageDescription("adegenet", fields = "Version")}}
-\author{Thibaut Jombart}
+
+\author{Thibaut Jombart
+  \thanks{\texttt{tjombart@imperial.ac.uk}}
+}
+\affil{{\footnotesize Imperial College London \\MRC Centre for Outbreak Analysis and Modelling}}
+
+%% \date{\today}
 \date{\today}
-
-
-
 
 \sloppy
 \hyphenpenalty 10000
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
+\selectlanguage{english}
 
-
+%% Sweave options and colors
 
 <<include=FALSE>>=
-opts_chunk$set(fig.path='base', echo=TRUE, eval=TRUE, fig.keep='none', dev='pdf')
+opts_chunk$set(fig.path='figs/base-', fig.keep='high', dev='pdf', fig.width=7, fig.height=7,
+               tidy=FALSE, warning=FALSE, fig.show="asis", fig.align='center', out.width=".8\\textwidth")
 @
 
-
-
-\definecolor{Soutput}{rgb}{0,0,0.56}
-\definecolor{Sinput}{rgb}{0.56,0,0}
-\DefineVerbatimEnvironment{Sinput}{Verbatim}
-{formatcom={\color{Sinput}},fontsize=\footnotesize, baselinestretch=0.75}
-\DefineVerbatimEnvironment{Soutput}{Verbatim}
-{formatcom={\color{Soutput}},fontsize=\footnotesize, baselinestretch=0.75}
 
 \color{black}
 
