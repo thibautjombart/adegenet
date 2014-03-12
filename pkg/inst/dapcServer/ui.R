@@ -26,10 +26,9 @@ shinyUI(
                                                       tags$hr()
                                                       ),
 
-                                     ## select number of PCA axes
 
-                                     ## CROSS-VALIDATION ##############
 
+                                     ## CROSS-VALIDATION
                                      # n.pca.max slider
                                      conditionalPanel(
                                        ## condition
@@ -65,7 +64,7 @@ shinyUI(
                                      ),
 
 
-                                     # result type
+                                     ## result type
                                      conditionalPanel(
                                        ## condition
                                        "$('li.active a').first().html()=='Cross-Validation'",
@@ -74,26 +73,10 @@ shinyUI(
                                                          "Overall" = "overall"))
                                      ),
 
-                                     # Select Output variable:
-#                                      conditionalPanel(
-                                       # condition
-#                                        "$('li.active a').first().html()!='Cross-Validation'",
-                                       checkboxInput("scalenpca", "Use suggested n.pca", FALSE)
-#                                      )
+                                     ## Select Output variable:
+                                       checkboxInput("useoptimnpca", "Use suggested n.pca", FALSE)
                                      ,
 
-#                                      conditionalPanel(
-#                                        ## condition
-#                                        "$('li.active a').first().html()=='Cross-Validation'",
-#                                        checkboxInput("Scale.n.da", "Use suggested n.da", TRUE)
-#                                      ),
-
-
-                                     ###########
-
-                                     # how to only show these 2 sliders when above options are FALSE?
-
-                                     # OR select n.pca by hand
 
                                      ##sliderInput("npca", "Number of PCA axes retained:", min=1, max=1000, value=10),
                                      uiOutput("npca"),
@@ -101,7 +84,6 @@ shinyUI(
                                      ## select number of DA axes
                                      ##sliderInput("nda", "Number of discriminant functions retained:", min=1, max=100, value=1),
                                      uiOutput("nda"),
-
 
 
                                      ## select color palette
@@ -138,11 +120,11 @@ shinyUI(
                                                       sliderInput("labelsize", "Size of the labels", value=1, min=0, max=10, step=0.2),
 
                                                       ## add screeplot of PCA?
-                                                      selectInput("scree.pca", "Position of the PCA screeplot:",
+                                                      selectInput("screepca", "Position of the PCA screeplot:",
                                                                   choices=c("none","bottomright","bottomleft","topright","topleft")),
 
                                                       ## add screeplot of DA?
-                                                      selectInput("scree.da", "Position of the DA screeplot:",
+                                                      selectInput("screeda", "Position of the DA screeplot:",
                                                                   choices=c("none","bottomright","bottomleft","topright","topleft")),
 
                                                       ## plot ellipses?

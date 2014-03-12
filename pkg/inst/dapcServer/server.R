@@ -82,7 +82,7 @@ shinyServer(function(input, output) {
 
     ## CROSS-VALIDATION
     xvaldapc <- reactive({
-        if(input$scalenpca){
+        if(input$useoptimnpca){
             x <- getData()
             mat <- as.matrix(na.replace(x, method="mean"))
             grp <- pop(x)
@@ -171,11 +171,10 @@ shinyServer(function(input, output) {
         npca <- nda <- 1
 
         ## n.pca determined by xval or slider?
-        if(input$scalenpca==TRUE){
+        if(input$useoptimnpca){
             xval1 <- xvaldapc()
             n.pca <- as.integer(xval1[[6]])
-        }
-        else{
+        } else{
             if(!is.null(input$npca)) npca <- input$npca
         }
 
@@ -206,13 +205,13 @@ shinyServer(function(input, output) {
             myCol <- get(input$col.pal)(K)
 
             ## get screeplot info
-            scree.pca <- ifelse(input$scree.pca=="none", FALSE, TRUE)
-            scree.da <- ifelse(input$scree.da=="none", FALSE, TRUE)
+            scree.pca <- ifelse(input$screepca=="none", FALSE, TRUE)
+            scree.da <- ifelse(input$screeda=="none", FALSE, TRUE)
             cellipse <- ifelse(input$ellipses, 1.5, 0)
             cstar <- ifelse(input$ellipses, 1, 0)
             scatter(dapc1, xax=input$xax, yax=input$yax, col=myCol,
                     scree.pca=scree.pca, scree.da=scree.da,
-                    posi.pca=input$scree.pca, posi.da=input$scree.da,
+                    posi.pca=input$screepca, posi.da=input$screeda,
                     cellipse=cellipse, cstar=cstar, mstree=input$mstree,
                     cex=input$pointsize, clabel=input$labelsize, solid=1-input$alpha)
         }
