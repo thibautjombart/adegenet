@@ -10,8 +10,11 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
   
   ## CHECKS ##
   grp <- factor(grp)
-  n.pca <- n.pca[n.pca>0]
-  n.da <- length(levels(grp))-1
+  n.pca <- n.pca[n.pca > 0]
+  if(missing(n.da)){
+  n.da <- length(levels(grp))-1}
+  else{
+    n.da <- n.da}
   if(missing(training.set)){
     training.set <- 0.9}
   else{
