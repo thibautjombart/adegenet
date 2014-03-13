@@ -111,7 +111,7 @@ shinyServer(function(input, output) {
     ## CROSS-VALIDATION
     ## DYNAMIC TICKBOX (TICKED IF OPTIMNPCA CHOSEN)
     output$doxval <- renderUI({
-        checkboxInput("useoptimnpca", "Perform cross validation (computer intensive)?", input$useoptimnpca)
+        checkboxInput("doxval", "Perform cross validation (computer intensive)?", input$doxval)
     })
    
    ## DYNAMIC SLIDER FOR MAX NPCA SELECTION
@@ -290,4 +290,132 @@ shinyServer(function(input, output) {
         }
     })
 
+   
+   ## DYNAMIC SELECTION OF DISCRIMINANT AXIS FOR LOADING PLOT
+   output$LPax <- renderUI({
+     def <- 1
+     nda <- 1
+     nmax <- 2
+          if(!is.null(x <- getData())) {
+            if(!is.null(input$nda)) nda <- input$nda
+            nmax <- nda
+            if(!is.null(input$LPax)) def <- input$LPax
+          }
+     
+     numericInput("LPax", "Select discriminant axis", value=def, min=1, max=nmax)
+   })
+   
+   
+   
+   # REACTIVE THRESHOLD/SNP SELECTION FUNCTION if using snpzip-like method
+   selector <- reactive({
+     
+     dimension <- 1 
+     
+     dapc1 <- getDapc()
+     if(!is.null(dapc1)){
+       if(!is.null(input$thresholdMethod)) method <- input$thresholdMethod
+       if(!is.null(input$LPaxis)) dimension <- input$LPaxis
+       x <- getData()
+       mat <- as.matrix(na.replace(x, method="mean", quiet=TRUE))
+     }
+     
+     if(method=="quantile"){
+       x <- dapc1$var.contr[,dimension]
+       thresh <- quantile(x,0.75)
+       maximus <- which(x > thresh)
+       n.snp.selected <- length(maximus)
+       sel.snps <- mat[,maximus]
+     }
+     else{
+     z <- dapc1$var.contr[,dimension]
+     xTotal <- dapc1$var.contr[,dimension]
+     toto <- which(xTotal%in%tail(sort(xTotal), 2000))
+     z <- sapply(toto, function(e) xTotal[e])
+     
+     D <- dist(z)
+     clust <- hclust(D,method)
+     pop <- factor(cutree(clust,k=2,h=NULL))
+     m <- which.max(tapply(z,pop,mean))
+     maximus <- which(pop==m)
+     maximus <- as.vector(unlist(sapply(maximus, function(e) toto[e])))    
+     popvect <- as.vector(unclass(pop))
+     n.snp.selected <- sum(popvect==m)
+     sel.snps <- mat[,maximus]
+     }
+
+     selection <- c((ncol(mat)-ncol(mat[,-maximus])), ncol(mat[,-maximus]))
+     resultat <- list(selection, maximus, dimnames(sel.snps)[[2]], dapc1$var.contr[maximus, dimension])
+     return(resultat)
+   })
+   
+   
+   
+   ## MAKE LOADINGPLOT ##
+   output$loadingplot <- renderPlot({
+     dapc1 <- getDapc()
+     LPaxis <- 1
+     if(!is.null(dapc1)){
+       ## get loadings for LP axis
+       LPaxis <- 1
+       if(!is.null(input$LPax)) LPaxis <- input$LPax
+       if(input$threshold){
+         # if threshold is by quantile
+         if(input$thresholdMethod=="quantile"){
+           x <- dapc1$var.contr[,LPaxis]
+           def <- quantile(x,0.75)
+         }else{
+           # if threshold is by clustering                    
+           select <- selector()
+           thresh <- select[[2]]
+           def <- abs(dapc1$var.contr[thresh][(which.min(dapc1$var.contr[thresh]))])-0.000001}
+       } 
+       else{
+         def <- NULL}
+       loadingplot(dapc1$var.contr[,LPaxis], threshold=def) 
+     }
+   })
+   
+   
+   ## FEATURE SELECTION OUTPUT
+   output$FS1 <-renderPrint({
+     if(input$FS){
+     fs1 <- selector()
+     if(!is.null(fs1)){
+       print(fs1[[1]])
+     }
+     }
+   })
+   
+   output$FS2 <-renderPrint({
+     if(input$FS){
+     fs1 <- selector()
+     if(!is.null(fs1)){
+       print(fs1[[2]])
+     }
+     }
+   })
+   
+   output$FS3 <-renderPrint({
+     if(input$FS){
+     fs1 <- selector()
+     if(!is.null(fs1)){
+       print(fs1[[3]])
+     }
+     }
+   })
+   
+   output$FS4 <-renderPrint({
+     if(input$FS){
+     fs1 <- selector()
+     if(!is.null(fs1)){
+       print(fs1[[4]])
+     }
+     }
+   })
+   
+   
+
+   
+   
 })
