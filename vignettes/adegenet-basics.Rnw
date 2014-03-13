@@ -55,11 +55,11 @@ opts_chunk$set(fig.path='figs/base-', fig.keep='high', dev='pdf', fig.width=7, f
 \begin{abstract}
   This vignette provides an introductory tutorial to the \textit{adegenet} package \cite{tjart05}
   for the R software \cite{np145}. This package implements tools to handle, analyse and simulate
-  genetic data.  Originally developped for multiallelic, codominant markers such as microsatellites,
-  \textit{adegenet} now also handles dominant markers, allows for any ploidy in the data, and
-  implements the most memory-efficient storage and handling of genome-wide SNP data. This vignette
-  introduces basic functionalities of the package. Other vignettes are dedicated to specific topics
-  (see Introduction below).
+  genetic data. Originally developped for multiallelic, codominant markers such as microsatellites,
+  \textit{adegenet} now also handles dominant markers, allows for any ploidy in the data, handles
+  SNPs and sequence data, and implements a memory-efficient storage for genome-wide SNP data.
+  This tutorial provides an overview of \textit{adegenet}'s basic functionalities. Since
+  \textit{adegenet} 1.4-0, this tutorial is no longer distributed as a package vignette.
 \end{abstract}
 
 
@@ -86,20 +86,19 @@ Principal Components (DAPC, \cite{tjart19}), the spatial Principal Components An
 
 
 Data can be imported from a wide range of formats, including those of
-popular software (GENETIX, STRUCTURE, Fstat, Genepop), or from simple dataframes of genotypes.
+popular population genetics software (GENETIX, STRUCTURE, Fstat, Genepop), or from simple dataframes of genotypes.
 Polymorphic sites can be extracted from both nucleotide and amino-acid sequences, with special
-methods for handling genome-wide SNPs data with maximum efficiency.
+methods for handling genome-wide SNPs data with miminum RAM requirements.
 \\
 
 In this tutorial, we first introduce the \texttt{genind} and \texttt{genpop} classes used to store
 multiallelic markers (respectively for individuals and populations), and then show how to extract
-information from these objects using a variety of tools.  Other vignettes are dedicated to some
+information from these objects using a variety of tools. Other tutorials are dedicated to some
 specific topics:
 \begin{itemize}
-\item sPCA: accessed by typing \texttt{vignette("adegenet-spca",package='adegenet')}; dedicated to sPCA.
-\item DAPC: accessed by typing \texttt{vignette("adegenet-dapc",package='adegenet')}; dedicated to DAPC.
-\item genomics: accessed by typing \texttt{vignette("adegenet-genomics",package='adegenet')};
-  dedicated to genome-wide SNP data handling and analysis.
+\item sPCA: dedicated to the spatial Principal Components Analysis.
+\item DAPC: dedicated to the Discriminant Analysis of Principal Components.
+\item genomics: dedicated to memory-efficient genome-wide SNP data handling and analysis using the \texttt{genlight} class.
 \end{itemize}
 
 
@@ -119,7 +118,7 @@ specific topics:
 Before going further, we shall make sure that \textit{adegenet} is well installed
 on the computer.
 Current version of the package is \Sexpr{packageDescription("adegenet", fields = "Version")}.
-Make sure you have a recent version of R ($\geq 2.13.0$) by typing:
+Make sure you have a recent version of R ($\geq 3.0.3$) by typing:
 <<>>=
 R.version.string
 @
@@ -129,16 +128,15 @@ Then, install \textit{adegenet} with dependencies using:
 install.packages("adegenet", dep=TRUE)
 @
 
-We can now load the package using:
-<<echo=FALSE, results='hide'>>=
+We can now load the package alongside other useful packages:
+<<results='hide'>>=
 library(ape)
-library(seqinr)
 library(genetics)
-@
-<<>>=
+library(pegas)
+library(seqinr)
+library(ggplot2)
 library(adegenet)
 @
-
 \noindent You can make sure that the right version of the package is installed using:
 <<>>=
 packageDescription("adegenet", fields = "Version")
@@ -187,8 +185,6 @@ adegenetWeb()
 @
 The same can be done for tutorials, using \texttt{adegenetTutorial} (see
 manpage to choose the tutorial to open).
-Alternatively, one can use \texttt{vignette}, for which \texttt{adegenetTutorial} is merely a wrapper.
-
 You will also find an overview of the main functionalities of the package typing:
 <<eval=FALSE>>=
 ?adegenet

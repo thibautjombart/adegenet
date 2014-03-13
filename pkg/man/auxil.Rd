@@ -1,8 +1,6 @@
 \encoding{UTF-8}
 \docType{methods}
 \name{Auxiliary functions}
-\alias{adegenetWeb}
-%\alias{adegenetTutorial}
 \alias{checkType}
 \alias{.rmspaces}
 \alias{.genlab}
@@ -34,12 +32,10 @@
   access documentation, and low-level treatment of character vectors.
 
   These functions are mostly auxiliary procedures used internally in
-  adegenet, with the exception of, which opens the
-  adegenet website in the default navigator.\cr
+  adegenet.\cr
 
   These items include:
   \itemize{
-    \item \code{adegenetWeb}: opens the adegenet website in a web navigator
     \item \code{num2col}: translates a numeric vector into colors. 
     \item \code{fac2col}: translates a factor into colors. 
     \item \code{any2col}: translates a vector of type numeric, character
@@ -74,7 +70,6 @@
   The R package RColorBrewer, proposing a nice selection of color palettes.
 }
 \usage{
-adegenetWeb()
 .genlab(base, n)
 corner(text, posi="topleft",  inset=0.1, \dots)
 num2col(x, col.pal=heat.colors, reverse=FALSE,
@@ -118,11 +113,6 @@ transp(col, alpha=.5)
 }
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
-\dontrun{
-## this opens the adegenet website
-adegenetWeb()
-
-}
 
 .genlab("Locus-",11)
 

@@ -70,28 +70,44 @@ adegenetWeb <- function(){
 
 
 
-## ############################
-## # Function adegenetTutorial
-## ############################
-## adegenetTutorial <- function(which=c("basics","spca")){
-##     which <- match.arg(which)
-##     if(which=="general"){
-##         url <- "http://adegenet.r-forge.r-project.org/files/adegenet.pdf"
-##         cat("\n")
-##         cat("  >> Seeking the general tutorial for adegenet.\n")
-##         cat("  >> Opening url \"",url,"\".\n ", sep="")
-##         cat("\n")
-##         browseURL(url)
-##     }
-##     if(which=="spca"){
-##         url <- "http://adegenet.r-forge.r-project.org/files/tutorial-spca.pdf"
-##         cat("\n")
-##         cat("  >> Seeking the sPCA tutorial for adegenet.\n")
-##         cat("  >> Opening url \"",url,"\". \n", sep="")
-##         cat("\n")
-##         browseURL(url)
-##     }
-## }
+############################
+# Function adegenetTutorial
+############################
+adegenetTutorial <- function(which=c("basics","spca","dapc","genomics")){
+    which <- match.arg(which)
+    if(which=="general"){
+        url <- "http://adegenet.r-forge.r-project.org/files/tutorial-basics.pdf"
+        cat("\n")
+        cat("  >> Opening the general introduction to adegenet.\n")
+        cat("  >> Seeking url: ",url,"\n ", sep="")
+        cat("\n")
+    }
+    if(which=="spca"){
+        url <- "http://adegenet.r-forge.r-project.org/files/tutorial-spca.pdf"
+        cat("\n")
+        cat("  >> Opening the sPCA tutorial.\n")
+        cat("  >> Seeking url: ",url,"\n ", sep="")
+        cat("\n")
+    }
+    if(which=="dapc"){
+        url <- "http://adegenet.r-forge.r-project.org/files/tutorial-dapc.pdf"
+        cat("\n")
+        cat("  >> Opening the DAPC tutorial.\n")
+        cat("  >> Seeking url: ",url,"\n ", sep="")
+        cat("\n")
+    }
+    if(which=="genomics"){
+        url <- "http://adegenet.r-forge.r-project.org/files/tutorial-genomics.pdf"
+        cat("\n")
+        cat("  >> Opening the genomics tutorial.\n")
+        cat("  >> Seeking url: ",url,"\n ", sep="")
+        cat("\n")
+    }
+
+    browseURL(url)
+
+    return(invisible(NULL))
+}
 
 
 
