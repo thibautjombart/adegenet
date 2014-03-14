@@ -59,12 +59,12 @@ shinyServer(function(input, output) {
         if(!is.null(x <- getData())) {
           nmax <- min(dim(x@tab))
           def <- min(10, nmax)
-           
+
           if(input$useoptimnpca){
             xval1 <- xvaldapc()
             npca <- as.integer(xval1[[6]])
             def <- npca}
-           
+
         } else {
             nmax <- 1000
             def <- 1
@@ -113,7 +113,7 @@ shinyServer(function(input, output) {
     output$doxval <- renderUI({
         checkboxInput("doxval", "Perform cross validation (computer intensive)?", input$doxval)
     })
-   
+
    ## DYNAMIC SLIDER FOR MAX NPCA SELECTION
    output$npcaMax <- renderUI({
      if(!is.null(x <- getData())) {
@@ -125,7 +125,7 @@ shinyServer(function(input, output) {
      }
      sliderInput("npcaMax", "Maximum number of PCs:", min=1, max=nmax, value=def,step=1)
    })
-   
+
 
     ## CROSS-VALIDATION FUNCTION
     xvaldapc <- reactive({
@@ -290,7 +290,7 @@ shinyServer(function(input, output) {
         }
     })
 
-   
+
    ## DYNAMIC SELECTION OF DISCRIMINANT AXIS FOR LOADING PLOT
    output$LPax <- renderUI({
      def <- 1
@@ -301,17 +301,17 @@ shinyServer(function(input, output) {
             nmax <- nda
             if(!is.null(input$LPax)) def <- input$LPax
           }
-     
+
      numericInput("LPax", "Select discriminant axis", value=def, min=1, max=nmax)
    })
-   
-   
-   
+
+
+
    # REACTIVE THRESHOLD/SNP SELECTION FUNCTION if using snpzip-like method
    selector <- reactive({
-     
-     dimension <- 1 
-     
+
+     dimension <- 1
+
      dapc1 <- getDapc()
      if(!is.null(dapc1)){
        if(!is.null(input$thresholdMethod)) method <- input$thresholdMethod
@@ -319,7 +319,7 @@ shinyServer(function(input, output) {
        x <- getData()
        mat <- as.matrix(na.replace(x, method="mean", quiet=TRUE))
      }
-     
+
      if(method=="quantile"){
        x <- dapc1$var.contr[,dimension]
        thresh <- quantile(x,0.75)
@@ -332,13 +332,13 @@ shinyServer(function(input, output) {
      xTotal <- dapc1$var.contr[,dimension]
      toto <- which(xTotal%in%tail(sort(xTotal), 2000))
      z <- sapply(toto, function(e) xTotal[e])
-     
+
      D <- dist(z)
      clust <- hclust(D,method)
      pop <- factor(cutree(clust,k=2,h=NULL))
      m <- which.max(tapply(z,pop,mean))
      maximus <- which(pop==m)
-     maximus <- as.vector(unlist(sapply(maximus, function(e) toto[e])))    
+     maximus <- as.vector(unlist(sapply(maximus, function(e) toto[e])))
      popvect <- as.vector(unclass(pop))
      n.snp.selected <- sum(popvect==m)
      sel.snps <- mat[,maximus]
@@ -348,9 +348,9 @@ shinyServer(function(input, output) {
      resultat <- list(selection, maximus, dimnames(sel.snps)[[2]], dapc1$var.contr[maximus, dimension])
      return(resultat)
    })
-   
-   
-   
+
+
+
    ## MAKE LOADINGPLOT ##
    output$loadingplot <- renderPlot({
      dapc1 <- getDapc()
@@ -365,18 +365,18 @@ shinyServer(function(input, output) {
            x <- dapc1$var.contr[,LPaxis]
            def <- quantile(x,0.75)
          }else{
-           # if threshold is by clustering                    
+           # if threshold is by clustering
            select <- selector()
            thresh <- select[[2]]
            def <- abs(dapc1$var.contr[thresh][(which.min(dapc1$var.contr[thresh]))])-0.000001}
-       } 
+       }
        else{
          def <- NULL}
-       loadingplot(dapc1$var.contr[,LPaxis], threshold=def) 
+       loadingplot(dapc1$var.contr[,LPaxis], threshold=def)
      }
    })
-   
-   
+
+
    ## FEATURE SELECTION OUTPUT
    output$FS1 <-renderPrint({
      if(input$FS){
@@ -386,7 +386,7 @@ shinyServer(function(input, output) {
      }
      }
    })
-   
+
    output$FS2 <-renderPrint({
      if(input$FS){
      fs1 <- selector()
@@ -395,7 +395,7 @@ shinyServer(function(input, output) {
      }
      }
    })
-   
+
    output$FS3 <-renderPrint({
      if(input$FS){
      fs1 <- selector()
@@ -404,7 +404,7 @@ shinyServer(function(input, output) {
      }
      }
    })
-   
+
    output$FS4 <-renderPrint({
      if(input$FS){
      fs1 <- selector()
@@ -413,9 +413,5 @@ shinyServer(function(input, output) {
      }
      }
    })
-   
-   
 
-   
-   
-})
+}) # end shinyServer
