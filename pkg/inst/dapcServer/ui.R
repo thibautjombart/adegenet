@@ -321,6 +321,8 @@ shinyUI(
                                                        ## EMAIL ##
                                                        h3(br(),"Ask your questions on the adegenet forum"),
                                                        p("Use the adegenet forum to ask all non-confidential questions: ", a("send an email", href="mailto:adegenet-forum@lists.r-forge.r-project.org", target="_top")),
+                                                       p("Make sure to describe your problem clearly and to provide, whenever possible, a reproducible example for any reported error. Please also give your session info (copy and paste the content of the serverInfo tab at the end of your email)"),
+                                                       
                                                        p("Note that this mailing list is moderated, and if not subscribed your post may be differed by a day or two. To subscribe to the mailing list, go to", a("this page", href="http://lists.r-forge.r-project.org/cgi-bin/mailman/listinfo/adegenet-forum", target="_blank")),
 
 
@@ -331,7 +333,7 @@ shinyUI(
                                                        p("Jombart T.(2008) adegenet: a R package for the multivariate analysis of genetic markers. Bioinformatics 24: 1403-1405. doi:10.1093/bioinformatics/btn129", a("[link to paper]", href="http://bioinformatics.oxfordjournals.org/cgi/reprint/btn129?ijkey=6sqx5BTXCdYtBZz&keytype=ref", target="_blank")),
                                                        p("Jombart T. and Ahmed I. (2011) adegenet 1.3-1: new tools for the analysis of genome-wide SNP data. Bioinformatics. doi: 10.1093/bioinformatics/btr521"),
 
-                                                       h4("Citation for the DAPC:"),
+                                                       h5("Citation for the DAPC:"),
                                                        p("Jombart T, Devillard S and Balloux F (2010) Discriminant analysis of principal components: a new method for the analysis of genetically structured populations. BMC Genetics 11:94. doi:10.1186/1471-2156-11-94", a("[link to paper]", href="http://www.biomedcentral.com/1471-2156/11/94", target="_blank")),
 
 
@@ -418,7 +420,7 @@ shinyUI(
                   above or below."),
                                                        p("Below the plot, a variety of summary statistics are provided.
                   Ultimately, it is the number of PCs associated with the lowest RMSE (root mean squared error,
-                  see Glossary) which is selected if 'Use suggested number of PCA components?' is ticked.")
+                  see Glossary) which is selected if 'Use suggested number of PCA components?' is ticked.",br(),br(),br())
 
 
 
@@ -426,9 +428,8 @@ shinyUI(
 
 
 
-##############
-                                              ## Glossary ##
-##############
+
+                                              ## GLOSSARY ##
 
                                               tabPanel("Glossary",
                                                        h3("Compoplot"),
@@ -488,11 +489,13 @@ shinyUI(
                                                        h3("Training set"),
                                                        p("The training set, in cross-validation, is the set of individuals retained in the analysis.
                   The complement of the training set is the 'validation set', which contains the remaining individuals excluded from the analysis
-                  who are used to test the performance of the model which varies as a function of the number of PCs retained.")
-                                                       ) # end Glossary
+                  who are used to test the performance of the model which varies as a function of the number of PCs retained.",br(),br(),br())
+                                                       ), # end Glossary
 
 
+                                              ## SERVER INFO ##
 
+                                              tabPanel("System info", verbatimTextOutput("systeminfo"))
                                               ) # end tabsetPanel
                                   ) # end mainPanel
                         ) # end pageWithSidebar

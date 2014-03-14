@@ -414,4 +414,7 @@ shinyServer(function(input, output) {
      }
    })
 
+    ## RENDER SYSTEM INFO ##
+    output$systeminfo <- .render.server.info()
+
 }) # end shinyServer

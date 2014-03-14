@@ -52,6 +52,8 @@
    \code{seqinr}, see \code{\link[seqinr]{as.alignment}}) using the
    function \code{\link{alignment2genind}}. \cr
 
+   The function \code{\link{fasta2DNAbin}} allows for reading fasta
+   files into DNAbin object with minimum RAM requirements.\cr
 
   It is also possible to read genotypes coded by character strings from
   a data.frame in which genotypes are in rows, markers in columns. For
@@ -144,6 +146,14 @@
    2010) .\cr
    \code{\link{glPca}}: implements PCA for \linkS4class{genlight}
    objects.\cr
+   - \code{\link{gengraph}}: implements some simple graph-based
+   clustering using genetic data.
+   - \code{\link{snpposi.plot}} and \code{\link{snpposi.test}}:
+   visualize the distribution of SNPs on a genetic sequence and test
+   their randomness.
+   - \code{\link{adegenetServer}}: opens up a web interface for some
+   functionalities of the package (DAPC with cross validation and
+   feature selection).\cr
 
 
 
@@ -179,8 +189,10 @@
    - \code{\link{sim2pop}}: Simulated genotypes of two georeferenced populations.\cr
    - \code{\link{spcaIllus}}: Simulated data illustrating the sPCA. \cr
 
-   For more information, visit the adegenet website by typing
-   \code{adegenetWeb()}.\cr
+   For more information, visit the adegenet website using the function
+   \code{\link{adegenetWeb}}.\cr
+
+   Tutorials are available via the command \code{\link{adegenetTutorials}}.\cr
 
 
    To cite adegenet, please use the reference given by
@@ -190,10 +202,10 @@
   \tabular{ll}{
     Package: \tab adegenet\cr
     Type: \tab Package\cr
-    Version: \tab 1.3-9.2\cr
-    Date: \tab 2013-08-05 \cr
+    Version: \tab 1.4-0\cr
+    Date: \tab 2014-03-14 \cr
     License: \tab GPL (>=2)
-  } 
+  }
 }
 \author{
   Thibaut Jombart <t.jombart@imperial.ac.uk>\cr
@@ -206,6 +218,10 @@
   Jombart T. (2008) adegenet: a R package for the multivariate analysis
   of genetic markers \emph{Bioinformatics} 24: 1403-1405. doi:
   10.1093/bioinformatics/btn129\cr
+
+  Jombart T. and Ahmed I. (2011) adegenet 1.3-1: new tools for the
+  analysis of genome-wide SNP data.  \emph{Bioinformatics}. doi:
+  10.1093/bioinformatics/btr521
 
   Jombart T, Devillard S and Balloux F (2010) Discriminant analysis of
   principal components: a new method for the analysis of genetically
@@ -233,5 +249,6 @@
   - \code{pegas} for population genetics tools\cr
   - \code{ape} for phylogenetics and DNA data handling\cr
   - \code{seqinr} for handling nucleic and proteic sequences\cr
+  - \code{shiny} for R-based web interfaces\cr
 }
 

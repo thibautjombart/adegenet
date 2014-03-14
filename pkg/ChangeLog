@@ -1,3 +1,24 @@
+			CHANGES IN ADEGENET VERSION 1.4-0
+NEW FEATURES
+	o adegenet now incorporates a web interface for DAPC, started by
+	the command adegenetServer("dapc")
+
+	o 'xvalDapc' has been modified to incorporate heterogeneous sample
+	sizes
+
+	o the new function 'snpzip' implements feature selection using DAPC
+
+	o 'snpposi.plot' plots SNP density across a DNA sequence
+
+	o 'snpposi.test' tests for randomness in the distribution of SNPs
+	across a DNA sequence
+
+	o the package is no longer distributed with vignettes; instead,
+	tutorials are available from the adegenet website, and can be
+	accessed from R directly by the function 'adegenetTutorial'.
+
+
+
 			CHANGES IN ADEGENET VERSION 1.3-9.2
 FIXES
 	o fixed NAMESPACE to get rid of a warning due to conflicting
