@@ -75,7 +75,7 @@ adegenetWeb <- function(){
 ############################
 adegenetTutorial <- function(which=c("basics","spca","dapc","genomics")){
     which <- match.arg(which)
-    if(which=="general"){
+    if(which=="basics"){
         url <- "http://adegenet.r-forge.r-project.org/files/tutorial-basics.pdf"
         cat("\n")
         cat("  >> Opening the general introduction to adegenet.\n")
