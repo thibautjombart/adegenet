@@ -1,56 +1,53 @@
-\documentclass{article}
-% \VignettePackage{spca}
-% \VignetteIndexEntry{A tutorial for spatial Analysis of Principal Components}
-
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
 \usepackage{graphicx}
-\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
-\usepackage{array}
 \usepackage{color}
+\definecolor{blue1}{RGB}{0,102,204}
+%% \usepackage[colorlinks=true,linkcolor=blue1,citecolor=blue1,urlcolor=blue1]{hyperref}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{array}
+\usepackage[english]{babel}
 \usepackage{amsfonts}
-
-\usepackage[utf8]{inputenc} % for UTF-8/single quotes from sQuote()
-
-
-% for bold symbols in mathmode
+\usepackage{url}
 \usepackage{bm}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[affil-it]{authblk}
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\beq}{\begin{equation}}
 \newcommand{\eeq}{\end{equation}}
 \newcommand{\m}[1]{\mathbf{#1}}
-
-
-
+\newcommand{\rcmd}[1]{\textcolor{red}{\texttt{#1}}}
 \newcommand{\code}[1]{{{\tt #1}}}
+\newcommand{\Rlogo}{\includegraphics[width=0.05\textwidth]{figs/Rlogo.pdf}}
+
 \title{A tutorial for the spatial Analysis of Principal Components (sPCA) using \textit{adegenet} \Sexpr{packageDescription("adegenet", fields = "Version")}}
-\author{Thibaut Jombart}
+
+\author{Thibaut Jombart
+  \thanks{\texttt{tjombart@imperial.ac.uk}}
+}
+\affil{{\footnotesize Imperial College London \\MRC Centre for Outbreak Analysis and Modelling}}
+
+%% \date{\today}
 \date{\today}
-
-
-
 
 \sloppy
 \hyphenpenalty 10000
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
-
-
+\selectlanguage{english}
 
 <<include=FALSE>>=
-opts_chunk$set(fig.path='spca', echo=TRUE, eval=TRUE, fig.keep='none', dev='pdf')
+opts_chunk$set(fig.path='figs/spca-', fig.keep='high', dev='pdf', fig.width=7, fig.height=7,
+               tidy=FALSE, warning=FALSE, fig.show="asis", fig.align='center', out.width=".8\\textwidth")
 @
 
-
-
-\definecolor{Soutput}{rgb}{0,0,0.56}
-\definecolor{Sinput}{rgb}{0.56,0,0}
-\DefineVerbatimEnvironment{Sinput}{Verbatim}
-{formatcom={\color{Sinput}},fontsize=\footnotesize, baselinestretch=0.75}
-\DefineVerbatimEnvironment{Soutput}{Verbatim}
-{formatcom={\color{Soutput}},fontsize=\footnotesize, baselinestretch=0.75}
-
 \color{black}
+
+
 
 \maketitle
 
@@ -158,12 +155,9 @@ analyzed in \cite{tjart04}, and corresponds to Figure 2A of the article.
 In \textit{adegenet}, the matrix of alleles frequencies previously
 denoted $\m{X}$ exactly corresponds to the \texttt{@tab} slot of \texttt{genind} or
 \texttt{genpop} objects:
-<<echo=FALSE,results='hide'>>=
-library(adehabitat)
-library(spdep)
-@
 <<>>=
 library(adegenet)
+library(spdep)
 library(adehabitat)
 data(spcaIllus)
 obj <- spcaIllus$dat2A
@@ -296,9 +290,10 @@ First, eigenvalues of the analysis are stored inside the
 head(mySpca$eig)
 tail(mySpca$eig)
 length(mySpca$eig)
-myPal <- colorRampPalette(c("red","grey","blue"))
-barplot(mySpca$eig, main="A variant of the plot\n of sPCA eigenvalues", col=myPal(length(mySpca$eig)))
-legend("topright", fill=c("red","blue"), leg=c("Global structures", "Local structures"))
+barplot(mySpca$eig, main="A variant of the plot\n of sPCA eigenvalues",
+        col=spectral(length(mySpca$eig)))
+legend("topright", fill=spectral(2),
+       leg=c("Global structures", "Local structures"))
 abline(h=0,col="grey")
 @
 
@@ -486,7 +481,8 @@ y <- other(obj)$xy[,2]
 @
 <<dev='png'>>=
 temp <- interp(x, y, mySpca$li[,1])
-image(temp)
+image(temp, col=azur(100))
+points(x,y)
 @
 
 \noindent Note that for better clarity, we can use the lagged principal scores (\texttt{\$ls})
@@ -496,7 +492,8 @@ interpolated coordinates:
 interpX <- seq(min(x),max(x),le=200)
 interpY <- seq(min(y),max(y),le=200)
 temp <- interp(x, y, mySpca$ls[,1], xo=interpX, yo=interpY)
-image(temp)
+image(temp, col=azur(100))
+points(x,y)
 @
 
 \noindent Alternatively, \texttt{filled.contour} can be used for the display, and a customized color
@@ -507,7 +504,8 @@ annot <- function(){
     title("sPCA - interpolated map of individual scores")
     points(x,y)
 }
-filled.contour(temp, color.pal=myPal, nlev=50, key.title=title("lagged \nscore 1"), plot.title=annot())
+filled.contour(temp, color.pal=myPal, nlev=50,
+               key.title=title("lagged \nscore 1"), plot.title=annot())
 @
 ~\\
 
@@ -757,7 +755,8 @@ For these data, spatial connectivity is best defined as the overlap between home
 individuals, modelled as disks with a radius of 1150m.
 \texttt{chooseCN} is used to create the corresponding connection network:
 <<>>=
-rupica.graph <- chooseCN(rupica$other$xy,type=5,d1=0,d2=2300, plot=FALSE, res="listw")
+rupica.graph <- chooseCN(rupica$other$xy,type=5,d1=0,d2=2300, plot=FALSE,
+                         res="listw")
 @
 The connection network should ressemble this:
 <<dev='png'>>=
@@ -826,8 +825,10 @@ look for spatial patterns. This is the role of the spatial Principal Component A
 We apply an sPCA to the \texttt{rupica} dataset, using the connection network used previously in
 Moran's $I$ tests:
 <<echo=TRUE>>=
-rupica.spca1 <- spca(rupica, cn=rupica.graph,scannf=FALSE, nfposi=2,nfnega=0)
-barplot(rupica.spca1$eig, col=rep(c("red","grey"), c(2,1000)), main="rupica dataset - sPCA eigenvalues")
+rupica.spca1 <- spca(rupica, cn=rupica.graph,scannf=FALSE,
+                     nfposi=2,nfnega=0)
+barplot(rupica.spca1$eig, col=rep(c("red","grey"), c(2,1000)),
+        main="rupica dataset - sPCA eigenvalues")
 @
 
 \noindent The principal components associated with the first two
@@ -885,8 +886,10 @@ Both genetic structures can be represented altogether using \texttt{colorplot}.
 The final figure should ressemble this (although colors may change from one computer to another):
 <<dev='png'>>=
 showBauges()
-colorplot(rupica$other$xy, rupica.spca1$ls, axes=1:2, transp=TRUE, add=TRUE, cex=3)
-title("sPCA - colorplot of PC 1 and 2\n(lagged scores)", col.main="yellow", line=-2, cex=2)
+colorplot(rupica$other$xy, rupica.spca1$ls, axes=1:2, transp=TRUE, add=TRUE,
+          cex=3)
+title("sPCA - colorplot of PC 1 and 2\n(lagged scores)", col.main="yellow",
+      line=-2, cex=2)
 @
 
 %% \begin{center}
