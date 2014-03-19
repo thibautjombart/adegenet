@@ -1,41 +1,52 @@
-\documentclass{article}
-% \VignettePackage{adegenet-genomics}
-% \VignetteIndexEntry{Analysing genome-wide SNP data using adegenet}
-
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
 \usepackage{graphicx}
-\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
-\usepackage{array}
 \usepackage{color}
+\definecolor{blue1}{RGB}{0,102,204}
+%% \usepackage[colorlinks=true,linkcolor=blue1,citecolor=blue1,urlcolor=blue1]{hyperref}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{array}
+\usepackage[english]{babel}
+\usepackage{amsfonts}
+\usepackage{url}
+\usepackage{bm}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[affil-it]{authblk}
 
-\usepackage[utf8]{inputenc} % for UTF-8/single quotes from sQuote()
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\beq}{\begin{equation}}
+\newcommand{\eeq}{\end{equation}}
+\newcommand{\m}[1]{\mathbf{#1}}
+\newcommand{\rcmd}[1]{\textcolor{red}{\texttt{#1}}}
 \newcommand{\code}[1]{{{\tt #1}}}
+\newcommand{\Rlogo}{\includegraphics[width=0.05\textwidth]{figs/Rlogo.pdf}}
+
 \title{Analysing genome-wide SNP data using  \textit{adegenet} \Sexpr{packageDescription("adegenet", fields = "Version")}}
-\author{Thibaut Jombart}
+
+
+\author{Thibaut Jombart and Caitlin Collins
+  \thanks{\texttt{tjombart@imperial.ac.uk}, \texttt{caitlin.collins12@imperial.ac.uk}}
+}
+\affil{{\footnotesize Imperial College London \\MRC Centre for Outbreak Analysis and Modelling}}
+
+%% \date{\today}
 \date{\today}
-
-
-
 
 \sloppy
 \hyphenpenalty 10000
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
-
+\selectlanguage{english}
 
 <<include=FALSE>>=
-opts_chunk$set(fig.path='genomics', echo=TRUE, eval=TRUE, fig.keep='none', dev='pdf')
+opts_chunk$set(fig.path='figs/genomics-', fig.keep='high', dev='pdf', fig.width=7, fig.height=7,
+               tidy=FALSE, warning=FALSE, fig.show="asis", fig.align='center', out.width=".8\\textwidth")
 @
 
 
-
-
-\definecolor{Soutput}{rgb}{0,0,0.56}
-\definecolor{Sinput}{rgb}{0.56,0,0}
-\DefineVerbatimEnvironment{Sinput}{Verbatim}
-{formatcom={\color{Sinput}},fontsize=\footnotesize, baselinestretch=0.75}
-\DefineVerbatimEnvironment{Soutput}{Verbatim}
-{formatcom={\color{Soutput}},fontsize=\footnotesize, baselinestretch=0.75}
 
 \color{black}
 
@@ -246,10 +257,12 @@ Ploidy has to be consistent across loci for a given individual, but individuals 
 the same ploidy, so that it is possible to have hapoid,
 diploid, and tetraploid individuals in the same dataset; for instance:
 <<eval=FALSE>>=
-x <- new("genlight", list(indiv1=c(1,1,0,1,1,0), indiv2=c(2,1,1,0,0,0), toto=c(2,2,0,0,4,4)))
+x <- new("genlight", list(indiv1=c(1,1,0,1,1,0), indiv2=c(2,1,1,0,0,0),
+                          toto=c(2,2,0,0,4,4)))
 @
 <<echo=FALSE>>=
-x <- new("genlight", list(indiv1=c(1,1,0,1,1,0), indiv2=c(2,1,1,0,0,0), toto=c(2,2,0,0,4,4)), parallel=FALSE)
+x <- new("genlight", list(indiv1=c(1,1,0,1,1,0), indiv2=c(2,1,1,0,0,0),
+                          toto=c(2,2,0,0,4,4)), parallel=FALSE)
 @
 <<>>=
 x
@@ -268,7 +281,8 @@ as the one above returned by \texttt{as.matrix}.
 However, they offer the advantage of efficient storage of the information; for instance, we can
 simulate 50 individuals typed for 100,000 SNPs each (including occasional NAs):
 <<>>=
-dat <- lapply(1:50, function(i) sample(c(0,1,NA), 1e5, prob=c(.5, .499, .001), replace=TRUE))
+dat <- lapply(1:50, function(i) sample(c(0,1,NA), 1e5, prob=c(.5, .499, .001),
+                                       replace=TRUE))
 names(dat) <- paste("indiv", 1:length(dat))
 print(object.size(dat),unit="auto")
 @
@@ -523,7 +537,8 @@ Brit Brit Fren monster NA
 \end{verbatim}
 We read the file in using:
 <<readsnp>>=
-obj <- read.snp(system.file("files/exampleSnpDat.snp",package="adegenet"), chunk=2, parallel=FALSE)
+obj <- read.snp(system.file("files/exampleSnpDat.snp",package="adegenet"),
+                chunk=2, parallel=FALSE)
 obj
 as.matrix(obj, parallel=FALSE)
 alleles(obj)
@@ -605,15 +620,24 @@ head(locNames(flu), 20)
 genome; this is very easily done in R, using \texttt{density} with an appropriate bandewidth:
 <<tidy=FALSE>>=
 temp <- density(position(flu), bw=10)
-plot(temp, type="n", xlab="Position in the alignment", main="Location of the SNPs",
-     xlim=c(0,1701))
-polygon(c(temp$x,rev(temp$x)), c(temp$y, rep(0,length(temp$x))), col=transp("blue",.3))
+plot(temp, type="n", xlab="Position in the alignment",
+     main="Location of the SNPs", xlim=c(0,1701))
+polygon(c(temp$x,rev(temp$x)), c(temp$y, rep(0,length(temp$x))),
+        col=transp("blue",.3))
 points(position(flu), rep(0, nLoc(flu)), pch="|", col="blue")
 @
-
-\noindent In this case, SNPs are distributed fairly homogeneously across the HA segment, with
+As of \textit{adegenet} 1.4-0, this approach is available in \texttt{snpposi.plot}, which also
+allow, as an option, to represent density by codon position:
+<<>>=
+snpposi.plot(position(flu), genome.size=1700, codon=FALSE)
+snpposi.plot(position(flu), genome.size=1700)
+@
+\noindent In this case, SNPs seem to be distributed fairly homogeneously across the HA segment, with
 a few possible hotspots of polymorphism within positions 400---700.
-\\
+This can be tested by \texttt{snpposi.test}:
+<<cache=TRUE>>=
+snpposi.test(position(flu), genome.size=1700)
+@
 
 
 Note that retaining only biallelic sites may cause minor loss of information, as sites
@@ -621,7 +645,8 @@ with more than 2 alleles are discarded from the data.
 It is however possible to ask \texttt{fasta2genlight} to keep track of the number of alleles for
 each site of the original alignment, by specifying:
 <<>>=
-flu <- fasta2genlight(myPath, chunk=10,saveNbAlleles=TRUE, quiet=TRUE, parallel=FALSE)
+flu <- fasta2genlight(myPath, chunk=10,saveNbAlleles=TRUE, quiet=TRUE,
+                      parallel=FALSE)
 flu
 @
 
@@ -694,29 +719,16 @@ There are only a few missing data, and they only concern a couple of individuals
 \\
 
 In some simple cases, some biological structures might also be apparent in such plot.
-For instance, we can generate data with independent SNPs distributions for two groups:
-<<eval=FALSE>>=
-x <- glSim(100, 0, 100, ploidy=2)
+For instance, we can generate data for 100 diploid individuals belonging to 5 separate populations
+(i.e. with independent allele frequencies):
+<<>>=
+x <- glSim(100, 1000, k=5, block.maxsize=200, ploidy=2,
+           sort.pop=TRUE)
+plot(x, col=bluepal(3))
 @
-<<eval=FALSE>>=
-plot(x)
-@
-\begin{center}
-  \includegraphics{glsim1}
-\end{center}
-
-Strong patterns of LD between contiguous sites are also very easy to spot:
-<<eval=FALSE>>=
-x <- glSim(100, 100, ploidy=2, LD=TRUE, block.size=10)
-@
-<<eval=FALSE>>=
-plot(x)
-@
-\begin{center}
-  \includegraphics{glsim2}
-\end{center}
-
-Of course, this is merely a very preliminary approach to the data.
+Note that both population structures (vertical blocks) and patterns of LD between contiguous sites
+(horizontal blocks) are easy to spot on the above figure.
+Of course, data visualization merely is a preliminary approach to the data.
 More detailed analysis can be achieved using both standard and \textit{ad hoc} procedures as
 detailed below.
 
@@ -775,7 +787,7 @@ interesting biological signal.
 More generally and perhaps more importantly, this figure may also cast light on a well-known social
 phenomenon occuring mainly in young people attending noisy kinds of conferences:
 \begin{center}
-  \includegraphics{devilsign}
+  \includegraphics{figs/devilsign}
 \end{center}
 
 \noindent We can indeed wonder whether the gesture usually referred to as the '\textit{devil sign}'
@@ -871,7 +883,8 @@ This distinction is most of the time overlooked when analysing genetic data.
 As a matter of fact, it does not matter when all individuals have the same ploidy.
 For instance, if we take the following data:
 <<>>=
-x <- new("genlight", list(a=c(0,0,1,1), b=c(1,1,0,0), c=c(1,1,1,1)), parallel=FALSE)
+x <- new("genlight", list(a=c(0,0,1,1), b=c(1,1,0,0), c=c(1,1,1,1)),
+         parallel=FALSE)
 locNames(x) <- 1:4
 x
 as.matrix(x)
@@ -883,7 +896,8 @@ glMean(x)
 @
 Let us no consider a sightly different case:
 <<>>=
-x <- new("genlight", list(a=c(0,0,2,2), b=c(1,1,0,0), c=c(1,1,1,1)), parallel=FALSE)
+x <- new("genlight", list(a=c(0,0,2,2), b=c(1,1,0,0), c=c(1,1,1,1)),
+         parallel=FALSE)
 locNames(x) <- 1:4
 x
 as.matrix(x)
@@ -940,7 +954,7 @@ pca1 <- glPca(flu)
 load("Robjects/pca1.RData")
 @
 \begin{center}
-  \includegraphics{pca1}
+  \includegraphics{figs/pca1}
 \end{center}
 When \texttt{nf} (number of retained factors) is not specified, the function displays the barplot of
 eigenvalues of the analysis and asks the user for a number of retained principal components.
@@ -1032,7 +1046,7 @@ loadingplot(dapc1$var.contr, thres=1e-3)
 @
 
 \begin{center}
-  \includegraphics{loadingplotGL}
+  \includegraphics{figs/loadingplotGL}
 \end{center}
 
 \noindent And we can zoom in to the contributions of the last 100 SNPs to make sure that the tail indeed
@@ -1041,7 +1055,7 @@ corresponds to the 50 last structured loci:
 loadingplot(tail(dapc1$var.contr[,1],100), thres=1e-3)
 @
 \begin{center}
-  \includegraphics{loadingplotGLzoom}
+  \includegraphics{figs/loadingplotGLzoom}
 \end{center}
 
 \noindent Here, we indeed identified the structured region of the genome fairly well.
