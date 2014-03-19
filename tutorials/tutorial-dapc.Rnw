@@ -1,55 +1,54 @@
-\documentclass{article}
-% \VignettePackage{dapc}
-% \VignetteIndexEntry{An introduction to Discriminant Analysis of Principal Components (DAPC)}
 
+
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
 \usepackage{graphicx}
-\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
-\usepackage{array}
 \usepackage{color}
-
-\usepackage[utf8]{inputenc} % for UTF-8/single quotes from sQuote()
-
-
-% for bold symbols in mathmode
+\definecolor{blue1}{RGB}{0,102,204}
+%% \usepackage[colorlinks=true,linkcolor=blue1,citecolor=blue1,urlcolor=blue1]{hyperref}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{array}
+\usepackage[english]{babel}
+\usepackage{amsfonts}
+\usepackage{url}
 \usepackage{bm}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[affil-it]{authblk}
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\beq}{\begin{equation}}
 \newcommand{\eeq}{\end{equation}}
 \newcommand{\m}[1]{\mathbf{#1}}
-
-
-
+\newcommand{\rcmd}[1]{\textcolor{red}{\texttt{#1}}}
 \newcommand{\code}[1]{{{\tt #1}}}
+\newcommand{\Rlogo}{\includegraphics[width=0.05\textwidth]{figs/Rlogo.pdf}}
+
+
 \title{A tutorial for Discriminant Analysis of Principal Components (DAPC) using \textit{adegenet} \Sexpr{packageDescription("adegenet", fields = "Version")}}
-\author{Thibaut Jombart}
+\author{Thibaut Jombart
+  \thanks{\texttt{tjombart@imperial.ac.uk}}
+}
+\affil{{\footnotesize Imperial College London \\MRC Centre for Outbreak Analysis and Modelling}}
+
 \date{\today}
-
-
-
 
 \sloppy
 \hyphenpenalty 10000
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
-
-
+\selectlanguage{english}
 
 <<include=FALSE>>=
-opts_chunk$set(fig.path='dapc', echo=TRUE, eval=TRUE, fig.keep='none', dev='pdf')
+opts_chunk$set(fig.path='figs/dapc-', fig.keep='high', dev='pdf', fig.width=7, fig.height=7,
+               tidy=FALSE, warning=FALSE, fig.show="asis", fig.align='center', out.width=".8\\textwidth")
 @
 
 
-
-\definecolor{Soutput}{rgb}{0,0,0.56}
-\definecolor{Sinput}{rgb}{0.56,0,0}
-\DefineVerbatimEnvironment{Sinput}{Verbatim}
-{formatcom={\color{Sinput}},fontsize=\footnotesize, baselinestretch=0.75}
-\DefineVerbatimEnvironment{Soutput}{Verbatim}
-{formatcom={\color{Soutput}},fontsize=\footnotesize, baselinestretch=0.75}
-
 \color{black}
+
 
 \maketitle
 
@@ -176,7 +175,7 @@ grp <- find.clusters(x, max.n.clust=40)
 @
 
 \begin{center}
-  \includegraphics[width=.7\textwidth]{findclust-pca.pdf}
+  \includegraphics[width=.7\textwidth]{figs/findclust-pca.pdf}
 \end{center}
 
 \noindent
@@ -188,7 +187,7 @@ are kept).
 
 Then, the function displays a graph of BIC values for increasing values of $k$:
 \begin{center}
-  \includegraphics[width=.7\textwidth]{findclust-bic.pdf}
+  \includegraphics[width=.7\textwidth]{figs/findclust-bic.pdf}
 \end{center}
 
 \noindent This graph shows a clear decrease of BIC until $k=6$ clusters, after which BIC increases.
@@ -212,7 +211,8 @@ Here, since we know the actual groups, we can check how well they have been retr
 Actual groups are accessed using \texttt{pop}:
 <<>>=
 table(pop(x), grp$grp)
-table.value(table(pop(x), grp$grp), col.lab=paste("inf", 1:6), row.lab=paste("ori", 1:6))
+table.value(table(pop(x), grp$grp), col.lab=paste("inf", 1:6),
+            row.lab=paste("ori", 1:6))
 @
 
 \noindent
@@ -238,7 +238,7 @@ summarise and understand the data. There is no longer a "true $k$", but some val
 better, more efficient summaries of the data than others.
 For instance, in the following case:
 \begin{center}
-  \includegraphics[width=.7\textwidth]{findclust-noclearcut.pdf}
+  \includegraphics[width=.7\textwidth]{figs/findclust-noclearcut.pdf}
 \end{center}
 
 \noindent , the concept of "true $k$" is fairly hypothetical. This does not mean that clutering
@@ -310,7 +310,7 @@ respect to the number of individuals can lead to over-fitting and unstability in
 probabilities returned by the method (see section below about the stability of membership probabilities).
 
 \begin{center}
-  \includegraphics[width=.7\textwidth]{findclust-pca.pdf}
+  \includegraphics[width=.7\textwidth]{figs/findclust-pca.pdf}
 \end{center}
 
 \noindent The bottomline is therefore retaining a few PCs without sacrificing too much information.
@@ -320,7 +320,7 @@ retain 40 PCs.
 Then, the method displays a barplot of eigenvalues for the discriminant analysis, asking for a
 number of discriminant functions to retain (unless argument \texttt{n.da} is provided).
 \begin{center}
-  \includegraphics[width=.7\textwidth]{eigen-dapc.pdf}
+  \includegraphics[width=.7\textwidth]{figs/eigen-dapc.pdf}
 \end{center}
 
 For small number of clusters, all eigenvalues can be retained since all discriminant functions can
@@ -378,7 +378,9 @@ scatter(dapc1, posi.da="bottomright", bg="white", pch=17:22)
 background, and we can remove the segments linking the points to their ellipses:
 <<>>=
 myCol <- c("darkblue","purple","green","orange","red","blue")
-scatter(dapc1, posi.da="bottomright",  bg="white", pch=17:22, cstar=0, col=myCol, scree.pca=TRUE, posi.pca="bottomleft")
+scatter(dapc1, posi.da="bottomright",  bg="white",
+        pch=17:22, cstar=0, col=myCol, scree.pca=TRUE,
+        posi.pca="bottomleft")
 @
 
 \noindent Another possibility is remove the labels within the ellipses and add a legend to the
@@ -398,22 +400,29 @@ Lastly, we remove the DAPC eigenvalues, not very useful in this case, and replac
 PCA eigenvalues retained in dimension-reduction step (retained eigenvalues in black, similar to
 using \texttt{scree.pca=TRUE}).
 <<>>=
-scatter(dapc1, ratio.pca=0.3, bg="white", pch=20,  cell=0, cstar=0, col=myCol, solid=.4,
-        cex=3, clab=0, mstree=TRUE, scree.da=FALSE,
-        posi.pca="bottomright", leg=TRUE, txt.leg=paste("Cluster",1:6))
+scatter(dapc1, ratio.pca=0.3, bg="white", pch=20,  cell=0,
+        cstar=0, col=myCol, solid=.4, cex=3, clab=0,
+        mstree=TRUE, scree.da=FALSE, posi.pca="bottomright",
+        leg=TRUE, txt.leg=paste("Cluster",1:6))
 
 par(xpd=TRUE)
-points(dapc1$grp.coord[,1], dapc1$grp.coord[,2], pch=4, cex=3, lwd=8, col="black")
-points(dapc1$grp.coord[,1], dapc1$grp.coord[,2], pch=4, cex=3, lwd=2, col=myCol)
+points(dapc1$grp.coord[,1], dapc1$grp.coord[,2], pch=4,
+       cex=3, lwd=8, col="black")
+points(dapc1$grp.coord[,1], dapc1$grp.coord[,2], pch=4,
+       cex=3, lwd=2, col=myCol)
 
 myInset <- function(){
     temp <- dapc1$pca.eig
     temp <- 100* cumsum(temp)/sum(temp)
-    plot(temp, col=rep(c("black","lightgrey"), c(dapc1$n.pca,1000)), ylim=c(0,100),
-         xlab="PCA axis", ylab="Cumulated variance (%)", cex=1, pch=20, type="h", lwd=2)
+    plot(temp, col=rep(c("black","lightgrey"),
+               c(dapc1$n.pca,1000)), ylim=c(0,100),
+         xlab="PCA axis", ylab="Cumulated variance (%)",
+         cex=1, pch=20, type="h", lwd=2)
 }
 
-add.scatter(myInset(), posi="bottomright", inset=c(-0.03,-0.01), ratio=.28, bg=transp("white"))
+add.scatter(myInset(), posi="bottomright",
+            inset=c(-0.03,-0.01), ratio=.28,
+            bg=transp("white"))
 @
 
 
@@ -422,7 +431,8 @@ especially useful when only one of these has been retained (e.g. in the case $k=
 This is achieved by plotting the densities of individuals on a given discriminant function with
 different colors for different groups:
 <<>>=
-scatter(dapc1,1,1, col=myCol, bg="white", scree.da=FALSE, legend=TRUE, solid=.4)
+scatter(dapc1,1,1, col=myCol, bg="white",
+        scree.da=FALSE, legend=TRUE, solid=.4)
 @
 
 
@@ -454,13 +464,15 @@ The first discriminant function shows the temporal evolution of the influenza vi
 second one shows the originality of 2006 strains.
 <<>>=
 myPal <- colorRampPalette(c("blue","gold","red"))
-scatter(dapc.flu, col=transp(myPal(6)), scree.da=FALSE, cell=1.5, cex=2, bg="white",cstar=0)
+scatter(dapc.flu, col=transp(myPal(6)), scree.da=FALSE,
+        cell=1.5, cex=2, bg="white",cstar=0)
 @
 
 We can assess which alleles most highlight the originality of 2006 using \texttt{loadingplot}:
 <<>>=
 set.seed(4)
-contrib <- loadingplot(dapc.flu$var.contr, axis=2, thres=.07, lab.jitter=1)
+contrib <- loadingplot(dapc.flu$var.contr, axis=2,
+                       thres=.07, lab.jitter=1)
 @
 
 \noindent \texttt{temp} is a list invisibly returned by \texttt{loadingplot} which contains the most
@@ -471,14 +483,20 @@ We can look into their allele frequencies over 2002-2006:
 temp <- seploc(H3N2)
 snp906 <- truenames(temp[["906"]])$tab
 snp399 <- truenames(temp[["399"]])$tab
-freq906 <- apply(snp906, 2, function(e) tapply(e, pop(H3N2), mean, na.rm=TRUE))
-freq399 <- apply(snp399, 2, function(e) tapply(e, pop(H3N2), mean, na.rm=TRUE))
+freq906 <- apply(snp906, 2, function(e)
+                 tapply(e, pop(H3N2), mean, na.rm=TRUE))
+freq399 <- apply(snp399, 2, function(e)
+                 tapply(e, pop(H3N2), mean, na.rm=TRUE))
 freq906
 freq399
 par(mfrow=c(1,2), mar=c(5.1,4.1,4.1,.1),las=3)
-matplot(freq906, pch=c("a","c"), type="b",xlab="year",ylab="allele frequency", xaxt="n", cex=1.5, main="SNP # 906")
+matplot(freq906, pch=c("a","c"), type="b",
+        xlab="year",ylab="allele frequency", xaxt="n",
+        cex=1.5, main="SNP # 906")
 axis(side=1, at=1:6, lab=2001:2006)
-matplot(freq399, pch=c("c","t"), type="b", xlab="year",ylab="allele frequency", xaxt="n", cex=1.5, main="SNP # 399")
+matplot(freq399, pch=c("c","t"), type="b", xlab="year",
+        ylab="allele frequency", xaxt="n", cex=1.5,
+        main="SNP # 399")
 axis(side=1, at=1:6, lab=2001:2006)
 @
 
@@ -541,12 +559,16 @@ Note that this information can also be plotted in a STRUCTURE-like (!) way using
 (see \code{?compoplot} to customize the plot).
 We can plot information of all individuals to have a global picture of the clusters composition.
 <<>>=
-compoplot(dapc1, posi="bottomright", txt.leg=paste("Cluster", 1:6), lab="", ncol=1, xlab="individuals")
+compoplot(dapc1, posi="bottomright",
+          txt.leg=paste("Cluster", 1:6), lab="",
+          ncol=1, xlab="individuals", col=funky(6))
 @
 
 \noindent We can also have a closer look at a subset of individuals; for instance, for the first 50 individuals:
 <<>>=
-compoplot(dapc1, subset=1:50, posi="bottomright", txt.leg=paste("Cluster", 1:6), lab="", ncol=2, xlab="individuals")
+compoplot(dapc1, subset=1:50, posi="bottomright",
+          txt.leg=paste("Cluster", 1:6), lab="",
+          ncol=2, xlab="individuals", col=funky(6))
 @
 
 Obviously, we can use the power of R to lead our investigation further. For instance, which are the
@@ -555,7 +577,9 @@ Let us consider as admixed individuals having no more than 90\% of probability o
 <<>>=
 temp <- which(apply(dapc1$posterior,1, function(e) all(e<0.9)))
 temp
-compoplot(dapc1, subset=temp, posi="bottomright", txt.leg=paste("Cluster", 1:6),  ncol=2)
+compoplot(dapc1, subset=temp, posi="bottomright",
+          txt.leg=paste("Cluster", 1:6),
+          ncol=2, col=funky(6))
 @
 
 
@@ -594,7 +618,8 @@ temp <- summary(dapc(microbov, n.da=100, n.pca=3))$assign.per.pop*100
 @
 <<>>=
 par(mar=c(4.5,7.5,1,1))
-barplot(temp, xlab="% of reassignment to actual breed", horiz=TRUE, las=1)
+barplot(temp, xlab="% of reassignment to actual breed",
+        horiz=TRUE, las=1)
 @
 
 \noindent
@@ -659,7 +684,7 @@ dapc2 <- dapc(microbov, n.da=100, n.pca=50)
 temp <- optim.a.score(dapc2)
 @
 \begin{center}
-  \includegraphics[width=.7\textwidth]{ascore.pdf}
+  \includegraphics[width=.7\textwidth]{figs/ascore.pdf}
 \end{center}
 
 
@@ -688,7 +713,7 @@ temp <- which(apply(dapc3$posterior,1, function(e) all(e<0.5)))
 temp
 lab <- pop(microbov)
 par(mar=c(8,4,5,1), xpd=TRUE)
-compoplot(dapc3, subset=temp, cleg=.6, posi=list(x=0,y=1.2),lab=lab)
+compoplot(dapc3, subset=temp, cleg=.6, posi=list(x=0,y=1.2), lab=lab)
 @
 
 \noindent Admixture appears to be the strongest between a few breeds (Blonde d'Aquitaine, Bretonne Pie-Noire,
@@ -697,6 +722,11 @@ fairly distant from its cluster, but has almost 50\% chances of being assigned t
 
 
 
+
+%%%%%%%%%%%%%%%%
+\subsection{Using cross validation}
+%%%%%%%%%%%%%%%%
+To come...
 
 
 
@@ -733,7 +763,8 @@ We first split the dataset into two parts: one used for the analysis, and one us
 <<>>=
 data(microbov)
 set.seed(2)
-kept.id <- unlist(tapply(1:nInd(microbov), pop(microbov), function(e) sample(e, 20,replace=FALSE)))
+kept.id <- unlist(tapply(1:nInd(microbov), pop(microbov),
+                         function(e) sample(e, 20,replace=FALSE)))
 x <- microbov[kept.id]
 x.sup <- microbov[-kept.id]
 nInd(x)
@@ -763,11 +794,14 @@ First, we can represent the new individuals using a scatterplot:
 <<>>=
 col <- rainbow(length(levels(pop(x))))
 col.points <- transp(col[as.integer(pop(x))],.2)
-scatter(dapc4, col=col, bg="white", scree.da=0, pch="", cstar=0, clab=0, xlim=c(-10,10), legend=TRUE)
+scatter(dapc4, col=col, bg="white", scree.da=0, pch="",
+        cstar=0, clab=0, xlim=c(-10,10), legend=TRUE)
 par(xpd=TRUE)
-points(dapc4$ind.coord[,1], dapc4$ind.coord[,2], pch=20, col=col.points, cex=5)
+points(dapc4$ind.coord[,1], dapc4$ind.coord[,2], pch=20,
+       col=col.points, cex=5)
 col.sup <- col[as.integer(pop(x.sup))]
-points(pred.sup$ind.scores[,1], pred.sup$ind.scores[,2], pch=15, col=transp(col.sup,.7), cex=2)
+points(pred.sup$ind.scores[,1], pred.sup$ind.scores[,2], pch=15,
+       col=transp(col.sup,.7), cex=2)
 add.scatter.eig(dapc4$eig,15,1,2, posi="bottomright", inset=.02)
 @
 
@@ -789,6 +823,36 @@ table.value(table(pred.sup$assign, pop(x.sup)), col.lab=levels(pop(x.sup)))
 correspond to inferred clusters.
 Overall, groups are fairly well retrieved, but we can notice that individuals of Blonde d'Aquitaine
 breed are poorly identified compared to other breeds.
+
+
+
+
+
+%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%
+\section{A web interface for DAPC}
+%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%
+
+As of version 1.4-0 of adegenet, an interactive web interface for DAPC is distributed with the package.
+It is started by typing:
+<<eval=FALSE>>=
+adegenetServer("DAPC")
+@
+This will open up the web browser used by default in R.
+This application should ressemble:
+\begin{center}
+  \includegraphics[width=.8\textwidth]{figs/sshotdapcserver2}
+\end{center}
+
+The corresponding address (e.g. ``http://localhost:3076/'') can be copied and pasted into a
+different web browser if needed.
+This interface is best used with google chrome:
+\url{http://www.google.com/chrome/}
+For further information, look at the documentation within the application.
+
+
+
 
 \begin{thebibliography}{9}
 

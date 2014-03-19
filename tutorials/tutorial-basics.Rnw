@@ -1689,12 +1689,11 @@ plot(mon1)
 \noindent see arguments in \texttt{?plot.monmonier} to customize this representation.
 Last, we can compare the infered boundary with the actual distribution of populations:
 <<>>=
-plot(mon1,add.arrows=FALSE,bwd=8)
-temp <- sim2pop$pop
-levels(temp) <- c(3,5)
-temp <- as.numeric(as.character(temp))
-points(sim2pop$other$xy,pch=temp,cex=1.3)
-legend("topright",leg=c("Pop A", "Pop B"),pch=c(3,5))
+plot(mon1,add.arrows=FALSE,bwd=10,col="black")
+points(sim2pop$other$xy, cex=2, pch=20,
+       col=fac2col(pop(sim2pop), col.pal=spectral))
+legend("topright",leg=c("Pop A", "Pop B"), pch=c(20),
+       col=spectral(2), pt.cex=2)
 @
 
 \noindent Not too bad...
@@ -1748,7 +1747,7 @@ implemented... suggestion or (better) contributions are welcome!
   analysis of genetic markers. \textit{Bioinformatics} 24: 1403-1405.
 
 \bibitem{np145}
-  R Development Core Team (2011). R: A language and environment for
+  R Development Core Team (2014). R: A language and environment for
   statistical computing. R Foundation for Statistical Computing,
   Vienna, Austria. ISBN 3-900051-07-0.
 
