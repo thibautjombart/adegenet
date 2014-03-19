@@ -1,0 +1,9 @@
+*pdf
+*tex
+*log
+*aux
+*toc
+*out
+cache
+.Rhistory
+*~
