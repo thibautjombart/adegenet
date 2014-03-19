@@ -40,7 +40,6 @@ glSim <- function(n.ind, n.snp.nonstruc, n.snp.struc = 0, grp.size = c(0.5, 0.5)
     }
   }
   if(!is.null(k) & is.null(pop.freq)){
-    warning("pop.freq will be the result of randomly assorting individuals into k pops")
     pops <-c(1:k) 
     popBaseline <- rep(pops, c(10))
     popBaseline <- factor(sample(popBaseline, length(popBaseline)))
@@ -88,7 +87,7 @@ glSim <- function(n.ind, n.snp.nonstruc, n.snp.struc = 0, grp.size = c(0.5, 0.5)
       
       ## simulate all allele frequencies ##
       out <- replicate(nbAll, simOneAll())
-      return(new("genlight", out, parallel=parallel))
+      return(new("genlight", out, ploidy=ploidy, parallel=parallel))
     } # end simBlock.NOLD
     
     
@@ -147,7 +146,8 @@ glSim <- function(n.ind, n.snp.nonstruc, n.snp.struc = 0, grp.size = c(0.5, 0.5)
     ## SIMULATE ALL DATA ##
     if(!LD){ # no LD
       out <- simBlock.NOLD(n.all, pop)
-    } else { # with LD
+    } else { # with LD IFF n.snp.nonstruc > 0 ! 
+      if(n.snp.nonstruc > 0){
       ## determine blocks ##
       block.sizes <- round(runif(1,min=block.minsize,max=block.maxsize))
       while(sum(block.sizes)<n.all){
@@ -166,8 +166,10 @@ glSim <- function(n.ind, n.snp.nonstruc, n.snp.struc = 0, grp.size = c(0.5, 0.5)
           out <- cbind(out, temp[[i]])
         }
       }
-      out <- new("genlight", out, parallel=parallel)
-    }
+      out <- new("genlight", out, ploidy=ploidy, parallel=parallel)
+    }else{
+      out <- simBlock.NOLD(0, pop)
+    }}
     out@other <- list(factor(pop))
     names(out@other) <- "ancestral.pops"
     outpop <- list(out, pop)
