@@ -20,12 +20,21 @@
   "class ? genpop", or "?genlight".\cr
 
   Essential functionalities of the package are presented througout 4
-  tutorial vignettes, accessible using \code{vignette("name-below", package="adegenet")}:\cr
-  - adegenet-basics: introduction to the package.\cr
-  - adegenet-spca: multivariate analysis of spatial genetic patterns.\cr
-  - adegenet-dapc: population structure and group assignment using DAPC.\cr
-  - adegenet-genomics: introduction to the class \linkS4class{genlight}
+  tutorials, accessible using \code{adegenetTutorial(which="name-below")}:\cr
+  - \code{basics}: introduction to the package.\cr
+  - \code{spca}: multivariate analysis of spatial genetic patterns.\cr
+  - \code{dapc}: population structure and group assignment using DAPC.\cr
+  - \code{genomics}: introduction to the class \linkS4class{genlight}
   for the handling and analysis of genome-wide SNP data.\cr
+  
+  Note: In older versions of adegenet, these tutorials were avilable as
+  vignettes, accessible through the function 
+  \code{vignette("name-below", package="adegenet")}:\cr
+  - \code{adegenet-basics}.\cr
+  - \code{adegenet-spca}.\cr
+  - \code{adegenet-dapc}.\cr
+  - \code{adegenet-genomics}.\cr
+  
 
   Important functions are also summarized below.\cr
 
