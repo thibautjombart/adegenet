@@ -191,7 +191,7 @@ setMethod ("show", "genind", function(object){
   cat("\n@ploidy: ",x@ploidy)
   cat("\n@type: ",x@type)
 
-  cat("\n\nOptionnal contents: ")
+  cat("\n\nOptional contents: ")
   cat("\n@pop: ", ifelse(is.null(x@pop), "- empty -", "factor giving the population of each individual"))
   cat("\n@pop.names: ", ifelse(is.null(x@pop.names), "- empty -", "factor giving the population of each individual"))
 
