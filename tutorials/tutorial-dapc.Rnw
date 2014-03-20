@@ -39,6 +39,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 \selectlanguage{english}
 
 <<include=FALSE>>=
@@ -601,16 +602,23 @@ In DAPC, discriminant functions are linear combinations of variables (principal 
 optimize the separation of individuals into pre-defined groups. Based on the retained discriminant
 functions, it is possible to derive group membership probabilities, which can be interpreted in
 order to assess how clear-cut or admixed the clusters are.
-Unfortunately, retaining too many PCs with respect to the number of individuals can lead to over-fitting the discriminant functions.
-In such case, discriminant functions become so "flexible" that they could discriminate almost perfectly any cluster.
-As a result, membership probabilities can become drastically inflated for the best-fitting cluster, resulting in apparent perfect discrimination.
+In attempting to summarise high-dimensional data in a small number of meaningful discriminant functions, 
+DAPC must manage a trade-off. If too \textit{few} PCs (with respect to the number of individuals) are retained, useful 
+information will be excluded from the analysis, and the resultant model will not be informative enough to accurately
+discriminate between groups. 
+By contrast, if too \textit{many} PCs are retained, this will have a destabilising effect on the coefficients extimated, 
+leading to problems of overfit. In such cases, the model is able to describe all of the data in such detail
+that it becomes flexible enough to discriminate almost perfectly between any possible clusters. As a result, membership
+probabilities can become drastically inflated for the best-fitting cluster, resulting in \textit{apparent} perfect discrimination. 
+At the same time, however, the excessively complex model loses its ability to generalise to new or unseen data, as reflected in a 
+loss of predictive capacity. 
 \\
 
 
 This point can be illustrated using the \texttt{microbov} dataset (704 cattles of 15 breeds typed
 for 30 microsatellite markers).
 We first examine the  \% of successful reassignment (i.e., quality of discrimination) for different numbers of retained PCs.
-First, retaining 3 PCs during the dimension-reduction step, and all discriminant functions:
+First, retaining only 3 PCs during the dimension-reduction step, and all discriminant functions:
 <<>>=
 data(microbov)
 microbov
@@ -623,8 +631,8 @@ barplot(temp, xlab="% of reassignment to actual breed",
 @
 
 \noindent
-We can see that some breeds are well discriminated (e.g. Zebu, Lagunaire,  > 90\%) while others are
-entirely overlooked by the analysis (e.g. Bretone Pie Noire, Limousin, <10\%).
+We can see that some breeds are well discriminated (e.g. Zebu, Lagunaire,  $geq$ 90\%) while others are
+entirely overlooked by the analysis (e.g. Bretone Pie Noire, Limousin, $leq$ 10\%).
 This is because too much genetic information is lost when retaining only 3 PCs.
 We repeat the analysis, this time keeping 300 PCs:
 <<>>=
@@ -635,11 +643,11 @@ par(mar=c(4.5,7.5,1,1))
 barplot(temp, xlab="% of reassignment to actual breed", horiz=TRUE, las=1)
 @
 
-\noindent We now obtain almost 100\% of discrimination for all groups.
+\noindent We now obtain almost 100\% discrimination for all groups.
 Is this result satisfying? Actually not.
-The number of PCs retained is so large that discriminant functions could model any structure and
+The number of PCs retained is so large that the resultant discriminant functions could in fact model any structure, and
 virtually any set of clusters would be well discriminated.
-This can be illustrated by running the analysis using randomized groups:
+This can be illustrated by running the analysis using randomised groups:
 <<>>=
 x <- microbov
 pop(x) <- sample(pop(x))
@@ -651,11 +659,10 @@ barplot(temp, xlab="% of reassignment to actual breed", horiz=TRUE, las=1)
 @
 
 \noindent
-Groups have been randomised, and yet we still get very good discrimination.
-There is therefore a trade-off between finding a space with a good power of discrimination using
-DAPC, and retaining too many dimensions and cause over-fitting.
-
-
+Groups have been randomised, and yet we find that we still get very good discrimination.
+This clearly illustrates the trade-off we have described: DAPC requires enough PCs
+to secure a space with sufficient power of discrimination but must also avoid retaining
+too many dimensions that lead to over-fitting. 
 
 
 %%%%%%%%%%%%%%%%
@@ -692,7 +699,7 @@ temp <- optim.a.score(dapc2)
 method evaluates a few numbers of retained PCs in this range, and uses spline interpolation to
 approximate the optimal number of PCs to retain. Then, one can evaluate all solutions within a
 restrained range using the argument \texttt{n.pca}.
-For the \texttt{microbov} dataset, we should probably retained between 10 and 30 PCs during the
+For the \texttt{microbov} dataset, we should probably retain between 10 and 30 PCs during the
 dimension-reduction step.
 \\
 
@@ -706,7 +713,7 @@ par(mar=c(5.1,4.1,1.1,1.1), xpd=TRUE)
 compoplot(dapc3, lab="", posi=list(x=12,y=-.01), cleg=.7)
 @
 
-And as before, we can investigate further admixed individuals, which we arbitrarily define as those
+And as before, we can further investigate admixed individuals, which we arbitrarily define as those
 having no more than 0.5 probability of membership to any group:
 <<>>=
 temp <- which(apply(dapc3$posterior,1, function(e) all(e<0.5)))
@@ -721,12 +728,76 @@ Limousine and Gascone). Some features are fairly surprising; for instance, the l
 fairly distant from its cluster, but has almost 50\% chances of being assigned to two other breeds.
 
 
+%%%%%%%%%%%%%%%%
+\subsection{Using cross-validation}
+%%%%%%%%%%%%%%%%
+Carrying out a DAPC requires the user to define the number of PCs retained in the analysis. 
+As discussed above, this is not a trivial decision, as the number of PCs can have a substantial impact
+on the results of the analysis. Cross-validation (carried out with the function \texttt{xvalDapc})
+provides an objective optimisation procedure for identifying the 'golidlocks point' in the trade-off 
+between retaining too few and too many PCs in the model. In cross-validation, the data is divided into two sets:
+a training set (typically comprising 90\% of the data) and a validation set (which contains the remainder (by default, 10\%) of the data).
+With \texttt{xvalDapc}, the validation set is selected by stratified random sampling: this ensures that at least one member of 
+each group or population in the original data is represented in both training and validation sets.
+\\
+DAPC is carried out on the training set with variable numbers of PCs retained, and the degree to which the analysis is 
+able to accurately predict the group membership of excluded individuals (those in the validation set) is used to identify
+the optimal number of PCs to retain. At each level of PC retention, the sampling and DAPC procedures are repeated \texttt{n.rep} times. 
+(By default, we perform 30 replicates, though it should be noted that for large datasets, performing large numbers of replicates may be
+computationally intensive). Here is an example using the \texttt{nancycats} dataset:
+<<eval=FALSE>>=
+data(nancycats)
+x <- nancycats
+mat <- as.matrix(na.replace(x, method="mean"))
+grp <- pop(x)
+
+xval <- xvalDapc(mat, grp, n.pca.max = 300, training.set = 0.9, n.da = NULL,
+                 result = "groupMean", center = TRUE, scale = FALSE, 
+                 n.pca = NULL, n.rep = 30, xval.plot = TRUE)
+  
+xval[2:6]
 
 
-%%%%%%%%%%%%%%%%
-\subsection{Using cross validation}
-%%%%%%%%%%%%%%%%
-To come...
+$`Median and Confidence Interval for Random Chance`
+      2.5%        50%      97.5% 
+0.03264849 0.05937043 0.09010794 
+
+$`Mean Successful Assignment by Number of PCs of PCA`
+       10        20        30        40        50        60        70        80        90       100 
+0.3372549 0.4977124 0.5751634 0.6120915 0.6500000 0.6584967 0.5928105 0.6375817 0.5843137 0.5333333 
+
+$`Number of PCs Achieving Highest Mean Success`
+[1] "60"
+
+$`Root Mean Squared Error by Number of PCs of PCA`
+       10        20        30        40        50        60        70        80        90       100 
+0.6685096 0.5140815 0.4367608 0.4078596 0.3570252 0.3535081 0.4146336 0.3738154 0.4254194 0.4766024 
+
+$`Number of PCs Achieving Lowest MSE`
+[1] "60"
+
+
+
+@
+
+\begin{center}
+  \includegraphics[width=.7\textwidth]{figs/XVALnancycats.pdf}
+\end{center}
+
+When \texttt{xval.plot} is \texttt{TRUE}, a scatterplot of the DAPC cross-validation is generated. 
+The number of PCs retained in each DAPC varies along the x-axis, and the proportion of successful
+outcome prediction varies along the y-axis. Individual replicates appear as points, and the density of those
+points in different regions of the plot is displayed in blue.
+\\
+As one might expect (or hope) for an optimisation procedure, the results of cross-validation here take on an
+arc-like shape. Predictive success is sub-optimal with both too few and too many retained PCA axes. At the apex of 
+this arc, we that we are able to achieve 60\% - 70\% predictive success and an associated root mean squared error
+(RMSE) of 30\% - 40\%. While in this example, the number of PCs associated with the highest mean success is also 
+associated with the lowest MSE, this is not always the case. Based on the model validation literature, we
+recommend using the number of PCs associated with the lowest RMSE as the 'optimum' \texttt{n.pca} 
+in the DAPC analysis. Hence, we return this \texttt{dapc} object as the seventh component of the output of
+\texttt{xvalDapc}. 
+
 
 
 
@@ -740,7 +811,7 @@ To come...
 \subsection{Rationale}
 %%%%%%%%%%%%%%%%
 
-Statistically speaking, supplementary individuals are observations which do not participate to
+Statistically speaking, supplementary individuals are observations which do not participate in
 constructing a model, but which we would like to predict using a model fitted on other ("training") data.
 In the context of DAPC, we may know groups for most individuals, but some individuals could be of
 unknown or uncertain group. In this case, we need to exclude individuals from the analysis, and then

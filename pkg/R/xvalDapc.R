@@ -11,10 +11,16 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
   ## CHECKS ##
   grp <- factor(grp)
   n.pca <- n.pca[n.pca > 0]
-  if(missing(n.da)){
-  n.da <- length(levels(grp))-1}
-  else{
+  if(!is.null(n.da)){
     n.da <- n.da}
+  else{
+    n.da <- length(levels(grp))-1}
+#   if(missing(n.da)){
+#   n.da <- length(levels(grp))-1}
+#   if(is.null(n.da)){
+#     n.da <- length(levels(grp))-1} # need to fix this to make interactive n.da selection an option! 
+#   else{
+#     n.da <- n.da}
   if(missing(training.set)){
     training.set <- 0.9}
   else{
