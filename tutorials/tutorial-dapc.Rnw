@@ -751,38 +751,21 @@ x <- nancycats
 mat <- as.matrix(na.replace(x, method="mean"))
 grp <- pop(x)
 
-xval <- xvalDapc(mat, grp, n.pca.max = 300, training.set = 0.9, n.da = NULL,
+xval <- xvalDapc(mat, grp, n.pca.max = 300, training.set = 0.9, 
                  result = "groupMean", center = TRUE, scale = FALSE, 
                  n.pca = NULL, n.rep = 30, xval.plot = TRUE)
-  
-xval[2:6]
-
-
-$`Median and Confidence Interval for Random Chance`
-      2.5%        50%      97.5% 
-0.03264849 0.05937043 0.09010794 
-
-$`Mean Successful Assignment by Number of PCs of PCA`
-       10        20        30        40        50        60        70        80        90       100 
-0.3372549 0.4977124 0.5751634 0.6120915 0.6500000 0.6584967 0.5928105 0.6375817 0.5843137 0.5333333 
-
-$`Number of PCs Achieving Highest Mean Success`
-[1] "60"
-
-$`Root Mean Squared Error by Number of PCs of PCA`
-       10        20        30        40        50        60        70        80        90       100 
-0.6685096 0.5140815 0.4367608 0.4078596 0.3570252 0.3535081 0.4146336 0.3738154 0.4254194 0.4766024 
-
-$`Number of PCs Achieving Lowest MSE`
-[1] "60"
-
-
-
 @
 
 \begin{center}
   \includegraphics[width=.7\textwidth]{figs/XVALnancycats.pdf}
 \end{center}
+
+<<echo=FALSE>>=
+load("Robjects/xval.Rdata")
+@
+<<>>=
+xval[2:6]
+@
 
 When \texttt{xval.plot} is \texttt{TRUE}, a scatterplot of the DAPC cross-validation is generated. 
 The number of PCs retained in each DAPC varies along the x-axis, and the proportion of successful
