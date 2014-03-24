@@ -39,7 +39,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
-\SweaveOpts{concordance=TRUE}
+%% \SweaveOpts{concordance=TRUE}
 \selectlanguage{english}
 
 <<include=FALSE>>=
@@ -602,16 +602,16 @@ In DAPC, discriminant functions are linear combinations of variables (principal 
 optimize the separation of individuals into pre-defined groups. Based on the retained discriminant
 functions, it is possible to derive group membership probabilities, which can be interpreted in
 order to assess how clear-cut or admixed the clusters are.
-In attempting to summarise high-dimensional data in a small number of meaningful discriminant functions, 
-DAPC must manage a trade-off. If too \textit{few} PCs (with respect to the number of individuals) are retained, useful 
+In attempting to summarise high-dimensional data in a small number of meaningful discriminant functions,
+DAPC must manage a trade-off. If too \textit{few} PCs (with respect to the number of individuals) are retained, useful
 information will be excluded from the analysis, and the resultant model will not be informative enough to accurately
-discriminate between groups. 
-By contrast, if too \textit{many} PCs are retained, this will have a destabilising effect on the coefficients extimated, 
+discriminate between groups.
+By contrast, if too \textit{many} PCs are retained, this will have a destabilising effect on the coefficients extimated,
 leading to problems of overfit. In such cases, the model is able to describe all of the data in such detail
 that it becomes flexible enough to discriminate almost perfectly between any possible clusters. As a result, membership
-probabilities can become drastically inflated for the best-fitting cluster, resulting in \textit{apparent} perfect discrimination. 
-At the same time, however, the excessively complex model loses its ability to generalise to new or unseen data, as reflected in a 
-loss of predictive capacity. 
+probabilities can become drastically inflated for the best-fitting cluster, resulting in \textit{apparent} perfect discrimination.
+At the same time, however, the excessively complex model loses its ability to generalise to new or unseen data, as reflected in a
+loss of predictive capacity.
 \\
 
 
@@ -662,7 +662,7 @@ barplot(temp, xlab="% of reassignment to actual breed", horiz=TRUE, las=1)
 Groups have been randomised, and yet we find that we still get very good discrimination.
 This clearly illustrates the trade-off we have described: DAPC requires enough PCs
 to secure a space with sufficient power of discrimination but must also avoid retaining
-too many dimensions that lead to over-fitting. 
+too many dimensions that lead to over-fitting.
 
 
 %%%%%%%%%%%%%%%%
@@ -731,18 +731,18 @@ fairly distant from its cluster, but has almost 50\% chances of being assigned t
 %%%%%%%%%%%%%%%%
 \subsection{Using cross-validation}
 %%%%%%%%%%%%%%%%
-Carrying out a DAPC requires the user to define the number of PCs retained in the analysis. 
+Carrying out a DAPC requires the user to define the number of PCs retained in the analysis.
 As discussed above, this is not a trivial decision, as the number of PCs can have a substantial impact
 on the results of the analysis. Cross-validation (carried out with the function \texttt{xvalDapc})
-provides an objective optimisation procedure for identifying the 'golidlocks point' in the trade-off 
+provides an objective optimisation procedure for identifying the 'golidlocks point' in the trade-off
 between retaining too few and too many PCs in the model. In cross-validation, the data is divided into two sets:
 a training set (typically comprising 90\% of the data) and a validation set (which contains the remainder (by default, 10\%) of the data).
-With \texttt{xvalDapc}, the validation set is selected by stratified random sampling: this ensures that at least one member of 
+With \texttt{xvalDapc}, the validation set is selected by stratified random sampling: this ensures that at least one member of
 each group or population in the original data is represented in both training and validation sets.
 \\
-DAPC is carried out on the training set with variable numbers of PCs retained, and the degree to which the analysis is 
+DAPC is carried out on the training set with variable numbers of PCs retained, and the degree to which the analysis is
 able to accurately predict the group membership of excluded individuals (those in the validation set) is used to identify
-the optimal number of PCs to retain. At each level of PC retention, the sampling and DAPC procedures are repeated \texttt{n.rep} times. 
+the optimal number of PCs to retain. At each level of PC retention, the sampling and DAPC procedures are repeated \texttt{n.rep} times.
 (By default, we perform 30 replicates, though it should be noted that for large datasets, performing large numbers of replicates may be
 computationally intensive). Here is an example using the \texttt{nancycats} dataset:
 <<eval=FALSE>>=
@@ -751,8 +751,8 @@ x <- nancycats
 mat <- as.matrix(na.replace(x, method="mean"))
 grp <- pop(x)
 
-xval <- xvalDapc(mat, grp, n.pca.max = 300, training.set = 0.9, 
-                 result = "groupMean", center = TRUE, scale = FALSE, 
+xval <- xvalDapc(mat, grp, n.pca.max = 300, training.set = 0.9,
+                 result = "groupMean", center = TRUE, scale = FALSE,
                  n.pca = NULL, n.rep = 30, xval.plot = TRUE)
 @
 
@@ -767,19 +767,19 @@ load("Robjects/xval.Rdata")
 xval[2:6]
 @
 
-When \texttt{xval.plot} is \texttt{TRUE}, a scatterplot of the DAPC cross-validation is generated. 
+When \texttt{xval.plot} is \texttt{TRUE}, a scatterplot of the DAPC cross-validation is generated.
 The number of PCs retained in each DAPC varies along the x-axis, and the proportion of successful
 outcome prediction varies along the y-axis. Individual replicates appear as points, and the density of those
 points in different regions of the plot is displayed in blue.
 \\
 As one might expect (or hope) for an optimisation procedure, the results of cross-validation here take on an
-arc-like shape. Predictive success is sub-optimal with both too few and too many retained PCA axes. At the apex of 
+arc-like shape. Predictive success is sub-optimal with both too few and too many retained PCA axes. At the apex of
 this arc, we that we are able to achieve 60\% - 70\% predictive success and an associated root mean squared error
-(RMSE) of 30\% - 40\%. While in this example, the number of PCs associated with the highest mean success is also 
+(RMSE) of 30\% - 40\%. While in this example, the number of PCs associated with the highest mean success is also
 associated with the lowest MSE, this is not always the case. Based on the model validation literature, we
-recommend using the number of PCs associated with the lowest RMSE as the 'optimum' \texttt{n.pca} 
+recommend using the number of PCs associated with the lowest RMSE as the 'optimum' \texttt{n.pca}
 in the DAPC analysis. Hence, we return this \texttt{dapc} object as the seventh component of the output of
-\texttt{xvalDapc}. 
+\texttt{xvalDapc}.
 
 
 
