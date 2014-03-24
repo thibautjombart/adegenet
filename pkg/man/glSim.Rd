@@ -36,8 +36,9 @@ glSim(n.ind, n.snp.nonstruc, n.snp.struc = 0, grp.size = c(0.5, 0.5), k = NULL,
   \item{ploidy}{an integer indicating the ploidy of the simulated
     genotypes.}
   \item{alpha}{asymmetry parameter: a numeric value between 0 and 0.5,
-    used to enforce allelic differences between the groups (see
-    details); ignored if \code{LD=TRUE}.}
+    used to enforce allelic differences between the groups. Differences
+    between groups are strongest when alpha = 0.5 and weakest when 
+    alpha = 0 (see details).}
   \item{parallel}{a logical indicating whether multiple cores should be used in 
     generating the simulated data (TRUE). This option can reduce the amount of 
     computational time required to simulate the data, but is not supported on 
