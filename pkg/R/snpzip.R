@@ -13,7 +13,7 @@ snpzip <- function(snps, y, plot=TRUE, xval.plot=FALSE, loading.plot=FALSE,
     
     dapc1 <- y
     phen <- 0
-    
+     
     
     if(xval.plot==TRUE){
       warning("cross-validation not performed when x is a dapc object; xval.plot will not be shown")
