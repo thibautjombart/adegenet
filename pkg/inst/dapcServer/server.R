@@ -415,6 +415,23 @@ shinyServer(function(input, output) {
    })
 
     ## RENDER SYSTEM INFO ##
-    output$systeminfo <- .render.server.info()
+    output$systeminfo <- renderPrint({
+      cat("\n== R version ==\n")
+      print(R.version)
+      
+      cat("\n== Date ==\n")
+      print(date())
+      
+      cat("\n== adegenet version ==\n")
+      print(packageDescription("adegenet", fields=c("Package", "Version", "Date", "Built")))
+      
+      cat("\n== shiny version ==\n")
+      print(packageDescription("adegenet", fields=c("Package", "Version", "Date", "Built")))
+      
+      cat("\n== attached packages ==\n")
+      print(search())
+    }) # end renderPrint
+   
+#      .render.server.info()
 
 }) # end shinyServer
