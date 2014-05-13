@@ -1,3 +1,9 @@
+			CHANGES IN ADEGENET VERSION 1.4-2
+FIXES
+	o fixed adegenetServer; this should now work on any platform.
+
+
+
 			CHANGES IN ADEGENET VERSION 1.4-1
 NEW FEATURES
 	o the adegenet website is now indicated in CRAN
@@ -7,7 +13,7 @@ FIXES
 	by the function
 
 
-	
+
 			CHANGES IN ADEGENET VERSION 1.4-0
 NEW FEATURES
 	o adegenet now incorporates a web interface for DAPC, started by

@@ -211,8 +211,8 @@
   \tabular{ll}{
     Package: \tab adegenet\cr
     Type: \tab Package\cr
-    Version: \tab 1.4-1\cr
-    Date: \tab 2014-03-14 \cr
+    Version: \tab 1.4-2\cr
+    Date: \tab 2014-05-13 \cr
     License: \tab GPL (>=2)
   }
 }
