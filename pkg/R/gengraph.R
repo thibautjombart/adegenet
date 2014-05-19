@@ -177,7 +177,7 @@ gengraph.genind <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
 
     ## USE MATRIX METHOD ##
     res <- gengraph(D, cutoff=cutoff, ngrp=ngrp, computeAll=computeAll, plot=plot, show.graph=show.graph, col.pal=col.pal,
-                    truenames=truenamesn, breaks=nbreaks, ...)
+                    truenames=truenamesn, nbreaks=nbreaks, ...)
     if(truenames){
         V(res$graph)$label <- indNames(x)
     }
@@ -209,7 +209,7 @@ gengraph.genpop <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
 
     ## USE MATRIX METHOD ##
     res <- gengraph(D, cutoff=cutoff, ngrp=ngrp, computeAll=computeAll, plot=plot, show.graph=show.graph, col.pal=col.pal,
-                    truenames=truenames, breaks=nbreaks, ...)
+                    truenames=truenames, nbreaks=nbreaks, ...)
     if(truenames){
         V(res$graph)$label <- x@pop.names
     }
@@ -237,7 +237,7 @@ gengraph.DNAbin <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
 
     ## USE MATRIX METHOD ##
     res <- gengraph(D, cutoff=cutoff, ngrp=ngrp, computeAll=computeAll, plot=plot, show.graph=show.graph, col.pal=col.pal,
-                    truenames=truenames, breaks=nbreaks, ...)
+                    truenames=truenames, nbreaks=nbreaks, ...)
     return(res)
 } # end gengraph.DNAbin
 
