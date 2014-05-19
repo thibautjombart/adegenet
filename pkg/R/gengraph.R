@@ -10,7 +10,8 @@ gengraph <-  function (x, ...) UseMethod("gengraph")
 #############
 ## DEFAULT ##
 #############
-gengraph.default <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE, show.graph=TRUE, col.pal=funky, truenames=TRUE, ...){
+gengraph.default <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE,
+                             show.graph=TRUE, col.pal=funky, truenames=TRUE, nbreaks=10, ...){
     stop(paste("No method for objects of class",class(x)))
 } # end gengraph.default
 
@@ -25,7 +26,7 @@ gengraph.default <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=T
 ## this is the basic method
 ##
 gengraph.matrix <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE, show.graph=TRUE, col.pal=funky,
-                            truenames=TRUE, ...){
+                            truenames=TRUE, nbreaks=10, ...){
     ## CHECKS ##
     ## if(!require("igraph")) stop("igraph is required")
 
@@ -101,16 +102,18 @@ gengraph.matrix <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
         if(ngrp>=nrow(x)) stop("ngrp is greater than or equal to the number of individuals")
 
         ## FIRST HAVE A LOOK AT A RANGE OF VALUES ##
-        cutToTry <- pretty(x,10)
-        cutToTry <- cutToTry[cutToTry>1 & cutToTry<nrow(x)]
+        cutToTry <- pretty(x,nbreaks)
+        cutToTry <- cutToTry[cutToTry>0 & cutToTry<max(x)]
         if(length(cutToTry)==0) cutToTry <- 1
         tempRes <- lapply(cutToTry, function(i) gengraph.matrix(x,cutoff=i))
         temp <- sapply(tempRes,function(e) e$clust$no)
-        if(!any(temp<ngrp)) {
-            cutoff <- 1
-        } else {
-            cutoff <- cutToTry[max(which(temp>ngrp))]
-        }
+        if(!min(abs(temp-ngrp))<1) warning(paste("The exact number of groups was not found. Tried increasing nbreaks"))
+        cutoff <- cutToTry[which.min(abs(temp-ngrp))]
+        ## if(!any(temp<ngrp)) {
+        ##     cutoff <- 1
+        ## } else {
+        ##     cutoff <- cutToTry[max(which(temp>ngrp))]
+        ## }
 
         ## FIND THE LOWEST CUTOFF GIVING NGRP ##
         res <- gengraph.matrix(x,cutoff=cutoff)
@@ -143,13 +146,14 @@ gengraph.matrix <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
 ############
 ## GENIND ##
 ############
-gengraph.dist <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE, show.graph=TRUE, col.pal=funky, truenames=TRUE, ...){
+gengraph.dist <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE,
+                          show.graph=TRUE, col.pal=funky, truenames=TRUE, nbreaks=10, ...){
     ## CHECKS ##
     ## if(!require("igraph")) stop("igraph is required")
 
     ## USE MATRIX METHOD ##
     res <- gengraph(as.matrix(x), cutoff=cutoff, ngrp=ngrp, computeAll=computeAll, plot=plot, show.graph=show.graph, col.pal=col.pal,
-                    truenames=truenames, ...)
+                    truenames=truenames, nbreaks=nbreaks, ...)
     return(res)
 } # end gengraph.dist
 
@@ -162,8 +166,8 @@ gengraph.dist <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE
 ############
 ## GENIND ##
 ############
-gengraph.genind <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE, show.graph=TRUE, col.pal=funky,
-                            truenames=TRUE, ...){
+gengraph.genind <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE,
+                            show.graph=TRUE, col.pal=funky, truenames=TRUE, nbreaks=10, ...){
     ## CHECKS ##
     ## if(!require("igraph")) stop("igraph is required")
 
@@ -173,7 +177,7 @@ gengraph.genind <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
 
     ## USE MATRIX METHOD ##
     res <- gengraph(D, cutoff=cutoff, ngrp=ngrp, computeAll=computeAll, plot=plot, show.graph=show.graph, col.pal=col.pal,
-                    truenames=truenames, ...)
+                    truenames=truenamesn, breaks=nbreaks, ...)
     if(truenames){
         V(res$graph)$label <- indNames(x)
     }
@@ -191,9 +195,8 @@ gengraph.genind <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
 ############
 ## GENPOP ##
 ############
-gengraph.genpop <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE, show.graph=TRUE, col.pal=funky, method=1,
-                            truenames=TRUE, ...){
-    ## CHECKS ##
+gengraph.genpop <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE, show.graph=TRUE,
+                            col.pal=funky, method=1, truenames=TRUE, nbreaks=10, ...){ ## CHECKS ##
     ## if(!require("igraph")) stop("igraph is required")
 
     ## COMPUTE DISTANCES ##
@@ -206,7 +209,7 @@ gengraph.genpop <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
 
     ## USE MATRIX METHOD ##
     res <- gengraph(D, cutoff=cutoff, ngrp=ngrp, computeAll=computeAll, plot=plot, show.graph=show.graph, col.pal=col.pal,
-                    truenames=truenames, ...)
+                    truenames=truenames, breaks=nbreaks, ...)
     if(truenames){
         V(res$graph)$label <- x@pop.names
     }
@@ -224,7 +227,7 @@ gengraph.genpop <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
 ## DNABIN ##
 ############
 gengraph.DNAbin <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE, show.graph=TRUE, col.pal=funky,
-                            truenames=TRUE, ...){
+                            truenames=TRUE, nbreaks=10, ...){
     ## CHECKS ##
     ## if(!require("igraph")) stop("igraph is required")
     ## if(!require("ape")) stop("ape is required")
@@ -234,7 +237,7 @@ gengraph.DNAbin <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
 
     ## USE MATRIX METHOD ##
     res <- gengraph(D, cutoff=cutoff, ngrp=ngrp, computeAll=computeAll, plot=plot, show.graph=show.graph, col.pal=col.pal,
-                    truenames=truenames, ...)
+                    truenames=truenames, breaks=nbreaks, ...)
     return(res)
 } # end gengraph.DNAbin
 
