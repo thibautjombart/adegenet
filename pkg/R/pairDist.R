@@ -1,7 +1,15 @@
-#############
-## GENERIC ##
-#############
+## AVOID:
+## airDistPlot.dist: no visible binding for global variable ‘groups’
+## pairDistPlot.dist: no visible binding for global variable ‘distance’
+if(getRversion() >= "2.15.1")  utils::globalVariables(c("groups","distance"))
+
+
+
+##############
+## GENERICS ##
+##############
 pairDistPlot <-  function (x, ...) UseMethod("pairDistPlot")
+pairDist <-  function (x, ...) UseMethod("pairDistPlot")
 
 
 
@@ -12,10 +20,14 @@ pairDistPlot <-  function (x, ...) UseMethod("pairDistPlot")
 #############
 pairDistPlot.default <- function(x, ...){
     stop(paste("No method for objects of class",class(x)))
-} # end gengraph.default
+} # end pairDistPlot.default
 
 
-
+pairDist.default <- function(x, grp, within=FALSE, sep="-", ...){
+    temp <- pairDistPlot(x=x, grp=grp, within=within, sep=sep,
+                         data=TRUE, violin=FALSE, boxplot=FALSE, jitter=FALSE)
+    return(temp$data)
+}
 
 
 ##########

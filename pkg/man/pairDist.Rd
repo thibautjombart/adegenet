@@ -1,17 +1,20 @@
 \encoding{UTF-8}
-\name{pairDist}
+\name{pairDistPlot}
 \alias{pairDist}
 \alias{pairDist.default}
-\alias{pairDist.dist}
-\alias{pairDist.matrix}
-\alias{pairDist.genind}
-\alias{pairDist.DNAbin}
+\alias{pairDistPlot}
+\alias{pairDistPlot.default}
+\alias{pairDistPlot.dist}
+\alias{pairDistPlot.matrix}
+\alias{pairDistPlot.genind}
+\alias{pairDistPlot.DNAbin}
 \title{Pairwise distance plots}
 \description{
-  The function \code{pairDist} plots pairwise distances between
-  different groups.
+  The function \code{pairDistPlot} extracts and plots pairwise distances
+  between different groups (graphs use ggplot2). The function
+  \code{pairDistPlot} does the same, without the graphs.
   
-  \code{pairDist} is a generic function with methods for the
+  \code{pairDistPlot} is a generic function with methods for the
  following types of objects:\cr
  - \code{dist} \cr
  - \code{matrix} (only numeric data)\cr
@@ -21,16 +24,18 @@
 \usage{
 pairDist(x, \dots)
 
-\method{pairDist}{dist}(x, grp, within=FALSE, sep="-", data=TRUE,
+pairDistPlot(x, \dots)
+
+\method{pairDistPlot}{dist}(x, grp, within=FALSE, sep="-", data=TRUE,
              violin=TRUE, boxplot=TRUE, jitter=TRUE, \dots)
 
-\method{pairDist}{matrix}(x, grp, within=FALSE, sep="-", data=TRUE,
+\method{pairDistPlot}{matrix}(x, grp, within=FALSE, sep="-", data=TRUE,
              violin=TRUE, boxplot=TRUE, jitter=TRUE, \dots)
 
-\method{pairDist}{genind}(x, grp, within=FALSE, sep="-", data=TRUE,
+\method{pairDistPlot}{genind}(x, grp, within=FALSE, sep="-", data=TRUE,
              violin=TRUE, boxplot=TRUE, jitter=TRUE, \dots)
 
-\method{pairDist}{DNAbin}(x, grp, within=FALSE, sep="-", data=TRUE,
+\method{pairDistPlot}{DNAbin}(x, grp, within=FALSE, sep="-", data=TRUE,
              violin=TRUE, boxplot=TRUE, jitter=TRUE, \dots)
 
 }

@@ -177,7 +177,7 @@ gengraph.genind <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
 
     ## USE MATRIX METHOD ##
     res <- gengraph(D, cutoff=cutoff, ngrp=ngrp, computeAll=computeAll, plot=plot, show.graph=show.graph, col.pal=col.pal,
-                    truenames=truenamesn, nbreaks=nbreaks, ...)
+                    truenames=truenames, nbreaks=nbreaks, ...)
     if(truenames){
         V(res$graph)$label <- indNames(x)
     }
