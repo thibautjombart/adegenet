@@ -1,6 +1,6 @@
 
 ##############
-## xval: temp xvalDapc ##
+## xvalDapc ##
 ##############
 
 
@@ -15,12 +15,12 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
     n.da <- n.da
   }else{
     n.da <- length(levels(grp))-1}
-#   if(missing(n.da)){
-#   n.da <- length(levels(grp))-1}
-#   if(is.null(n.da)){
-#     n.da <- length(levels(grp))-1} # need to fix this to make interactive n.da selection an option! 
-#   else{
-#     n.da <- n.da}
+  #   if(missing(n.da)){
+  #   n.da <- length(levels(grp))-1}
+  #   if(is.null(n.da)){
+  #     n.da <- length(levels(grp))-1} # need to fix this to make interactive n.da selection an option! 
+  #   else{
+  #     n.da <- n.da}
   if(missing(training.set)){
     training.set <- 0.9
   }else{
@@ -29,7 +29,7 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
     n.rep <- 30
   }else{
     n.rep <- n.rep}
-
+  
   if(missing(result)){
     result <- "groupMean"
   }else{ 
@@ -153,6 +153,4 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
 
 xvalDapc.data.frame <- xvalDapc
 xvalDapc.matrix <- xvalDapc.data.frame
-
-
 

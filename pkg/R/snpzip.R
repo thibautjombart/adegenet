@@ -13,7 +13,7 @@ snpzip <- function(snps, y, plot=TRUE, xval.plot=FALSE, loading.plot=FALSE,
     
     dapc1 <- y
     phen <- 0
-     
+    
     
     if(xval.plot==TRUE){
       warning("cross-validation not performed when x is a dapc object; xval.plot will not be shown")
@@ -249,94 +249,92 @@ snpzip <- function(snps, y, plot=TRUE, xval.plot=FALSE, loading.plot=FALSE,
     gc()
     return(resultat)
   }
-
+  
+  if(dapc1$n.da==1){
+    features <- selector(dapc1, dimension=1)      
+  }
+  else{
+    dimensions <- c(1:dapc1$n.da)
+    features <- lapply(dimensions, function(e)
+      selector(dapc1, dimension=e))     
+  }
+  
+  ################################################
+  ####  Calculate success in discrimination   ####
+  ################################################
+  
+  # overall
+  grp <- dapc1$grp
+  ass <- dapc1$assign
+  dapc.success.overall <- length(which(ass==grp)) / length(grp)
+  
+  # by group        
+  
+  # give grp and ass numbered factor levels
+  GRP <- factor(grp, levels=levels(grp), labels=c(0:(nlevels(grp)-1)))
+  ASS <- factor(ass, levels=levels(ass), labels=c(0:(nlevels(ass)-1)))
+  
+  # make each level of those factors into one element of a list
+  index <- c(0:(nlevels(grp) - 1))
+  ASSIGN <- sapply(index, function(e) which(ASS==e))
+  GROUP <- sapply(index, function(e) which(GRP==e))
+  
+  index2 <- c(1:(nlevels(grp)))
+  dapc.success.byGroup <- sum(sapply(index2, function(e) 
+    (length(which(ASSIGN[[e]]%in%GROUP[[e]]))) / 
+      length(GROUP[[e]]))) / length(index2)
+  
+  dapc.success <- c(dapc.success.overall, dapc.success.byGroup)
+  
+  ################################################
+  #### Loading Plot Delineating SNP Clusters  ####
+  ################################################
+  
+  if(loading.plot==TRUE){
     if(dapc1$n.da==1){
-      features <- selector(dapc1, dimension=1)      
-    }
-    else{
-      dimensions <- c(1:dapc1$n.da)
-      features <- lapply(dimensions, function(e)
-                        selector(dapc1, dimension=e))     
-    }
-    
-    ################################################
-    ####  Calculate success in discrimination   ####
-    ################################################
-    
-    # overall
-    grp <- dapc1$grp
-    ass <- dapc1$assign
-    dapc.success.overall <- length(which(ass==grp)) / length(grp)
-    
-    # by group        
-    
-    # give grp and ass numbered factor levels
-    GRP <- factor(grp, levels=levels(grp), labels=c(0:(nlevels(grp)-1)))
-    ASS <- factor(ass, levels=levels(ass), labels=c(0:(nlevels(ass)-1)))
-    
-    # make each level of those factors into one element of a list
-    index <- c(0:(nlevels(grp) - 1))
-    ASSIGN <- sapply(index, function(e) which(ASS==e))
-    GROUP <- sapply(index, function(e) which(GRP==e))
-    
-    index2 <- c(1:(nlevels(grp)))
-    dapc.success.byGroup <- sum(sapply(index2, function(e) 
-      (length(which(ASSIGN[[e]]%in%GROUP[[e]]))) / 
-                                         length(GROUP[[e]]))) / length(index2)
-    
-    dapc.success <- c(dapc.success.overall, dapc.success.byGroup)
-    
-    ################################################
-    #### Loading Plot Delineating SNP Clusters  ####
-    ################################################
-    
-    if(loading.plot==TRUE){
-      if(dapc1$n.da==1){
       par(ask=TRUE)
       maximus <- features[[2]]
       decimus <- abs(dapc1$var.contr[maximus][(which.min(dapc1$var.contr[maximus]))])-0.000001
       meridius <- loadingplot(dapc1$var.contr[,1], threshold=c(decimus))
+    }
+    else{
+      par(ask=TRUE)
+      # specify that you want to run the following lines for all DA (ie. from DA=1 to DA=(k-1))
+      DA <- c(1:dapc1$n.da)
+      # generate separate loading plots for each DA
+      for(i in DA){
+        title <- paste("Loading Plot for DA", i, sep=" ")
+        maximus <- features[[i]][[2]] 
+        decimus <- abs(dapc1$var.contr[maximus,i][(which.min(dapc1$var.contr[maximus,i]))])-0.000001
+        meridius <- loadingplot(dapc1$var.contr[, i], threshold=decimus, main=title)
       }
-      else{
-        par(ask=TRUE)
-        # specify that you want to run the following lines for all DA (ie. from DA=1 to DA=(k-1))
-        DA <- c(1:dapc1$n.da)
-        # generate separate loading plots for each DA
-        for(i in DA){
-          title <- paste("Loading Plot for DA", i, sep=" ")
-          maximus <- features[[i]][[2]] 
-          decimus <- abs(dapc1$var.contr[maximus,i][(which.min(dapc1$var.contr[maximus,i]))])-0.000001
-          meridius <- loadingplot(dapc1$var.contr[, i], threshold=decimus, main=title)
-        }
-      }
     }
+  }
+  
+  ################################################
+  ########## Return snpzip Results  ##############
+  ################################################
+  
+  if(class(y)=="dapc"){
     
-    ################################################
-    ########## Return snpzip Results  ##############
-    ################################################
-    
-    if(class(y)=="dapc"){
-      
-      answer <- list(dapc1$n.pca, features)
-      names(answer)[[1]] <- "Number of PCs of PCA retained"
-      names(answer)[[2]] <- "FS"
-      return(answer) 
-    }
-    
-    else{ 
-      answer <- list(best.n.pca, features, dapc.success, dapc1)
-      names(answer)[[1]] <- "Number of PCs of PCA retained"
-      names(answer)[[2]] <- "FS"
-      names(answer)[[3]] <- "Discrimination success overall & by group"
-      names(answer)[[4]] <- "DAPC"
-      return(answer)
-    }
-    
-    par(ask=FALSE)
-  } # end snpzip
+    answer <- list(dapc1$n.pca, features)
+    names(answer)[[1]] <- "Number of PCs of PCA retained"
+    names(answer)[[2]] <- "FS"
+    return(answer) 
+  }
   
+  else{ 
+    answer <- list(best.n.pca, features, dapc.success, dapc1)
+    names(answer)[[1]] <- "Number of PCs of PCA retained"
+    names(answer)[[2]] <- "FS"
+    names(answer)[[3]] <- "Discrimination success overall & by group"
+    names(answer)[[4]] <- "DAPC"
+    return(answer)
+  }
   
-  
-  
-  
-  
+  par(ask=FALSE)
+} # end snpzip
+
+
+
+
