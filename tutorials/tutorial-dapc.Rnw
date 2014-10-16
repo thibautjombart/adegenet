@@ -25,8 +25,8 @@
 
 
 \title{A tutorial for Discriminant Analysis of Principal Components (DAPC) using \textit{adegenet} \Sexpr{packageDescription("adegenet", fields = "Version")}}
-\author{Thibaut Jombart
-  \thanks{\texttt{tjombart@imperial.ac.uk}}
+\author{Thibaut Jombart, Caitlin Collins
+  \thanks{\texttt{tjombart@imperial.ac.uk}, \texttt{caitlin.collins12@imperial.ac.uk}}
 }
 \affil{{\footnotesize Imperial College London \\MRC Centre for Outbreak Analysis and Modelling}}
 
