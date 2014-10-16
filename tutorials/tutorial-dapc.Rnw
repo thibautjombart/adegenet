@@ -891,7 +891,7 @@ breed are poorly identified compared to other breeds.
 As of version 1.4-0 of adegenet, an interactive web interface for DAPC is distributed with the package.
 It is started by typing:
 <<eval=FALSE>>=
-adegenetServer("DAPC")
+adegenetServer(what = "DAPC")
 @
 This will open up the web browser used by default in R.
 This application should ressemble:
