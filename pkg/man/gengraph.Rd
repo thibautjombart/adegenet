@@ -30,20 +30,24 @@
 gengraph(x, \dots)
 
 \method{gengraph}{matrix}(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE,
-plot=TRUE, show.graph=TRUE, col.pal=funky, truenames=TRUE, \dots)
+           plot=TRUE, show.graph=TRUE, col.pal=funky, truenames=TRUE,
+           nbreaks=10, \dots)
 
 \method{gengraph}{dist}(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE,
-plot=TRUE, show.graph=TRUE, col.pal=funky, truenames=TRUE, \dots)
+           plot=TRUE, show.graph=TRUE, col.pal=funky, truenames=TRUE,
+           nbreaks=10, \dots)
 
 \method{gengraph}{genind}(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE,
-plot=TRUE, show.graph=TRUE, col.pal=funky, truenames=TRUE, \dots)
+           plot=TRUE, show.graph=TRUE, col.pal=funky, truenames=TRUE,
+           nbreaks=10, \dots)
 
 \method{gengraph}{genpop}(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE,
-         plot=TRUE, show.graph=TRUE, col.pal=funky, method=1,
-         truenames=TRUE, \dots)
+           plot=TRUE, show.graph=TRUE, col.pal=funky, method=1,
+           truenames=TRUE, nbreaks=10, \dots)
 
 \method{gengraph}{DNAbin}(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE,
-plot=TRUE, show.graph=TRUE, col.pal=funky, truenames=TRUE, \dots)
+           plot=TRUE, show.graph=TRUE, col.pal=funky, truenames=TRUE,
+           nbreaks=10, \dots)
 
 }
 \arguments{
@@ -51,27 +55,39 @@ plot=TRUE, show.graph=TRUE, col.pal=funky, truenames=TRUE, \dots)
     \code{\linkS4class{genpop}}, or \code{DNAbin} object. For
     \code{matrix} and \code{dist}, the object represents pairwise
     (by default, Hamming) distances between considered individuals.}
+
   \item{cutoff}{a \code{numeric} value indicating the cutoff point,
     i.e. the distance at which two entities are no longer connected in
     the garph produced by the method.}
+
   \item{ngrp}{an \code{integer} indicating the number of groups to be
     looked for. A message is issued if this exact number could not be found.}
+
   \item{computeAll}{a \code{logical} stating whether to investigate
     solutions for every (integer) cutoff point; defaults to FALSE.}
+
   \item{plot}{a \code{logical} indicating whether plots should be drawn;
     defaults to TRUE; this operation can take time for large, highly-connected graphs.}
+
   \item{show.graph}{a \code{logical} indicating whether the found graph
     should be drawn, only used in the interactive mode; this operation
     can take time for large, highly-connected graphs; defaults to FALSE.}
+
   \item{col.pal}{a color palette used to define group colors.}
+
   \item{method}{an \code{integer} ranging from 1 to 6 indicating the
     type of method to be used to derive a matrix of pairwise distances
     between populations; values from 1 to 5 are passed to the function
     \code{dist.genpop}; 6 corresponds to pairwise Fst; other values are
     not supported.}
+
   \item{truenames}{a logical indicating whether original labels should
     be used for plotting (TRUE), as opposed to indices of sequences
     (FALSE).}
+
+  \item{nbreaks}{an integer indicating the number of breaks used by the
+    heuristic when seeking an exact number of groups.}
+
   \item{\dots}{further arguments to be used by other functions;
     currently not used.}
 }

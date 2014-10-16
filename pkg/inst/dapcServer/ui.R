@@ -158,8 +158,7 @@ shinyUI(
                                      ## select transparency
                                      conditionalPanel(
                                                       ## condition
-                                                      "$('li.active a').first().html()=='Scatterplot'
-                                        && $('li.active a').first().html()=='Compoplot'",
+                                                      "$('li.active a').first().html()=='Scatterplot'",
                                                       sliderInput("alpha", "Choose transparency", min=0, max=1, step=0.05, value=0.5)
                                                       ),
 
@@ -226,7 +225,7 @@ shinyUI(
                                                       checkboxInput("threshold", "Display threshold?", TRUE),
 
                                                       selectInput("thresholdMethod", "Method for selecting threshold:",
-                                                                  choices=c("Third quantile" = "quantile",
+                                                                  choices=c("Third quartile" = "quartile",
                                                                   "Complete linkage clustering" = "complete",
                                                                   "Single linkage clustering" = "single",
                                                                   "Average linkage clustering" = "average",
@@ -279,9 +278,9 @@ shinyUI(
 
 
 
-##################
-                                              ## HELP SECTION ##
-##################
+######################
+#### HELP SECTION ####
+######################
 
                                               tabPanel("Help",
 
@@ -322,7 +321,7 @@ shinyUI(
                                                        h3(br(),"Ask your questions on the adegenet forum"),
                                                        p("Use the adegenet forum to ask all non-confidential questions: ", a("send an email", href="mailto:adegenet-forum@lists.r-forge.r-project.org", target="_top")),
                                                        p("Make sure to describe your problem clearly and to provide, whenever possible, a reproducible example for any reported error. Please also give your session info (copy and paste the content of the serverInfo tab at the end of your email)"),
-                                                       
+
                                                        p("Note that this mailing list is moderated, and if not subscribed your post may be differed by a day or two. To subscribe to the mailing list, go to", a("this page", href="http://lists.r-forge.r-project.org/cgi-bin/mailman/listinfo/adegenet-forum", target="_blank")),
 
 
@@ -388,7 +387,7 @@ shinyUI(
 
                                                        ## LOADING PLOT ##
 
-                                                       h3("Loading Plot"),
+                                                       h3(br(), "Loading Plot"),
                                                        p("The Loading Plot page allows the user to examine how the original variables contribute to the
                   discriminant functions created by DAPC. Variables are plotted along the x-axis, and the contribution
                   of those variables to the DAPC is plotted in the y-axis."),

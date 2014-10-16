@@ -320,7 +320,7 @@ shinyServer(function(input, output) {
        mat <- as.matrix(na.replace(x, method="mean", quiet=TRUE))
      }
 
-     if(method=="quantile"){
+     if(method=="quartile"){
        x <- dapc1$var.contr[,dimension]
        thresh <- quantile(x,0.75)
        maximus <- which(x > thresh)
@@ -361,7 +361,7 @@ shinyServer(function(input, output) {
        if(!is.null(input$LPax)) LPaxis <- input$LPax
        if(input$threshold){
          # if threshold is by quantile
-         if(input$thresholdMethod=="quantile"){
+         if(input$thresholdMethod=="quartile"){
            x <- dapc1$var.contr[,LPaxis]
            def <- quantile(x,0.75)
          }else{
@@ -418,20 +418,20 @@ shinyServer(function(input, output) {
     output$systeminfo <- renderPrint({
       cat("\n== R version ==\n")
       print(R.version)
-      
+
       cat("\n== Date ==\n")
       print(date())
-      
+
       cat("\n== adegenet version ==\n")
       print(packageDescription("adegenet", fields=c("Package", "Version", "Date", "Built")))
-      
+
       cat("\n== shiny version ==\n")
       print(packageDescription("adegenet", fields=c("Package", "Version", "Date", "Built")))
-      
+
       cat("\n== attached packages ==\n")
       print(search())
     }) # end renderPrint
-   
+
 #      .render.server.info()
 
 }) # end shinyServer

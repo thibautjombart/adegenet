@@ -487,6 +487,7 @@ scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=seasun(length(levels(gr
                          cgrid = 1, pixmap = NULL, contour = NULL, area = NULL, ...){
     ONEDIM <- xax==yax | ncol(x$ind.coord)==1
 
+
     ## recycle color and pch
     col <- rep(col, length(levels(grp)))
     pch <- rep(pch, length(levels(grp)))
@@ -498,6 +499,14 @@ scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=seasun(length(levels(gr
         grp <- x$grp
     }
 
+    ## handle xax or yax NULL
+    if(is.null(xax)||is.null(yax)){
+        xax <- 1L
+        yax <- ifelse(ncol(x$ind.coord)==1L, 1L, 2L)
+        ONEDIM <- TRUE
+    }
+
+    ## handle 1 dimensional plot
     if(!ONEDIM){
         ## set par
         opar <- par(mar = par("mar"))
