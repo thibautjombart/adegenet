@@ -299,10 +299,15 @@ snpzip <- function(snps, y, plot=TRUE, xval.plot=FALSE, loading.plot=FALSE,
       }
       else{
         par(ask=TRUE)
-        maximus <- features[[1]][[2]] # not sure this is the right way to deal with the lapply
-                                      # plus need to specify that this is only the loadingplot for dimension 1 ... 
-        decimus <- abs(dapc1$var.contr[maximus][(which.min(dapc1$var.contr[maximus]))])-0.000001
-        meridius <- loadingplot(dapc1$var.contr[,1], threshold=c(decimus)) 
+        # specify that you want to run the following lines for all DA (ie. from DA=1 to DA=(k-1))
+        DA <- c(1:dapc1$n.da)
+        # generate separate loading plots for each DA
+        for(i in DA){
+          title <- paste("Loading Plot for DA", i, sep=" ")
+          maximus <- features[[i]][[2]] 
+          decimus <- abs(dapc1$var.contr[maximus,i][(which.min(dapc1$var.contr[maximus,i]))])-0.000001
+          meridius <- loadingplot(dapc1$var.contr[, i], threshold=decimus, main=title)
+        }
       }
     }
     

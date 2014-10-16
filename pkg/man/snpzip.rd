@@ -73,6 +73,8 @@ snpzip(snps, y, plot = TRUE, xval.plot = FALSE, loading.plot = FALSE,
   
   If \code{loading.plot=TRUE}, a loading plot will be generated to show the 
   contributions of alleles to the DAPC, and the SNP selection threshold will be indicated.
+  If the number of Discriminant Axes (\code{n.da}) in the DAPC is greater than 1, 
+  \code{loading.plot=TRUE} will generate one loading plot for each discriminant axis.
 }
 
 \references{

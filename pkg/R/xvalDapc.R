@@ -12,8 +12,8 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
   grp <- factor(grp)
   n.pca <- n.pca[n.pca > 0]
   if(!is.null(n.da)){
-    n.da <- n.da}
-  else{
+    n.da <- n.da
+  }else{
     n.da <- length(levels(grp))-1}
 #   if(missing(n.da)){
 #   n.da <- length(levels(grp))-1}
@@ -22,21 +22,26 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
 #   else{
 #     n.da <- n.da}
   if(missing(training.set)){
-    training.set <- 0.9}
-  else{
+    training.set <- 0.9
+  }else{
     training.set <- training.set}
   if(missing(n.rep)){
-    n.rep <- 30}
-  else{
+    n.rep <- 30
+  }else{
     n.rep <- n.rep}
+
+  if(missing(result)){
+    result <- "groupMean"
+  }else{ 
+    result <- result}
   
   
   ## GET TRAINING SET SIZE ##
   N <- nrow(x)
   groups <- levels(grp)
   if(all(lapply(groups, function(e) sum(as.vector(unclass(grp==e))))>=10)==TRUE){
-    N.training <- round(N*training.set)}
-  else{
+    N.training <- round(N*training.set)
+  }else{
     groups1 <- (levels(grp))[(as.vector(which.min((lapply(groups, function(e) sum(as.vector(unclass(grp==e))))))))]
     popmin <- length(which(grp%in%groups1))
     training.set2 <- ((popmin - 1)/popmin)
@@ -46,12 +51,12 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
   ## GET FULL PCA ##
   if(missing(n.pca.max)) n.pca.max <- min(dim(x))
   pcaX <- dudi.pca(x, nf=n.pca.max, scannf=FALSE, center=center, scale=scale)
-  n.pca.max <- min(n.pca.max, pcaX$rank, N.training-1)
+  n.pca.max <- min(n.pca.max, pcaX$rank, N.training-1) # re-defines n.pca.max (so user's input may not be the value used...)
   
   ## DETERMINE N.PCA IF NEEDED ##
   if(n.pca.max < 10){
-    runs <- n.pca.max}
-  else{
+    runs <- n.pca.max
+  }else{
     runs <- 10}
   
   if(is.null(n.pca)){
@@ -83,7 +88,7 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
       return(out)
     }
     return(replicate(n.rep, f1()))
-  }
+  } # end get.prop.pred
   
   
   ## GET %SUCCESSFUL OF ACCURATE PREDICTION FOR ALL VALUES ##
@@ -126,7 +131,7 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
                   ylim=c(0,1), xlab="Number of PCA axes retained",
                   ylab="Proportion of successful outcome prediction", 
                   main="DAPC Cross-Validation")
-    print(abline(h=q.phen, lty=c(2,1,2)))
+    abline(h=q.phen, lty=c(2,1,2))
   }
   
   
