@@ -3,7 +3,9 @@ NEW FEATURES
 	o the generic function pairDist has been added; it plots pairwise
 	distance distributions for different group combinations. Method
 	for objects of class: dist, matrix, genind, DNAbin.
-	
+
+	o 'inbreeding' can now return the maximum likelihood estimate via the
+	stats function 'optimize'.
 
 
 
