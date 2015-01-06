@@ -10,6 +10,8 @@ importFrom(utils, "packageDescription")
 
 importFrom(stats, "kmeans")
 
+importFrom(stats, "optimize")
+
 importFrom(MASS, "lda")
 
 ## CURRENTLY DOES NOT WORK - as.DNAbin methods not exported - sent email to E.P.
