@@ -11,8 +11,8 @@
   1 is acceptable.
 }
 \usage{
-inbreeding(x, pop = NULL, truenames = TRUE, res.type = c("sample","function"),
-           N = 200, M = N * 10)
+inbreeding(x, pop = NULL, truenames = TRUE, 
+           res.type = c("sample", "function", "estimate"), N = 200, M = N * 10)
 }
 \arguments{
   \item{x}{an object of class \linkS4class{genind}.}
@@ -22,9 +22,10 @@ inbreeding(x, pop = NULL, truenames = TRUE, res.type = c("sample","function"),
   \item{truenames}{a logical indicating whether true names should be
     used (TRUE, default) instead of generic labels (FALSE); used if
     res.type is "matrix".}
- \item{res.type}{a character string matching "sample" or "function",
+ \item{res.type}{a character string matching "sample", "function", or "estimate"
    specifying whether the output should be a function giving the density
-   of probability of F values ("function") or a sample of F values taken
+   of probability of F values ("function"), the maximum likelihood estimate
+   of F from this distribution ("estimate"), or a sample of F values taken
    from this distribution ("sample", default).}
  \item{N}{an integer indicating the size of the sample to be taken from
    the distribution of F values.}
@@ -60,6 +61,7 @@ inbreeding(x, pop = NULL, truenames = TRUE, res.type = c("sample","function"),
 }
 \author{
   Thibaut Jombart \email{t.jombart@imperial.ac.uk}\cr
+  Zhian N. Kamvar\cr
 }
 \examples{
 \dontrun{
@@ -90,5 +92,22 @@ Fdens[[1]]
 ## plot the first 10 functions
 invisible(sapply(Fdens[1:10], plot, ylab="Density",
 main="Density of probability of F values"))
+
+## estimate inbreeding - return maximum likelihood estimates
+Fest <- inbreeding(lagun, res.type = "estimate")
+mostInbred <- which.max(Fest)
+plot(Fdens[[mostInbred]], ylab = "Density", xlab = "F",
+     main = paste("Probability density of F values\nfor", names(mostInbred)))
+abline(v = Fest[mostInbred], col = "red", lty = 2)
+legend("topright", legend = "MLE", col = "red", lty = 2)
+
+## note that estimates and average samples are likely to be different.
+plot(Fest, ylab = "F", col = "blue",
+     main = "comparison of MLE and average sample estimates of F")
+points(Fmean, pch = 2, col = "red")
+arrows(x0 = 1:length(Fest), y0 = Fest, 
+       y1 = Fmean, x1 = 1:length(Fest), length = 0.125)
+legend("topleft", legend = c("estimate", "sample"), col = c("blue", "red"),
+       pch = c(1, 2), title = "res.type")
 }
 }
