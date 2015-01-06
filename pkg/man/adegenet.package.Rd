@@ -220,7 +220,7 @@
   Thibaut Jombart <t.jombart@imperial.ac.uk>\cr
   Developers: Caitlin Collins <caitiecollins17@gmail.com> Ismail Ahmed
   <ismail.ahmed@inserm.fr>, Federico Calboli <f.calboli@imperial.ac.uk>,
-  Tobias Erik Reiners, Peter Solymos, Anne Cori\cr
+  Tobias Erik Reiners, Peter Solymos, Anne Cori, Zhian N. Kamvar\cr
   Contributed datasets from: Katayoun Moazami-Goudarzi, Denis Laloë,
   Dominique Pontier, Daniel Maillard, Francois Balloux.  }
 \references{
