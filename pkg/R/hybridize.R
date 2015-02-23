@@ -22,7 +22,7 @@ hybridize <- function(x1, x2, n, pop=NULL,
     ## used variables
     n1 <- nInd(x1)
     n2 <- nInd(x2)
-    k <- nLoc(x)
+    k <- nLoc(x1)
 
     #### get frequencies for each locus
     y1 <- genind2genpop(x1,pop=factor(rep(1,n1)),missing="0",quiet=TRUE)
