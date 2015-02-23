@@ -15,14 +15,14 @@ hybridize <- function(x1, x2, n, pop=NULL,
     checkType(x2)
 
     n <- as.integer(n)
-    ploidy <- x1@ploidy
+    ploidy <- ploidy(x1)
     res.type <- match.arg(res.type)
-    if(!all(x1@loc.names==x2@loc.names)) stop("names of markers in x1 and x2 do not correspond")
+    if(!all(locNames(x1)==locNames(x2))) stop("names of markers in x1 and x2 do not correspond")
 
     ## used variables
-    n1 <- nrow(x1$tab)
-    n2 <- nrow(x2$tab)
-    k <- length(x1$loc.names)
+    n1 <- nInd(x1)
+    n2 <- nInd(x2)
+    k <- nLoc(x)
 
     #### get frequencies for each locus
     y1 <- genind2genpop(x1,pop=factor(rep(1,n1)),missing="0",quiet=TRUE)
@@ -37,41 +37,26 @@ hybridize <- function(x1, x2, n, pop=NULL,
     ## kX1 / kX2 are lists of tables of sampled gametes
     kX1 <- lapply(freq1, function(v) t(rmultinom(n,ploidy/2,v)))
     names(kX1) <- x1$loc.names
-    for(i in 1:k) { colnames(kX1[[i]]) <- x1$all.names[[i]]}
+    for(i in 1:k) { colnames(kX1[[i]]) <- alleles(x1)[[i]]}
     kX2 <- lapply(freq2, function(v) t(rmultinom(n,ploidy/2,v)))
     names(kX2) <- x2$loc.names
-    for(i in 1:k) { colnames(kX2[[i]]) <- x2$all.names[[i]]}
-
-    ## tab1 / tab2 are cbinded tables
-    ## tab1 <- cbind.data.frame(kX1)
-    ## gam 1/2 are genind containing gametes
-    ## gam 1
-    ##    gam1 <- genind(tab1, ploidy=ploidy/2)
-    ##     gam1@loc.names <- x1@loc.names
-    ##     gam1@loc.fac <- x1@loc.fac
-    ##     gam1@all.names <- x1@all.names
-    ##     gam1@loc.nall <- x1@loc.nall
-    ##     gam1 <- genind2df(gam1,sep="/",usepop=FALSE)
-    ##     gam1 <- as.matrix(gam1)
-
-    ##     ## gam 2
-    ##     tab2 <- cbind.data.frame(kX2)
-    ##     ## gam 1/2 are genind containing gametes
-    ##     gam2 <- genind(tab2, ploidy=ploidy/2)
-    ##     gam2@loc.names <- x2@loc.names
-    ##     gam2@loc.fac <- x2@loc.fac
-    ##     gam2@all.names <- x2@all.names
-    ##     gam2@loc.nall <- x2@loc.nall
-    ##     gam2 <- genind2df(gam2,sep="/",usepop=FALSE)
-    ##     gam2 <- as.matrix(gam2)
+    for(i in 1:k) { colnames(kX2[[i]]) <- alleles(x2)[[i]]}
 
     ## construction of zygotes ##
-    ## gam1 <-  gsub("/.*$","",gam1)
-    ## gam2 <-  gsub("/.*$","",gam2)
-    tab1 <- cbind.data.frame(kX1)
-    tab2 <- cbind.data.frame(kX2)
-    zyg <- (tab1 + tab2)/ploidy
-    row.names(zyg) <- .genlab(hyb.label,n)
+    ## individual gamete tables
+    tab1 <- as.matrix(cbind.data.frame(kX1))
+    tab2 <- as.matrix(cbind.data.frame(kX2))
+
+    ## make empty matrix with all alleles in tab1 and tab2
+    zyg.rownames <- .genlab(hyb.label,n)
+    zyg.colnames <- sort(unique(c(colnames(tab1),colnames(tab2))))
+    zyg <- matrix(0, nrow=n, ncol=length(zyg.colnames),
+                  dimnames=list(zyg.rownames, zyg.colnames))
+
+    ## add in the alleles
+    zyg[, colnames(tab1)] <- zyg[, colnames(tab1)] + tab1
+    zyg[, colnames(tab2)] <- zyg[, colnames(tab2)] + tab2
+    zyg <- zyg/ploidy
     zyg <- genind(zyg, type="codom", ploidy=ploidy)
 
     ## res.type=="STRUCTURE"
