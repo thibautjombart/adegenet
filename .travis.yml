@@ -7,6 +7,7 @@ before_install:
   - chmod 755 ./travis-tool.sh
   - sudo add-apt-repository -y ppa:texlive-backports/ppa # This repository > default debian for R
   - ./travis-tool.sh bootstrap
+  - sudo apt-get install tcl tk
 
 install:
   - ./travis-tool.sh install_deps
