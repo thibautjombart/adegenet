@@ -1,14 +1,14 @@
 Package: adegenet
 Version: 1.4-3
-Date: 2014/05/13
-Title: adegenet: an R package for the exploratory analysis of genetic and genomic data.
-Author:  Thibaut Jombart, Caitlin Collins, Peter Solymos, Ismail Ahmed, Federico Calboli, Anne Cori, Zhian N. Kamvar
+Date: 2015/03/01
+Title: adegenet: an R Package for the Exploratory Analysis of Genetic and Genomic Data
+Author:  Thibaut Jombart, Caitlin Collins, Zhian N. Kamvar, Roman Lustrik, Peter Solymos, Ismail Ahmed, Federico Calboli, Anne Cori
 Maintainer: Thibaut Jombart <t.jombart@imperial.ac.uk>
 Suggests: genetics, spdep, tripack, pegas, seqinr, adehabitat, parallel, akima, maps, splancs, hierfstat
 Depends: R (>= 2.14), methods, ade4
 Imports: utils, stats, MASS, igraph, ape, shiny, ggplot2
 URL: http://adegenet.r-forge.r-project.org/
-Description: Classes and functions for genetic data analysis within the multivariate framework.
+Description: Adegenet provides classes and functions for the exploration of genetic and genomic data. It implements original multivariate methods (DAPC, sPCA), graphics, statistical tests, simulation tools, distance and similarity measures, and several spatial methods.
 Collate: classes.R basicMethods.R handling.R auxil.R setAs.R SNPbin.R glHandle.R glFunctions.R glSim.R find.clust.R hybridize.R scale.R fstat.R import.R seqTrack.R chooseCN.R genind2genpop.R loadingplot.R sequences.R gstat.randtest.R makefreq.R colorplot.R monmonier.R spca.R coords.monmonier.R haploGen.R old2new.R spca.rtests.R dapc.R xvalDapc.R haploPop.R PCtest.R dist.genpop.R Hs.R propShared.R export.R HWE.R propTyped.R inbreeding.R glPlot.R gengraph.R simOutbreak.R mutations.R snpposi.R snpzip.R pairDist.R servers.R zzz.R
 License: GPL (>=2)
 LazyLoad: yes
