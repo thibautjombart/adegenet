@@ -1,6 +1,64 @@
 ##############
 # loadingplot
 ##############
+
+
+#' Represents a cloud of points with colors
+#' 
+#' The \code{loadingplot} function represents positive values of a vector and
+#' identifies the values above a given threshold. It can also indicate groups
+#' of observations provided as a factor. \cr
+#' 
+#' Such graphics can be used, for instance, to assess the weight of each
+#' variable (loadings) in a given analysis.
+#' 
+#' 
+#' @aliases loadingplot loadingplot.default
+#' @param x either a vector with numeric values to be plotted, or a matrix-like
+#' object containing numeric values. In such case, the \code{x[,axis]} is used
+#' as vector of values to be plotted.
+#' @param at an optional numeric vector giving the abscissa at which loadings
+#' are plotted. Useful when variates are SNPs with a known position in an
+#' alignement.
+#' @param threshold a threshold value above which values of x are identified.
+#' By default, this is the third quartile of x.
+#' @param axis an integer indicating the column of x to be plotted; used only
+#' if x is a matrix-like object.
+#' @param fac a factor defining groups of observations.
+#' @param byfac a logical stating whether loadings should be averaged by groups
+#' of observations, as defined by \code{fac}.
+#' @param lab a character vector giving the labels used to annotate values
+#' above the threshold; if NULL, names are taken from the object.
+#' @param cex.lab a numeric value indicating the size of annotations.
+#' @param cex.fac a numeric value indicating the size of annotations for groups
+#' of observations.
+#' @param lab.jitter a numeric value indicating the factor of randomisation for
+#' the position of annotations. Set to 0 (by default) implies no randomisation.
+#' @param main the main title of the figure.
+#' @param xlab the title of the x axis.
+#' @param ylab the title of the y axis.
+#' @param srt rotation of the labels; see ?text.
+#' @param adj adjustment of the labels; see ?text.
+#' @param \dots further arguments to be passed to the plot function.
+#' @return Invisibly returns a list with the following components:\cr -
+#' threshold: the threshold used\cr - var.names: the names of observations
+#' above the threshold\cr - var.idx: the indices of observations above the
+#' threshold\cr - var.values: the values above the threshold\cr
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#' @keywords multivariate hplot
+#' @examples
+#' 
+#' x <- runif(20)
+#' names(x) <- letters[1:20]
+#' grp <- factor(paste("group", rep(1:4,each=5)))
+#' 
+#' ## basic plot
+#' loadingplot(x)
+#' 
+#' ## adding groups
+#' loadingplot(x,fac=grp,main="My title",cex.lab=1)
+#' 
+#' @export loadingplot
 loadingplot <- function (x, ...) UseMethod("loadingplot")
 
 

@@ -8,6 +8,66 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("groups","distance"))
 ##############
 ## GENERICS ##
 ##############
+
+
+#' Pairwise distance plots
+#' 
+#' The function \code{pairDistPlot} extracts and plots pairwise distances
+#' between different groups (graphs use ggplot2). The function
+#' \code{pairDistPlot} does the same, without the graphs.
+#' 
+#' \code{pairDistPlot} is a generic function with methods for the following
+#' types of objects:\cr - \code{dist} \cr - \code{matrix} (only numeric
+#' data)\cr - \code{\linkS4class{genind}} objects (genetic markers,
+#' individuals)\cr - \code{\link[ape]{DNAbin}} objects (DNA sequences)
+#' 
+#' 
+#' @aliases pairDist pairDist.default pairDistPlot pairDistPlot.default
+#' pairDistPlot.dist pairDistPlot.matrix pairDistPlot.genind
+#' pairDistPlot.DNAbin
+#' @param x pairwise distances provided as a \code{dist} or a symmetric
+#' \code{matrix}, or \code{\linkS4class{genind}} or \code{DNAbin} object. For
+#' \code{\linkS4class{genind}} objects, pairwise squared Euclidean distances
+#' are computed from the allele data. For \code{DNAbin} objects, distances are
+#' computed uing \code{\link{dist.dna}}, and '...' is used to pass arguments to
+#' the function.
+#' @param grp a factor defining a grouping of individuals.
+#' @param within a logical indicating whether to keep within-group comparisons.
+#' @param sep a character used as separator between group names
+#' @param data a logical indicating whether data of the plot should be
+#' returned.
+#' @param violin a logical indicating whether a violinplot should be generated.
+#' @param boxplot a logical indicating whether a boxplot should be generated.
+#' @param jitter a logical indicating whether a jitter-plot should be
+#' generated.
+#' @param \dots further arguments to be used by other functions; used for
+#' \code{DNAbin} object to pass argumetns to \code{dist.dna}.
+#' @return A list with different components, depending on the values of the
+#' arguments. Plots are returned as \code{ggplot2} objects.
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}.
+#' @seealso \code{\link{gengraph}} to identify connectivity based on distances.
+#' @examples
+#' 
+#' \dontrun{
+#' 
+#' ## use a subset of influenza data
+#' data(H3N2)
+#' set.seed(1)
+#' dat <- H3N2[sample(1:nInd(H3N2), 100)]
+#' 
+#' ## get pairwise distances
+#' temp <- pairDistPlot(dat, other(dat)$epid)
+#' 
+#' ## see raw data
+#' head(temp$data)
+#' 
+#' ## see plots
+#' temp$boxplot
+#' temp$violin
+#' temp$jitter
+#' 
+#' }
+#' 
 pairDistPlot <-  function (x, ...) UseMethod("pairDistPlot")
 pairDist <-  function (x, ...) UseMethod("pairDistPlot")
 

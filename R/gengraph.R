@@ -1,6 +1,75 @@
 #############
 ## GENERIC ##
 #############
+
+
+#' Genetic transitive graphs
+#' 
+#' These functions are under development. Please email the author before using
+#' them for published work.\cr
+#' 
+#' The function \code{gengraph} generates graphs based on genetic distances, so
+#' that pairs of entities (individuals or populations) are connected if and
+#' only if they are distant by less than a given threshold distance. Graph
+#' algorithms and classes from the \code{\link[igraph]{igraph}} package are
+#' used.\cr
+#' 
+#' \code{gengraph} is a generic function with methods for the following types
+#' of objects:\cr - \code{matrix} (only numeric data)\cr - \code{dist} \cr -
+#' \code{\linkS4class{genind}} objects (genetic markers, individuals)\cr -
+#' \code{\linkS4class{genpop}} objects (genetic markers, populations)\cr -
+#' \code{\link[ape]{DNAbin}} objects (DNA sequences)
+#' 
+#' 
+#' @aliases gengraph gengraph.default gengraph.matrix gengraph.dist
+#' gengraph.genind gengraph.genpop gengraph.DNAbin
+#' @param x a \code{matrix}, \code{dist}, \code{\linkS4class{genind}},
+#' \code{\linkS4class{genpop}}, or \code{DNAbin} object. For \code{matrix} and
+#' \code{dist}, the object represents pairwise (by default, Hamming) distances
+#' between considered individuals.
+#' @param cutoff a \code{numeric} value indicating the cutoff point, i.e. the
+#' distance at which two entities are no longer connected in the garph produced
+#' by the method.
+#' @param ngrp an \code{integer} indicating the number of groups to be looked
+#' for. A message is issued if this exact number could not be found.
+#' @param computeAll a \code{logical} stating whether to investigate solutions
+#' for every (integer) cutoff point; defaults to FALSE.
+#' @param plot a \code{logical} indicating whether plots should be drawn;
+#' defaults to TRUE; this operation can take time for large, highly-connected
+#' graphs.
+#' @param show.graph a \code{logical} indicating whether the found graph should
+#' be drawn, only used in the interactive mode; this operation can take time
+#' for large, highly-connected graphs; defaults to FALSE.
+#' @param col.pal a color palette used to define group colors.
+#' @param method an \code{integer} ranging from 1 to 6 indicating the type of
+#' method to be used to derive a matrix of pairwise distances between
+#' populations; values from 1 to 5 are passed to the function
+#' \code{dist.genpop}; 6 corresponds to pairwise Fst; other values are not
+#' supported.
+#' @param truenames a logical indicating whether original labels should be used
+#' for plotting (TRUE), as opposed to indices of sequences (FALSE).
+#' @param nbreaks an integer indicating the number of breaks used by the
+#' heuristic when seeking an exact number of groups.
+#' @param \dots further arguments to be used by other functions; currently not
+#' used.
+#' @return The class \code{gengraph} is a list with the following
+#' components:\cr \item{graph}{a graph of class \code{\link[igraph]{igraph}}.}
+#' \item{clust}{a list containing group information: \code{$membership}: an
+#' integer giving group membership; \code{$csize}: the size of each cluster;
+#' \code{$no}: the number of clusters} \item{cutoff}{the value used as a cutoff
+#' point} \item{col}{the color used to plot each group.}
+#' @author Original idea by Anne Cori and Christophe Fraser.  Implementation by
+#' Thibaut Jombart \email{t.jombart@@imperial.ac.uk}.
+#' @seealso The \code{\link[igraph]{igraph}} package.
+#' @examples
+#' 
+#' \dontrun{
+#' dat <- haploGen()
+#' res <- gengraph(dat$seq, ngrp=1)
+#' plot(res$graph)
+#' }
+#' 
+#' @export gengraph
 gengraph <-  function (x, ...) UseMethod("gengraph")
 
 
@@ -26,6 +95,36 @@ gengraph.default <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=T
 ## this is the basic method
 ##
 gengraph.matrix <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE, show.graph=TRUE, col.pal=funky,
+
+
+#' Restore true labels of an object
+#' 
+#' The function \code{truenames} returns some elements of an object
+#' (\linkS4class{genind} or \linkS4class{genpop}) using true names (as opposed
+#' to generic labels) for individuals, markers, alleles, and population.\cr
+#' 
+#' 
+#' @name truenames
+#' @aliases truenames truenames-methods truenames,ANY-method
+#' truenames,genind-method truenames,genpop-method
+#' @docType methods
+#' @param x a \linkS4class{genind} or a \linkS4class{genpop} object
+#' @return If x\$pop is empty (NULL), a matrix similar to the x\$tab slot but
+#' with true labels.
+#' 
+#' If x\$pop exists, a list with this matrix (\$tab) and a population vector
+#' with true names (\$pop).\cr
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#' @keywords manip
+#' @examples
+#' 
+#' data(microbov)
+#' microbov
+#' 
+#' microbov$tab[1:5,1:5]
+#' truenames(microbov)$tab[1:5,1:5]
+#' 
+#' @export truenames
                             truenames=TRUE, nbreaks=10, ...){
     ## CHECKS ##
     ## if(!require("igraph")) stop("igraph is required")
