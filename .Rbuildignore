@@ -1,3 +1,4 @@
 ~.so
 ~.o
 tutorials
+^\.travis\.yml$
