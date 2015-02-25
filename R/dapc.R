@@ -172,7 +172,7 @@
 #' 
 #' ## H3N2 EXAMPLE ##
 #' data(H3N2)
-#' pop(H3N2) <- factor(H3N2$other$epid)
+#' pop(H3N2) <- factor(H3N2@@other$epid)
 #' dapc1 <- dapc(H3N2, var.contrib=FALSE, scale=FALSE, n.pca=150, n.da=5)
 #' 
 #' ## remove internal segments and ellipses, different pch, add MStree
@@ -254,7 +254,7 @@
 #' 
 #' ## CROSS-VALIDATION ##
 #' data(sim2pop)
-#' xval <- xvalDapc(sim2pop@tab, pop(sim2pop), n.pca.max=100, n.rep=3)
+#' xval <- xvalDapc(sim2pop@@tab, pop(sim2pop), n.pca.max=100, n.rep=3)
 #' xval
 #' boxplot(xval$success~xval$n.pca, xlab="Number of PCA components",
 #' ylab="Classification succes", main="DAPC - cross-validation")
