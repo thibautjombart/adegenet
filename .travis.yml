@@ -19,6 +19,8 @@ after_failure:
 
 env:
   global:
+    - R_BUILD_ARGS="--resave-data"
+    - R_CHECK_ARGS="--as-cran"
     - WARNINGS_ARE_ERRORS=1
     - _R_CHECK_FORCE_SUGGESTS_="FALSE"
 
