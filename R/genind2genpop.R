@@ -20,9 +20,9 @@
 #' This is obtained by the product of the margins sums divided by the total
 #' number of alleles.\cr
 #' 
-#' === processing the \code{@other} slot ===\cr Essentially,
+#' === processing the \code{@@other} slot ===\cr Essentially,
 #' \code{genind2genpop} is about aggregating data per population. The function
-#' can do the same for all numeric items in the \code{@other} slot provided
+#' can do the same for all numeric items in the \code{@@other} slot provided
 #' they have the same length (for vectors) or the same number of rows
 #' (matrix-like objects) as the number of genotypes. When the case is
 #' encountered and if \code{process.other} is TRUE, then these objects are
@@ -32,16 +32,16 @@
 #' 
 #' @param x an object of class \code{genind}.
 #' @param pop a factor giving the population of each genotype in 'x'. If note
-#' provided, seeked in x@pop, but if given, the argument prevails on x@pop.
+#' provided, sought in x@@pop, but if given, the argument prevails on x@@pop.
 #' @param missing can be "NA", "0", or "chi2". See details for more
 #' information.
 #' @param quiet logical stating whether a conversion message must be printed
 #' (TRUE,default) or not (FALSE).
-#' @param process.other a logical indicating whether the \code{@other} slot
+#' @param process.other a logical indicating whether the \code{@@other} slot
 #' should be processed (see details).
-#' @param other.action a function to be used when processing the \code{@other}
+#' @param other.action a function to be used when processing the \code{@@other}
 #' slot. By default, 'mean' is used.
-#' @return A genpop object. The component @other in 'x' is passed to the
+#' @return A genpop object. The component @@other in 'x' is passed to the
 #' created genpop object.
 #' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
 #' @seealso \linkS4class{genind}, \linkS4class{genpop},
@@ -56,7 +56,7 @@
 #' catpop
 #' summary(catpop)
 #' 
-#' ## processing the @other slot
+#' ## processing the @@other slot
 #' data(sim2pop)
 #' sim2pop$other$foo <- letters
 #' sim2pop
