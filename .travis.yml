@@ -18,8 +18,9 @@ after_failure:
   - ./travis-tool.sh dump_logs
 
 env:
-  - WARNINGS_ARE_ERRORS=1
-  - _R_CHECK_FORCE_SUGGESTS_="FALSE"
+  global:
+    - WARNINGS_ARE_ERRORS=1
+    - _R_CHECK_FORCE_SUGGESTS_="FALSE"
 
 notifications:
   email:
