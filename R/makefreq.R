@@ -41,7 +41,7 @@
 #' # perform a correspondance analysis on counts data
 #' 
 #' Xcount <- genind2genpop(obj1,missing="chi2")
-#' ca1 <- dudi.coa(as.data.frame(Xcount@tab),scannf=FALSE)
+#' ca1 <- dudi.coa(as.data.frame(Xcount@@tab),scannf=FALSE)
 #' s.label(ca1$li,sub="Correspondance Analysis",csub=1.2)
 #' add.scatter.eig(ca1$eig,nf=2,xax=1,yax=2,posi="topleft")
 #' 
