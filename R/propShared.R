@@ -10,7 +10,7 @@
 #' Compute proportion of shared alleles
 #' 
 #' The function \code{propShared} computes the proportion of shared alleles in
-#' a set of genotypes (i.e. from a \linkS4class{genind} object). Current
+#' a set of genotypes (i.e. from a \code{"\linkS4class{genind}"} object). Current
 #' implementation works for any level of ploidy.
 #' 
 #' Computations of the numbers of shared alleles are done in C.  Proportions
@@ -28,7 +28,7 @@
 #' \dontrun{
 #' ## make a small object
 #' data(microbov)
-#' obj <- microbov[1:5,microbov@loc.fac %in% c("L01","L02")]
+#' obj <- microbov[1:5,microbov@@loc.fac %in% c("L01","L02")]
 #' 
 #' ## verify results
 #' propShared(obj)
