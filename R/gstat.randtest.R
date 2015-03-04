@@ -24,7 +24,7 @@
 #' 
 #' @param x an object of class \code{genind}.
 #' @param pop a factor giving the 'population' of each individual. If NULL, pop
-#' is seeked from x\@pop. Note that the term population refers in fact to any
+#' is seeked from x@@pop. Note that the term population refers in fact to any
 #' grouping of individuals'.
 #' @param method a character (if a vector, only first argument is kept) giving
 #' the method to be applied: 'global', 'within' or 'between' (see details).
