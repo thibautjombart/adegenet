@@ -3,7 +3,7 @@
 # Tests for global and local structures
 #
 # Thibaut Jombart 2007
-# t.jombart@imperial.ac.uk
+# t.jombart@@imperial.ac.uk
 #
 ########################################
 
@@ -17,7 +17,7 @@
 #' Global and local tests
 #' 
 #' These two Monte Carlo tests are used to assess the existence of global and
-#' local spatial structures. They can be used as an aid to interprete global
+#' local spatial structures. They can be used as an aid to interpret global
 #' and local components of spatial Principal Component Analysis (sPCA).\cr
 #' 
 #' They rely on the decomposition of a data matrix X into global and local
@@ -31,7 +31,7 @@
 #' The reference distribution of these statistics are obtained by randomly
 #' permuting the rows of X.
 #' 
-#' This test is purely R code. A C or C++ version will be developped soon.
+#' This test is purely R code. A C or C++ version will be developed soon.
 #' 
 #' @aliases global.rtest local.rtest
 #' @param X a data matrix, with variables in columns
@@ -52,14 +52,14 @@
 #' \dontrun{
 #'  data(sim2pop)
 #' if(require(spdep)){
-#' cn <- chooseCN(sim2pop@other$xy,ask=FALSE,type=1,plot=FALSE,res="listw")
+#' cn <- chooseCN(sim2pop@@other$xy,ask=FALSE,type=1,plot=FALSE,res="listw")
 #' 
 #' # global test
-#' Gtest <- global.rtest(sim2pop@tab,cn)
+#' Gtest <- global.rtest(sim2pop@@tab,cn)
 #' Gtest
 #' 
 #' # local test
-#' Ltest <- local.rtest(sim2pop@tab,cn)
+#' Ltest <- local.rtest(sim2pop@@tab,cn)
 #' Ltest
 #' }
 #' }
