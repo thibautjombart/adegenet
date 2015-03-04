@@ -1,6 +1,6 @@
 # Algorithm to detect boundaries, based on Monmonier's algorithm
 # Extended to any connection network
-# Thibaut Jombart 2006-2008 (t.jombart@imperial.ac.uk)
+# Thibaut Jombart 2006-2008 (t.jombart@@imperial.ac.uk)
 
 
 
@@ -160,21 +160,21 @@
 #' ## run monmonier algorithm
 #' 
 #' # build connection network
-#' gab <- chooseCN(sim2pop@other$xy,ask=FALSE,type=2)
+#' gab <- chooseCN(sim2pop@@other$xy,ask=FALSE,type=2)
 #' 
 #' # filter random noise 
-#' pca1 <- dudi.pca(sim2pop@tab,scale=FALSE, scannf=FALSE, nf=1)
+#' pca1 <- dudi.pca(sim2pop@@tab,scale=FALSE, scannf=FALSE, nf=1)
 #' 
 #' # run the algorithm
-#' mon1 <- monmonier(sim2pop@other$xy,dist(pca1$l1[,1]),gab,scanthres=FALSE)
+#' mon1 <- monmonier(sim2pop@@other$xy,dist(pca1$l1[,1]),gab,scanthres=FALSE)
 #' 
 #' # graphical display 
 #' plot(mon1,var=pca1$l1[,1])
-#' temp <- sim2pop@pop
+#' temp <- sim2pop@@pop
 #' levels(temp) <- c(17,19)
 #' temp <- as.numeric(as.character(temp))
 #' plot(mon1)
-#' points(sim2pop@other$xy,pch=temp,cex=2)
+#' points(sim2pop@@other$xy,pch=temp,cex=2)
 #' legend("topright",leg=c("Pop A", "Pop B"),pch=c(17,19))
 #' 
 #' 
