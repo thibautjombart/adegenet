@@ -1,5 +1,5 @@
 ###################################################################
-## Fonctions designed to import files from other softwares
+## Functions designed to import files from other softwares
 ## into genind objects
 ##
 ## currently supported formats are :
@@ -9,7 +9,7 @@
 ## .stru (STRUCTURE)
 ##
 ## Thibaut Jombart, avril 2006
-## t.jombart@imperial.ac.uk
+## t.jombart@@imperial.ac.uk
 ##
 ##################################################################
 
@@ -28,8 +28,8 @@
 #' are in columns\cr - each element is a string of characters coding alleles
 #' with or without separator. If no separator is used, the function tries to
 #' find how many characters code each genotypes at a locus, but it is safer to
-#' state it (\code{ncode} argument). Uncomplete strings are filled with "0" at
-#' the begining. \cr
+#' state it (\code{ncode} argument). Incomplete strings are filled with "0" at
+#' the beginning. \cr
 #' 
 #' The function \code{genind2df} converts a \linkS4class{genind} back to such a
 #' data.frame. Alleles of a given locus can be coded as a single character
@@ -39,7 +39,7 @@
 #' === There are 3 treatments for missing values === \cr - NA: kept as NA.\cr
 #' 
 #' - 0: allelic frequencies are set to 0 on all alleles of the concerned locus.
-#' Recommended for a PCA on compositionnal data.\cr
+#' Recommended for a PCA on compositional data.\cr
 #' 
 #' - "mean": missing values are replaced by the mean frequency of the
 #' corresponding allele, computed on the whole set of individuals. Recommended
@@ -68,7 +68,7 @@
 #' 'presence/absence' markers (e.g. AFLP, RAPD).
 #' @param x a \linkS4class{genind} object
 #' @param usepop a logical stating whether the population (argument \code{pop}
-#' or \code{x@pop} should be used (TRUE, default) or not (FALSE)).
+#' or \code{x@@pop} should be used (TRUE, default) or not (FALSE)).
 #' @param oneColPerAll a logical stating whether alleles of one locus should be
 #' provided on separate columns (TRUE) rather than as a single character string
 #' (FALSE, default).
@@ -759,7 +759,7 @@ read.genepop <- function(file,missing=NA,quiet=FALSE){
 #' @param col.pop an integer giving the index of the column containing
 #' population to which genotypes belong. '0' if absent.
 #' @param col.others an vector of integers giving the indexes of the columns
-#' containing other informations to be read. Will be available in @other of the
+#' containing other informations to be read. Will be available in @@other of the
 #' created object.
 #' @param row.marknames an integer giving the index of the row containing the
 #' names of the markers. '0' if absent.
@@ -995,7 +995,7 @@ import2genind <- function(file,missing=NA,quiet=FALSE, ...){
 #' 
 #' The function \code{read.snp} reads a SNP data file with extension '.snp' and
 #' converts it into a \linkS4class{genlight} object. This format is devoted to
-#' handle biallelic SNP only, but can accomodate massive datasets such as
+#' handle biallelic SNP only, but can accommodate massive datasets such as
 #' complete genomes with considerably less memory than other formats.
 #' 
 #' The function reads data by chunks of a few genomes (minimum 1, no maximum)
@@ -1029,10 +1029,10 @@ import2genind <- function(file,missing=NA,quiet=FALSE, ...){
 #' computer is used.
 #' @param \dots other arguments to be passed to other functions - currently not
 #' used.
-#' @return an object of the class \linkS4class{genlight}
+#' @return an object of the class \code{"\linkS4class{genlight}"}
 #' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
 #' @seealso - \code{?genlight} for a description of the class
-#' \linkS4class{genlight}.
+#' \code{"\linkS4class{genlight}"}.
 #' 
 #' - \code{\link{read.PLINK}}: read SNPs in PLINK's '.raw' format.
 #' 
@@ -1040,7 +1040,7 @@ import2genind <- function(file,missing=NA,quiet=FALSE, ...){
 #' format.
 #' 
 #' - \code{\link{df2genind}}: convert any multiallelic markers into adegenet
-#' \linkS4class{genind}.
+#' \code{"\linkS4class{genlight}"}.
 #' 
 #' - \code{\link{import2genind}}: read multiallelic markers from various
 #' software into adegenet.\cr
@@ -1273,11 +1273,11 @@ extract.PLINKmap <- function(file, x=NULL){
 #' Reading PLINK Single Nucleotide Polymorphism data
 #' 
 #' The function \code{read.PLINK} reads a data file exported by the PLINK
-#' software with extension '.raw' and converts it into a \linkS4class{genlight}
+#' software with extension '.raw' and converts it into a \code{"\linkS4class{genlight}"}
 #' object. Optionally, information about SNPs can be read from a ".map" file,
 #' either by specifying the argument \code{map.file} in \code{read.PLINK}, or
 #' using \code{extract.PLINKmap} to add information to an existing
-#' \linkS4class{genlight} object.
+#' \code{"\linkS4class{genlight}"} object.
 #' 
 #' The function reads data by chunks of several genomes (minimum 1, no maximum)
 #' at a time, which allows one to read massive datasets with negligible RAM
@@ -1303,7 +1303,7 @@ extract.PLINKmap <- function(file, x=NULL){
 #' @param map.file an optional character string indicating the path to a ".map"
 #' file, which contains information about the SNPs (chromosome, position). If
 #' provided, this information is processed by \code{extract.PLINKmap} and
-#' stored in the \code{@other} slot.
+#' stored in the \code{@@other} slot.
 #' @param quiet logical stating whether a conversion messages should be printed
 #' (TRUE,default) or not (FALSE).
 #' @param chunkSize an integer indicating the number of genomes to be read at a
@@ -1317,21 +1317,21 @@ extract.PLINKmap <- function(file, x=NULL){
 #' computer is used.
 #' @param \dots other arguments to be passed to other functions - currently not
 #' used.
-#' @param x an optional object of the class \linkS4class{genlight}, in which
+#' @param x an optional object of the class \code{"\linkS4class{genlight}"}, in which
 #' the information read is stored; if provided, information is matched against
 #' the names of the loci in \code{x}, as returned by \code{locNames(x)}; if not
 #' provided, a list of two components is returned, containing chromosome and
 #' position information.
-#' @return - read.PLINK: an object of the class \linkS4class{genlight}
+#' @return - read.PLINK: an object of the class \code{"\linkS4class{genlight}"}
 #' 
-#' - extract.PLINKmap: if a \linkS4class{genlight} is provided as argument
+#' - extract.PLINKmap: if a \code{"\linkS4class{genlight}"} is provided as argument
 #' \code{x}, this object incorporating the new information about SNPs in the
-#' \code{@other} slot (with new components 'chromosome' and 'position');
+#' \code{@@other} slot (with new components 'chromosome' and 'position');
 #' otherwise, a list with two components containing chromosome and position
 #' information.
 #' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
 #' @seealso - \code{?genlight} for a description of the class
-#' \linkS4class{genlight}.
+#' \code{"\linkS4class{genlight}"}.
 #' 
 #' - \code{\link{read.snp}}: read SNPs in adegenet's '.snp' format.
 #' 
