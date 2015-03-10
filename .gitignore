@@ -1,2 +1,6 @@
 *~
 adegenet.Rcheck
+.Rproj.user
+adegenet.Rproj
+src/*o
+.Rhistory
