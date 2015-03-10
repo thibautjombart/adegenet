@@ -2,6 +2,41 @@
 ##############
 ## xvalDapc ##
 ##############
+.group_sampler <- function(e, grp, training.set){
+  group_e <- grp == e
+  samp_group <- which(group_e)
+  samp_size <- round(training.set * sum(group_e))
+  sample(samp_group, size = samp_size)
+}
+
+.boot_group_sampler <- function(dat, mle = training.set){
+  grp <- pop(dat)
+  dat[unlist(lapply(levels(grp), .group_sampler, grp, mle))]
+}
+
+.get.prop.pred <- function(n.pca, groups, grp, training.set, training.set2,
+                           pcaX, x, n.da){
+  groups_ge_ten <- vapply(groups, function(e) sum(grp == e) >= 10, logical(1))
+  if (all(groups_ge_ten) == TRUE){
+    toKeep <- unlist(lapply(groups, .group_sampler, grp, training.set))
+  } else {
+    toKeep <- unlist(lapply(groups, .group_sampler, grp, training.set2))
+  }
+  temp.pca <- pcaX
+  temp.pca$li <- temp.pca$li[toKeep,,drop=FALSE]
+  temp.dapc <- suppressWarnings(dapc(x[toKeep,,drop=FALSE], grp[toKeep], 
+                                     n.pca=n.pca, n.da=n.da, dudi=temp.pca))
+  temp.pred <- predict.dapc(temp.dapc, newdata=x[-toKeep,,drop=FALSE])
+  if(result=="overall"){
+    out <- mean(temp.pred$assign==grp[-toKeep])
+  }
+  if(result=="groupMean"){
+    out <- mean(tapply(temp.pred$assign==grp[-toKeep], grp[-toKeep], mean), na.rm=TRUE)
+  }
+  return(out)
+}
+
+
 
 
 xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9, 
