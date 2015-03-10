@@ -89,7 +89,7 @@
 ###############
 ## inbreeding
 ###############
-inbreeding <- function(x, pop=NULL, truenames=TRUE, res.type=c("sample","function"), N=200, M=N*10){
+inbreeding <- function(x, pop=NULL, truenames=TRUE, res.type=c("sample","function","estimate"), N=200, M=N*10){
     ## CHECKS ##
     if(!is.genind(x)) stop("x is not a valid genind object")
     checkType(x)
@@ -177,6 +177,14 @@ inbreeding <- function(x, pop=NULL, truenames=TRUE, res.type=c("sample","functio
     ## IF WE RETURN FUNCTIONS ##
     if(res.type=="function"){
           return(res)
+    } 
+    
+    if (res.type == "estimate"){
+      opfun <- function(x, ...) optimize(x, ...)[[1]]
+      funval <- numeric(1)
+      res <- vapply(res, FUN = opfun , FUN.VALUE = funval, interval = c(0, 1), 
+                    maximum = TRUE, tol = .Machine$double.eps^0.75)
+      return(res)
     }
 
 
