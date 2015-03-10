@@ -2,6 +2,8 @@
 ##############
 ## xvalDapc ##
 ##############
+
+# Return randomly sampled indices from a group.
 .group_sampler <- function(e, grp, training.set){
   group_e <- grp == e
   samp_group <- which(group_e)
@@ -9,31 +11,69 @@
   sample(samp_group, size = samp_size)
 }
 
-.boot_group_sampler <- function(dat, mle = training.set){
-  grp <- pop(dat)
-  dat[unlist(lapply(levels(grp), .group_sampler, grp, mle))]
+
+# Function to subsample the data. This is to be used as the ran.gen function
+# in the boot function. DATA is a data frame or matrix containing the samples,
+# GRP is the group identities of the samples, PCA is the result of dudi.pca
+# on the full data set, KEEP is the subset of samples based on the training
+# set (mle). Note that this function only has two inputs, dat, and mle.
+.boot_group_sampler <- function(dat = list(DATA = dat, GRP = grp, PCA = pcaX, 
+                                           KEEP = 1:nrow(dat)), 
+                                mle = training.set){
+  to_keep    <- unlist(lapply(levels(dat$GRP), .group_sampler, dat$GRP, mle))
+  dat$PCA$li <- dat$PCA$li[to_keep, , drop = FALSE]
+  dat$KEEP   <- to_keep
+  return(dat)
 }
 
-.get.prop.pred <- function(n.pca, groups, grp, training.set, training.set2,
-                           pcaX, x, n.da){
-  groups_ge_ten <- vapply(groups, function(e) sum(grp == e) >= 10, logical(1))
-  if (all(groups_ge_ten) == TRUE){
-    toKeep <- unlist(lapply(groups, .group_sampler, grp, training.set))
+
+# Function to pass to the "statistic" parameter of boot. This will subset the
+# data, calculate the DAPC, give the predictions and return the results.
+.boot_dapc_pred <- function(x, n.pca = n.pca, n.da = n.da, 
+                            result = "overall"){
+  if (length(x$KEEP) == nrow(x$DATA)){
+    out <- 1
   } else {
-    toKeep <- unlist(lapply(groups, .group_sampler, grp, training.set2))
-  }
-  temp.pca <- pcaX
-  temp.pca$li <- temp.pca$li[toKeep,,drop=FALSE]
-  temp.dapc <- suppressWarnings(dapc(x[toKeep,,drop=FALSE], grp[toKeep], 
-                                     n.pca=n.pca, n.da=n.da, dudi=temp.pca))
-  temp.pred <- predict.dapc(temp.dapc, newdata=x[-toKeep,,drop=FALSE])
-  if(result=="overall"){
-    out <- mean(temp.pred$assign==grp[-toKeep])
-  }
-  if(result=="groupMean"){
-    out <- mean(tapply(temp.pred$assign==grp[-toKeep], grp[-toKeep], mean), na.rm=TRUE)
+    new_dat   <- x$DATA[-x$KEEP, ,drop = FALSE]
+    train_dat <- x$DATA[x$KEEP, ,drop = FALSE]
+    
+    new_grp   <- x$GRP[-x$KEEP]
+    train_grp <- x$GRP[x$KEEP]
+    
+    temp.dapc <- suppressWarnings(dapc(train_dat, train_grp, dudi = x$PCA, 
+                                       n.pca = n.pca, n.da = n.da))
+    temp.pred <- predict.dapc(temp.dapc, newdata = new_dat)
+    if (result=="overall"){
+      out <- mean(temp.pred$assign == new_grp)
+    }
+    if (result=="groupMean"){
+      out <- mean(tapply(temp.pred$assign == new_grp, new_grp, mean), na.rm = TRUE)
+    }
   }
   return(out)
+}
+
+
+# Function that will actually do the bootstrapping. It will return a numeric
+# vector with the sucesses ratios. Note that the ellipses are used to pass
+# parameters to boot. When implemented in the xvalDapc function, this will allow
+# the user to implement this in parallel. 
+.get.prop.pred <- function(n.pca, x, n.da, groups, grp, training.set, 
+                           training.set2, pcaX, result = "overall", reps = 100,
+                           ...){
+  
+  groups_ge_ten <- vapply(groups, function(e) sum(grp == e) >= 10, logical(1))
+  bootlist      <- list(DATA = x, GRP = grp, PCA = pcaX, KEEP = 1:nrow(x))
+  if (all(groups_ge_ten) == TRUE){
+    out <- boot::boot(bootlist, .boot_dapc_pred, sim = "parametric", R = reps,
+                      ran.gen = .boot_group_sampler, mle = training.set, 
+                      n.pca = n.pca, n.da = n.da, result = result, ...)$t
+  } else {
+    out <- boot::boot(bootlist, .boot_dapc_pred, sim = "parametric", R = reps,
+                      ran.gen = .boot_group_sampler, mle = training.set2, 
+                      n.pca = n.pca, n.da = n.da, result = result, ...)$t
+  }
+  return(as.vector(out))
 }
 
 
@@ -99,35 +139,11 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
   }
   n.pca <- n.pca[n.pca>0 & n.pca<(N.training-1)]
   
-  ## FUNCTION GETTING THE % OF ACCURATE PREDICTION FOR ONE NUMBER OF PCA PCs ##
-  ## n.pca is a number of retained PCA PCs
-  get.prop.pred <- function(n.pca){
-    f1 <- function(){
-      if(all(lapply(groups, function(e) sum(as.vector(unclass(grp==e))))>=10)==TRUE){
-        toKeep <- unlist(lapply(groups, function(e) sample(which(grp==e), 
-                                                           size=(round(training.set*sum(as.vector(unclass(grp==e))))))))}
-      else{
-        toKeep <- unlist(lapply(groups, function(e) sample(which(grp==e), 
-                                                           size=(round(training.set2*sum(as.vector(unclass(grp==e))))))))}
-      temp.pca <- pcaX
-      temp.pca$li <- temp.pca$li[toKeep,,drop=FALSE]
-      temp.dapc <- suppressWarnings(dapc(x[toKeep,,drop=FALSE], grp[toKeep], 
-                                         n.pca=n.pca, n.da=n.da, dudi=temp.pca))
-      temp.pred <- predict.dapc(temp.dapc, newdata=x[-toKeep,,drop=FALSE])
-      if(result=="overall"){
-        out <- mean(temp.pred$assign==grp[-toKeep])
-      }
-      if(result=="groupMean"){
-        out <- mean(tapply(temp.pred$assign==grp[-toKeep], grp[-toKeep], mean), na.rm=TRUE)
-      }
-      return(out)
-    }
-    return(replicate(n.rep, f1()))
-  } # end get.prop.pred
-  
   
   ## GET %SUCCESSFUL OF ACCURATE PREDICTION FOR ALL VALUES ##
-  res.all <- unlist(lapply(n.pca, get.prop.pred))
+  res.all <- unlist(lapply(n.pca, .get.prop.pred, x, n.da, groups, grp,
+                           training.set, training.set2, pcaX, result, 
+                           n.rep, ...))
   xval <- data.frame(n.pca=rep(n.pca, each=n.rep), success=res.all)    
   
   
