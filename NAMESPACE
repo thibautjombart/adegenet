@@ -12,6 +12,8 @@ importFrom(stats, "kmeans")
 
 importFrom(stats, "optimize")
 
+importFrom(boot, "boot")
+
 importFrom(MASS, "lda")
 
 ## CURRENTLY DOES NOT WORK - as.DNAbin methods not exported - sent email to E.P.

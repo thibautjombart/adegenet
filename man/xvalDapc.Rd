@@ -54,7 +54,7 @@ xvalDapc(x, grp, n.pca.max = 300, n.da = NULL,
     PC retention; defaults to 30.}
   \item{xval.plot}{a logical indicating whether a plot of the cross-validation
     results should be generated.}
-  \item{\dots}{further arguments to be passed to other methods.}
+  \item{\dots}{further arguments to be passed to \code{\link[boot]{boot}}.}
 }
 \details{
   The Discriminant Analysis of Principal Components (DAPC) relies on
