@@ -1235,7 +1235,11 @@ setMethod("as.SNPbin", "numeric", function(x, ...) as(x, "SNPbin"))
 #' identical(x1,x3)
 #' }
 #'
-#'
+#' @export
+as.matrix.genlight <- function(x, ...){
+  return(as(x, "matrix"))
+}
+
 setAs("genlight", "matrix", def=function(from){
     res <- unlist(lapply(from@gen, as.integer))
     res <- matrix(res, ncol=nLoc(from), nrow=nInd(from), byrow=TRUE)
@@ -1248,16 +1252,16 @@ setAs("genlight", "matrix", def=function(from){
 })
 
 
-as.matrix.genlight <- function(x, ...){
-    return(as(x, "matrix"))
-}
+
 
 
 setAs("genlight", "data.frame", def=function(from){
     return(as.data.frame(as.matrix(from)))
 })
 
-
+#' @export
+#' @rdname coerce-methods
+#' @docType methods
 as.data.frame.genlight <- function(x, ...){
     return(as(x, "data.frame"))
 }
@@ -1269,7 +1273,9 @@ setAs("genlight", "list", def=function(from){
     return(res)
 })
 
-
+#' @export
+#' @rdname coerce-methods
+#' @docType methods
 as.list.genlight <- function(x, ...){
     return(as(x, "list"))
 }
@@ -1277,7 +1283,9 @@ as.list.genlight <- function(x, ...){
 
 
 
-## other -> SNPbin/genlight
+#' @export
+#' @rdname coerce-methods
+#' @docType methods
 setGeneric("as.genlight", function(x, ...) standardGeneric("as.genlight"))
 
 
