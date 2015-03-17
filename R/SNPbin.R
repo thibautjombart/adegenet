@@ -1234,14 +1234,11 @@ setMethod("as.SNPbin", "numeric", function(x, ...) as(x, "SNPbin"))
 #' identical(x1,x3)
 #' }
 #'
-<<<<<<< HEAD
-=======
 #' @export
 as.matrix.genlight <- function(x, ...){
   return(as(x, "matrix"))
 }
 
->>>>>>> a951c4b9bf7227f5d1add6510d8cc5b3a22fbdd9
 setAs("genlight", "matrix", def=function(from){
     res <- unlist(lapply(from@gen, as.integer))
     res <- matrix(res, ncol=nLoc(from), nrow=nInd(from), byrow=TRUE)
