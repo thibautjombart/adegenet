@@ -277,7 +277,6 @@ setClass("indInfo", representation(ind.names = "character",
 #'
 #' }
 #'
-NULL
 setClass("genind", contains=c("gen", "indInfo"))
 setValidity("genind", .genind.valid)
 
