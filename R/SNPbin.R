@@ -1,14 +1,93 @@
 
+#' Formal class "SNPbin"
+#'
+#' The class \code{SNPbin} is a formal (S4) class for storing a genotype of
+#' binary SNPs in a compact way, using a bit-level coding scheme.  This storage
+#' is most efficient with haploid data, where the memory taken to represent
+#' data can reduced more than 50 times. However, \code{SNPbin} can be used for
+#' any level of ploidy, and still remain an efficient storage mode.
+#'
+#' A \code{SNPbin} object can be constructed from a vector of integers giving
+#' the number of the second allele for each locus.
+#'
+#' \code{SNPbin} stores a single genotype. To store multiple genotypes, use the
+#' \linkS4class{genlight} class.
+#'
+#'
+#' @name SNPbin-class
+#' @aliases SNPbin SNPbin-class [,SNPbin-method [,SNPbin,ANY,ANY-method
+#' initialize,SNPbin-method show,SNPbin-method nLoc,SNPbin-method
+#' $,SNPbin-method $<-,SNPbin-method names,SNPbin-method ploidy,SNPbin-method
+#' ploidy<-,SNPbin-method coerce,SNPbin,integer-method as.integer.SNPbin
+#' NA.posi,SNPbin-method cbind.SNPbin c.SNPbin as,integer,SNPbin-method
+#' as,numeric,SNPbin-method
+#' @docType class
+#' @section Objects from the class SNPbin: \code{SNPbin} objects can be created
+#' by calls to \code{new("SNPbin", ...)}, where '...' can be the following
+#' arguments:
+#'
+#' \describe{ \item{list("snp")}{a vector of integers or numeric giving numbers
+#' of copies of the second alleles for each locus. If only one unnamed argument
+#' is provided to 'new', it is considered as this one.}
+#' \item{list("ploidy")}{an integer indicating the ploidy of the genotype; if
+#' not provided, will be guessed from the data (as the maximum from the 'snp'
+#' input vector).} \item{list("label")}{an optional character string serving as
+#' a label for the genotype.} }
+#' @author Thibaut Jombart (\email{t.jombart@@imperial.ac.uk})
+#' @seealso Related class:\cr - \code{\linkS4class{genlight}}, for storing
+#' multiple binary SNP genotypes. \cr - \code{\linkS4class{genind}}, for
+#' storing other types of genetic markers. \cr
+#' @keywords classes
+#' @examples
+#'
+#' \dontrun{
+#' #### HAPLOID EXAMPLE ####
+#' ## create a genotype of 100,000 SNPs
+#' dat <- sample(c(0,1,NA), 1e5, prob=c(.495, .495, .01), replace=TRUE)
+#' dat[1:10]
+#' x <- new("SNPbin", dat)
+#' x
+#' x[1:10] # subsetting
+#' as.integer(x[1:10])
+#'
+#' ## try a few accessors
+#' ploidy(x)
+#' nLoc(x)
+#' head(x$snp[[1]]) # internal bit-level coding
+#'
+#' ## check that conversion is OK
+#' identical(as(x, "integer"),as.integer(dat)) # SHOULD BE TRUE
+#'
+#' ## compare the size of the objects
+#' print(object.size(dat), unit="auto")
+#' print(object.size(x), unit="auto")
+#' object.size(dat)/object.size(x) # EFFICIENCY OF CONVERSION
+#'
+#'
+#' #### TETRAPLOID EXAMPLE ####
+#' ## create a genotype of 100,000 SNPs
+#' dat <- sample(c(0:4,NA), 1e5, prob=c(rep(.995/5,5), 0.005), replace=TRUE)
+#' x <- new("SNPbin", dat)
+#' identical(as(x, "integer"),as.integer(dat)) # MUST BE TRUE
+#'
+#' ## compare the size of the objects
+#' print(object.size(dat), unit="auto")
+#' print(object.size(x), unit="auto")
+#' object.size(dat)/object.size(x) # EFFICIENCY OF CONVERSION
+#'
+#'
+#' #### c, cbind ####
+#' a <- new("SNPbin", c(1,1,1,1,1))
+#' b <- new("SNPbin", c(0,0,0,0,0))
+#' a
+#' b
+#' ab <- c(a,b)
+#' ab
+#' identical(c(a,b),cbind(a,b))
+#' as.integer(ab)
+#' }
+#'
 
-###############
-##
-##   CLASSES
-##
-###############
-
-###############
-## SNPbin class
-###############
 setClass("SNPbin", representation(snp = "list",
                                   n.loc = "integer",
                                   NA.posi = "integer",
@@ -19,9 +98,156 @@ setClass("SNPbin", representation(snp = "list",
 
 
 
-###############
-## genlight class
-###############
+
+
+#' Formal class "genlight"
+#'
+#' The class \code{genlight} is a formal (S4) class for storing a genotypes of
+#' binary SNPs in a compact way, using a bit-level coding scheme.  This storage
+#' is most efficient with haploid data, where the memory taken to represent
+#' data can be reduced more than 50 times. However, \code{genlight} can be used
+#' for any level of ploidy, and still remain an efficient storage mode.
+#'
+#' A \code{genlight} object can be constructed from vectors of integers giving
+#' the number of the second allele for each locus and each individual (see
+#' 'Objects of the class genlight' below).
+#'
+#' \code{genlight} stores multiple genotypes. Each genotype is stored as a
+#' \linkS4class{SNPbin} object.
+#'
+#' === On the subsetting using \code{[} ===
+#'
+#' The function \code{[} accepts the following extra arguments: \describe{
+#' \item{treatOther}{a logical stating whether elements of the \code{@@other}
+#' slot should be treated as well (TRUE), or not (FALSE). If treated, elements
+#' of the list are examined for a possible match of length (vectors, lists) or
+#' number of rows (matrices, data frames) with the number of individuals. Those
+#' who match are subsetted accordingly. Others are left as is, issuing a
+#' warning unless the argument \code{quiet} is set to TRUE.} \item{quiet}{a
+#' logical indicating whether warnings should be issued when trying to subset
+#' components of the \code{@@other} slot which do not match the number of
+#' individuals (TRUE), or not (FALSE, default). } \item{list()}{further
+#' arguments passed to the genlight constructor.} }
+#'
+#' @name genlight-class
+#' @aliases genlight genlight-class [,genlight-method [,genlight,ANY,ANY-method
+#' initialize,genlight-method show,genlight-method nLoc,genlight-method
+#' nInd,genlight-method $,genlight-method $<-,genlight-method
+#' names,genlight-method ploidy,genlight-method ploidy<-,genlight-method
+#' locNames,genlight-method locNames<-,genlight-method indNames,genlight-method
+#' indNames<-,genlight-method alleles,genlight-method alleles<-,genlight-method
+#' chromosome chromosome<- chromosome,genlight-method
+#' chromosome<-,genlight-method chr chr<- chr,genlight-method
+#' chr<-,genlight-method position position<- position,genlight-method
+#' position<-,genlight-method pop,genlight-method pop<-,genlight-method NA.posi
+#' NA.posi,genlight-method other,genlight-method other<-,genlight-method
+#' as.matrix.genlight as.data.frame.genlight as,matrix,genlight-method
+#' as,data.frame,genlight-method as,list,genlight-method
+#' coerce,matrix,genlight-method coerce,data.frame,genlight-method
+#' coerce,list,genlight-method as.list.genlight cbind.genlight rbind.genlight
+#' @docType class
+#' @section Objects from the class genlight: \code{genlight} objects can be
+#' created by calls to \code{new("genlight", ...)}, where '...' can be the
+#' following arguments: \describe{ \item{list("gen")}{input genotypes, where
+#' each genotype is coded as a vector of numbers of the second allele. If a
+#' list, each slot of the list correspond to an individual; if a matrix or a
+#' data.frame, rows correspond to individuals and columns to SNPs. If
+#' individuals or loci are named in the input, these names will we stored in
+#' the produced object. All individuals are expected to have the same number of
+#' SNPs. Shorter genotypes are completed with NAs, issuing a warning.}
+#' \item{list("ploidy")}{an optional vector of integers indicating the ploidy
+#' of the genotypes. Genotypes can therefore have different ploidy. If not
+#' provided, ploidy will be guessed from the data (as the maximum number of
+#' second alleles in each individual).} \item{list("ind.names")}{an optional
+#' vector of characters giving the labels of the genotypes.}
+#' \item{list("loc.names")}{an optional vector of characters giving the labels
+#' of the SNPs.} \item{list("loc.all")}{an optional vector of characters
+#' indicating the alleles of each SNP; for each SNP, alleles must be coded by
+#' two letters separated by '/', e.g. 'a/t' is valid, but 'a t' or 'a |t' are
+#' not.} \item{list("chromosome")}{an optional factor indicating the chromosome
+#' to which each SNP belongs.} \item{list("position")}{an optional vector of
+#' integers indicating the position of the SNPs.} \item{list("other")}{an
+#' optional list storing miscellaneous information.} }
+#' @author Thibaut Jombart (\email{t.jombart@@imperial.ac.uk})
+#' @seealso Related class:\cr - \code{\linkS4class{SNPbin}}, for storing
+#' individual genotypes of binary SNPs\cr
+#'
+#' - \code{\linkS4class{genind}}, for storing other types of genetic markers.
+#' \cr
+#' @keywords classes
+#' @examples
+#'
+#' \dontrun{
+#' ## TOY EXAMPLE ##
+#' ## create and convert data
+#' dat <- list(toto=c(1,1,0,0), titi=c(NA,1,1,0), tata=c(NA,0,3, NA))
+#' x <- new("genlight", dat)
+#' x
+#'
+#' ## examine the content of the object
+#' names(x)
+#' x@@gen
+#' x@@gen[[1]]@@snp # bit-level coding for first individual
+#'
+#' ## conversions
+#' as.list(x)
+#' as.matrix(x)
+#'
+#' ## round trips - must return TRUE
+#' identical(x, new("genlight", as.list(x))) # list
+#' identical(x, new("genlight", as.matrix(x))) # matrix
+#' identical(x, new("genlight", as.data.frame(x))) # data.frame
+#'
+#' ## test subsetting
+#' x[c(1,3)] # keep individuals 1 and 3
+#' as.list(x[c(1,3)])
+#' x[c(1,3), 1:2] # keep individuals 1 and 3, loci 1 and 2
+#' as.list(x[c(1,3), 1:2])
+#' x[c(TRUE,FALSE), c(TRUE,TRUE,FALSE,FALSE)] # same, using logicals
+#' as.list(x[c(TRUE,FALSE), c(TRUE,TRUE,FALSE,FALSE)])
+#'
+#'
+#' ## REAL-SIZE EXAMPLE ##
+#' ## 50 genotypes of 1,000,000 SNPs
+#' dat <- lapply(1:50, function(i) sample(c(0,1,NA), 1e6, prob=c(.5, .49, .01), replace=TRUE))
+#' names(dat) <- paste("indiv", 1:length(dat))
+#' print(object.size(dat), unit="aut") # size of the original data
+#'
+#' x <- new("genlight", dat) # conversion
+#' x
+#' print(object.size(x), unit="au") # size of the genlight object
+#' object.size(dat)/object.size(x) # conversion efficiency
+#'
+#'
+#'
+#' #### cbind, rbind ####
+#' a <- new("genlight", list(toto=rep(1,10), tata=rep(c(0,1), each=5), titi=c(NA, rep(1,9)) ))
+#'
+#' ara <- rbind(a,a)
+#' ara
+#' as.matrix(ara)
+#'
+#' aca <- cbind(a,a)
+#' aca
+#' as.matrix(aca)
+#'
+#'
+#' #### subsetting @@other ####
+#' x <- new("genlight", list(a=1,b=0,c=1), other=list(1:3, letters,data.frame(2:4)))
+#' x
+#' other(x)
+#' x[2:3]
+#' other(x[2:3])
+#' other(x[2:3, treatOther=FALSE])
+#'
+#'
+#' #### seppop ####
+#' pop(x) # no population info
+#' pop(x) <- c("pop1","pop1", "pop2") # set population memberships
+#' pop(x)
+#' seppop(x)
+#' }
+#'
 setClass("genlight", representation(gen = "list",
                                     n.loc = "integer",
                                     ind.names = "charOrNULL",
@@ -796,12 +1022,50 @@ setReplaceMethod("other","genlight",function(x,value) {
 
 
 
+#' Conversion to class "SNPbin"
+#'
+#' The class \linkS4class{SNPbin} is a formal (S4) class for storing a genotype
+#' of binary SNPs in a compact way, using a bit-level coding scheme. New
+#' instances of this class are best created using \code{new}; see the manpage
+#' of \linkS4class{SNPbin} for more information on this point.
+#'
+#' As a shortcut, conversion methods can be used to convert various objects
+#' into a \linkS4class{SNPbin} object. Conversions can be achieved using
+#' S3-style (\code{as.SNPbin(x)}) or S4-style (\code{as(x,"SNPbin"})
+#' procedures. All of them call upon the constructor (\code{new}) of
+#' \linkS4class{SNPbin} objects.
+#'
+#' Conversion is currently available from the following objects: - integer
+#' vectors - numeric vectors
+#'
+#'
+#' @aliases as,SNPbin,integer-method as,SNPbin,numeric-method as.SNPbin
+#' as.SNPbin,integer-method as.SNPbin,numeric-method
+#' coerce,integer,SNPbin-method coerce,numeric,SNPbin-method
+#' @author Thibaut Jombart (\email{t.jombart@@imperial.ac.uk})
+#' @seealso Related class:\cr - \code{\linkS4class{SNPbin}} -
+#' \code{\linkS4class{genlight}}, for storing multiple binary SNP genotypes.
+#' \cr
+#' @keywords classes
+#' @examples
+#'
+#' \dontrun{
+#' ## data to be converted
+#' dat <- c(1,0,0,2,1,1,1,2,2,1,1,0,0,1)
+#'
+#' ## using the constructor
+#' x1 <- new("SNPbin", dat)
+#' x1
+#'
+#' ## using 'as' methods
+#' x2 <- as.SNPbin(dat)
+#' x3 <- as(dat, "SNPbin")
+#'
+#' identical(x1,x2)
+#' identical(x1,x3)
+#' }
+#'
 
-###################
-##
-##   CONVERSIONS
-##
-###################
 
 ############
 ## .bin2raw
@@ -900,6 +1164,75 @@ as.integer.SNPbin <- function(x, ...){
 }
 
 
+
+setGeneric("as.SNPbin", function(x, ...) standardGeneric("as.SNPbin"))
+
+setAs("integer", "SNPbin", def=function(from){
+    res <- new("SNPbin", from)
+    return(res)
+})
+
+setAs("numeric", "SNPbin", def=function(from){
+    res <- new("SNPbin", from)
+    return(res)
+})
+
+
+setMethod("as.SNPbin", "integer", function(x, ...) as(x, "SNPbin"))
+setMethod("as.SNPbin", "numeric", function(x, ...) as(x, "SNPbin"))
+
+
+
+#' Conversion to class "genlight"
+#'
+#' The class \code{genlight} is a formal (S4) class for storing a genotypes of
+#' binary SNPs in a compact way, using a bit-level coding scheme. New instances
+#' of this class are best created using \code{new}; see the manpage of
+#' \linkS4class{genlight} for more information on this point.
+#'
+#' As a shortcut, conversion methods can be used to convert various objects
+#' into a \linkS4class{genlight} object. Conversions can be achieved using
+#' S3-style (\code{as.genlight(x)}) or S4-style (\code{as(x,"genlight"})
+#' procedures. All of them call upon the constructor (\code{new}) of
+#' \linkS4class{genlight} objects.
+#'
+#' Conversion is currently available from the following objects: - matrix of
+#' type integer/numeric - data.frame with integer/numeric data - list of
+#' vectors of integer/numeric type
+#'
+#'
+#' @aliases as,genlight,matrix-method as,genlight,data.frame-method
+#' as,genlight,list-method as.genlight as.genlight,matrix-method
+#' as.genlight,data.frame-method as.genlight,list-method
+#' coerce,genlight,matrix-method coerce,genlight,data.frame-method
+#' coerce,genlight,list-method
+#' @author Thibaut Jombart (\email{t.jombart@@imperial.ac.uk})
+#' @seealso Related class:\cr - \code{\linkS4class{SNPbin}}, for storing
+#' individual genotypes of binary SNPs\cr
+#'
+#' - \code{\linkS4class{genind}}
+#' @keywords classes
+#' @examples
+#'
+#' \dontrun{
+#' ## data to be converted
+#' dat <- list(toto=c(1,1,0,0,2,2,1,2,NA), titi=c(NA,1,1,0,1,1,1,0,0), tata=c(NA,0,3, NA,1,1,1,0,0))
+#'
+#' ## using the constructor
+#' x1 <- new("genlight", dat)
+#' x1
+#'
+#' ## using 'as' methods
+#' x2 <- as.genlight(dat)
+#' x3 <- as(dat, "genlight")
+#'
+#' identical(x1,x2)
+#' identical(x1,x3)
+#' }
+#'
+#'
+
+
 setAs("genlight", "matrix", def=function(from){
     res <- unlist(lapply(from@gen, as.integer))
     res <- matrix(res, ncol=nLoc(from), nrow=nInd(from), byrow=TRUE)
@@ -942,22 +1275,7 @@ as.list.genlight <- function(x, ...){
 
 
 ## other -> SNPbin/genlight
-setGeneric("as.SNPbin", function(x, ...) standardGeneric("as.SNPbin"))
 setGeneric("as.genlight", function(x, ...) standardGeneric("as.genlight"))
-
-setAs("integer", "SNPbin", def=function(from){
-    res <- new("SNPbin", from)
-    return(res)
-})
-
-setAs("numeric", "SNPbin", def=function(from){
-    res <- new("SNPbin", from)
-    return(res)
-})
-
-
-setMethod("as.SNPbin", "integer", function(x, ...) as(x, "SNPbin"))
-setMethod("as.SNPbin", "numeric", function(x, ...) as(x, "SNPbin"))
 
 
 setAs("matrix", "genlight", def=function(from){
@@ -980,125 +1298,8 @@ setAs("list", "genlight", def=function(from){
 ## })
 
 
-
-
 setMethod("as.genlight", "matrix", function(x, ...) as(x, "genlight"))
 setMethod("as.genlight", "data.frame", function(x, ...) as(x, "genlight"))
 setMethod("as.genlight", "list", function(x, ...) as(x, "genlight"))
 ## setMethod("as.genlight", "snp.matrix", function(x, ...) as(x, "genlight"))
 
-
-
-
-
-
-################################
-## testing SNPbin
-##
-##
-## library(adegenet)
-## dat <- c(1,0,0,1,0,NA,1,0,0,0,0,1)
-## x <- new("SNPbin",dat)
-## as.integer(x)
-
-
-## HAPLOID DATA - NO NA
-## dat <- sample(c(0L,1L), 1e6, replace=TRUE)
-## x <- new("SNPbin", dat)
-## identical(as(x, "integer"),dat) # SHOULD NORMALLY BE TRUE
-## all(as(x, "integer") == dat, na.rm=TRUE) # MUST BE TRUE
-## object.size(dat)/object.size(x) # EFFICIENCY OF CONVERSION
-
-
-## HAPLOID DATA - WITH NAs
-## dat <- sample(c(0,1,NA), 1e6, prob=c(.5, .49, .01), replace=TRUE)
-## x <- new("SNPbin", dat)
-## identical(as(x, "integer"),dat) # SHOULD NORMALLY BE TRUE
-## all(as(x, "integer") == dat, na.rm=TRUE) # MUST BE TRUE
-## object.size(dat)/object.size(x) # EFFICIENCY OF CONVERSION
-
-
-
- ## DIPLOID DATA
-## dat <- sample(c(0:2,NA), 1e6, prob=c(.4, .4, .195 ,.005), replace=TRUE)
-## x <- new("SNPbin", dat)
-
-## identical(as(x, "integer"),dat) # MUST BE TRUE
-
-## object.size(dat)/object.size(x) # EFFICIENCY OF CONVERSION
-
-
-
- ## POLYLOID DATA
-## dat <- sample(c(0:5,NA), 1e6, prob=c(rep(.995/6,6), 0.005), replace=TRUE)
-##  x <- new("SNPbin", dat)
-
-## identical(as(x, "integer"),dat) # MUST BE TRUE
-
-## object.size(dat)/object.size(x) # EFFICIENCY OF CONVERSION
-
-
-
-
-################################
-## testing genlight
-##
-##
-
-
-## SIMPLE TESTS
-## dat <- c(1,0,0,1,0,0,1,1,1,0,1)
-## x <- new("SNPbin",dat)$snp[[1]]
-## as.integer(x)==dat
-
-
-## library(adegenet)
-## dat <- list(toto=c(1,1,0,0), titi=c(NA,1,1,0), tata=c(NA,0,3, NA))
-## x <- new("genlight", dat)
-## x
-## as.list(x)
-## as.matrix(x)
-
-## identical(x, new("genlight", as.list(x))) # round trip - list - MUST BE TRUE
-## identical(x, new("genlight", as.matrix(x))) # round trip - matrix - MUST BE TRUE
-## identical(x, new("genlight", as.data.frame(x))) # round trip - data.frame - MUST BE TRUE
-
-## ## test subsetting
-## identical(as.list(x[c(1,3)]), as.list(x)[c(1,3)]) # MUST BE TRUE
-## identical(x, x[]) # MUST BE TRUE
-## all.equal(t(as.matrix(as.data.frame(dat)))[,1:3], as.matrix(x[,1:3])) # MUST BE TRUE
-
-
-
-
-## ## ## BIG SCALE TEST - HAPLOID DATA WITH NA
-## library(adegenet)
-## dat <- lapply(1:50, function(i) sample(c(0,1,NA), 1e6, prob=c(.5, .49, .01), replace=TRUE))
-## names(dat) <- paste("indiv", 1:length(dat))
-## print(object.size(dat), unit="aut")
-
-## system.time(x <- new("genlight", dat)) # conversion + time taken
-## print(object.size(x), unit="au")
-## object.size(dat)/object.size(x) # conversion efficiency
-
-
-## ## time taken by subsetting (quite long, +- 35sec)
-## system.time(y <- x[1:10, 1:5e5])
-
-
-
-## c, cbind, rbind ##
-## a <- new("genlight", list(c(1,0,1), c(0,0,1,0)) )
-## b <- new("genlight", list(c(1,0,1,1,1,1), c(1,0)) )
-## locNames(a) <- letters[1:4]
-## locNames(b) <- 1:6
-## c <- cbind(a,b)
-## identical(as.matrix(c),cbind(as.matrix(a), as.matrix(b))) # MUST BE TRUE
-## identical(as.matrix(rbind(a,a)),rbind(as.matrix(a),as.matrix(a)))
-
-
-
-
-## test subsetting with/without @other ##
-## x <- new("genlight", list(a=1,b=0,c=1), other=list(1:3, letters, data.frame(2:4)))
-## pop(x) <- c("pop1","pop1", "pop2")

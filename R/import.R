@@ -21,7 +21,7 @@
 
 
 #' Convert a data.frame of genotypes to a genind object, and conversely.
-#' 
+#'
 #' The function \code{df2genind} converts a data.frame (or a matrix) into a
 #' \linkS4class{genind} object. The data.frame must meet the following
 #' requirements:\cr - genotypes are in row (one row per genotype)\cr - markers
@@ -30,26 +30,26 @@
 #' find how many characters code each genotypes at a locus, but it is safer to
 #' state it (\code{ncode} argument). Incomplete strings are filled with "0" at
 #' the beginning. \cr
-#' 
+#'
 #' The function \code{genind2df} converts a \linkS4class{genind} back to such a
 #' data.frame. Alleles of a given locus can be coded as a single character
 #' string (with specified separators), or provided on different columns (see
 #' \code{oneColPerAll} argument).
-#' 
+#'
 #' === There are 3 treatments for missing values === \cr - NA: kept as NA.\cr
-#' 
+#'
 #' - 0: allelic frequencies are set to 0 on all alleles of the concerned locus.
 #' Recommended for a PCA on compositional data.\cr
-#' 
+#'
 #' - "mean": missing values are replaced by the mean frequency of the
 #' corresponding allele, computed on the whole set of individuals. Recommended
 #' for a centred PCA.\cr\cr
-#' 
+#'
 #' === Details for the \code{sep} argument ===\cr this character is directly
 #' used in reguar expressions like \code{gsub}, and thus require some
 #' characters to be preceeded by double backslashes. For instance, "/" works
 #' but "|" must be coded as "\\|".
-#' 
+#'
 #' @aliases df2genind genind2df
 #' @param X a matrix or a data.frame (see decription)
 #' @param sep a character string separating alleles. See details.
@@ -79,22 +79,22 @@
 #' \code{\link{read.fstat}}, \code{\link{read.structure}}
 #' @keywords manip
 #' @examples
-#' 
+#'
 #' ## simple example
 #' df <- data.frame(locusA=c("11","11","12","32"),
 #' locusB=c(NA,"34","55","15"),locusC=c("22","22","21","22"))
 #' row.names(df) <- .genlab("genotype",4)
 #' df
-#' 
+#'
 #' obj <- df2genind(df, ploidy=2)
 #' obj
 #' truenames(obj)
-#' 
-#' ## converting a genind as data.frame 
+#'
+#' ## converting a genind as data.frame
 #' genind2df(obj)
 #' genind2df(obj, sep="/")
 #' genind2df(obj, oneColPerAll=TRUE)
-#' 
+#'
 #' @export df2genind
 df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, pop=NULL, missing=NA, ploidy=2, type=c("codom","PA")){
 
@@ -354,24 +354,24 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
 
 
 #' Reading data from GENETIX
-#' 
+#'
 #' The function \code{read.genetix} reads GENETIX data files (.gtx) and convert
 #' them into a \linkS4class{genind} object.
-#' 
+#'
 #' Note: \code{read.genetix} is meant for DIPLOID DATA ONLY. Haploid data with
 #' the GENETIX format can be read into R using \code{read.table} or
 #' \code{read.csv} after removing headers and 'POP' lines, and then converted
 #' using \code{\link{df2genind}}.
-#' 
+#'
 #' There are 3 treatments for missing values: \cr - NA: kept as NA.\cr
-#' 
+#'
 #' - 0: allelic frequencies are set to 0 on all alleles of the concerned locus.
 #' Recommended for a PCA on compositionnal data.\cr
-#' 
+#'
 #' - "mean": missing values are replaced by the mean frequency of the
 #' corresponding allele, computed on the whole set of individuals. Recommended
 #' for a centred PCA.\cr
-#' 
+#'
 #' @param file a character string giving the path to the file to convert, with
 #' the appropriate extension.
 #' @param missing can be NA, 0 or "mean". See details section.
@@ -388,10 +388,10 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
 #' Université de Montpellier II, Montpellier (France). \cr
 #' @keywords manip
 #' @examples
-#' 
+#'
 #' obj <- read.genetix(system.file("files/nancycats.gtx",package="adegenet"))
 #' obj
-#' 
+#'
 #' @export read.genetix
 read.genetix <- function(file=NULL,missing=NA,quiet=FALSE) {
     if(!quiet) cat("\n Converting data from GENETIX to a genind object... \n")
@@ -469,24 +469,24 @@ read.genetix <- function(file=NULL,missing=NA,quiet=FALSE) {
 
 
 #' Reading data from Fstat
-#' 
+#'
 #' The function \code{read.fstat} reads Fstat data files (.dat) and convert
 #' them into a \linkS4class{genind} object.
-#' 
+#'
 #' Note: \code{read.fstat} is meant for DIPLOID DATA ONLY. Haploid data with
 #' the Hierfstat format can be read into R using \code{read.table} or
 #' \code{read.csv} after removing headers and 'POP' lines, and then converted
 #' using \code{\link{df2genind}}.
-#' 
+#'
 #' There are 3 treatments for missing values: \cr - NA: kept as NA.\cr
-#' 
+#'
 #' - 0: allelic frequencies are set to 0 on all alleles of the concerned locus.
 #' Recommended for a PCA on compositionnal data.\cr
-#' 
+#'
 #' - "mean": missing values are replaced by the mean frequency of the
 #' corresponding allele, computed on the whole set of individuals. Recommended
 #' for a centred PCA.\cr
-#' 
+#'
 #' @param file a character string giving the path to the file to convert, with
 #' the appropriate extension.
 #' @param missing can be NA, 0 or "mean". See details section.
@@ -501,10 +501,10 @@ read.genetix <- function(file=NULL,missing=NA,quiet=FALSE) {
 #' http://www2.unil.ch/popgen/softwares/fstat.htm\cr
 #' @keywords manip
 #' @examples
-#' 
+#'
 #' obj <- read.fstat(system.file("files/nancycats.dat",package="adegenet"))
 #' obj
-#' 
+#'
 #' @export read.fstat
 read.fstat <- function(file,missing=NA,quiet=FALSE){
     ##if(!file.exists(file)) stop("Specified file does not exist.") <- not needed
@@ -557,24 +557,24 @@ read.fstat <- function(file,missing=NA,quiet=FALSE){
 
 
 #' Reading data from Genepop
-#' 
+#'
 #' The function \code{read.genepop} reads Genepop data files (.gen) and convert
 #' them into a \linkS4class{genind} object.
-#' 
+#'
 #' Note: \code{read.genepop} is meant for DIPLOID DATA ONLY. Haploid data with
 #' the Genepop format can be read into R using \code{read.table} or
 #' \code{read.csv} after removing headers and 'POP' lines, and then converted
 #' using \code{\link{df2genind}}.
-#' 
+#'
 #' There are 3 treatments for missing values: \cr - NA: kept as NA.\cr
-#' 
+#'
 #' - 0: allelic frequencies are set to 0 on all alleles of the concerned locus.
 #' Recommended for a PCA on compositionnal data.\cr
-#' 
+#'
 #' - "mean": missing values are replaced by the mean frequency of the
 #' corresponding allele, computed on the whole set of individuals. Recommended
 #' for a centred PCA.\cr
-#' 
+#'
 #' @param file a character string giving the path to the file to convert, with
 #' the appropriate extension.
 #' @param missing can be NA, 0 or "mean". See details section.
@@ -590,10 +590,10 @@ read.fstat <- function(file,missing=NA,quiet=FALSE){
 #' Heredity}, \bold{86}:248-249 \cr
 #' @keywords manip
 #' @examples
-#' 
+#'
 #' obj <- read.genepop(system.file("files/nancycats.gen",package="adegenet"))
 #' obj
-#' 
+#'
 #' @export read.genepop
 read.genepop <- function(file,missing=NA,quiet=FALSE){
     ## if(!file.exists(file)) stop("Specified file does not exist.") <- not needed
@@ -726,27 +726,27 @@ read.genepop <- function(file,missing=NA,quiet=FALSE){
 
 
 #' Reading data from STRUCTURE
-#' 
+#'
 #' The function \code{read.structure} reads STRUCTURE data files (.str ou
 #' .stru) and convert them into a \linkS4class{genind} object. By default, this
 #' function is interactive and asks a few questions about data content. This
 #' can be disabled (for optional questions) by turning the 'ask' argument to
 #' FALSE. However, one has to know the number of genotypes, of markers and if
 #' genotypes are coded on a single or on two rows before importing data.
-#' 
+#'
 #' Note: \code{read.structure} is meant for DIPLOID DATA ONLY. Haploid data
 #' with the STRUCTURE format can easily be read into R using \code{read.table}
 #' or \code{read.csv} and then converted using \code{\link{df2genind}}.
-#' 
+#'
 #' There are 3 treatments for missing values: \cr - NA: kept as NA.\cr
-#' 
+#'
 #' - 0: allelic frequencies are set to 0 on all alleles of the concerned locus.
 #' Recommended for a PCA on compositionnal data.\cr
-#' 
+#'
 #' - "mean": missing values are replaced by the mean frequency of the
 #' corresponding allele, computed on the whole set of individuals. Recommended
 #' for a centred PCA.\cr
-#' 
+#'
 #' @param file a character string giving the path to the file to convert, with
 #' the appropriate extension.
 #' @param n.ind an integer giving the number of genotypes (or 'individuals') in
@@ -783,12 +783,12 @@ read.genepop <- function(file,missing=NA,quiet=FALSE){
 #' \bold{155}: 945-959
 #' @keywords manip
 #' @examples
-#' 
+#'
 #' obj <- read.structure(system.file("files/nancycats.str",package="adegenet"),
 #'   onerowperind=FALSE, n.ind=237, n.loc=9, col.lab=1, col.pop=2, ask=FALSE)
-#' 
+#'
 #' obj
-#' 
+#'
 #' @export read.structure
 read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL, col.lab=NULL, col.pop=NULL, col.others=NULL, row.marknames=NULL, NA.char="-9", pop=NULL, missing=NA, ask=TRUE, quiet=FALSE){
 
@@ -953,9 +953,83 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL, col
 
 
 
-#########################
-# Function import2genind
-#########################
+
+
+#' Importing data from several softwares to a genind object
+#'
+#' Their are several ways to import genotype data to a \linkS4class{genind}
+#' object: i) from a data.frame with a given format (see
+#' \code{\link{df2genind}}), ii) from a file with a recognized extension, or
+#' iii) from an alignement of sequences (see \code{\link{DNAbin2genind}}).\cr
+#'
+#' The function \code{import2genind} detects the extension of the file given in
+#' argument and seeks for an appropriate import function to create a
+#' \code{genind} object.\cr Current recognized formats are :\cr - GENETIX files
+#' (.gtx) \cr - Genepop files (.gen) \cr - Fstat files (.dat) \cr - STRUCTURE
+#' files (.str or .stru) \cr
+#'
+#' There are 3 treatments for missing values: \cr - NA: kept as NA.\cr
+#'
+#' - 0: allelic frequencies are set to 0 on all alleles of the concerned locus.
+#' Recommended for a PCA on compositionnal data.\cr
+#'
+#' - "mean": missing values are replaced by the mean frequency of the
+#' corresponding allele, computed on the whole set of individuals. Recommended
+#' for a centred PCA.\cr
+#'
+#' Beware: same data in different formats are not expected to produce exactly
+#' the same \code{genind} objects.\cr For instance, conversions made by GENETIX
+#' to Fstat may change the the sorting of the genotypes; GENETIX stores
+#' individual names whereas Fstat does not; Genepop chooses a sample's name
+#' from the name of its last genotype; etc.
+#'
+#' @aliases import2genind import2genind
+#' @param file a character string giving the path to the file to convert, with
+#' the appropriate extension.
+#' @param missing can be NA, 0 or "mean". See details section.
+#' @param quiet logical stating whether a conversion message must be printed
+#' (TRUE,default) or not (FALSE).
+#' @param \dots other arguments passed to the appropriate 'read' function
+#' (currently passed to \code{read.structure})
+#' @return an object of the class \code{genind}
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#' @seealso \code{\link{import2genind}}, \code{\link{read.genetix}},
+#' \code{\link{read.fstat}}, \code{\link{read.structure}},
+#' \code{\link{read.genepop}}
+#' @references Belkhir K., Borsa P., Chikhi L., Raufaste N. & Bonhomme F.
+#' (1996-2004) GENETIX 4.05, logiciel sous Windows TM pour la génétique des
+#' populations. Laboratoire Génome, Populations, Interactions, CNRS UMR 5000,
+#' Université de Montpellier II, Montpellier (France). \cr
+#'
+#' Pritchard, J.; Stephens, M. & Donnelly, P. (2000) Inference of population
+#' structure using multilocus genotype data. \emph{Genetics}, \bold{155}:
+#' 945-959
+#'
+#' Raymond M. & Rousset F, (1995). GENEPOP (version 1.2): population genetics
+#' software for exact tests and ecumenicism. \emph{J. Heredity},
+#' \bold{86}:248-249 \cr
+#'
+#' Fstat (version 2.9.3). Software by Jerome Goudet.
+#' http://www2.unil.ch/popgen/softwares/fstat.htm\cr
+#'
+#' Excoffier L. & Heckel G.(2006) Computer programs for population genetics
+#' data analysis: a survival guide \emph{Nature}, \bold{7}: 745-758
+#' @keywords manip
+#' @examples
+#'
+#' import2genind(system.file("files/nancycats.gtx",
+#' package="adegenet"))
+#'
+#' import2genind(system.file("files/nancycats.dat",
+#' package="adegenet"))
+#'
+#' import2genind(system.file("files/nancycats.gen",
+#' package="adegenet"))
+#'
+#' import2genind(system.file("files/nancycats.str",
+#' package="adegenet"), onerowperind=FALSE, n.ind=237, n.loc=9, col.lab=1, col.pop=2, ask=FALSE)
+#'
+
 import2genind <- function(file,missing=NA,quiet=FALSE, ...){
     ## if(!file.exists(file)) stop("Specified file does not exist.") <- not needed
     ext <- .readExt(file)
@@ -992,28 +1066,28 @@ import2genind <- function(file,missing=NA,quiet=FALSE, ...){
 
 
 #' Reading Single Nucleotide Polymorphism data
-#' 
+#'
 #' The function \code{read.snp} reads a SNP data file with extension '.snp' and
 #' converts it into a \linkS4class{genlight} object. This format is devoted to
 #' handle biallelic SNP only, but can accommodate massive datasets such as
 #' complete genomes with considerably less memory than other formats.
-#' 
+#'
 #' The function reads data by chunks of a few genomes (minimum 1, no maximum)
 #' at a time, which allows one to read massive datasets with negligible RAM
 #' requirements (albeit at a cost of computational time). The argument
 #' \code{chunkSize} indicates the number of genomes read at a time. Increasing
 #' this value decreases the computational time required to read data in, while
 #' increasing memory requirements.
-#' 
+#'
 #' A description of the .snp format is provided in an example file distributed
 #' with adegenet (see example below).
-#' 
+#'
 #' === The .snp format ===
-#' 
+#'
 #' Details of the .snp format can be found in the example file distributed with
 #' adegenet (see below), or on the adegenet website (type \code{adegenetWeb()}
 #' in R).
-#' 
+#'
 #' @param file a character string giving the path to the file to convert, with
 #' the extension ".snp".
 #' @param quiet logical stating whether a conversion messages should be printed
@@ -1033,29 +1107,29 @@ import2genind <- function(file,missing=NA,quiet=FALSE, ...){
 #' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
 #' @seealso - \code{?genlight} for a description of the class
 #' \code{"\linkS4class{genlight}"}.
-#' 
+#'
 #' - \code{\link{read.PLINK}}: read SNPs in PLINK's '.raw' format.
-#' 
+#'
 #' - \code{\link{fasta2genlight}}: extract SNPs from alignments with fasta
 #' format.
-#' 
+#'
 #' - \code{\link{df2genind}}: convert any multiallelic markers into adegenet
 #' \code{"\linkS4class{genlight}"}.
-#' 
+#'
 #' - \code{\link{import2genind}}: read multiallelic markers from various
 #' software into adegenet.\cr
 #' @keywords manip
 #' @examples
-#' 
+#'
 #' \dontrun{
 #' ## show the example file ##
 #' ## this is the path to the file:
 #' system.file("files/exampleSnpDat.snp",package="adegenet")
-#' 
+#'
 #' ## show its content:
 #' file.show(system.file("files/exampleSnpDat.snp",package="adegenet"))
-#' 
-#' 
+#'
+#'
 #' ## read the file
 #' obj <-
 #' read.snp(system.file("files/exampleSnpDat.snp",package="adegenet"), chunk=2)
@@ -1065,7 +1139,7 @@ import2genind <- function(file,missing=NA,quiet=FALSE, ...){
 #' alleles(obj)
 #' locNames(obj)
 #' }
-#' 
+#'
 #' @export read.snp
 read.snp <- function(file, quiet=FALSE, chunkSize=1000,
                      parallel=require("parallel"), n.cores=NULL, ...){
@@ -1271,31 +1345,31 @@ extract.PLINKmap <- function(file, x=NULL){
 
 
 #' Reading PLINK Single Nucleotide Polymorphism data
-#' 
+#'
 #' The function \code{read.PLINK} reads a data file exported by the PLINK
 #' software with extension '.raw' and converts it into a \code{"\linkS4class{genlight}"}
 #' object. Optionally, information about SNPs can be read from a ".map" file,
 #' either by specifying the argument \code{map.file} in \code{read.PLINK}, or
 #' using \code{extract.PLINKmap} to add information to an existing
 #' \code{"\linkS4class{genlight}"} object.
-#' 
+#'
 #' The function reads data by chunks of several genomes (minimum 1, no maximum)
 #' at a time, which allows one to read massive datasets with negligible RAM
 #' requirements (albeit at a cost of computational time). The argument
 #' \code{chunkSize} indicates the number of genomes read at a time. Increasing
 #' this value decreases the computational time required to read data in, while
 #' increasing memory requirements.
-#' 
+#'
 #' See details for the documentation about how to export data using PLINK to
 #' the '.raw' format.
-#' 
+#'
 #' === Exporting data from PLINK ===
-#' 
+#'
 #' Data need to be exported from PLINK using the option "--recodeA" (and NOT
 #' "--recodeAD"). The PLINK command should therefore look like: \code{plink
 #' --file data --recodeA}. For more information on this topic, please look at
 #' this webpage: \url{http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml}
-#' 
+#'
 #' @aliases read.PLINK read.plink extract.PLINKmap
 #' @param file for \code{read.PLINK} a character string giving the path to the
 #' file to convert, with the extension ".raw"; for \code{extract.PLINKmap}, a
@@ -1323,7 +1397,7 @@ extract.PLINKmap <- function(file, x=NULL){
 #' provided, a list of two components is returned, containing chromosome and
 #' position information.
 #' @return - read.PLINK: an object of the class \code{"\linkS4class{genlight}"}
-#' 
+#'
 #' - extract.PLINKmap: if a \code{"\linkS4class{genlight}"} is provided as argument
 #' \code{x}, this object incorporating the new information about SNPs in the
 #' \code{@@other} slot (with new components 'chromosome' and 'position');
@@ -1332,17 +1406,17 @@ extract.PLINKmap <- function(file, x=NULL){
 #' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
 #' @seealso - \code{?genlight} for a description of the class
 #' \code{"\linkS4class{genlight}"}.
-#' 
+#'
 #' - \code{\link{read.snp}}: read SNPs in adegenet's '.snp' format.
-#' 
+#'
 #' - \code{\link{fasta2genlight}}: extract SNPs from alignments with fasta
 #' format.
-#' 
+#'
 #' - other import function in adegenet: \code{\link{import2genind}},
 #' \code{\link{df2genind}}, \code{\link{read.genetix}}
 #' \code{\link{read.fstat}}, \code{\link{read.structure}},
 #' \code{\link{read.genepop}}.
-#' 
+#'
 #' - another function \code{read.plink} is available in the package
 #' \code{snpMatrix}.
 #' @keywords manip
@@ -1464,32 +1538,32 @@ read.PLINK <- function(file, map.file=NULL, quiet=FALSE, chunkSize=1000,
 
 
 #' Extract Single Nucleotide Polymorphism (SNPs) from alignments
-#' 
+#'
 #' The function \code{fasta2genlight} reads alignments with the fasta format
 #' (extensions ".fasta", ".fas", or ".fa"), extracts the binary SNPs, and
 #' converts the output into a \linkS4class{genlight} object.
-#' 
+#'
 #' The function reads data by chunks of a few genomes (minimum 1, no maximum)
 #' at a time, which allows one to read massive datasets with negligible RAM
 #' requirements (albeit at a cost of computational time). The argument
 #' \code{chunkSize} indicates the number of genomes read at a time. Increasing
 #' this value decreases the computational time required to read data in, while
 #' increasing memory requirements.
-#' 
+#'
 #' Multiple cores can be used to decrease the overall computational time on
 #' parallel architectures (needs the package \code{parallel}).
-#' 
-#' 
+#'
+#'
 #' === Using multiple cores ===
-#' 
+#'
 #' Most recent machines have one or several processors with multiple cores. R
 #' processes usually use one single core. The package \code{parallel} allows
 #' for parallelizing some computations on multiple cores, which decreases
 #' drastically computational time.
-#' 
+#'
 #' To use this functionality, you need to have the last version of the
 #' \code{parallel} package installed.
-#' 
+#'
 #' @param file a character string giving the path to the file to convert, with
 #' the extension ".fa", ".fas", or ".fasta".
 #' @param quiet logical stating whether a conversion messages should be printed
@@ -1514,40 +1588,40 @@ read.PLINK <- function(file, map.file=NULL, quiet=FALSE, chunkSize=1000,
 #' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
 #' @seealso - \code{?genlight} for a description of the class
 #' \linkS4class{genlight}.
-#' 
+#'
 #' - \code{\link{read.snp}}: read SNPs in adegenet's '.snp' format.
-#' 
+#'
 #' - \code{\link{read.PLINK}}: read SNPs in PLINK's '.raw' format.
-#' 
+#'
 #' - \code{\link{df2genind}}: convert any multiallelic markers into adegenet
 #' \linkS4class{genind}.
-#' 
+#'
 #' - \code{\link{import2genind}}: read multiallelic markers from various
 #' software into adegenet.
 #' @keywords manip
 #' @examples
-#' 
+#'
 #' \dontrun{
 #' ## show the example file ##
 #' ## this is the path to the file:
 #' myPath <- system.file("files/usflu.fasta",package="adegenet")
 #' myPath
-#' 
+#'
 #' ## read the file
 #' obj <- fasta2genlight(myPath, chunk=10) # process 10 sequences at a time
 #' obj
-#' 
+#'
 #' ## look at extracted information
 #' position(obj)
 #' alleles(obj)
 #' locNames(obj)
-#' 
+#'
 #' ## plot positions of polymorphic sites
 #' temp <- density(position(obj), bw=10)
 #' plot(temp, xlab="Position in the alignment", lwd=2, main="Location of the SNPs")
 #' points(position(obj), rep(0, nLoc(obj)), pch="|", col="red")
 #' }
-#' 
+#'
 #' @export fasta2genlight
 fasta2genlight <- function(file, quiet=FALSE, chunkSize=1000, saveNbAlleles=FALSE,
                        parallel=require("parallel"), n.cores=NULL, ...){
@@ -1706,22 +1780,22 @@ fasta2genlight <- function(file, quiet=FALSE, chunkSize=1000, saveNbAlleles=FALS
 
 
 #' Read large DNA alignments into R
-#' 
+#'
 #' The function \code{fasta2DNAbin} reads alignments with the fasta format
 #' (extensions ".fasta", ".fas", or ".fa"), and outputs a
 #' \code{\link[ape]{DNAbin}} object (the efficient DNA representation from the
 #' ape package). The output contains either the full alignments, or only SNPs.
 #' This implementation is designed for memory-efficiency, and can read in
 #' larger datasets than Ape's \code{\link[ape]{read.dna}}.
-#' 
+#'
 #' The function reads data by chunks of a few genomes (minimum 1, no maximum)
 #' at a time, which allows one to read massive datasets with negligible RAM
 #' requirements (albeit at a cost of computational time). The argument
 #' \code{chunkSize} indicates the number of genomes read at a time. Increasing
 #' this value decreases the computational time required to read data in, while
 #' increasing memory requirements.
-#' 
-#' 
+#'
+#'
 #' @param file a character string giving the path to the file to convert, with
 #' the extension ".fa", ".fas", or ".fasta".
 #' @param quiet a logical stating whether a conversion messages should be
@@ -1734,30 +1808,30 @@ fasta2genlight <- function(file, quiet=FALSE, chunkSize=1000, saveNbAlleles=FALS
 #' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
 #' @seealso - \code{?DNAbin} for a description of the class
 #' \code{\link[ape]{DNAbin}}.
-#' 
+#'
 #' - \code{\link{read.snp}}: read SNPs in adegenet's '.snp' format.
-#' 
+#'
 #' - \code{\link{read.PLINK}}: read SNPs in PLINK's '.raw' format.
-#' 
+#'
 #' - \code{\link{df2genind}}: convert any multiallelic markers into adegenet
 #' \linkS4class{genind}.
-#' 
+#'
 #' - \code{\link{import2genind}}: read multiallelic markers from various
 #' software into adegenet.
 #' @keywords manip
 #' @examples
-#' 
+#'
 #' \dontrun{
 #' ## show the example file ##
 #' ## this is the path to the file:
 #' myPath <- system.file("files/usflu.fasta",package="adegenet")
 #' myPath
-#' 
+#'
 #' ## read the file
 #' obj <- fasta2DNAbin(myPath, chunk=10) # process 10 sequences at a time
 #' obj
 #' }
-#' 
+#'
 #' @export fasta2DNAbin
 fasta2DNAbin <- function(file, quiet=FALSE, chunkSize=10, snpOnly=FALSE){
 

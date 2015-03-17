@@ -53,9 +53,72 @@ setMethod("truenames",signature(x="genpop"), function(x){
 
 
 
-###########################
-# Method seploc for genind
-###########################
+
+#' Separate data per locus
+#'
+#' The function \code{seploc} splits an object (\linkS4class{genind},
+#' \linkS4class{genpop} or \linkS4class{genlight}) by marker. For
+#' \linkS4class{genind} and \linkS4class{genpop} objects, the method returns a
+#' list of objects whose components each correspond to a marker. For
+#' \linkS4class{genlight} objects, the methods returns blocks of SNPs.
+#'
+#'
+#' @name seploc
+#' @aliases seploc seploc-methods seploc,ANY-method seploc,genind-method
+#' seploc,genpop-method seploc,genlight-method
+#' @docType methods
+#' @param x a \linkS4class{genind} or a \linkS4class{genpop} object.
+#' @param truenames a logical indicating whether true names should be used
+#' (TRUE, default) instead of generic labels (FALSE).
+#' @param res.type a character indicating the type of returned results, a
+#' genind or genpop object (default) or a matrix of data corresponding to the
+#' 'tab' slot.
+#' @param n.block an integer indicating the number of blocks of SNPs to be
+#' returned.
+#' @param block.size an integer indicating the size (in number of SNPs) of the
+#' blocks to be returned.
+#' @param random should blocks be formed of contiguous SNPs, or should they be
+#' made or randomly chosen SNPs.
+#' @param parallel a logical indicating whether multiple cores -if available-
+#' should be used for the computations (TRUE, default), or not (FALSE);
+#' requires the package \code{parallel} to be installed.
+#' @param n.cores if \code{parallel} is TRUE, the number of cores to be used in
+#' the computations; if NULL, then the maximum number of cores available on the
+#' computer is used.
+#' @return The function \code{seploc} returns an list of objects of the same
+#' class as the initial object, or a list of matrices similar to x\$tab.\cr
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#' @seealso \code{\link{seppop}}, \code{\link{repool}}
+#' @keywords manip
+#' @examples
+#'
+#' \dontrun{
+#' ## example on genind objects
+#' data(microbov)
+#'
+#' # separate all markers
+#' obj <- seploc(microbov)
+#' names(obj)
+#'
+#' obj$INRA5
+#'
+#'
+#' ## example on genlight objects
+#' x <- glSim(100, 1000, 0, ploidy=2) # simulate data
+#' x <- x[,order(glSum(x))] # reorder loci by frequency of 2nd allele
+#' glPlot(x, main="All data") # plot data
+#' foo <- seploc(x, n.block=3) # form 3 blocks
+#' foo
+#' glPlot(foo[[1]], main="1st block") # plot 1st block
+#' glPlot(foo[[2]], main="2nd block") # plot 2nd block
+#' glPlot(foo[[3]], main="3rd block") # plot 3rd block
+#'
+#' foo <- seploc(x, block.size=600, random=TRUE) # split data, randomize loci
+#' foo # note the different block sizes
+#' glPlot(foo[[1]])
+#' }
+#'
+
 setGeneric("seploc", function(x, ...) standardGeneric("seploc"))
 
 setMethod("seploc", signature(x="genind"), function(x,truenames=TRUE,res.type=c("genind","matrix")){
@@ -182,9 +245,70 @@ setMethod("$<-","genind",function(x,name,value) {
 
 
 
-##################
-# Function seppop
-##################
+
+
+#' Separate genotypes per population
+#'
+#' The function \code{seppop} splits a \linkS4class{genind} or a
+#' \linkS4class{genlight} object by population, returning a list of objects
+#' whose components each correspond to a population.\cr
+#'
+#' For \linkS4class{genind} objects, the output can either be a list of
+#' \linkS4class{genind} (default), or a list of matrices corresponding to the
+#' \code{@@tab} slot.
+#'
+#'
+#' @name seppop
+#' @aliases seppop seppop-methods seppop,ANY-method seppop,genind-method
+#' seppop,genlight-method
+#' @docType methods
+#' @param x a \linkS4class{genind} object
+#' @param pop a factor giving the population of each genotype in 'x'. If not
+#' provided, seeked in x\$pop.
+#' @param truenames a logical indicating whether true names should be used
+#' (TRUE, default) instead of generic labels (FALSE); used if res.type is
+#' "matrix".
+#' @param res.type a character indicating the type of returned results, a list
+#' of \linkS4class{genind} object (default) or a matrix of data corresponding
+#' to the 'tab' slots.
+#' @param drop a logical stating whether alleles that are no longer present in
+#' a subset of data should be discarded (TRUE) or kept anyway (FALSE, default).
+#' @param treatOther a logical stating whether elements of the \code{@@other}
+#' slot should be treated as well (TRUE), or not (FALSE). See details in
+#' accessor documentations (\code{\link{pop}}).
+#' @param quiet a logical indicating whether warnings should be issued when
+#' trying to subset components of the \code{@@other} slot (TRUE), or not (FALSE,
+#' default).
+#' @param \dots further arguments passed to the genlight constructor.
+#' @return According to 'res.type': a list of \linkS4class{genind} object
+#' (default) or a matrix of data corresponding to the 'tab' slots.
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#' @seealso \code{\link{seploc}}, \code{\link{repool}}
+#' @keywords manip
+#' @examples
+#'
+#' \dontrun{
+#' data(microbov)
+#'
+#' obj <- seppop(microbov)
+#' names(obj)
+#'
+#' obj$Salers
+#'
+#'
+#' #### example for genlight objects ####
+#' x <- new("genlight", list(a=rep(1,1e3),b=rep(0,1e3),c=rep(1, 1e3)))
+#' x
+#'
+#' pop(x) # no population info
+#' pop(x) <- c("pop1","pop2", "pop1") # set population memberships
+#' pop(x)
+#' seppop(x)
+#' as.matrix(seppop(x)$pop1)[,1:20]
+#' as.matrix(seppop(x)$pop2)[,1:20,drop=FALSE]
+#' }
+#'
+
 setGeneric("seppop", function(x, ...) standardGeneric("seppop"))
 
 ## genind
@@ -230,9 +354,65 @@ setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,re
 
 
 
-#####################
-# Methods na.replace
-#####################
+
+
+#' Replace missing values (NA) from an object
+#'
+#' The generic function \code{na.replace} replaces NA in an object by
+#' appropriate values as defined by the argument \code{method}.\cr
+#'
+#' Methods are defined for \linkS4class{genind} and \linkS4class{genpop}
+#' objects.
+#'
+#' The argument "method" have the following effects:\cr - "0": missing values
+#' are set to "0". An entity (individual or population) that is not type on a
+#' locus has zeros for all alleles of that locus.\cr
+#'
+#' - "mean": missing values are set to the mean of the concerned allele,
+#' computed on all available observations (without distinction of
+#' population).\cr
+#'
+#' - "chi2": if a population is not typed for a marker, the corresponding count
+#' is set to that of a theoretical count in of a Chi-squared test. This is
+#' obtained by the product of the sums of both margins divided by the total
+#' number of alleles.
+#'
+#' @name na.replace-methods
+#' @aliases na.replace na.replace-methods na.replace,genind-method
+#' na.replace,genpop-method
+#' @docType methods
+#' @param x a \linkS4class{genind} and \linkS4class{genpop} object
+#' @param method a character string: can be "0" or "mean" for
+#' \linkS4class{genind} objects, and "0" or "chi2" for \linkS4class{genpop}
+#' objects.
+#' @param quiet logical stating whether a message should be printed
+#' (TRUE,default) or not (FALSE).
+#' @return A \linkS4class{genind} and \linkS4class{genpop} object without
+#' missing values.
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#' @keywords methods manip
+#' @examples
+#'
+#' \dontrun{
+#' data(nancycats)
+#'
+#' obj1 <- genind2genpop(nancycats)
+#' # note missing data in this summary
+#' summary(obj1)
+#'
+#' # NA are all in pop 17 and marker fca45
+#' which(is.na(obj1$tab),TRUE)
+#' truenames(obj1)[17,]
+#'
+#' # replace missing values
+#' obj2 <- na.replace(obj1,"chi2")
+#' obj2$loc.names
+#'
+#' # missing values where replaced
+#' truenames(obj2)[,obj2$loc.fac=="L4"]
+#' }
+#'
+
 setGeneric("na.replace", function(x, ...) standardGeneric("na.replace"))
 
 ## genind method
@@ -326,18 +506,18 @@ setMethod("na.replace", signature(x="genpop"), function(x,method, quiet=FALSE){
 
 
 #' Pool several genotypes into a single dataset
-#' 
+#'
 #' The function \code{repool} allows to merge genotypes from different
 #' \linkS4class{genind} objects into a single 'pool' (i.e. a new
 #' \linkS4class{genind}).  The markers have to be the same for all objects to
 #' be merged, but there is no constraint on alleles.\cr
-#' 
+#'
 #' This function can be useful, for instance, when hybrids are created using
 #' \code{\link{hybridize}}, to merge hybrids with their parent population for
 #' further analyses. Note that \code{repool} can also reverse the action of
 #' \code{\link{seppop}}.
-#' 
-#' 
+#'
+#'
 #' @param \dots can be i) a list whose components are valid
 #' \linkS4class{genind} objects or, ii) several valid \linkS4class{genind}
 #' objects separated by commas.
@@ -346,22 +526,22 @@ setMethod("na.replace", signature(x="genpop"), function(x,method, quiet=FALSE){
 #' @seealso \code{\link{seploc}}, \code{\link{seppop}}
 #' @keywords manip
 #' @examples
-#' 
+#'
 #' \dontrun{
 #' ## use the cattle breeds dataset
 #' data(microbov)
 #' temp <- seppop(microbov)
 #' names(temp)
-#' 
+#'
 #' ## hybridize salers and zebu -- nasty cattle
 #' zebler <- hybridize(temp$Salers, temp$Zebu, n=40)
 #' zebler
-#' 
+#'
 #' ## now merge zebler with other cattle breeds
 #' nastyCattle <- repool(microbov, zebler)
 #' nastyCattle
 #' }
-#' 
+#'
 #' @export repool
 repool <- function(...){
 
@@ -411,9 +591,40 @@ repool <- function(...){
 
 
 
-#############
-# selpopsize
-#############
+#' Select genotypes of well-represented populations
+#'
+#' The function \code{selPopSize} checks the sample size of each population in
+#' a \linkS4class{genind} object and keeps only genotypes of populations having
+#' a given minimum size.
+#'
+#'
+#' @name selPopSize
+#' @aliases selPopSize selPopSize-methods selPopSize,ANY-method
+#' selPopSize,genind-method
+#' @docType methods
+#' @param x a \linkS4class{genind} object
+#' @param pop a vector of characters or a factor giving the population of each
+#' genotype in 'x'. If not provided, seeked from x\$pop.
+#' @param nMin the minimum sample size for a population to be retained. Samples
+#' sizes strictly less than \code{nMin} will be discarded, those equal to or
+#' greater than \code{nMin} are kept.
+#' @return A \linkS4class{genind} object.
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#' @seealso \code{\link{seploc}}, \code{\link{repool}}
+#' @keywords manip
+#' @examples
+#'
+#' \dontrun{
+#' data(microbov)
+#'
+#' table(pop(microbov))
+#' obj <- selPopSize(microbov, n=50)
+#'
+#' obj
+#' table(pop(obj))
+#' }
+#'
+
 setGeneric("selPopSize", function(x, ...) standardGeneric("selPopSize"))
 
 ## genind method ##
@@ -446,9 +657,38 @@ setMethod("selPopSize", signature(x="genind"), function(x,pop=NULL,nMin=10){
 
 
 
-#########
-# isPoly
-#########
+
+
+
+#' Assess polymorphism in genind/genpop objects
+#'
+#' The simple function \code{isPoly} can be used to check which loci are
+#' polymorphic, or alternatively to check which alleles give rise to
+#' polymorphism.
+#'
+#'
+#' @name isPoly-methods
+#' @aliases isPoly isPoly-methods isPoly,genind-method isPoly,genpop-method
+#' @docType methods
+#' @param x a \linkS4class{genind} and \linkS4class{genpop} object
+#' @param by a character being "locus" or "allele", indicating whether results
+#' should indicate polymorphic loci ("locus"), or alleles giving rise to
+#' polymorphism ("allele").
+#' @param thres a numeric value giving the minimum frequency of an allele
+#' giving rise to polymorphism (defaults to 0.01).
+#' @return A vector of logicals.
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#' @keywords methods manip
+#' @examples
+#'
+#' \dontrun{
+#' data(nancycats)
+#' isPoly(nancycats,by="loc", thres=0.1)
+#' isPoly(nancycats[1:3],by="loc", thres=0.1)
+#' genind2df(nancycats[1:3])
+#' }
+#'
+
 setGeneric("isPoly", function(x, ...) standardGeneric("isPoly"))
 
 ## genind method ##

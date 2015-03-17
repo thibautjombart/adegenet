@@ -7,24 +7,24 @@
 ###########################
 
 #' Auxiliary functions for adegenet
-#' 
+#'
 #' adegenet implements a number of auxiliary procedures that might be of
 #' interest for users. These include graphical tools to translate variables
 #' (numeric or factors) onto a color scale, adding transparency to existing
 #' colors, pre-defined color palettes, extra functions to access documentation,
 #' and low-level treatment of character vectors.
-#' 
+#'
 #' These functions are mostly auxiliary procedures used internally in
 #' adegenet.\cr
-#' 
+#'
 #' These items include:
 #' \itemize{
 #' \item \code{num2col}: translates a numeric vector into colors.
-#' 
+#'
 #' \item \code{fac2col}: translates a factor into colors.
-#' 
+#'
 #' \item \code{any2col}: translates a vector of type numeric, character or factor into colors.
-#' 
+#'
 #' \item \code{transp}: adds transparency to a vector of colors. Note that transparent colors are not supported on some graphical devices.
 #'
 #' \item \code{corner}: adds text to a corner of a figure.
@@ -37,32 +37,32 @@
 #'
 #' \item \code{.readExt}: read the extension of a given file.
 #' }
-#' 
+#'
 #' Color palettes include:
 #' \itemize{
-#' 
+#'
 #' \item \code{bluepal}: white -> dark blue
-#' 
+#'
 #' \item \code{redpal}: white -> dark red
-#' 
+#'
 #' \item \code{greenpal}: white -> dark green
-#' 
+#'
 #' \item \code{greypal}: white -> dark grey
-#' 
+#'
 #' \item \code{flame}: gold -> red
-#' 
+#'
 #' \item \code{azur}: gold -> blue
-#' 
+#'
 #' \item \code{seasun}: blue -> gold -> red
-#' 
+#'
 #' \item \code{lightseasun}: blue -> gold -> red (light variant)
-#' 
+#'
 #' \item \code{deepseasun}: blue -> gold -> red (deep variant)
-#' 
+#'
 #' \item \code{spectral}: red -> yellow -> blue (RColorBrewer variant)
-#' 
+#'
 #' \item \code{wasp}: gold -> brown -> black \item \code{funky}: many colors }
-#'  
+#'
 #' @name Auxiliary functions
 #' @aliases checkType .rmspaces .genlab .readExt corner num2col fac2col any2col
 #' transp bluepal redpal greenpal greypal flame azur seasun lightseasun
@@ -101,14 +101,14 @@
 #' palettes.
 #' @keywords manip
 #' @examples
-#' 
-#' 
+#'
+#'
 #' .genlab("Locus-",11)
-#' 
+#'
 #' ## transparent colors using "transp"
 #' plot(rnorm(1000), rnorm(1000), col=transp("blue",.3), pch=20, cex=4)
-#' 
-#' 
+#'
+#'
 #' ## numeric values to color using num2col
 #' plot(1:100, col=num2col(1:100), pch=20, cex=4)
 #' plot(1:100, col=num2col(1:100, col.pal=bluepal), pch=20, cex=4)
@@ -116,7 +116,7 @@
 #' plot(1:100, col=num2col(1:100, col.pal=wasp), pch=20, cex=4)
 #' plot(1:100, col=num2col(1:100, col.pal=azur,rev=TRUE), pch=20, cex=4)
 #' plot(1:100, col=num2col(1:100, col.pal=spectral), pch=20, cex=4)
-#' 
+#'
 #' ## factor as colors using fac2col
 #' dat <- cbind(c(rnorm(50,8), rnorm(100), rnorm(150,3),
 #' rnorm(50,10)),c(rnorm(50,1),rnorm(100),rnorm(150,3), rnorm(50,5)))
@@ -124,20 +124,20 @@
 #' plot(dat, col=fac2col(fac), pch=19, cex=4)
 #' plot(dat, col=transp(fac2col(fac)), pch=19, cex=4)
 #' plot(dat, col=transp(fac2col(fac,seed=2)), pch=19, cex=4)
-#' 
+#'
 #' ## use of any2col
 #' x <- factor(1:10)
 #' col.info <- any2col(x, col.pal=funky)
 #' plot(x, col=col.info$col, main="Use of any2col on a factor")
 #' legend("bottomleft", fill=col.info$leg.col, legend=col.info$leg.txt, bg="white")
-#' 
+#'
 #' x <- 100:1
 #' col.info <- any2col(x, col.pal=wasp)
 #' barplot(x, col=col.info$col, main="Use of any2col on a numeric")
 #' legend("bottomleft", fill=col.info$leg.col, legend=col.info$leg.txt, bg="white")
-#' 
 #'
-#' 
+#'
+#'
 #######################
 # Function rmspaces
 #######################
@@ -189,21 +189,37 @@
 
 
 
-#######################
-# Function adegenetWeb
-#######################
+
+#' Website and tutorials for adegenet
+#'
+#' These functions allow to access documentation for adegenet available
+#' online.\cr
+#'
+#' These functions include: \itemize{ \item \code{adegenetWeb}: opens the
+#' adegenet website in a web navigator.  \item \code{adegenetTutorial}: opens a
+#' specified tutorial.  }
+#'
+#'
+#' @name Website and tutorials
+#' @aliases adegenetWeb adegenetTutorial adegenetTutorials
+#' @docType methods
+#' @param which a character string indicating the type of tutorial to open
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#' @examples
+#'
+#' \dontrun{
+#' ## this opens the adegenet website
+#' adegenetWeb()
+#' adegenetTutorial("dapc")
+#' }
+#'
+
 adegenetWeb <- function(){
     cat("Opening url \"http://adegenet.r-forge.r-project.org/\" ...\n")
     browseURL("http://adegenet.r-forge.r-project.org/")
 }
 
 
-
-
-
-############################
-# Function adegenetTutorial
-############################
 adegenetTutorial <- function(which=c("basics","spca","dapc","genomics")){
     which <- match.arg(which)
     if(which=="basics"){

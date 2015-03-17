@@ -1,6 +1,42 @@
-############
-# propTyped
-############
+
+
+#' Compute the proportion of typed elements
+#'
+#' The generic function \code{propTyped} is devoted to investigating the
+#' structure of missing data in adegenet objects.\cr
+#'
+#' Methods are defined for \linkS4class{genind} and \linkS4class{genpop}
+#' objects. They can return the proportion of available (i.e. non-missing) data
+#' per individual/population, locus, or the combination of both in with case
+#' the matrix indicates which entity (individual or population) was typed on
+#' which locus.
+#'
+#' When \code{by} is set to "both", the result is a matrix of binary data with
+#' entities in rows (individuals or populations) and markers in columns. The
+#' values of the matrix are 1 for typed data, and 0 for NA.
+#'
+#' @name propTyped-methods
+#' @aliases propTyped propTyped-methods propTyped,genind-method
+#' propTyped,genpop-method
+#' @docType methods
+#' @param x a \linkS4class{genind} and \linkS4class{genpop} object
+#' @param by a character being "ind","loc", or "both" for \linkS4class{genind}
+#' object and "pop","loc", or "both" for \linkS4class{genpop} object. It
+#' specifies whether proportion of typed data are provided by entity
+#' ("ind"/"pop"), by locus ("loc") or both ("both"). See details.
+#' @return A vector of proportion (when \code{by} equals "ind", "pop", or
+#' "loc"), or a matrix of binary data (when \code{by} equals "both")
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#' @keywords methods manip
+#' @examples
+#'
+#' \dontrun{
+#' data(nancycats)
+#' propTyped(nancycats,by="loc")
+#' propTyped(genind2genpop(nancycats),by="both")
+#' }
+#'
+
 setGeneric("propTyped", function(x,...){
     standardGeneric("propTyped")
 })

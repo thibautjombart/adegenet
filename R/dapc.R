@@ -737,6 +737,173 @@ summary.dapc <- function(object, ...){
 
 
 
+
+#' Graphics for Discriminant Analysis of Principal Components (DAPC)
+#'
+#' These functions provide graphic outputs for Discriminant Analysis of
+#' Principal Components (DAPC, Jombart et al. 2010). See \code{?dapc} for
+#' details about this method. DAPC graphics are detailed in the DAPC tutorial
+#' accessible using \code{vignette("adegenet-dapc")}.
+#'
+#' These functions all require an object of class \code{dapc} (the ".dapc" can
+#' be ommitted when calling the functions):\cr - \code{scatter.dapc}: produces
+#' scatterplots of principal components (or 'discriminant functions'), with a
+#' screeplot of eigenvalues as inset.\cr - \code{assignplot}: plot showing the
+#' probabilities of assignment of individuals to the different clusters.\cr -
+#' \code{compoplot}: barplot showing the probabilities of assignment of
+#' individuals to the different clusters.\cr
+#'
+#' See the documentation of \code{\link{dapc}} for more information about the
+#' method.
+#'
+#' @aliases scatter.dapc assignplot compoplot
+#' @param x a \code{dapc} object.
+#' @param xax,yax \code{integers} specifying which principal components of DAPC
+#' should be shown in x and y axes.
+#' @param grp a factor defining group membership for the individuals. The
+#' scatterplot is optimal only for the default group, i.e. the one used in the
+#' DAPC analysis.
+#' @param col a suitable color to be used for groups. The specified vector
+#' should match the number of groups, not the number of individuals.
+#' @param pch a \code{numeric} indicating the type of point to be used to
+#' indicate the prior group of individuals (see \code{\link{points}}
+#' documentation for more details); one value is expected for each group;
+#' recycled if necessary.
+#' @param bg the color used for the background of the scatterplot.
+#' @param solid a value between 0 and 1 indicating the alpha level for the
+#' colors of the plot; 0=full transparency, 1=solid colours.
+#' @param scree.da a logical indicating whether a screeplot of Discriminant
+#' Analysis eigenvalues should be displayed in inset (TRUE) or not (FALSE).
+#' @param scree.pca a logical indicating whether a screeplot of Principal
+#' Component Analysis eigenvalues should be displayed in inset (TRUE) or not
+#' (FALSE); retained axes are displayed in black.
+#' @param posi.da the position of the inset of DA eigenvalues; can match any
+#' combination of "top/bottom" and "left/right".
+#' @param posi.pca the position of the inset of PCA eigenvalues; can match any
+#' combination of "top/bottom" and "left/right".
+#' @param bg.inset the color to be used as background for the inset plots.
+#' @param ratio.da the size of the inset of DA eigenvalues as a proportion of
+#' the current plotting region.
+#' @param ratio.pca the size of the inset of PCA eigenvalues as a proportion of
+#' the current plotting region.
+#' @param inset.da a vector with two numeric values (recycled if needed)
+#' indicating the inset to be used for the screeplot of DA eigenvalues as a
+#' proportion of the current plotting region; see \code{?add.scatter} for more
+#' details.
+#' @param inset.pca a vector with two numeric values (recycled if needed)
+#' indicating the inset to be used for the screeplot of PCA eigenvalues as a
+#' proportion of the current plotting region; see \code{?add.scatter} for more
+#' details.
+#' @param inset.solid a value between 0 and 1 indicating the alpha level for
+#' the colors of the inset plots; 0=full transparency, 1=solid colours.
+#' @param onedim.filled a logical indicating whether curves should be filled
+#' when plotting a single discriminant function (TRUE), or not (FALSE).
+#' @param mstree a logical indicating whether a minimum spanning tree linking
+#' the groups and based on the squared distances between the groups inside the
+#' entire space should added to the plot (TRUE), or not (FALSE).
+#' @param lwd,lty,segcol the line width, line type, and segment colour to be
+#' used for the minimum spanning tree.
+#' @param legend a logical indicating whether a legend for group colours should
+#' added to the plot (TRUE), or not (FALSE).
+#' @param posi.leg the position of the legend for group colours; can match any
+#' combination of "top/bottom" and "left/right", or a set of x/y coordinates
+#' stored as a list (\code{locator} can be used).
+#' @param cleg a size factor used for the legend.
+#' @param
+#' cstar,cellipse,axesell,label,clabel,xlim,ylim,grid,addaxes,origin,include.origin,sub,csub,possub,cgrid,pixmap,contour,area
+#' arguments passed to \code{\link[ade4]{s.class}}; see \code{?s.class} for
+#' more informations
+#' @param only.grp a \code{character} vector indicating which groups should be
+#' displayed. Values should match values of \code{x$grp}. If \code{NULL}, all
+#' results are displayed
+#' @param subset \code{integer} or \code{logical} vector indicating which
+#' individuals should be displayed. If \code{NULL}, all results are displayed
+#' @param new.pred an optional list, as returned by the \code{predict} method
+#' for \code{dapc} objects; if provided, the individuals with unknown groups
+#' are added at the bottom of the plot. To visualize these individuals only,
+#' specify \code{only.grp="unknown"}.
+#' @param cex.lab a \code{numeric} indicating the size of labels.
+#' @param lab a vector of characters (recycled if necessary) of labels for the
+#' individuals; if left to NULL, the row names of \code{x$tab} are used.
+#' @param txt.leg a character vector indicating the text to be used in the
+#' legend; if not provided, group names stored in \code{x$grp} are used.
+#' @param ncol an integer indicating the number of columns of the legend,
+#' defaulting to 4.
+#' @param posi a characther string indicating the position of the legend; can
+#' match any combination of "top/bottom" and "left/right". See \code{?legend}.
+#' @param list() further arguments to be passed to other functions. For
+#' \code{scatter}, arguments passed to \code{points}; for \code{compoplot},
+#' arguments passed to \code{barplot}.
+#' @return All functions return the matched call.\cr
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#' @seealso - \code{\link{dapc}}: implements the DAPC.
+#'
+#' - \code{\link{find.clusters}}: to identify clusters without prior.
+#'
+#' - \code{\link{dapcIllus}}: a set of simulated data illustrating the DAPC
+#'
+#' - \code{\link{eHGDP}}, \code{\link{H3N2}}: empirical datasets illustrating
+#' DAPC
+#' @references Jombart T, Devillard S and Balloux F (2010) Discriminant
+#' analysis of principal components: a new method for the analysis of
+#' genetically structured populations. BMC Genetics11:94.
+#' doi:10.1186/1471-2156-11-94
+#' @keywords multivariate
+#' @examples
+#'
+#' \dontrun{
+#' data(H3N2)
+#' dapc1 <- dapc(H3N2, pop=H3N2$other$epid, n.pca=30,n.da=6)
+#'
+#' ## defautl plot ##
+#' scatter(dapc1)
+#'
+#' ## showing different scatter options ##
+#' ## remove internal segments and ellipses, different pch, add MStree
+#' scatter(dapc1, pch=18:23, cstar=0, mstree=TRUE, lwd=2, lty=2, posi.da="topleft")
+#'
+#' ## only ellipse, custom labels, use insets
+#' scatter(dapc1, cell=2, pch="", cstar=0, posi.pca="topleft", posi.da="topleft", scree.pca=TRUE,
+#' inset.pca=c(.01,.3), lab=paste("year\n",2001:2006), axesel=FALSE, col=terrain.colors(10))
+#'
+#' ## without ellipses, use legend for groups
+#' scatter(dapc1, cell=0, cstar=0, scree.da=FALSE, clab=0, cex=3,
+#' solid=.4, bg="white", leg=TRUE, posi.leg="topleft")
+#'
+#' ## only one axis
+#' scatter(dapc1,1,1,scree.da=FALSE, legend=TRUE, solid=.4,bg="white")
+#'
+#'
+#'
+#' ## example using genlight objects ##
+#' ## simulate data
+#' x <- glSim(50,4e3-50, 50, ploidy=2)
+#' x
+#' plot(x)
+#'
+#' ## perform DAPC
+#' dapc2 <- dapc(x, n.pca=10, n.da=1)
+#' dapc2
+#'
+#' ## plot results
+#' scatter(dapc2, scree.da=FALSE, leg=TRUE, txt.leg=paste("group",
+#' c('A','B')), col=c("red","blue"))
+#'
+#' ## SNP contributions
+#' loadingplot(dapc2$var.contr)
+#' loadingplot(tail(dapc2$var.contr, 100), main="Loading plot - last 100 SNPs")
+#'
+#'
+#'
+#' ## assignplot / compoplot ##
+#' assignplot(dapc1, only.grp=2006)
+#'
+#' data(microbov)
+#' dapc3 <- dapc(microbov, n.pca=20, n.da=15)
+#' compoplot(dapc3, lab="")
+#' }
+#'
+
 ##############
 ## scatter.dapc
 ##############
@@ -1022,9 +1189,80 @@ compoplot <- function(x, only.grp=NULL, subset=NULL, new.pred=NULL, col=NULL, la
 
 
 
-###############
-## a.score
-###############
+
+#' Compute and optimize a-score for Discriminant Analysis of Principal
+#' Components (DAPC)
+#'
+#' These functions are under development. Please email the author before using
+#' them for published results.
+#'
+#' The Discriminant Analysis of Principal Components seeks a reduced space
+#' inside which observations are best discriminated into pre-defined groups.
+#' One way to assess the quality of the discrimination is looking at
+#' re-assignment of individuals to their prior group, successful re-assignment
+#' being a sign of strong discrimination.
+#'
+#' However, when the original space is very large, ad hoc solutions can be
+#' found, which discriminate very well the sampled individuals but would
+#' perform poorly on new samples. In such a case, DAPC re-assignment would be
+#' high even for randomly chosen clusters.  The a-score measures this bias. It
+#' is computed as (Pt-Pr), where Pt is the reassignment probability using the
+#' true cluster, and Pr is the reassignment probability for randomly permuted
+#' clusters. A a-score close to one is a sign that the DAPC solution is both
+#' strongly discriminating and stable, while low values (toward 0 or lower)
+#' indicate either weak discrimination or instability of the results.
+#'
+#' The a-score can serve as a criterion for choosing the optimal number of PCs
+#' in the PCA step of DAPC, i.e. the number of PC maximizing the a-score. Two
+#' procedures are implemented in \code{optim.a.score}. The smart procedure
+#' selects evenly distributed number of PCs in a pre-defined range, compute the
+#' a-score for each, and then interpolate the results using splines, predicting
+#' an approximate optimal number of PCs. The other procedure (when \code{smart}
+#' is FALSE) performs the computations for all number of PCs request by the
+#' user. The 'optimal' number is then the one giving the highest mean a-score
+#' (computed over the groups).
+#'
+#' @aliases a.score optim.a.score
+#' @param x a \code{dapc} object.
+#' @param n.pca a vector of \code{integers} indicating the number of axes
+#' retained in the Principal Component Analysis (PCA) steps of DAPC.
+#' \code{nsim} DAPC will be run for each value in \code{n.pca}, unless the
+#' smart approach is used (see details).
+#' @param smart a \code{logical} indicating whether a smart, less
+#' computer-intensive approach should be used (TRUE, default) or not (FALSE).
+#' See details section.
+#' @param n an \code{integer} indicating the numbers of values spanning the
+#' range of \code{n.pca} to be used in the smart approach.
+#' @param plot a \code{logical} indicating whether the results should be
+#' displayed graphically (TRUE, default) or not (FALSE).
+#' @param n.sim an \code{integer} indicating the number of simulations to be
+#' performed for each number of retained PC.
+#' @param n.da an \code{integer} indicating the number of axes retained in the
+#' Discriminant Analysis step.
+#' @param list() further arguments passed to other methods; currently unused..
+#' @return === a.score ===\cr \code{a.score} returns a list with the following
+#' components:\cr \item{tab}{a matrix of a-scores with groups in columns and
+#' simulations in row.} \item{pop.score}{a vector giving the mean a-score for
+#' each population.} \item{mean}{the overall mean a-score.}\cr
+#'
+#' === optim.a.score ===\cr \code{optima.score} returns a list with the
+#' following components:\cr \item{pop.score}{a list giving the mean a-score of
+#' the populations for each number of retained PC (each element of the list
+#' corresponds to a number of retained PCs).} \item{mean}{a vector giving the
+#' overall mean a-score for each number of retained PCs.} \item{pred}{(only
+#' when \code{smart} is TRUE) the predictions of the spline, given in x and y
+#' coordinates.} \item{best}{the optimal number of PCs to be retained.}
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#' @seealso - \code{\link{find.clusters}}: to identify clusters without prior.
+#'
+#' - \code{\link{dapc}}: the Discriminant Analysis of Principal Components
+#' (DAPC)
+#' @references Jombart T, Devillard S and Balloux F (2010) Discriminant
+#' analysis of principal components: a new method for the analysis of
+#' genetically structured populations. BMC Genetics11:94.
+#' doi:10.1186/1471-2156-11-94
+#' @keywords multivariate
+
 a.score <- function(x, n.sim=10, ...){
     if(!inherits(x,"dapc")) stop("x is not a dapc object")
 

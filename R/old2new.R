@@ -1,6 +1,23 @@
-##################
-# Methods old2new
-##################
+
+#' Convert objects with obsolete classe into new objects
+#'
+#' Adegenet classes changed from S3 to S4 types starting from version 1.1-0.
+#' \code{old2new} has two methods for genind and genpop objects, so that old
+#' adegenet objects can be retrieved and used in recent versions.
+#'
+#' Optional content but \code{$pop} and \code{$pop.names} will not be
+#' converted. These are to be coerced into a list and set in the \code{@@other}
+#' slot of the new object.
+#'
+#' @name old2new
+#' @aliases old2new old2new,ANY-method old2new-methods old2new,genind-method
+#' old2new,genpop-method
+#' @docType methods
+#' @param object a genind or genpop object in S3 version, i.e. prior
+#' adegenet\_1.1-0
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#' @keywords methods classes manip
+
 setGeneric("old2new",  function(object) standardGeneric("old2new"))
 
 setMethod("old2new", "genind", function(object){
