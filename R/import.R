@@ -18,11 +18,11 @@
 #####################
 # Function df2genind
 #####################
-df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, pop=NULL, missing=NA, ploidy=2, type=c("codom","PA")){
+df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, pop=NULL, missing=NA,
+                      NA.char="", ploidy=2, type=c("codom","PA")){
 
     if(is.data.frame(X)) X <- as.matrix(X)
     if (!inherits(X, "matrix")) stop ("X is not a matrix")
-
     res <- list()
     type <- match.arg(type)
     ## checkType(type)
@@ -31,8 +31,8 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
     ## type-independent stuff ##
     n <- nrow(X)
     nloc <- ncol(X)
-    ploidy <- as.integer(ploidy)
-    if(ploidy < 1L) stop("ploidy cannot be less than 1")
+    ploidy <- rep(as.integer(ploidy), length=n)
+    if(any(ploidy < 1L)) stop("ploidy cannot be less than 1")
 
     if(is.null(ind.names)) {ind.names <- rownames(X)}
     if(is.null(loc.names)) {loc.names <- colnames(X)}
@@ -47,22 +47,23 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
     ## PA case ##
     if(toupper(type)=="PA"){
         ## preliminary stuff
-        mode(X) <- "numeric"
         rownames(X) <- ind.names
         colnames(X) <- loc.names
 
         ## Erase entierely non-typed loci
-        temp <- apply(X,2,function(c) all(is.na(c)))
+        temp <- colSums(is.na(X))==nrow(X)
         if(any(temp)){
             X <- X[,!temp]
             warning("entirely non-type marker(s) deleted")
         }
 
         ## Erase entierely non-type individuals
-        temp <- apply(X,1,function(r) all(is.na(r)))
+        temp <- rowSums(is.na(X))==ncol(X)
         if(any(temp)){
             X <- X[!temp,,drop=FALSE]
-            pop <- pop[!temp]
+            if(!is.null(pop)) pop <- pop[!temp]
+            ploidy <- ploidy[!temp]
+            ind.names <- ind.names[!temp]
             warning("entirely non-type individual(s) deleted")
         }
 
@@ -70,12 +71,14 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
         temp <- apply(X, 2, function(loc) length(unique(loc[!is.na(loc)]))==1)
         if(any(temp)){
             X <- X[,!temp,drop=FALSE]
+            loc.names <- loc.names[!temp]
+            nloc <- ncol(X)
             warning("non-polymorphic marker(s) deleted")
         }
 
         prevcall <- match.call()
 
-        res <- genind( tab=X, pop=pop, prevcall=prevcall, ploidy=ploidy, type="PA")
+        res <- genind(tab=X, pop=pop, prevcall=prevcall, ploidy=ploidy, type="PA")
 
         return(res)
     } # end type PA
@@ -88,55 +91,39 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
 
 
     ## find or check the number of coding characters, 'ncode'
-    if(is.null(sep)){
-        if(!is.null(ncode)) {
-            temp <- nchar(X[!is.na(X)])
-            if(ncode <  max(temp) ) stop("some character strings exceed the provided ncode.")
-        }
-        if(is.null(ncode)) {
-            temp <- nchar(X[!is.na(X)])
-            ncode <- max(temp)
-        }
-        if((ncode %% ploidy)>0) stop(paste(ploidy,"alleles cannot be coded by a total of",
-                                           ncode,"characters", sep=" "))
-    }
+    if(is.null(sep) && is.null(ncode)) stop("please indicate either the separator (sep) or the number of characters coding an allele (ncode).")
 
-    ## ERASE ENTIRELY NON-TYPE LOCI AND INDIVIDUALS
-    tempX <- X
-    if(!is.null(sep)) tempX <- gsub(sep,"",X)
-    ## turn NANANA, 00000, ... into NA
-    tempX <- gsub("^0*$",NA,tempX)
-    tempX <- gsub("(NA)+",NA,tempX)
+    ## HANDLE NAs ##
+    ## find all strings which are in fact NAs
+    NA.list <- unlist(lapply(unique(ploidy), function(nrep) paste(rep(NA.char, nrep), collapse="/")))
+    NA.list <- unique(c(NA.list, NA.char))
 
-    ## Erase entierely non-typed loci
-    temp <- apply(tempX,2,function(c) all(is.na(c)))
-    if(any(temp)){
-        X <- X[,!temp,drop=FALSE]
-        tempX <- tempX[,!temp,drop=FALSE]
-        loc.names <- loc.names[!temp]
+    ## replace NAs
+    X[X %in% NA.list] <- NA
+
+    ## erase entirely non-type loci
+    toRemove <- which(colSums(is.na(X))==nrow(X))
+    if(any(toRemove)){
+        X <- X[,-toRemove]
+        loc.names <- loc.names[-toRemove]
         nloc <- ncol(X)
         warning("entirely non-type marker(s) deleted")
     }
 
-    ## Erase entierely non-type individuals
-    temp <- apply(tempX,1,function(r) all(is.na(r)))
-    if(any(temp)){
-        X <- X[!temp,,drop=FALSE]
-        tempX <- tempX[!temp,,drop=FALSE]
-        pop <- pop[!temp]
-        ind.names <- ind.names[!temp]
-        n <- nrow(X)
+
+    ## erase entierely non-type individuals
+    toRemove <- which(rowSums(is.na(X))==ncol(X))
+    if(any(toRemove)){
+        X <- X[-toRemove, ]
+        ind.names <- ind.names[-toRemove]
+        nind <- nrow(X)
+        if(!is.null(pop)) pop <- pop[-toRemove]
         warning("entirely non-type individual(s) deleted")
     }
 
     n <- nrow(X)
-    ## SET NAs IN X
-    X[is.na(tempX)] <- NA
 
-    # ind.names <- rownames(X) this erases the real labels
-    # note: if X is kept as a matrix, duplicate row names are no problem
-
-
+    #### STOPPED REFORM OF THE CODE HERE ####
     ## function to fill a matrix of char 'M' with the required
     ## number of zero, targetN being the total number of char required
     fillWithZero <- function(M, targetN){

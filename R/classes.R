@@ -278,11 +278,12 @@ genind <- function(tab,pop=NULL,prevcall=NULL,ploidy=2L,type=c("codom","PA")){
     old.rownames <- rownames(tab)
     old.colnames <- colnames(tab)
     old.dim <- dim(tab)
-    tab <- as.integer(tab)
-    dim(tab) <- old.dim
-    rownames(tab) <- old.rownames
-    colnames(tab) <- old.colnames
-
+    if(typeof(tab)!="integer"){
+        tab <- as.integer(tab)
+        dim(tab) <- old.dim
+        rownames(tab) <- old.rownames
+        colnames(tab) <- old.colnames
+    }
     type <- match.arg(type)
     nind <- nrow(tab)
     ploidy <- as.integer(ploidy)
@@ -396,11 +397,12 @@ genpop <- function(tab,prevcall=NULL,ploidy=as.integer(2),type=c("codom","PA")){
     old.rownames <- rownames(tab)
     old.colnames <- colnames(tab)
     old.dim <- dim(tab)
-    tab <- as.integer(tab)
-    dim(tab) <- old.dim
-    rownames(tab) <- old.rownames
-    colnames(tab) <- old.colnames
-
+    if(typeof(tab)!="integer"){
+        tab <- as.integer(tab)
+        dim(tab) <- old.dim
+        rownames(tab) <- old.rownames
+        colnames(tab) <- old.colnames
+    }
     type <- match.arg(type)
     ploidy <- as.integer(ploidy)
     npop <- nrow(tab)
