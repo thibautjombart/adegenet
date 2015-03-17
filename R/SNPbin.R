@@ -1201,7 +1201,11 @@ setMethod("as.SNPbin", "numeric", function(x, ...) as(x, "SNPbin"))
 #' vectors of integer/numeric type
 #'
 #'
-#' @aliases as,genlight,matrix-method as,genlight,data.frame-method
+#' @export
+#' @docType methods
+#' @rdname coerce-methods
+
+#' #' @aliases as,genlight,matrix-method as,genlight,data.frame-method
 #' as,genlight,list-method as.genlight as.genlight,matrix-method
 #' as.genlight,data.frame-method as.genlight,list-method
 #' coerce,genlight,matrix-method coerce,genlight,data.frame-method
@@ -1209,6 +1213,7 @@ setMethod("as.SNPbin", "numeric", function(x, ...) as(x, "SNPbin"))
 #' @author Thibaut Jombart (\email{t.jombart@@imperial.ac.uk})
 #' @seealso Related class:\cr - \code{\linkS4class{SNPbin}}, for storing
 #' individual genotypes of binary SNPs\cr
+#'
 #'
 #' - \code{\linkS4class{genind}}
 #' @keywords classes
@@ -1231,8 +1236,6 @@ setMethod("as.SNPbin", "numeric", function(x, ...) as(x, "SNPbin"))
 #' }
 #'
 #'
-
-
 setAs("genlight", "matrix", def=function(from){
     res <- unlist(lapply(from@gen, as.integer))
     res <- matrix(res, ncol=nLoc(from), nrow=nInd(from), byrow=TRUE)

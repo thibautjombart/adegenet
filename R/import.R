@@ -953,8 +953,6 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL, col
 
 
 
-
-
 #' Importing data from several softwares to a genind object
 #'
 #' Their are several ways to import genotype data to a \linkS4class{genind}
@@ -983,7 +981,7 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL, col
 #' individual names whereas Fstat does not; Genepop chooses a sample's name
 #' from the name of its last genotype; etc.
 #'
-#' @aliases import2genind import2genind
+#' @aliases import2genind
 #' @param file a character string giving the path to the file to convert, with
 #' the appropriate extension.
 #' @param missing can be NA, 0 or "mean". See details section.
@@ -1031,7 +1029,6 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL, col
 #'
 
 import2genind <- function(file,missing=NA,quiet=FALSE, ...){
-    ## if(!file.exists(file)) stop("Specified file does not exist.") <- not needed
     ext <- .readExt(file)
     ext <- toupper(ext)
 
