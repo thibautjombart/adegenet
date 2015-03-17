@@ -138,9 +138,7 @@
 #'
 #' === SIMULATING DATA ===\cr - \code{\link{hybridize}}: implements
 #' hybridization between two populations. \cr - \code{\link{haploGen}}:
-#' simulates genealogies of haplotypes, storing full genomes. \cr % -
-#' \code{\link{haploPop}}: simulates populations of haplotypes, using %
-#' different population dynamics, storing SNPs (under development). \cr -
+#' simulates genealogies of haplotypes, storing full genomes. \cr
 #' \code{\link{glSim}}: simulates simple \linkS4class{genlight} objects.\cr
 #'
 #' === DATASETS ===\cr - \code{\link{H3N2}}: Seasonal influenza (H3N2) HA
