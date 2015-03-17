@@ -1,0 +1,39 @@
+
+## Export all classes
+exportPattern("^[^\\.]")
+export(.rmspaces, .readExt, .genlab, .render.server.info)
+#export(.rmspaces, .readExt, .genlab, .dapcServer)
+
+## Import all packages listed as Imports or Depends
+
+importFrom(utils, "packageDescription")
+
+importFrom(stats, "kmeans")
+
+importFrom(stats, "optimize")
+
+importFrom(MASS, "lda")
+
+## CURRENTLY DOES NOT WORK - as.DNAbin methods not exported - sent email to E.P.
+importFrom(ape, "as.character.DNAbin", "as.DNAbin", "as.DNAbin.alignment", "as.DNAbin.character",
+           "as.DNAbin.list", "as.list.DNAbin", "as.matrix.DNAbin", "cbind.DNAbin", "c.DNAbin",
+           "[.DNAbin", "labels.DNAbin", "print.DNAbin", "rbind.DNAbin", "dist.dna")
+
+importFrom(igraph, "graph.data.frame", "V", "V<-", "E", "E<-", "layout.fruchterman.reingold",
+           "as.igraph", "plot.igraph", "print.igraph", "graph.adjacency", "clusters")
+
+import(methods,ade4)
+
+importFrom(shiny, "runApp", "renderPrint")
+
+importFrom(ggplot2, "ggplot", "geom_density", "geom_rug", "labs", "aes", "xlim",
+           "guides", "guide_legend", "geom_boxplot", "geom_violin", "geom_jitter",
+           "coord_flip")
+
+## Declare S3 methods
+S3method(scatter, dapc)
+S3method(scatter, glPca)
+
+## Load DLL
+useDynLib(adegenet)
+
