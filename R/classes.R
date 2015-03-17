@@ -97,7 +97,7 @@ setClass("gen", representation(tab = "matrix",
                                all.names = "listOrNULL",
                                call = "callOrNULL",
                                "VIRTUAL"),
-         prototype(tab=matrix(ncol=0,nrow=0), loc.nall=integer(0), call=NULL))
+         prototype(tab=matrix(0L, ncol=0,nrow=0), loc.nall=integer(0), call=NULL))
 
 setValidity("gen", .gen.valid)
 
@@ -137,6 +137,13 @@ setClass("indInfo", representation(ind.names = "character",
         print(temp[temp>1])
     }
 
+    if(typeof(object@tab)!="integer"){
+        warning("@tab does not contain integers; as of adegenet_1.5-0, numeric values are no longer used")
+        ## cat("\ntab does not contain integers; as of adegenet_1.5-0, numeric values are no longer used")
+        ## return(FALSE)
+    }
+
+
     if(!is.null(object@pop)){ # check pop
 
         if(length(object@pop) != nrow(object@tab)) {
@@ -163,9 +170,12 @@ setClass("indInfo", representation(ind.names = "character",
     } # end check pop
 
     ## check ploidy
-    if(object@ploidy < as.integer(1)){
+    if(any(object@ploidy < 1L)){
         cat("\nploidy inferior to 1\n")
         return(FALSE)
+    }
+    if(length(object@ploidy)!=nInd(object)){
+        warning("as of adegenet_1.5-0, @ploidy should contain one value per individual")
     }
 
     ## check type of marker
@@ -209,7 +219,7 @@ setClass("popInfo", representation(pop.names = "character", ploidy = "integer",
     }
 
      ## check ploidy
-    if(object@ploidy < as.integer(1)){
+    if(object@ploidy < 1L){
         cat("\nploidy inferior to 1\n")
         return(FALSE)
     }
@@ -259,23 +269,29 @@ setMethod("names", signature(x = "genpop"), function(x){
 # Function genind
 ##################
 ## constructor of a genind object
-genind <- function(tab,pop=NULL,prevcall=NULL,ploidy=2,type=c("codom","PA")){
-    ## handle arguments
-    X <- as.matrix(tab)
-    if(is.null(colnames(X))) stop("tab columns have no name.")
-    if(is.null(rownames(X))) {rownames(X) <- 1:nrow(X)}
+genind <- function(tab,pop=NULL,prevcall=NULL,ploidy=2L,type=c("codom","PA")){
+    ## HANDLE ARGUMENTS ##
+    if(is.null(colnames(tab))) stop("tab columns have no name.")
+    if(is.null(rownames(tab))) {rownames(tab) <- 1:nrow(tab)}
+
+    ## force matrix & integer
+    old.rownames <- rownames(tab)
+    old.colnames <- colnames(tab)
+    old.dim <- dim(tab)
+    tab <- as.integer(tab)
+    dim(tab) <- old.dim
+    rownames(tab) <- old.rownames
+    colnames(tab) <- old.colnames
 
     type <- match.arg(type)
+    nind <- nrow(tab)
     ploidy <- as.integer(ploidy)
-    nind <- nrow(X)
+    ploidy <- rep(ploidy, length=nind)
 
 
     ## HANDLE LABELS ##
-
     ## loc names is not type-dependent
-    temp <- colnames(X)
-    ## temp <- gsub("[.].*$","",temp)
-    temp <- gsub("[.][^.]*$", "", temp)
+    temp <- gsub("[.][^.]*$", "", old.colnames)
     temp <- .rmspaces(temp)
     loc.names <- unique(temp)
     nloc <- length(loc.names)
@@ -284,9 +300,9 @@ genind <- function(tab,pop=NULL,prevcall=NULL,ploidy=2,type=c("codom","PA")){
 
     ## ind names is not type-dependent either
     ind.codes <- .genlab("", nind)
-    ind.names <- .rmspaces(rownames(X))
+    ind.names <- .rmspaces(rownames(tab))
     names(ind.names) <- ind.codes
-    rownames(X) <- ind.codes
+    rownames(tab) <- ind.codes
 
 
     if(type=="codom"){
@@ -299,7 +315,7 @@ genind <- function(tab,pop=NULL,prevcall=NULL,ploidy=2,type=c("codom","PA")){
         loc.fac <- rep(loc.codes,loc.nall)
 
         ## alleles name
-        temp <- colnames(X)
+        temp <- colnames(tab)
         temp <- gsub("^.*[.]","",temp)
         temp <- .rmspaces(temp)
         all.names <- split(temp,loc.fac)
@@ -308,10 +324,10 @@ genind <- function(tab,pop=NULL,prevcall=NULL,ploidy=2,type=c("codom","PA")){
             names(all.names[[i]]) <- all.codes[[i]]
         }
 
-        colnames(X) <- paste(loc.fac,unlist(all.codes),sep=".")
+        colnames(tab) <- paste(loc.fac,unlist(all.codes),sep=".")
         loc.fac <- as.factor(loc.fac)
     } else { # end if type=="codom" <=> if type=="PA"
-        colnames(X) <- loc.codes
+        colnames(tab) <- loc.codes
         loc.fac <- NULL
         all.names <- NULL
         loc.nall <- NULL
@@ -319,7 +335,7 @@ genind <- function(tab,pop=NULL,prevcall=NULL,ploidy=2,type=c("codom","PA")){
 
     ## Ideally I should use an 'initialize' method here
     res <- new("genind")
-    res@tab <- X
+    res@tab <- tab
     res@ind.names <- ind.names
     res@loc.names <- loc.names
     res@loc.nall <- loc.nall
@@ -372,22 +388,28 @@ as.genind <- genind
 ##################
 genpop <- function(tab,prevcall=NULL,ploidy=as.integer(2),type=c("codom","PA")){
 
-    ## handle args
-    X <- as.matrix(tab)
-    if(is.null(colnames(X))) stop("tab columns have no name.")
-    if(is.null(rownames(X))) {rownames(X) <- 1:nrow(X)}
+    ## HANDLE ARGS ##
+    if(is.null(colnames(tab))) stop("tab columns have no name.")
+    if(is.null(rownames(tab))) {rownames(tab) <- 1:nrow(tab)}
+
+    ## force matrix & integer
+    old.rownames <- rownames(tab)
+    old.colnames <- colnames(tab)
+    old.dim <- dim(tab)
+    tab <- as.integer(tab)
+    dim(tab) <- old.dim
+    rownames(tab) <- old.rownames
+    colnames(tab) <- old.colnames
 
     type <- match.arg(type)
     ploidy <- as.integer(ploidy)
-    npop <- nrow(X)
+    npop <- nrow(tab)
 
 
     ## HANDLE LABELS ##
 
     ## loc names is not type-dependent
-    temp <- colnames(X)
-    ## temp <- gsub("[.].*$","",temp)
-    temp <- gsub("[.][^.]*$", "", temp)
+    temp <- gsub("[.][^.]*$", "", old.colnames)
     temp <- .rmspaces(temp)
     loc.names <- unique(temp)
     nloc <- length(loc.names)
@@ -396,9 +418,9 @@ genpop <- function(tab,prevcall=NULL,ploidy=as.integer(2),type=c("codom","PA")){
 
     ## pop names is not type-dependent either
     pop.codes <- .genlab("", npop)
-    pop.names <- .rmspaces(rownames(X))
+    pop.names <- .rmspaces(rownames(tab))
     names(pop.names) <- pop.codes
-    rownames(X) <- pop.codes
+    rownames(tab) <- pop.codes
 
     ## type-dependent stuff
     if(type=="codom"){
@@ -411,7 +433,7 @@ genpop <- function(tab,prevcall=NULL,ploidy=as.integer(2),type=c("codom","PA")){
         loc.fac <- rep(loc.codes,loc.nall)
 
         ## alleles name
-        temp <- colnames(X)
+        temp <- colnames(tab)
         temp <- gsub("^.*[.]","",temp)
         temp <- .rmspaces(temp)
         all.names <- split(temp,loc.fac)
@@ -420,11 +442,11 @@ genpop <- function(tab,prevcall=NULL,ploidy=as.integer(2),type=c("codom","PA")){
             names(all.names[[i]]) <- all.codes[[i]]
         }
 
-        rownames(X) <- pop.codes
-        colnames(X) <- paste(loc.fac,unlist(all.codes),sep=".")
+        rownames(tab) <- pop.codes
+        colnames(tab) <- paste(loc.fac,unlist(all.codes),sep=".")
         loc.fac <- as.factor(loc.fac)
     } else { # end if type=="codom" <=> if type=="PA"
-        colnames(X) <- loc.codes
+        colnames(tab) <- loc.codes
         loc.fac <- NULL
         all.names <- NULL
         loc.nall <- NULL
@@ -432,7 +454,7 @@ genpop <- function(tab,prevcall=NULL,ploidy=as.integer(2),type=c("codom","PA")){
 
     res <- new("genpop")
 
-    res@tab <- X
+    res@tab <- tab
     res@pop.names <- pop.names
     res@loc.names <- loc.names
     res@loc.nall <- loc.nall
