@@ -59,39 +59,21 @@ setMethod("truenames",signature(x="genpop"), function(x){
 setGeneric("seploc", function(x, ...) standardGeneric("seploc"))
 
 setMethod("seploc", signature(x="genind"), function(x,truenames=TRUE,res.type=c("genind","matrix")){
+    truenames <- TRUE # this argument will be deprecated
     if(x@type=="PA"){
         msg <- paste("seploc is not implemented for presence/absence markers")
         cat("\n",msg,"\n")
         return(invisible())
     }
 
-
     if(!is.genind(x)) stop("x is not a valid genind object")
     res.type <- match.arg(res.type)
-    if(res.type=="genind") { truenames <- TRUE }
 
-    temp <- x@loc.fac
-    nloc <- length(levels(temp))
-    levels(temp) <- 1:nloc
-
+    ## make separate tables
     kX <- list()
-
-    for(i in 1:nloc){
-        kX[[i]] <- matrix(x@tab[,temp==i],ncol=x@loc.nall[i])
-
-        if(!truenames){
-            rownames(kX[[i]]) <- rownames(x@tab)
-            colnames(kX[[i]]) <- paste(names(x@loc.names)[i],names(x@all.names[[i]]),sep=".")
-        }else{
-            rownames(kX[[i]]) <- x@ind.names
-            colnames(kX[[i]]) <- paste(x@loc.names[i],x@all.names[[i]],sep=".")
-        }
-    }
-
-    if(truenames) {
-        names(kX) <- x@loc.names
-    } else{
-        names(kX) <- names(x@loc.names)
+    locfac.char <- as.character(x@loc.fac)
+    for(i in locNames(x)){
+        kX[[i]] <- x@tab[,i==locfac.char,drop=FALSE]
     }
 
     prevcall <- match.call()

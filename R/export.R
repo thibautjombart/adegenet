@@ -121,7 +121,45 @@ genind2hierfstat <- function(x,pop=NULL){
 #####################
 # Function genind2df
 #####################
-genind2df <- function(x, pop=NULL, sep="", usepop=TRUE, oneColPerAll=FALSE){
+#' Convert a genind object to a data.frame.
+#'
+#' The function \code{genind2df} converts a \linkS4class{genind} back to a
+#' data.frame of raw allelic data.
+#'
+#' @aliases genind2df
+#'
+#' @param x a \linkS4class{genind} object
+#' @param pop an optional factor giving the population of each individual.
+#' @param sep a character string separating alleles. See details.
+#' @param usepop a logical stating whether the population (argument \code{pop}
+#' or \code{x@@pop} should be used (TRUE, default) or not (FALSE)).
+#'
+#' @return a data.frame of raw allelic data, with individuals in rows and loci in column
+#'
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#'
+#' @seealso \code{\link{df2genind}}, \code{\link{import2genind}}, \code{\link{read.genetix}},
+#' \code{\link{read.fstat}}, \code{\link{read.structure}}
+#' @keywords manip
+#' @examples
+#'
+#' ## simple example
+#' df <- data.frame(locusA=c("11","11","12","32"),
+#' locusB=c(NA,"34","55","15"),locusC=c("22","22","21","22"))
+#' row.names(df) <- .genlab("genotype",4)
+#' df
+#'
+#' obj <- df2genind(df, ploidy=2, ncode=1)
+#' obj
+#' obj@@tab
+#'
+#'
+#' ## converting a genind as data.frame
+#' genind2df(obj)
+#' genind2df(obj, sep="/")
+#'
+#' @export genind2df
+genind2df <- function(x, pop=NULL, sep="", usepop=TRUE){
 
   if(!is.genind(x)) stop("x is not a valid genind object")
   ## checkType(x)
@@ -129,10 +167,6 @@ genind2df <- function(x, pop=NULL, sep="", usepop=TRUE, oneColPerAll=FALSE){
   if(is.null(pop)) {
       pop <- x@pop
       levels(pop) <- x@pop.names
-  }
-
-  if(oneColPerAll){
-      sep <- "/"
   }
 
   ## PA case ##
@@ -167,24 +201,24 @@ genind2df <- function(x, pop=NULL, sep="", usepop=TRUE, oneColPerAll=FALSE){
   kGen <- lapply(1:length(kX), function(i) apply(kX[[i]],1,recod,x@all.names[[i]]))
   names(kGen) <- x@loc.names
 
-  ## if use one column per allele
-  if(oneColPerAll){
-      f1 <- function(vec){ # to repeat NA with seperators
-          vec[is.na(vec)] <- paste(rep("NA",x@ploidy), collapse=sep)
-          return(vec)
-      }
-      temp <- lapply(kGen, f1)
-      temp <- lapply(temp, strsplit,sep)
+  ## ## if use one column per allele
+  ## if(oneColPerAll){
+  ##     f1 <- function(vec){ # to repeat NA with seperators
+  ##         vec[is.na(vec)] <- paste(rep("NA",x@ploidy), collapse=sep)
+  ##         return(vec)
+  ##     }
+  ##     temp <- lapply(kGen, f1)
+  ##     temp <- lapply(temp, strsplit,sep)
 
-      res <- lapply(temp, function(e) matrix(unlist(e), ncol=x@ploidy, byrow=TRUE))
-      res <- data.frame(res,stringsAsFactors=FALSE)
-      names(res) <- paste(rep(locNames(x),each=x@ploidy), 1:x@ploidy, sep=".")
+  ##     res <- lapply(temp, function(e) matrix(unlist(e), ncol=x@ploidy, byrow=TRUE))
+  ##     res <- data.frame(res,stringsAsFactors=FALSE)
+  ##     names(res) <- paste(rep(locNames(x),each=x@ploidy), 1:x@ploidy, sep=".")
 
-      ## handle pop here
-      if(!is.null(pop) & usepop) res <- cbind.data.frame(pop,res,stringsAsFactors=FALSE)
+  ##     ## handle pop here
+  ##     if(!is.null(pop) & usepop) res <- cbind.data.frame(pop,res,stringsAsFactors=FALSE)
 
-      return(res) # exit here
-  } # end if oneColPerAll
+  ##     return(res) # exit here
+  ## } # end if oneColPerAll
 
   ## build the final data.frame
   res <- cbind.data.frame(kGen,stringsAsFactors=FALSE)

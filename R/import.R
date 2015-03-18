@@ -80,16 +80,17 @@
 #' row.names(df) <- .genlab("genotype",4)
 #' df
 #'
-#' obj <- df2genind(df, ploidy=2)
+#' obj <- df2genind(df, ploidy=2, ncode=1)
 #' obj
-#' truenames(obj)
+#' obj@@tab
+#'
 #'
 #' ## converting a genind as data.frame
 #' genind2df(obj)
 #' genind2df(obj, sep="/")
-#' genind2df(obj, oneColPerAll=TRUE)
 #'
 #' @export df2genind
+#'
 df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, pop=NULL, missing=NA,
                       NA.char="", ploidy=2, type=c("codom","PA")){
 
@@ -234,9 +235,9 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
     dimnames(out) <- list(rownames(out), colnames(out))
 
     ## restore NAs
-    NA.col <- sapply(NA.locus, grep, colnames(out))
+    out.colnames <- colnames(out)
     for(i in 1:length(NA.ind)){
-        out[NA.ind[i], NA.col[[i]]] <- NA
+        out[NA.ind[i], grep(NA.locus[i], out.colnames)] <- NA
     }
 
     ## call upon genind constructor
