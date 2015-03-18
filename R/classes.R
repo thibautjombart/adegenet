@@ -300,8 +300,9 @@ genind <- function(tab,pop=NULL,prevcall=NULL,ploidy=2L,type=c("codom","PA")){
     ## ind names is not type-dependent either
     ## only use generic label if no name or duplicates
     if(is.null(rownames(tab))) {
-        rownames(tab) <- ind.names <- .genlab("", nind)
+        rownames(tab) <- .genlab("", nind)
     }
+    ind.names <- rownames(tab)
     if(length(unique(ind.names))!=length(ind.names)) {
         warning("duplicate labels detected for some individuals; using generic labels")
         rownames(tab) <- ind.names <- .genlab("", nind)
@@ -311,10 +312,10 @@ genind <- function(tab,pop=NULL,prevcall=NULL,ploidy=2L,type=c("codom","PA")){
         ## loc.nall
         loc.nall <-  table(temp)[match(loc.names,names(table(temp)))]
         loc.nall <- as.integer(loc.nall)
-        names(loc.nall) <- loc.codes
+        names(loc.nall) <- loc.names
 
         ## loc.fac
-        loc.fac <- rep(loc.codes,loc.nall)
+        loc.fac <- rep(loc.names,loc.nall)
 
         ## alleles name
         temp <- colnames(tab)

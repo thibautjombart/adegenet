@@ -171,6 +171,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
         ## add "/" as separator
         X <- gsub(paste("([[:alnum:]]{",ncode,"})",sep=""), "\\1/", X)
         X <- sub("/$","",X)
+        sep <- "/"
     }
 
     ## HANDLE NAs
