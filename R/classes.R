@@ -403,45 +403,42 @@ genpop <- function(tab,prevcall=NULL,ploidy=as.integer(2),type=c("codom","PA")){
     temp <- .rmspaces(temp)
     loc.names <- unique(temp)
     nloc <- length(loc.names)
-    loc.codes <- .genlab("L",nloc)
-    names(loc.names) <- loc.codes
 
     ## pop names is not type-dependent either
-    pop.codes <- .genlab("", npop)
-    pop.names <- .rmspaces(rownames(tab))
-    names(pop.names) <- pop.codes
-    rownames(tab) <- pop.codes
+    ## only use generic label if no name or duplicates
+    if(is.null(rownames(tab))) {
+        rownames(tab) <- .genlab("", npop)
+    }
+    pop.names <- rownames(tab)
+    if(length(unique(pop.names))!=length(pop.names)) {
+        warning("duplicate labels detected for some populations; using generic labels")
+        rownames(tab) <- pop.names <- .genlab("", npop)
+    }
 
-    ## type-dependent stuff
     if(type=="codom"){
         ## loc.nall
         loc.nall <-  table(temp)[match(loc.names,names(table(temp)))]
         loc.nall <- as.integer(loc.nall)
-        names(loc.nall) <- loc.codes
+        names(loc.nall) <- loc.names
 
         ## loc.fac
-        loc.fac <- rep(loc.codes,loc.nall)
+        loc.fac <- rep(loc.names,loc.nall)
 
         ## alleles name
         temp <- colnames(tab)
         temp <- gsub("^.*[.]","",temp)
         temp <- .rmspaces(temp)
         all.names <- split(temp,loc.fac)
-        all.codes <- lapply(all.names,function(e) .genlab("",length(e)))
-        for(i in 1:length(all.names)){
-            names(all.names[[i]]) <- all.codes[[i]]
-        }
-
-        rownames(tab) <- pop.codes
-        colnames(tab) <- paste(loc.fac,unlist(all.codes),sep=".")
+        all.names <- all.names[loc.names]
         loc.fac <- as.factor(loc.fac)
+
     } else { # end if type=="codom" <=> if type=="PA"
-        colnames(tab) <- loc.codes
         loc.fac <- NULL
         all.names <- NULL
         loc.nall <- NULL
     }
 
+    ## build final output
     res <- new("genpop")
 
     res@tab <- tab
