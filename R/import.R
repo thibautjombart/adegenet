@@ -9,10 +9,10 @@
 ## .stru (STRUCTURE)
 ##
 ## Thibaut Jombart, avril 2006
+## Revised March 2015
 ## t.jombart@imperial.ac.uk
 ##
 ##################################################################
-
 
 
 #####################
@@ -21,14 +21,16 @@
 df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, pop=NULL, missing=NA,
                       NA.char="", ploidy=2, type=c("codom","PA")){
 
+    ## CHECKS ##
     if(is.data.frame(X)) X <- as.matrix(X)
     if (!inherits(X, "matrix")) stop ("X is not a matrix")
     res <- list()
     type <- match.arg(type)
-    ## checkType(type)
+    if(is.null(sep) && is.null(ncode)) stop("Not enough information to convert data: please indicate the separator (sep=...) or the number of characters coding an allele (ncode=...)")
 
 
-    ## type-independent stuff ##
+    ## TYPE-INDEPENDENT STUFF ##
+    ## misc variables
     n <- nrow(X)
     nloc <- ncol(X)
     ploidy <- rep(as.integer(ploidy), length=n)
@@ -37,14 +39,14 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
     if(is.null(ind.names)) {ind.names <- rownames(X)}
     if(is.null(loc.names)) {loc.names <- colnames(X)}
 
-    ## pop optionnelle
+    ## pop argument
     if(!is.null(pop)){
         if(length(pop)!= n) stop("length of factor pop differs from nrow(X)")
         pop <- as.factor(pop)
     }
 
 
-    ## PA case ##
+    ## PRESENCE/ABSENCE MARKERS ##
     if(toupper(type)=="PA"){
         ## preliminary stuff
         rownames(X) <- ind.names
@@ -84,11 +86,9 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
     } # end type PA
 
 
-    ## codom case ##
-
+    ## CODOMINANT MARKERS ##
     ## make sure X is in character mode
     mode(X) <- "character"
-
 
     ## find or check the number of coding characters, 'ncode'
     if(is.null(sep) && is.null(ncode)) stop("please indicate either the separator (sep) or the number of characters coding an allele (ncode).")
@@ -115,64 +115,50 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
     toRemove <- which(rowSums(is.na(X))==ncol(X))
     if(any(toRemove)){
         X <- X[-toRemove, ]
-        ind.names <- ind.names[-toRemove]
+        ind.names <- rownames(X)
         nind <- nrow(X)
+        ploidy <- ploidy[-toRemove]
         if(!is.null(pop)) pop <- pop[-toRemove]
         warning("entirely non-type individual(s) deleted")
     }
 
-    n <- nrow(X)
 
-    #### STOPPED REFORM OF THE CODE HERE ####
-    ## function to fill a matrix of char 'M' with the required
-    ## number of zero, targetN being the total number of char required
-    fillWithZero <- function(M, targetN){
-        naIdx <- is.na(M)
-        keepCheck <- any(nchar(M) < targetN)
-        while(keepCheck){
-            mat0 <- matrix("", ncol=ncol(M), nrow=nrow(M))
-            mat0[nchar(M) < targetN] <- "0"
-            M <-  matrix(paste(mat0, M, sep=""), nrow=nrow(mat0))
-            keepCheck <- any(nchar(M) < targetN)
-        }
+    ## TRANSLATE DATA INTO ALLELE FREQUENCIES ##
+    ## unfold data for each cell of the table
+    allele.data <- strsplit(X, sep)
+    n.items <- sapply(allele.data, length)
+    locus.data <- rep(rep(loc.names, each=nind), n.items)
+    ind.data <- rep(rep(ind.names,ncol(X)), n.items)
+    allele.data <- unlist(allele.data)
 
-        ## restore NA (otherwise we're left with "NA")
-        M[naIdx] <- NA
-        return(M)
-    }
+    ## identify NAs
+    NA.posi <- which(is.na(allele.data))
+    NA.ind <- ind.data[NA.posi]
+    NA.locus <- as.character(locus.data[NA.posi])
 
-    ## CHECK STRING LENGTH IF NO SEPARATOR PROVIDED
-    if(is.null(sep) | ploidy==as.integer(1)){
-        ##     ## now check all strings and make sure they all have 'ncode' characters
-        ##         ## NA are temporarily coded as "00", "000" or "000000" to fit the check
-        ##         keepCheck <- any(nchar(X) < ncode)
-        ##         missAll <- paste(rep("0",ncode/ploidy),collapse="")
-        ##         missTyp <- paste(rep("0",ncode),collapse="")
-        ##         X[is.na(X)] <- missTyp
+    ## remove NAs
+    allele.data <- allele.data[-NA.posi]
+    locus.data <- locus.data[-NA.posi]
+    ind.data <- ind.data[-NA.posi]
 
-        ##         while(keepCheck){
-        ##             mat0 <- matrix("", ncol=ncol(X), nrow=nrow(X))
-        ##             mat0[nchar(X) < ncode] <- "0"
-        ##             X <-  matrix(paste(mat0, X, sep=""), nrow=nrow(mat0))
-        ##             keepCheck <- any(nchar(X) < ncode)
-        ##         }
+    ## get matrix of allele counts
+    allele.data <- paste(locus.data, allele.data, sep=".")
+    allele.data <- factor(allele.data, levels=unique(allele.data))
+    out <- table(ind.data, allele.data)
 
-        X <- fillWithZero(X,targetN=ncode)
+    ## force type 'matrix'
+    class(out) <- NULL
+    dimnames(out) <- list(rownames(out), colnames(out))
 
-        ## now split X by allele
-        splitX <- list()
-        for(i in 1:ploidy){
-            splitX[[i]] <- substr(X,1,ncode/ploidy)
-            X <- sub(paste("^.{",ncode/ploidy,"}",sep=""),"",X)
-        }
-
-    } # END CHECK STRING LENGTH WITHOUT SEP
+    ## restore NAs
+    
 
 
     ## CHECK STRING LENGTH WITH SEPARATOR PROVIDED
     if(!is.null(sep)){
         if(ploidy > 1){
             temp <- t(as.matrix(as.data.frame(strsplit(X,sep))))
+
             splitX <- list()
             for(i in 1:ncol(temp)){
                 splitX[[i]] <- matrix(temp[,i], nrow=n)
@@ -186,7 +172,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
         temp <- unlist(splitX)
         temp <- temp[!is.na(temp)]
         ncode <- max(nchar(temp))*ploidy
-        splitX <- lapply(splitX, function(Y) fillWithZero(Y,targetN=ncode/ploidy))
+#        splitX <- lapply(splitX, function(Y) fillWithZero(Y,targetN=ncode/ploidy))
     } # END CHECK STRING LENGTH WITH SEP
 
 
