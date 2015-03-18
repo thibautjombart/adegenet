@@ -192,7 +192,7 @@ genind2df <- function(x, pop=NULL, sep="", usepop=TRUE){
   ## function to recode a genotype in form "A1[sep]...[sep]Ak" from frequencies
   recod <- function(vec,lab){
       if(any(is.na(vec))) return(NA)
-      res <- paste( rep(lab,vec), collapse=sep)
+      res <- paste(rep(lab,vec), collapse=sep)
       return(res)
   }
 

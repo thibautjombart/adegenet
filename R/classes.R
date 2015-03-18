@@ -322,7 +322,9 @@ genind <- function(tab,pop=NULL,prevcall=NULL,ploidy=2L,type=c("codom","PA")){
         temp <- gsub("^.*[.]","",temp)
         temp <- .rmspaces(temp)
         all.names <- split(temp,loc.fac)
+        all.names <- all.names[loc.names]
         loc.fac <- as.factor(loc.fac)
+
     } else { # end if type=="codom" <=> if type=="PA"
         loc.fac <- NULL
         all.names <- NULL

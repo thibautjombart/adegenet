@@ -165,7 +165,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
 
 
     ## HANDLE MISSING SEPARATORS
-    if(is.null(sep)){
+    if(is.null(sep) && any(ploidy>1)){
         ## check that ncode is provided
         if(is.null(ncode)) stop("please indicate either the separator (sep) or the number of characters coding an allele (ncode).")
 
