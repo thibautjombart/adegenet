@@ -90,10 +90,18 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
     ## make sure X is in character mode
     mode(X) <- "character"
 
-    ## find or check the number of coding characters, 'ncode'
-    if(is.null(sep) && is.null(ncode)) stop("please indicate either the separator (sep) or the number of characters coding an allele (ncode).")
 
-    ## HANDLE NAs ##
+    ## HANDLE MISSING SEPARATORS
+    if(is.null(sep)){
+        ## check that ncode is provided
+        if(is.null(ncode)) stop("please indicate either the separator (sep) or the number of characters coding an allele (ncode).")
+
+        ## add "/" as separator
+        X <- gsub(paste("([[:alnum:]]{",ncode,"})",sep=""), "\\1/", X)
+        X <- sub("/$","",X)
+    }
+
+    ## HANDLE NAs
     ## find all strings which are in fact NAs
     NA.list <- unlist(lapply(unique(ploidy), function(nrep) paste(rep(NA.char, nrep), collapse="/")))
     NA.list <- unique(c(NA.list, NA.char))
@@ -106,7 +114,6 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
     if(any(toRemove)){
         X <- X[,-toRemove]
         loc.names <- loc.names[-toRemove]
-        nloc <- ncol(X)
         warning("entirely non-type marker(s) deleted")
     }
 
@@ -116,7 +123,6 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
     if(any(toRemove)){
         X <- X[-toRemove, ]
         ind.names <- rownames(X)
-        nind <- nrow(X)
         ploidy <- ploidy[-toRemove]
         if(!is.null(pop)) pop <- pop[-toRemove]
         warning("entirely non-type individual(s) deleted")
@@ -124,6 +130,10 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
 
 
     ## TRANSLATE DATA INTO ALLELE FREQUENCIES ##
+    ## get dimensions of X
+    nloc <- ncol(X)
+    nind <- nrow(X)
+
     ## unfold data for each cell of the table
     allele.data <- strsplit(X, sep)
     n.items <- sapply(allele.data, length)
@@ -156,10 +166,11 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
         out[NA.ind[i], NA.col[[i]]] <- NA
     }
 
+    ## call upon genind constructor
     prevcall <- match.call()
-    res <- genind( tab=mat, pop=pop, prevcall=prevcall, ploidy=ploidy, type=type)
+    out <- genind(tab=out, pop=pop, prevcall=prevcall, ploidy=ploidy, type=type)
 
-    return(res)
+    return(out)
 } # end df2genind
 
 
