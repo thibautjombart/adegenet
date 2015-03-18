@@ -134,7 +134,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
     ## identify NAs
     NA.posi <- which(is.na(allele.data))
     NA.ind <- ind.data[NA.posi]
-    NA.locus <- as.character(locus.data[NA.posi])
+    NA.locus <- locus.data[NA.posi]
 
     ## remove NAs
     allele.data <- allele.data[-NA.posi]
@@ -151,92 +151,18 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
     dimnames(out) <- list(rownames(out), colnames(out))
 
     ## restore NAs
-    
-
-
-    ## CHECK STRING LENGTH WITH SEPARATOR PROVIDED
-    if(!is.null(sep)){
-        if(ploidy > 1){
-            temp <- t(as.matrix(as.data.frame(strsplit(X,sep))))
-
-            splitX <- list()
-            for(i in 1:ncol(temp)){
-                splitX[[i]] <- matrix(temp[,i], nrow=n)
-            } # each matrix of splitX contains typing for 1 allele
-        } else {
-            splitX <- list()
-            splitX[[1]] <- X
-        }
-
-        ## get the right ncode
-        temp <- unlist(splitX)
-        temp <- temp[!is.na(temp)]
-        ncode <- max(nchar(temp))*ploidy
-#        splitX <- lapply(splitX, function(Y) fillWithZero(Y,targetN=ncode/ploidy))
-    } # END CHECK STRING LENGTH WITH SEP
-
-
-    ## AT THIS STAGE, splitX IS A LIST OF MATRICES,
-    ## EACH GIVING TYPING FOR AN ALLELE
-
-    ## fetch all possible alleles per locus
-    loc.all <- list()
-    for(i in 1:nloc){
-        temp <- unlist(lapply(splitX,function(e) e[,i]))
-        loc.all[[i]] <- sort(unique(temp[!is.na(temp)]))
-    }
-
-    names(loc.all) <- loc.names
-    ## loc.all is a list whose element are vectors of sorted possible alleles at a locus
-    temp <- lapply(1:nloc, function(i) matrix(0,nrow=n,ncol=length(loc.all[[i]]),
-       dimnames=list(NULL,loc.all[[i]])) )
-
-    names(temp) <- loc.names
-    # note: keep rownames as NULL in case of duplicates
-    ## temp is a list whose elements are one matrix (indiv x alleles) for each marker
-
-    ## now tables in 'temp' are filled up
-    findall <- function(cha,loc.all){
-        if(is.na(cha)) return(NULL)
-        return(which(cha==loc.all))
-    }
-
-    for(k in 1:ploidy){
-        for(i in 1:n){
-            for(j in 1:nloc){
-                allIdx <- findall(splitX[[k]][i,j],loc.all[[j]])
-                temp[[j]][i,allIdx] <- temp[[j]][i,allIdx] + 1
-                if(is.null(allIdx)) {temp[[j]][i,] <- NA}
-            }
-        }
-    }
-
-    ## beware: colnames are wrong when there is only one allele in a locus
-    ## right colnames are first generated
-    nall <- unlist(lapply(temp,ncol))
-    loc.rep <- rep(names(nall),nall)
-    col.lab <- paste(loc.rep,unlist(loc.all,use.names=FALSE),sep=".")
-
-    ## mat <- as.matrix(cbind.data.frame(temp)) # ! does not work for huge numbers of alleles
-    mat <- matrix(unlist(temp), nrow=nrow(temp[[1]]))
-    mat <- mat/ploidy
-    colnames(mat) <- col.lab
-    rownames(mat) <- ind.names
-
-    if(!is.na(missing)){
-      if(missing==0) {mat[is.na(mat)] <- 0}
-      if(toupper(missing)=="MEAN") {
-        moy <- apply(mat,2,function(c) mean(c,na.rm=TRUE))
-        for(j in 1:ncol(mat)) {mat[,j][is.na(mat[,j])] <- moy[j]}
-      }
+    NA.col <- sapply(NA.locus, grep, colnames(out))
+    for(i in 1:length(NA.ind)){
+        out[NA.ind[i], NA.col[[i]]] <- NA
     }
 
     prevcall <- match.call()
-
     res <- genind( tab=mat, pop=pop, prevcall=prevcall, ploidy=ploidy, type=type)
 
     return(res)
 } # end df2genind
+
+
 
 
 
