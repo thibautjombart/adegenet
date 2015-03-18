@@ -27,20 +27,13 @@ NULL, taken from colnames of X.}
 
 \item{missing}{can be NA, 0 or "mean". See details section.}
 
+\item{NA.char}{a vector of character strings which are to be treated as NA}
+
 \item{ploidy}{an integer indicating the degree of ploidy of the genotypes.}
 
 \item{type}{a character string indicating the type of marker: 'codom' stands
 for 'codominant' (e.g. microstallites, allozymes); 'PA' stands for
 'presence/absence' markers (e.g. AFLP, RAPD).}
-
-\item{x}{a \linkS4class{genind} object}
-
-\item{usepop}{a logical stating whether the population (argument \code{pop}
-or \code{x@pop} should be used (TRUE, default) or not (FALSE)).}
-
-\item{oneColPerAll}{a logical stating whether alleles of one locus should be
-provided on separate columns (TRUE) rather than as a single character string
-(FALSE, default).}
 }
 \value{
 an object of the class \linkS4class{genind} for \code{df2genind}; a
