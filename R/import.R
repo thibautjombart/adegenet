@@ -241,7 +241,7 @@ read.genetix <- function(file=NULL,missing=NA,quiet=FALSE) {
     pop <- factor(rep(pop.names,pop.nind))
 
     ## pass X to df2genind
-    res <- df2genind(X=X, ncode=6, pop=pop, missing=missing, ploidy=2)
+    res <- df2genind(X=X, ncode=3, pop=pop, missing=missing, ploidy=2)
     res@call <- match.call()
 
     if(!quiet) cat("\n...done.\n\n")
@@ -266,14 +266,17 @@ read.fstat <- function(file,missing=NA,quiet=FALSE){
     txt <- scan(file,what="character",sep="\n",quiet=TRUE)
     txt <- gsub("\t"," ",txt)
 
-                                        # read first infos
+    ## read length of allele
+    ncode <- as.integer(unlist(strsplit(txt[1], " "))[4])
+
+    ## read first infos
     info <- unlist(strsplit(txt[1],"([[:space:]]+)"))
-                                        # npop <- as.numeric(info[1]) ## no longer used
+    ## npop <- as.numeric(info[1]) ## no longer used
     nloc <- as.numeric(info[2])
 
     loc.names <- txt[2:(nloc+1)]
 
-                                        # build genotype matrix
+    ## build genotype matrix
     txt <- txt[-(1:(nloc+1))]
     txt <- .rmspaces(txt)
     txt <- sapply(1:length(txt),function(i) unlist(strsplit(txt[i],"([[:space:]]+)|([[:blank:]]+)")) )
@@ -285,8 +288,8 @@ read.fstat <- function(file,missing=NA,quiet=FALSE){
     colnames(X) <- loc.names
     rownames(X) <- 1:nrow(X)
 
-    res <- df2genind(X=X,pop=pop,missing=missing, ploidy=2)
-                                        # beware : fstat files do not yield ind names
+    res <- df2genind(X=X,pop=pop,missing=missing, ploidy=2, ncode=ncode)
+    ## beware : fstat files do not yield ind names
     res@ind.names <- rep("",length(res@ind.names))
     names(res@ind.names) <- rownames(res@tab)
     res@call <- call
@@ -304,7 +307,7 @@ read.fstat <- function(file,missing=NA,quiet=FALSE){
 ##########################
 # Function read.genepop
 ##########################
-read.genepop <- function(file,missing=NA,quiet=FALSE){
+read.genepop <- function(file, ncode=2, missing=NA, quiet=FALSE){
     ## if(!file.exists(file)) stop("Specified file does not exist.") <- not needed
     if(toupper(.readExt(file)) != "GEN") stop("File extension .gen expected")
 
@@ -328,23 +331,6 @@ read.genepop <- function(file,missing=NA,quiet=FALSE){
   # loc2,
   # ...
 
-  ### former version
-  #1
-  #if(length(grep(",",txt[1])) > 0){
-  #  loc.names <- unlist(strsplit(txt[1],","))
-  #  loc.names <- gsub("^([[:blank:]]*)([[:space:]]*)","",loc.names)
-  #  loc.names <- gsub("([[:blank:]]*)([[:space:]]*)$","",loc.names)
-  #  nloc <- length(loc.names)
-
-  #  txt <- txt[-1]
-  #} else { #2
-  #  nloc <- min(grep("POP",toupper(txt)))-1
-  #  loc.names <- txt[1:nloc]
-  #  loc.names <- gsub("^([[:blank:]]*)([[:space:]]*)","",loc.names)
-  #  loc.names <- gsub("([[:blank:]]*)([[:space:]]*)$","",loc.names)
-
-  #  txt <- txt[-(1:nloc)]
-  #}
 
     ## new strategy (shorter): isolate the 'locus names' part and then parse it.
     locinfo.idx <- 1:(min(grep("POP",toupper(txt)))-1)
@@ -398,25 +384,13 @@ read.genepop <- function(file,missing=NA,quiet=FALSE){
     rownames(X) <- ind.names
     colnames(X) <- loc.names
 
- ##  # correct X to fulfill the genetix format
-##   f1 <- function(char){
-##     paste("00", substr(char,1,1), "00", substr(char,2,2), sep="")
-##   }
-
-##   f2 <- function(char){
-##     paste("0", substr(char,1,2), "0", substr(char,3,4), sep="")
-##   }
-
-##   if(all(nchar(X)==2)) {X <- apply(X,c(1,2),f1)}
-##   if(all(nchar(X)==4)) {X <- apply(X,c(1,2),f2)}
-
     ## give right pop names
     ## beware: genepop takes the name of the last individual of a sample as this sample's name
     pop.names.idx <- cumsum(table(pop))
     pop.names <- ind.names[pop.names.idx]
     levels(pop) <- pop.names
 
-    res <- df2genind(X=X,pop=pop,missing=missing, ploidy=2)
+    res <- df2genind(X=X,pop=pop,missing=missing, ploidy=2, ncode=ncode)
     res@call <- prevcall
 
     if(!quiet) cat("\n...done.\n\n")
@@ -571,10 +545,11 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL, col
         ## reorder matrix of genotypes
         X <- t(sapply(temp, function(i) paste(gen[i,],gen[i+1,],sep="") ))
 
-    } else { # else of "if(!onerowperind)"
+    } else { # if onerowperind
         temp <- seq(1,p-1,by=2)
-        X <- paste(gen[,temp] , gen[,temp+1], sep="")
+        X <- paste(gen[,temp] , gen[,temp+1], sep="/")
         X <- matrix(X, nrow=n.ind)
+        sep <- NULL
     }
 
     ## replace missing values by NAs
@@ -582,7 +557,7 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL, col
     rownames(X) <- ind.names
     colnames(X) <- loc.names
 
-    res <- df2genind(X=X,pop=pop,missing=missing, ploidy=2)
+    res <- df2genind(X=X,pop=pop,missing=missing, ploidy=2,sep=sep,ncode=ncode)
 
     res@call <- match.call()
 
