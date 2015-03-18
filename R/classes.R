@@ -296,15 +296,16 @@ genind <- function(tab,pop=NULL,prevcall=NULL,ploidy=2L,type=c("codom","PA")){
     temp <- .rmspaces(temp)
     loc.names <- unique(temp)
     nloc <- length(loc.names)
-    loc.codes <- .genlab("L",nloc)
-    names(loc.names) <- loc.codes
 
     ## ind names is not type-dependent either
-    ind.codes <- .genlab("", nind)
-    ind.names <- .rmspaces(rownames(tab))
-    names(ind.names) <- ind.codes
-    rownames(tab) <- ind.codes
-
+    ## only use generic label if no name or duplicates
+    if(is.null(rownames(tab))) {
+        rownames(tab) <- ind.names <- .genlab("", nind)
+    }
+    if(length(unique(ind.names))!=length(ind.names)) {
+        warning("duplicate labels detected for some individuals; using generic labels")
+        rownames(tab) <- ind.names <- .genlab("", nind)
+    }
 
     if(type=="codom"){
         ## loc.nall
@@ -320,15 +321,8 @@ genind <- function(tab,pop=NULL,prevcall=NULL,ploidy=2L,type=c("codom","PA")){
         temp <- gsub("^.*[.]","",temp)
         temp <- .rmspaces(temp)
         all.names <- split(temp,loc.fac)
-        all.codes <- lapply(all.names,function(e) .genlab("",length(e)))
-        for(i in 1:length(all.names)){
-            names(all.names[[i]]) <- all.codes[[i]]
-        }
-
-        colnames(tab) <- paste(loc.fac,unlist(all.codes),sep=".")
         loc.fac <- as.factor(loc.fac)
     } else { # end if type=="codom" <=> if type=="PA"
-        colnames(tab) <- loc.codes
         loc.fac <- NULL
         all.names <- NULL
         loc.nall <- NULL
@@ -349,22 +343,13 @@ genind <- function(tab,pop=NULL,prevcall=NULL,ploidy=2L,type=c("codom","PA")){
     if(!is.null(pop)) {
         # convert pop to a factor if it is not
         if(!is.factor(pop)) {pop <- factor(pop)}
-        pop.lab <- .genlab("P",length(levels(pop)) )
-        # put pop levels in appearance order
-        pop <- as.character(pop)
-        pop <- factor(pop, levels=unique(pop))
-        temp <- pop
-        # now levels are correctly ordered
-        levels(pop) <- pop.lab
         res@pop <- pop
-        pop.names <- as.character(levels(temp))
-        names(pop.names) <- as.character(levels(res@pop))
-        res@pop.names <- pop.names
+        res@pop.names <- levels(pop)
     }
 
     ## ploidy
     plo <- as.integer(ploidy)
-    if(plo < as.integer(1)) stop("ploidy inferior to 1")
+    if(any(plo < 1L)) stop("ploidy inferior to 1")
     res@ploidy <- plo
 
     ## type of marker

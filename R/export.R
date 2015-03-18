@@ -154,8 +154,6 @@ genind2df <- function(x, pop=NULL, sep="", usepop=TRUE, oneColPerAll=FALSE){
   ## codom case ##
   # make one table by locus from x@tab
   kX <- seploc(x,res.type="matrix")
-  kX <- lapply(kX, function(X) round(X*x@ploidy)) # take data as numbers of alleles
-  ## (kX is a list of nloc tables)
 
   ## function to recode a genotype in form "A1[sep]...[sep]Ak" from frequencies
   recod <- function(vec,lab){

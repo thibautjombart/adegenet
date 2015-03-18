@@ -18,6 +18,79 @@
 #####################
 # Function df2genind
 #####################
+#' Convert a data.frame of allele data to a genind object.
+#'
+#' The function \code{df2genind} converts a data.frame (or a matrix) into a
+#' \linkS4class{genind} object. The data.frame must meet the following
+#' requirements:\cr
+#' - genotypes are in row (one row per genotype)\cr
+#' - markers/loci are in columns\cr
+#' - each element is a string of characters coding alleles, ideally separated by a character string (argument \code{sep});
+#' if no separator is used, the number of characters coding alleles must be indicated (argument \code{ncode}).\cr
+#'
+#' See \code{\link{genind2df}} to convert \linkS4class{genind} objects back to such a
+#' data.frame.
+#'
+#' === There are 3 treatments for missing values === \cr - NA: kept as NA.\cr
+#'
+#' - 0: allelic frequencies are set to 0 on all alleles of the concerned locus.
+#' Recommended for a PCA on compositional data.\cr
+#'
+#' - "mean": missing values are replaced by the mean frequency of the
+#' corresponding allele, computed on the whole set of individuals. Recommended
+#' for a centred PCA.\cr\cr
+#'
+#' === Details for the \code{sep} argument ===\cr this character is directly
+#' used in reguar expressions like \code{gsub}, and thus require some
+#' characters to be preceeded by double backslashes. For instance, "/" works
+#' but "|" must be coded as "\\|".
+#'
+#' @aliases df2genind
+#' @param X a matrix or a data.frame (see decription)
+#' @param sep a character string separating alleles. See details.
+#' @param ncode an optional integer giving the number of characters used for
+#' coding one genotype at one locus. If not provided, this is determined from
+#' data.
+#' @param ind.names an optional character vector giving the individuals names;
+#' if NULL, taken from rownames of X.
+#' @param loc.names an optional character vector giving the markers names; if
+#' NULL, taken from colnames of X.
+#' @param pop an optional factor giving the population of each individual.
+#' @param missing can be NA, 0 or "mean". See details section.
+#' @param ploidy an integer indicating the degree of ploidy of the genotypes.
+#' @param type a character string indicating the type of marker: 'codom' stands
+#' for 'codominant' (e.g. microstallites, allozymes); 'PA' stands for
+#' 'presence/absence' markers (e.g. AFLP, RAPD).
+#' @param x a \linkS4class{genind} object
+#' @param usepop a logical stating whether the population (argument \code{pop}
+#' or \code{x@@pop} should be used (TRUE, default) or not (FALSE)).
+#' @param oneColPerAll a logical stating whether alleles of one locus should be
+#' provided on separate columns (TRUE) rather than as a single character string
+#' (FALSE, default).
+#' @return an object of the class \linkS4class{genind} for \code{df2genind}; a
+#' matrix of biallelic genotypes for \code{genind2df}
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#' @seealso \code{\link{genind2df}}, \code{\link{import2genind}}, \code{\link{read.genetix}},
+#' \code{\link{read.fstat}}, \code{\link{read.structure}}
+#' @keywords manip
+#' @examples
+#'
+#' ## simple example
+#' df <- data.frame(locusA=c("11","11","12","32"),
+#' locusB=c(NA,"34","55","15"),locusC=c("22","22","21","22"))
+#' row.names(df) <- .genlab("genotype",4)
+#' df
+#'
+#' obj <- df2genind(df, ploidy=2)
+#' obj
+#' truenames(obj)
+#'
+#' ## converting a genind as data.frame
+#' genind2df(obj)
+#' genind2df(obj, sep="/")
+#' genind2df(obj, oneColPerAll=TRUE)
+#'
+#' @export df2genind
 df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, pop=NULL, missing=NA,
                       NA.char="", ploidy=2, type=c("codom","PA")){
 
