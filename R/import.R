@@ -227,10 +227,12 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
     dimnames(out) <- list(rownames(out), colnames(out))
 
     ## restore NAs
-    out.colnames <- colnames(out)
-    for(i in 1:length(NA.ind)){
-        out[NA.ind[i], grep(NA.locus[i], out.colnames)] <- NA
-    }
+     if(length(NA.posi)>0){
+         out.colnames <- colnames(out)
+         for(i in 1:length(NA.ind)){
+             out[NA.ind[i], grep(NA.locus[i], out.colnames)] <- NA
+         }
+     }
 
     ## call upon genind constructor
     prevcall <- match.call()
