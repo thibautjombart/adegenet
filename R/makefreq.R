@@ -102,27 +102,23 @@ setMethod ("makefreq", signature(x="genpop"), function(x, quiet=FALSE, missing=N
       eff.pop <- t(eff.pop)
   }
 
-  # tabfreq is a pop x loci table of allelic frequencies
-  tabfreq <- t(apply(tabcount,1,function(r) unlist(tapply(r,x@loc.fac,f1))))
-  if(length(x@loc.nall)==1 && x@loc.nall[1]==1) tabfreq <- t(tabfreq) # matrix is transposed by apply if there's a single allele
-  colnames(tabfreq) <- colnames(x@tab)
+  # out is a pop x loci table of allelic frequencies
+  out <- t(apply(tabcount,1,function(r) unlist(tapply(r,x@loc.fac,f1))))
+  if(length(x@loc.nall)==1 && x@loc.nall[1]==1) out <- t(out) # matrix is transposed by apply if there's a single allele
+  colnames(out) <- colnames(x@tab)
 
   # NA treatment
   # NA can be kept as is, or replaced 0 or by the mean frequency of the allele.
   if(!is.na(missing)){
-    if(missing==0) tabfreq[is.na(tabfreq)] <- 0
+    if(missing==0) out[is.na(out)] <- 0
     if(toupper(missing)=="MEAN") {
-      moy <- apply(tabfreq,2,function(c) mean(c,na.rm=TRUE))
-      for(j in 1:ncol(tabfreq)) {tabfreq[,j][is.na(tabfreq[,j])] <- moy[j]}
+      moy <- apply(out,2,function(c) mean(c,na.rm=TRUE))
+      for(j in 1:ncol(out)) {out[,j][is.na(out[,j])] <- moy[j]}
     }
   }
 
   if(!quiet) cat("\n...done.\n\n")
 
-  res$tab <- tabfreq
-  res$nobs <- eff.pop
-  res$call <- match.call()
-
-  return(res)
+  return(out)
 }) #end makefreq for genpop
 

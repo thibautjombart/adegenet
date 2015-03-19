@@ -21,7 +21,7 @@ inbreeding <- function(x, pop=NULL, truenames=TRUE, res.type=c("sample","functio
     ## get allele frequencies and \sum p_i^2 by pop and loc ##
     ## (generalized to any ploidy) ##
     ## tabfreq2 <- (makefreq(x = genind2genpop(x, quiet = TRUE), quiet=TRUE, truenames=truenames)$tab) ^2
-    tabfreq2 <- (makefreq(x = genind2genpop(x, quiet = TRUE), quiet=TRUE)$tab) ^ PLO
+    tabfreq2 <- makefreq(x = genind2genpop(x, quiet = TRUE), quiet=TRUE) ^ PLO
     sumpi2 <- t(apply(tabfreq2, 1, tapply, x$loc.fac, sum))
 
     ## function to check a 1-locus genotype for homozigosity

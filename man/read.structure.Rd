@@ -6,8 +6,8 @@
 \usage{
 read.structure(file, n.ind = NULL, n.loc = NULL, onerowperind = NULL,
   col.lab = NULL, col.pop = NULL, col.others = NULL,
-  row.marknames = NULL, NA.char = "-9", pop = NULL, missing = NA,
-  ask = TRUE, quiet = FALSE)
+  row.marknames = NULL, NA.char = "-9", pop = NULL, ask = TRUE,
+  quiet = FALSE)
 }
 \arguments{
 \item{file}{a character string giving the path to the file to convert, with
@@ -40,8 +40,6 @@ too.}
 
 \item{pop}{an optional factor giving the population of each individual.}
 
-\item{missing}{can be NA, 0 or "mean". See details section.}
-
 \item{ask}{a logical specifying if the function should ask for optional
 informations about the dataset (TRUE, default), or try to be as quiet as
 possible (FALSE).}
@@ -64,15 +62,6 @@ genotypes are coded on a single or on two rows before importing data.
 Note: \code{read.structure} is meant for DIPLOID DATA ONLY. Haploid data
 with the STRUCTURE format can easily be read into R using \code{read.table}
 or \code{read.csv} and then converted using \code{\link{df2genind}}.
-
-There are 3 treatments for missing values: \cr - NA: kept as NA.\cr
-
-- 0: allelic frequencies are set to 0 on all alleles of the concerned locus.
-Recommended for a PCA on compositionnal data.\cr
-
-- "mean": missing values are replaced by the mean frequency of the
-corresponding allele, computed on the whole set of individuals. Recommended
-for a centred PCA.\cr
 }
 \examples{
 obj <- read.structure(system.file("files/nancycats.str",package="adegenet"),

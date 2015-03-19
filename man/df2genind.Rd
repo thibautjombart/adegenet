@@ -5,11 +5,11 @@
 \title{Convert a data.frame of allele data to a genind object.}
 \usage{
 df2genind(X, sep = NULL, ncode = NULL, ind.names = NULL,
-  loc.names = NULL, pop = NULL, missing = NA, NA.char = "",
-  ploidy = 2, type = c("codom", "PA"))
+  loc.names = NULL, pop = NULL, NA.char = "", ploidy = 2,
+  type = c("codom", "PA"))
 }
 \arguments{
-\item{X}{a matrix or a data.frame (see decription)}
+\item{X}{a matrix or a data.frame containing allelle data only (see decription)}
 
 \item{sep}{a character string separating alleles. See details.}
 
@@ -24,8 +24,6 @@ if NULL, taken from rownames of X.}
 NULL, taken from colnames of X.}
 
 \item{pop}{an optional factor giving the population of each individual.}
-
-\item{missing}{can be NA, 0 or "mean". See details section.}
 
 \item{NA.char}{a vector of character strings which are to be treated as NA}
 
@@ -51,15 +49,6 @@ if no separator is used, the number of characters coding alleles must be indicat
 \details{
 See \code{\link{genind2df}} to convert \linkS4class{genind} objects back to such a
 data.frame.
-
-=== There are 3 treatments for missing values === \cr - NA: kept as NA.\cr
-
-- 0: allelic frequencies are set to 0 on all alleles of the concerned locus.
-Recommended for a PCA on compositional data.\cr
-
-- "mean": missing values are replaced by the mean frequency of the
-corresponding allele, computed on the whole set of individuals. Recommended
-for a centred PCA.\cr\cr
 
 === Details for the \code{sep} argument ===\cr this character is directly
 used in reguar expressions like \code{gsub}, and thus require some

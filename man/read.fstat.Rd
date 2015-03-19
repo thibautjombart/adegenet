@@ -4,13 +4,11 @@
 \alias{read.fstat}
 \title{Reading data from Fstat}
 \usage{
-read.fstat(file, missing = NA, quiet = FALSE)
+read.fstat(file, quiet = FALSE)
 }
 \arguments{
 \item{file}{a character string giving the path to the file to convert, with
 the appropriate extension.}
-
-\item{missing}{can be NA, 0 or "mean". See details section.}
 
 \item{quiet}{logical stating whether a conversion message must be printed
 (TRUE,default) or not (FALSE).}
@@ -27,15 +25,6 @@ Note: \code{read.fstat} is meant for DIPLOID DATA ONLY. Haploid data with
 the Hierfstat format can be read into R using \code{read.table} or
 \code{read.csv} after removing headers and 'POP' lines, and then converted
 using \code{\link{df2genind}}.
-
-There are 3 treatments for missing values: \cr - NA: kept as NA.\cr
-
-- 0: allelic frequencies are set to 0 on all alleles of the concerned locus.
-Recommended for a PCA on compositionnal data.\cr
-
-- "mean": missing values are replaced by the mean frequency of the
-corresponding allele, computed on the whole set of individuals. Recommended
-for a centred PCA.\cr
 }
 \examples{
 obj <- read.fstat(system.file("files/nancycats.dat",package="adegenet"))

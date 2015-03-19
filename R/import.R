@@ -31,22 +31,13 @@
 #' See \code{\link{genind2df}} to convert \linkS4class{genind} objects back to such a
 #' data.frame.
 #'
-#' === There are 3 treatments for missing values === \cr - NA: kept as NA.\cr
-#'
-#' - 0: allelic frequencies are set to 0 on all alleles of the concerned locus.
-#' Recommended for a PCA on compositional data.\cr
-#'
-#' - "mean": missing values are replaced by the mean frequency of the
-#' corresponding allele, computed on the whole set of individuals. Recommended
-#' for a centred PCA.\cr\cr
-#'
 #' === Details for the \code{sep} argument ===\cr this character is directly
 #' used in reguar expressions like \code{gsub}, and thus require some
 #' characters to be preceeded by double backslashes. For instance, "/" works
 #' but "|" must be coded as "\\|".
 #'
 #' @aliases df2genind
-#' @param X a matrix or a data.frame (see decription)
+#' @param X a matrix or a data.frame containing allelle data only (see decription)
 #' @param sep a character string separating alleles. See details.
 #' @param ncode an optional integer giving the number of characters used for
 #' coding one genotype at one locus. If not provided, this is determined from
@@ -56,7 +47,6 @@
 #' @param loc.names an optional character vector giving the markers names; if
 #' NULL, taken from colnames of X.
 #' @param pop an optional factor giving the population of each individual.
-#' @param missing can be NA, 0 or "mean". See details section.
 #' @param NA.char a vector of character strings which are to be treated as NA
 #' @param ploidy an integer indicating the degree of ploidy of the genotypes.
 #' @param type a character string indicating the type of marker: 'codom' stands
@@ -91,7 +81,7 @@
 #'
 #' @export
 #'
-df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, pop=NULL, missing=NA,
+df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, pop=NULL,
                       NA.char="", ploidy=2, type=c("codom","PA")){
 
     ## CHECKS ##
@@ -268,18 +258,8 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
 #' \code{read.csv} after removing headers and 'POP' lines, and then converted
 #' using \code{\link{df2genind}}.
 #'
-#' There are 3 treatments for missing values: \cr - NA: kept as NA.\cr
-#'
-#' - 0: allelic frequencies are set to 0 on all alleles of the concerned locus.
-#' Recommended for a PCA on compositionnal data.\cr
-#'
-#' - "mean": missing values are replaced by the mean frequency of the
-#' corresponding allele, computed on the whole set of individuals. Recommended
-#' for a centred PCA.\cr
-#'
 #' @param file a character string giving the path to the file to convert, with
 #' the appropriate extension.
-#' @param missing can be NA, 0 or "mean". See details section.
 #' @param quiet logical stating whether a conversion message must be printed
 #' (TRUE,default) or not (FALSE).
 #' @return an object of the class \code{genind}
@@ -298,7 +278,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
 #' obj
 #'
 #' @export read.genetix
-read.genetix <- function(file=NULL,missing=NA,quiet=FALSE) {
+read.genetix <- function(file=NULL,quiet=FALSE) {
     if(!quiet) cat("\n Converting data from GENETIX to a genind object... \n")
 
 
@@ -356,7 +336,7 @@ read.genetix <- function(file=NULL,missing=NA,quiet=FALSE) {
     pop <- factor(rep(pop.names,pop.nind))
 
     ## pass X to df2genind
-    res <- df2genind(X=X, ncode=3, pop=pop, missing=missing, ploidy=2)
+    res <- df2genind(X=X, ncode=3, pop=pop, ploidy=2)
     res@call <- match.call()
 
     if(!quiet) cat("\n...done.\n\n")
@@ -381,18 +361,8 @@ read.genetix <- function(file=NULL,missing=NA,quiet=FALSE) {
 #' \code{read.csv} after removing headers and 'POP' lines, and then converted
 #' using \code{\link{df2genind}}.
 #'
-#' There are 3 treatments for missing values: \cr - NA: kept as NA.\cr
-#'
-#' - 0: allelic frequencies are set to 0 on all alleles of the concerned locus.
-#' Recommended for a PCA on compositionnal data.\cr
-#'
-#' - "mean": missing values are replaced by the mean frequency of the
-#' corresponding allele, computed on the whole set of individuals. Recommended
-#' for a centred PCA.\cr
-#'
 #' @param file a character string giving the path to the file to convert, with
 #' the appropriate extension.
-#' @param missing can be NA, 0 or "mean". See details section.
 #' @param quiet logical stating whether a conversion message must be printed
 #' (TRUE,default) or not (FALSE).
 #' @return an object of the class \code{genind}
@@ -409,7 +379,7 @@ read.genetix <- function(file=NULL,missing=NA,quiet=FALSE) {
 #' obj
 #'
 #' @export read.fstat
-read.fstat <- function(file,missing=NA,quiet=FALSE){
+read.fstat <- function(file,quiet=FALSE){
     ##if(!file.exists(file)) stop("Specified file does not exist.") <- not needed
     if(toupper(.readExt(file)) != "DAT") stop("File extension .dat expected")
 
@@ -441,7 +411,7 @@ read.fstat <- function(file,missing=NA,quiet=FALSE){
     colnames(X) <- loc.names
     rownames(X) <- 1:nrow(X)
 
-    res <- df2genind(X=X,pop=pop,missing=missing, ploidy=2, ncode=ncode)
+    res <- df2genind(X=X,pop=pop, ploidy=2, ncode=ncode)
     ## beware : fstat files do not yield ind names
     res@ind.names <- rep("",length(res@ind.names))
     names(res@ind.names) <- rownames(res@tab)
@@ -470,19 +440,9 @@ read.fstat <- function(file,missing=NA,quiet=FALSE){
 #' \code{read.csv} after removing headers and 'POP' lines, and then converted
 #' using \code{\link{df2genind}}.
 #'
-#' There are 3 treatments for missing values: \cr - NA: kept as NA.\cr
-#'
-#' - 0: allelic frequencies are set to 0 on all alleles of the concerned locus.
-#' Recommended for a PCA on compositionnal data.\cr
-#'
-#' - "mean": missing values are replaced by the mean frequency of the
-#' corresponding allele, computed on the whole set of individuals. Recommended
-#' for a centred PCA.\cr
-#'
 #' @param file a character string giving the path to the file to convert, with
 #' the appropriate extension.
 #' @param ncode an integer indicating the number of characters used to code an allele.
-#' @param missing can be NA, 0 or "mean". See details section.
 #' @param quiet logical stating whether a conversion message must be printed
 #' (TRUE,default) or not (FALSE).
 #' @return an object of the class \code{genind}
@@ -500,7 +460,7 @@ read.fstat <- function(file,missing=NA,quiet=FALSE){
 #' obj
 #'
 #' @export read.genepop
-read.genepop <- function(file, ncode=2L, missing=NA, quiet=FALSE){
+read.genepop <- function(file, ncode=2L, quiet=FALSE){
     ## if(!file.exists(file)) stop("Specified file does not exist.") <- not needed
     if(toupper(.readExt(file)) != "GEN") stop("File extension .gen expected")
 
@@ -583,7 +543,7 @@ read.genepop <- function(file, ncode=2L, missing=NA, quiet=FALSE){
     pop.names <- ind.names[pop.names.idx]
     levels(pop) <- pop.names
 
-    res <- df2genind(X=X,pop=pop,missing=missing, ploidy=2, ncode=ncode)
+    res <- df2genind(X=X,pop=pop, ploidy=2, ncode=ncode)
     res@call <- prevcall
 
     if(!quiet) cat("\n...done.\n\n")
@@ -612,15 +572,6 @@ read.genepop <- function(file, ncode=2L, missing=NA, quiet=FALSE){
 #' with the STRUCTURE format can easily be read into R using \code{read.table}
 #' or \code{read.csv} and then converted using \code{\link{df2genind}}.
 #'
-#' There are 3 treatments for missing values: \cr - NA: kept as NA.\cr
-#'
-#' - 0: allelic frequencies are set to 0 on all alleles of the concerned locus.
-#' Recommended for a PCA on compositionnal data.\cr
-#'
-#' - "mean": missing values are replaced by the mean frequency of the
-#' corresponding allele, computed on the whole set of individuals. Recommended
-#' for a centred PCA.\cr
-#'
 #' @param file a character string giving the path to the file to convert, with
 #' the appropriate extension.
 #' @param n.ind an integer giving the number of genotypes (or 'individuals') in
@@ -644,7 +595,6 @@ read.genepop <- function(file, ncode=2L, missing=NA, quiet=FALSE){
 #' @param ask a logical specifying if the function should ask for optional
 #' informations about the dataset (TRUE, default), or try to be as quiet as
 #' possible (FALSE).
-#' @param missing can be NA, 0 or "mean". See details section.
 #' @param quiet logical stating whether a conversion message must be printed
 #' (TRUE,default) or not (FALSE).
 #' @return an object of the class \code{genind}
@@ -664,7 +614,9 @@ read.genepop <- function(file, ncode=2L, missing=NA, quiet=FALSE){
 #' obj
 #'
 #' @export read.structure
-read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL, col.lab=NULL, col.pop=NULL, col.others=NULL, row.marknames=NULL, NA.char="-9", pop=NULL, missing=NA, ask=TRUE, quiet=FALSE){
+read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL,
+                           col.lab=NULL, col.pop=NULL, col.others=NULL,
+                           row.marknames=NULL, NA.char="-9", pop=NULL, ask=TRUE, quiet=FALSE){
 
     ## if(!file.exists(file)) stop("Specified file does not exist.") <- not needed
     if(!toupper(.readExt(file)) %in% c("STR","STRU")) stop("File extension .stru expected")
@@ -815,7 +767,7 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL, col
     rownames(X) <- ind.names
     colnames(X) <- loc.names
 
-    res <- df2genind(X=X,pop=pop,missing=missing, ploidy=2,sep=sep,ncode=ncode)
+    res <- df2genind(X=X,pop=pop, ploidy=2,sep=sep,ncode=ncode)
 
     res@call <- match.call()
 
@@ -845,15 +797,6 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL, col
 #' (.gtx) \cr - Genepop files (.gen) \cr - Fstat files (.dat) \cr - STRUCTURE
 #' files (.str or .stru) \cr
 #'
-#' There are 3 treatments for missing values: \cr - NA: kept as NA.\cr
-#'
-#' - 0: allelic frequencies are set to 0 on all alleles of the concerned locus.
-#' Recommended for a PCA on compositionnal data.\cr
-#'
-#' - "mean": missing values are replaced by the mean frequency of the
-#' corresponding allele, computed on the whole set of individuals. Recommended
-#' for a centred PCA.\cr
-#'
 #' Beware: same data in different formats are not expected to produce exactly
 #' the same \code{genind} objects.\cr For instance, conversions made by GENETIX
 #' to Fstat may change the the sorting of the genotypes; GENETIX stores
@@ -863,7 +806,6 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL, col
 #' @aliases import2genind
 #' @param file a character string giving the path to the file to convert, with
 #' the appropriate extension.
-#' @param missing can be NA, 0 or "mean". See details section.
 #' @param quiet logical stating whether a conversion message must be printed
 #' (TRUE,default) or not (FALSE).
 #' @param \dots other arguments passed to the appropriate 'read' function
@@ -906,7 +848,7 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL, col
 #' import2genind(system.file("files/nancycats.str",
 #' package="adegenet"), onerowperind=FALSE, n.ind=237, n.loc=9, col.lab=1, col.pop=2, ask=FALSE)
 #'
-import2genind <- function(file,missing=NA,quiet=FALSE, ...){
+import2genind <- function(file, quiet=FALSE, ...){
     ## if(!file.exists(file)) stop("Specified file does not exist.") <- not needed
     ext <- .readExt(file)
     ext <- toupper(ext)

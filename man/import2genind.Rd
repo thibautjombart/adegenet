@@ -4,13 +4,11 @@
 \alias{import2genind}
 \title{Importing data from several softwares to a genind object}
 \usage{
-import2genind(file, missing = NA, quiet = FALSE, ...)
+import2genind(file, quiet = FALSE, ...)
 }
 \arguments{
 \item{file}{a character string giving the path to the file to convert, with
 the appropriate extension.}
-
-\item{missing}{can be NA, 0 or "mean". See details section.}
 
 \item{quiet}{logical stating whether a conversion message must be printed
 (TRUE,default) or not (FALSE).}
@@ -33,15 +31,6 @@ argument and seeks for an appropriate import function to create a
 \code{genind} object.\cr Current recognized formats are :\cr - GENETIX files
 (.gtx) \cr - Genepop files (.gen) \cr - Fstat files (.dat) \cr - STRUCTURE
 files (.str or .stru) \cr
-
-There are 3 treatments for missing values: \cr - NA: kept as NA.\cr
-
-- 0: allelic frequencies are set to 0 on all alleles of the concerned locus.
-Recommended for a PCA on compositionnal data.\cr
-
-- "mean": missing values are replaced by the mean frequency of the
-corresponding allele, computed on the whole set of individuals. Recommended
-for a centred PCA.\cr
 
 Beware: same data in different formats are not expected to produce exactly
 the same \code{genind} objects.\cr For instance, conversions made by GENETIX
