@@ -221,7 +221,7 @@ summary.spca <- function (object, ..., printres=TRUE) {
   }
 
   if(is.genind(obj)) { X <- obj@tab }
-  if(is.genpop(obj)) { X <- makefreq(obj, quiet=TRUE)$tab }
+  if(is.genpop(obj)) { X <- makefreq(obj, quiet=TRUE) }
 
   X <- apply(X,2,f1)
 

@@ -90,11 +90,11 @@ using the function \code{as.loci}.
 marker; for \linkS4class{genlight} objects, creates blocks of SNPs.\cr -
 \code{\link{seppop}}: creates one object per population \cr -
 \code{\link{na.replace}}: replaces missing data (NA) in an approriate way
-\cr - \code{\link{truenames}}: restores true names of an object
-(\linkS4class{genind} and \linkS4class{genpop} use generic labels) \cr -
+\cr - \code{\link{tab}}: access the allele data (counts or frequencies) of an object
+(\linkS4class{genind} and \linkS4class{genpop}) \cr -
 x[i,j]: create a new object keeping only genotypes (or populations) indexed
 by 'i' and the alleles indexed by 'j'.\cr - \code{\link{makefreq}}: returns
-a table of allelic frequencies from a \linkS4class{genpop} object.\cr -
+a table of allelic frequencies from  \linkS4class{genind} or \linkS4class{genpop} object.\cr -
 \code{\link{repool}} merges genoptypes from different gene pools into one
 single \linkS4class{genind} object.\cr - \code{\link{propTyped}} returns the
 proportion of available (typed) data, by individual, population, and/or

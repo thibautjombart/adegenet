@@ -26,11 +26,11 @@ hybridize <- function(x1, x2, n, pop=NULL,
 
     #### get frequencies for each locus
     y1 <- genind2genpop(x1,pop=factor(rep(1,n1)),missing="0",quiet=TRUE)
-    freq1 <- makefreq(y1,quiet=TRUE)$tab
+    freq1 <- makefreq(y1,quiet=TRUE)
     freq1 <- split(freq1, y1@loc.fac)
 
     y2 <- genind2genpop(x2,pop=factor(rep(1,n2)),missing="0",quiet=TRUE)
-    freq2 <- makefreq(y2,quiet=TRUE)$tab
+    freq2 <- makefreq(y2,quiet=TRUE)
     freq2 <- split(freq2, y2@loc.fac)
 
     #### sampling of gametes

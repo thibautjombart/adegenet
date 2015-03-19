@@ -28,8 +28,7 @@ makefreq(x, ...)
 \item{missing}{treatment for missing values. Can be NA, 0 or "mean" (see
 details)}
 
-\item{truenames}{a logical indicating whether true labels (as opposed to
-generic labels) should be used to name the output.}
+\item{truenames}{deprecated; there for backward compatibility}
 }
 \value{
 Returns a list with the following components: \item{tab}{matrix of

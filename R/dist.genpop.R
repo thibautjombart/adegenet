@@ -42,7 +42,7 @@ dist.genpop <- function(x, method = 1, diag = FALSE, upper = FALSE) {
 
   nloc <- length(levels(x@loc.fac))
   loc.fac <- x@loc.fac
-  X <- makefreq(x,missing="mean",quiet=TRUE)$tab
+  X <- makefreq(x,missing="mean",quiet=TRUE)
   # X is a matrix of allelic frequencies
   nlig <- nrow(X)
 

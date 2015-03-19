@@ -344,7 +344,7 @@ setMethod ("summary", signature(object="genind"), function(object, ...){
       }
 
       temp <- genind2genpop(x,pop=rep(1,nrow(x@tab)),quiet=TRUE)
-      temp <- makefreq(temp,quiet=TRUE)$tab
+      temp <- makefreq(temp,quiet=TRUE)
       temp.names <- colnames(temp)
       temp <- as.vector(temp)
       names(temp) <- temp.names

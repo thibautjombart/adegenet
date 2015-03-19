@@ -11,14 +11,18 @@
 \usage{
 tab(x, ...)
 
-\S4method{tab}{genind}(x, freq = FALSE, ...)
+\S4method{tab}{genind}(x, freq = FALSE, NA.method = c("asis", "mean",
+  "zero"), ...)
 
-\S4method{tab}{genpop}(x, freq = FALSE, ...)
+\S4method{tab}{genpop}(x, freq = FALSE, NA.method = c("asis", "mean",
+  "zero"), ...)
 }
 \arguments{
 \item{x}{a \linkS4class{genind} or \linkS4class{genpop} object.}
 
 \item{freq}{a logical indicating if data should be transformed into relative frequencies (TRUE); defaults to FALSE.}
+
+\item{NA.method}{a method to replace NA; asis: leave NAs as is; mean: replace by the mean allele frequencies; zero: replace by zero}
 }
 \value{
 a matrix of integers or numeric
