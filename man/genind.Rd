@@ -89,7 +89,7 @@ plot(gtest)
 }
 
 # perform a between-class PCA
-pca1 <- dudi.pca(obj@tab,scannf=FALSE,scale=FALSE)
+pca1 <- dudi.pca(makefreq(obj),scannf=FALSE,scale=FALSE)
 pcabet1 <- between(pca1,obj@pop,scannf=FALSE)
 pcabet1
 
