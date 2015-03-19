@@ -75,7 +75,7 @@ Class \code{"\linkS4class{indInfo}"}, directly.
 \examples{
 showClass("genind")
 
-obj <- read.genetix(system.file("files/nancycats.gtx",package="adegenet"),missing="mean")
+obj <- read.genetix(system.file("files/nancycats.gtx",package="adegenet"))
 obj
 validObject(obj)
 summary(obj)
@@ -89,7 +89,7 @@ plot(gtest)
 }
 
 # perform a between-class PCA
-pca1 <- dudi.pca(makefreq(obj),scannf=FALSE,scale=FALSE)
+pca1 <- dudi.pca(scaleGen(obj, NA.method="mean"),scannf=FALSE,scale=FALSE)
 pcabet1 <- between(pca1,obj@pop,scannf=FALSE)
 pcabet1
 
