@@ -833,7 +833,7 @@ optim.a.score <- function(x, n.pca=1:ncol(x$tab), smart=TRUE, n=10, plot=TRUE,
 
     ## SMART: COMPUTE A FEW VALUES, PREDICT THE BEST PICK ##
     if(smart){
-        if(!require(stats)) stop("the package stats is required for 'smart' option")
+        ## if(!require(stats)) stop("the package stats is required for 'smart' option")
         o.min <- min(n.pca)
         o.max <- max(n.pca)
         n.pca <- pretty(n.pca, n) # get evenly spaced nb of retained PCs

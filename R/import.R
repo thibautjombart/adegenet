@@ -89,7 +89,7 @@
 #' genind2df(obj)
 #' genind2df(obj, sep="/")
 #'
-#' @export df2genind
+#' @export
 #'
 df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, pop=NULL, missing=NA,
                       NA.char="", ploidy=2, type=c("codom","PA")){
@@ -1022,7 +1022,7 @@ read.snp <- function(file, quiet=FALSE, chunkSize=1000,
     ext <- toupper(ext)
     if(ext != "SNP") warning("wrong file extension - '.snp' expected")
     if(!quiet) cat("\n Reading biallelic SNP data file into a genlight object... \n\n")
-    if(parallel && !require(parallel)) stop("parallel package requested but not installed")
+    ## if(parallel && !require(parallel)) stop("parallel package requested but not installed")
     if(parallel && is.null(n.cores)){
         n.cores <- parallel::detectCores()
     }
@@ -1308,7 +1308,7 @@ read.PLINK <- function(file, map.file=NULL, quiet=FALSE, chunkSize=1000,
     ext <- toupper(ext)
     if(ext != "RAW") warning("wrong file extension - '.raw' expected")
     if(!quiet) cat("\n Reading PLINK raw format into a genlight object... \n\n")
-    if(parallel && !require(parallel)) stop("parallel package requested but not installed")
+    ## if(parallel && !require(parallel)) stop("parallel package requested but not installed")
     if(parallel && is.null(n.cores)){
         n.cores <- parallel::detectCores()
     }
@@ -1422,7 +1422,7 @@ fasta2genlight <- function(file, quiet=FALSE, chunkSize=1000, saveNbAlleles=FALS
     ext <- toupper(ext)
     if(!ext %in% c("FASTA", "FA", "FAS")) warning("wrong file extension - '.fasta', '.fa' or '.fas' expected")
     if(!quiet) cat("\n Converting FASTA alignment into a genlight object... \n\n")
-    if(parallel && !require(parallel)) stop("parallel package requested but not installed")
+    ## if(parallel && !require(parallel)) stop("parallel package requested but not installed")
     if(parallel && is.null(n.cores)){
         n.cores <- parallel::detectCores()
     }

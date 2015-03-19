@@ -9,7 +9,7 @@ gstat.randtest <- function(x,pop=NULL, method=c("global","within","between"),
     if(!is.genind(x)) stop("x is not a valid genind object")
     if(x@ploidy != as.integer(2)) stop("not implemented for non-diploid genotypes")
     checkType(x)
-    if(!require(hierfstat)) stop("hierfstat package is required. Please install it.")
+    ## if(!require(hierfstat)) stop("hierfstat package is required. Please install it.")
 
     if(is.null(pop)) pop <- x@pop
     if(is.null(pop)) pop <- as.factor(rep("P1",nrow(x@tab)))

@@ -8,7 +8,6 @@ HWE.test.genind <- function(x,pop=NULL,permut=FALSE,nsim=1999,hide.NA=TRUE,res.t
   if(x@ploidy != as.integer(2)) stop("not implemented for non-diploid genotypes")
   checkType(x)
 
-  if(!require(genetics)) stop("genetics package is required. Please install it.")
   if(is.null(pop)) pop <- x@pop
   if(is.null(pop)) pop <- as.factor(rep("P1",nrow(x@tab)))
   res.type <- tolower(res.type[1])

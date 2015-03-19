@@ -4,29 +4,29 @@
 
 
 #' Function to choose a connection network
-#' 
+#'
 #' The function \code{chooseCN} is a simple interface to build a connection
 #' network (CN) from xy coordinates. The user chooses from 6 types of graph and
 #' one additional weighting scheme.  \code{chooseCN} calls functions from
 #' appropriate packages, handles non-unique coordinates and returns a
 #' connection network either with classe \code{nb} or \code{listw}. For graph
 #' types 1-4, duplicated locations are not accepted and will issue an error.
-#' 
+#'
 #' There are 7 kinds of graphs proposed: \cr Delaunay triangulation (type 1)\cr
 #' Gabriel graph (type 2)\cr Relative neighbours (type 3)\cr Minimum spanning
 #' tree (type 4)\cr Neighbourhood by distance (type 5)\cr K nearests neighbours
 #' (type 6)\cr Inverse distances (type 7)\cr
-#' 
+#'
 #' The last option (type=7) is not a true neighbouring graph: all sites are
 #' neighbours, but the spatial weights are directly proportional to the
 #' inversed spatial distances.\cr Also not that in this case, the output of the
 #' function is always a \code{listw} object, even if \code{nb} was
 #' requested.\cr
-#' 
+#'
 #' The choice of the connection network has been discuted on the adegenet
 #' forum. Please search the archives from adegenet website (section 'contact')
 #' using 'graph' as keyword.
-#' 
+#'
 #' @param xy an matrix or data.frame with two columns for x and y coordinates.
 #' @param ask a logical stating whether graph should be chosen interactively
 #' (TRUE,default) or not (FALSE). Set to FALSE if \code{type} is provided.
@@ -56,11 +56,11 @@
 #' @seealso \code{\link{spca}}
 #' @keywords spatial utilities
 #' @examples
-#' 
+#'
 #' \dontrun{
 #' data(nancycats)
 #' if(require(spdep)){
-#' 
+#'
 #' par(mfrow=c(2,2))
 #' cn1 <- chooseCN(nancycats@@other$xy,ask=FALSE,type=1)
 #' cn2 <- chooseCN(nancycats@@other$xy,ask=FALSE,type=2)
@@ -69,8 +69,11 @@
 #' par(mfrow=c(1,1))
 #' }
 #' }
-#' 
+#'
 #' @export chooseCN
+#' @import spdep
+#' @import ade4
+#'
 chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL, k=NULL,
                      a=NULL, dmin=NULL, plot.nb=TRUE, edit.nb=FALSE){
 
@@ -80,7 +83,7 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
   result.type <- tolower(result.type)
    if(is.null(type) & !ask) stop("Non-interactive mode but no graph chosen; please provide a value for 'type' argument.")
 
-  if(!require(spdep, quietly=TRUE)) stop("spdep library is required.")
+  ## if(!require(spdep, quietly=TRUE)) stop("spdep library is required.")
 
   res <- list()
 
@@ -162,7 +165,7 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
     ## graph types
     ## type 1: Delaunay
     if(type==1){
-      if(!require(tripack, quietly=TRUE)) stop("tripack library is required.")
+      ## if(!require(tripack, quietly=TRUE)) stop("tripack library is required.")
       cn <- tri2nb(xy)
     }
 
@@ -249,7 +252,7 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
         result.type <- "listw"
     } # end type 7
 
-## end graph types
+    ## end graph types
 
     if(ask & plot.nb) {
       plot(cn,xy)

@@ -80,7 +80,7 @@ DNAbin2genind <- function(x, pop=NULL, exp.char=c("a","t","g","c"), polyThres=1/
 alignment2genind <- function(x, pop=NULL, exp.char=c("a","t","g","c"), na.char="-", polyThres=1/100){
 
     ## misc checks
-    if(!require(seqinr)) stop("The package seqinr is required.")
+    ## if(!require(seqinr)) stop("The package seqinr is required.")
     if(!inherits(x,"alignment")) stop("x is not a alignment object")
     N <- length(x$seq)
     if(!is.null(x$nam) && length(x$nam)!=N) stop("Inconsistent names in x (length of x$nam and x$seq do not match). ")

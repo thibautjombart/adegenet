@@ -25,7 +25,6 @@ spca <- function(obj, xy=NULL, cn=NULL, matWeight=NULL,
     if(!any(inherits(obj,c("genind","genpop")))) stop("obj must be a genind or genpop object.")
     invisible(validObject(obj))
     ## checkType(obj)
-    if(!require(spdep, quietly=TRUE)) stop("spdep library is required.")
 
 
     ## handle xy coordinates
@@ -189,7 +188,6 @@ print.spca <- function(x, ...){
 ########################
 summary.spca <- function (object, ..., printres=TRUE) {
   if (!inherits(object, "spca"))stop("to be used with 'spca' object")
-  if(!require(spdep,quietly=TRUE)) stop("the library spdep is required; please install this package")
 
   #util <- function(n) { ## no longer used
   #  x <- "1"
@@ -313,7 +311,6 @@ summary.spca <- function (object, ..., printres=TRUE) {
 plot.spca <- function (x, axis = 1, useLag=FALSE, ...){
     if (!inherits(x, "spca")) stop("Use only with 'spca' objects.")
 
-    if(!require(spdep)) stop("spdep package is required.")
     if(axis>ncol(x$li)) stop("wrong axis required.")
 
     opar <- par(no.readonly = TRUE)

@@ -176,7 +176,7 @@ glDotProd <- function(x, center=FALSE, scale=FALSE, alleleAsUnit=FALSE,
     if(!inherits(x, "genlight")) stop("x is not a genlight object")
 
     ## SOME CHECKS ##
-    if(parallel && !require(parallel)) stop("parallel package requested but not installed")
+    ## if(parallel && !require(parallel)) stop("parallel package requested but not installed")
     if(parallel && is.null(n.cores)){
         n.cores <- parallel::detectCores()
     }
@@ -300,7 +300,7 @@ glPca <- function(x, center=TRUE, scale=FALSE, nf=NULL, loadings=TRUE, alleleAsU
 
         ## == if non-C code is used ==
         if(!useC){
-            if(parallel && !require(parallel)) stop("parallel package requested but not installed")
+            ## if(parallel && !require(parallel)) stop("parallel package requested but not installed")
             if(parallel && is.null(n.cores)){
                 n.cores <- parallel::detectCores()
             }
