@@ -12,6 +12,7 @@
 setGeneric("truenames", function(x) standardGeneric("truenames"))
 
 setMethod("truenames", signature(x="genind"), function(x){
+    message("This accessor is now deprecated. Please use 'tab' instead.")
     return(x@tab)
 })
 
@@ -21,29 +22,56 @@ setMethod("truenames", signature(x="genind"), function(x){
 # Method truenames for genpop
 ##############################
 setMethod("truenames",signature(x="genpop"), function(x){
+    message("This accessor is now deprecated. Please use 'tab' instead.")
     return(x@tab)
 })
 
 
 
-##############################
-# Method truenames for genpop
-##############################
-setMethod("truenames",signature(x="genpop"), function(x){
-    return(x@tab)
-})
-
-
 
 ###########################
-## Generic / tethods 'tab'
+## Generic / methods 'tab'
 ###########################
+#'
+#' Access allele counts or frequencies
+#'
+#' This accessor is used to retrieve a matrix of allele data.
+#' By default, a matrix of integers representing allele counts is returned.
+#' If \code{freq} is TRUE, then data are standardised as frequencies, so that for any individual and any locus the data sum to 1.
+#' This accessor replaces the previous function \code{truenames}.
+#'
+#' @export
+#'
+#' @aliases tab
+#'
+#' @rdname tab
+#'
+#' @docType methods
+#'
+#' @param x a \linkS4class{genind} or \linkS4class{genpop} object.
+#' @param freq a logical indicating if data should be transformed into relative frequencies (TRUE); defaults to FALSE.
+#'
+#' @return a matrix of integers or numeric
+#'
+#' @examples
+#'
+#' data(microbov)
+#' head(tab(microbov))
+#' head(tab(microbov,freq=TRUE))
+#'
+#'
 setGeneric("tab", function(x, ...) standardGeneric("tab"))
 
+#' @rdname tab
+#' @aliases tab,genind-methods
+#' @aliases tab.genind
 setMethod("tab", signature(x="genind"), function(x, freq=FALSE, ...){
     if(freq) return(makefreq(x, missing=NA, quiet=TRUE)) else return(x@tab)
 })
 
+#' @rdname tab
+#' @aliases tab,genpop-methods
+#' @aliases tab.genpop
 setMethod("tab", signature(x="genpop"), function(x, freq=FALSE, ...){
     if(freq) return(makefreq(x, missing=NA, quiet=TRUE)) else return(x@tab)
 })
