@@ -175,7 +175,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
 
     ## erase entirely non-type loci
     toRemove <- which(colSums(is.na(X))==nrow(X))
-    if(any(toRemove)){
+    if(length(toRemove)>1){
         X <- X[,-toRemove]
         loc.names <- loc.names[-toRemove]
         warning("entirely non-type marker(s) deleted")
@@ -184,7 +184,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
 
     ## erase entierely non-type individuals
     toRemove <- which(rowSums(is.na(X))==ncol(X))
-    if(any(toRemove)){
+    if(length(toRemove)>1){
         X <- X[-toRemove, ]
         ind.names <- rownames(X)
         ploidy <- ploidy[-toRemove]
@@ -393,6 +393,7 @@ read.fstat <- function(file,quiet=FALSE){
 
     ## read length of allele
     ncode <- as.integer(unlist(strsplit(txt[1], " "))[4])
+    NA.char <- rep("0",1:ncode)
 
     ## read first infos
     info <- unlist(strsplit(txt[1],"([[:space:]]+)"))
@@ -413,7 +414,7 @@ read.fstat <- function(file,quiet=FALSE){
     colnames(X) <- loc.names
     rownames(X) <- 1:nrow(X)
 
-    res <- df2genind(X=X,pop=pop, ploidy=2, ncode=ncode)
+    res <- df2genind(X=X,pop=pop, ploidy=2, ncode=ncode, NA.char=NA.char)
     ## beware : fstat files do not yield ind names
     res@ind.names <- rep("",length(res@ind.names))
     names(res@ind.names) <- rownames(res@tab)
