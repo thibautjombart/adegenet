@@ -856,16 +856,16 @@ import2genind <- function(file, quiet=FALSE, ...){
     ext <- toupper(ext)
 
     if(ext == "GTX")
-        return(read.genetix(file,missing=missing,quiet=quiet))
+        return(read.genetix(file,quiet=quiet))
 
     if(ext == "DAT")
-        return(read.fstat(file,missing=missing,quiet=quiet))
+        return(read.fstat(file, quiet=quiet))
 
     if(ext == "GEN")
-        return(read.genepop(file,missing=missing,quiet=quiet))
+        return(read.genepop(file, quiet=quiet))
 
     if(ext %in% c("STR","STRU"))
-        return(read.structure(file,missing=missing,quiet=quiet, ...))
+        return(read.structure(file, quiet=quiet, ...))
 
     ## evaluated only if extension is not supported
     cat("\n File format (",ext,") not supported.\n")
