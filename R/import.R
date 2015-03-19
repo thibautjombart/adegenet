@@ -395,7 +395,7 @@ read.fstat <- function(file,quiet=FALSE){
 
     ## read length of allele
     ncode <- as.integer(unlist(strsplit(txt[1], " "))[4])
-    NA.char <- rep("0",1:ncode)
+    NA.char <- sapply(1:ncode, function(i) paste(rep("0",i),collapse=""))
 
     ## read first infos
     info <- unlist(strsplit(txt[1],"([[:space:]]+)"))
