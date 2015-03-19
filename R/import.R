@@ -211,9 +211,11 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
     NA.locus <- locus.data[NA.posi]
 
     ## remove NAs
-    allele.data <- allele.data[-NA.posi]
-    locus.data <- locus.data[-NA.posi]
-    ind.data <- ind.data[-NA.posi]
+    if(length(NA.posi)>0){
+        allele.data <- allele.data[-NA.posi]
+        locus.data <- locus.data[-NA.posi]
+        ind.data <- ind.data[-NA.posi]
+    }
 
     ## get matrix of allele counts
     allele.data <- paste(locus.data, allele.data, sep=".")
@@ -336,7 +338,7 @@ read.genetix <- function(file=NULL,quiet=FALSE) {
     pop <- factor(rep(pop.names,pop.nind))
 
     ## pass X to df2genind
-    res <- df2genind(X=X, ncode=3, pop=pop, ploidy=2)
+    res <- df2genind(X=X, ncode=3, pop=pop, ploidy=2, NA.char="000")
     res@call <- match.call()
 
     if(!quiet) cat("\n...done.\n\n")
