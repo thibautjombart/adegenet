@@ -3,6 +3,9 @@
 ##########################
 gstat.randtest <- function(x,pop=NULL, method=c("global","within","between"),
                            sup.pop=NULL, sub.pop=NULL, nsim=499){
+    message("Sorry, this function depends on hierfstat, and has been moved to the package hierfstat.")
+    return()
+
     ##   cat("\nSorry, hierfstat package has been disabled - this function will be restored in a future release.\n")
     ## return(invisible())
 

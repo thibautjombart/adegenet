@@ -4,7 +4,10 @@
 #
 # Wrapper for fst estimator from hierfstat package
 #
+
 fstat <- function(x, pop=NULL, fstonly=FALSE){
+    message("Sorry, this function depends on hierfstat, and has been moved to the package hierfstat.")
+    return()
     ## cat("\nSorry, hierfstat package has been disabled - this function will be restored in a future release.\n")
     ## return(invisible())
     ## misc checks
@@ -34,6 +37,7 @@ fstat <- function(x, pop=NULL, fstonly=FALSE){
 ## pairwise fst sensu Nei (Ht - mean(Hs))/Ht
 ##
 pairwise.fst <- function(x, pop=NULL, res.type=c("dist","matrix"), truenames=TRUE){
+    message("This function has been moved to the package hierfstat. You can still use it in adegenet, but this version is deprecated.")
     ## MISC CHECKS ##
     if(!is.genind(x)) stop("x is not a valid genind object")
     if(!is.null(pop)){
