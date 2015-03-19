@@ -12,7 +12,7 @@ Hs <- function(x, truenames=TRUE) {
 
 
     ## MAIN COMPUTATIONS
-    x.byloc <- seploc(x, truenames=truenames)
+    x.byloc <- seploc(x)
 
     lX <- lapply(x.byloc, function(e) makefreq(e, quiet=TRUE, truenames=truenames)$tab)
     lres <- lapply(lX, function(X) 1- apply(X^2,1,sum))

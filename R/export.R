@@ -159,7 +159,7 @@ genind2hierfstat <- function(x,pop=NULL){
 #' genind2df(obj, sep="/")
 #'
 #' @export
-#' 
+#'
 genind2df <- function(x, pop=NULL, sep="", usepop=TRUE){
 
   if(!is.genind(x)) stop("x is not a valid genind object")
@@ -172,17 +172,8 @@ genind2df <- function(x, pop=NULL, sep="", usepop=TRUE){
 
   ## PA case ##
   if(x@type=="PA"){
-      temp <- truenames(x)
-      if(is.list(temp) & usepop){
-          res <- cbind.data.frame(pop=temp[[2]],temp[[1]])
-      } else{
-          if(is.list(temp)) {
-              res <- temp[[1]]
-          } else{
-              res <- temp
-          }
-      }
-
+      res <- tab(x)
+      if(usepop) res <- cbind.data.frame(pop=pop(x),res)
       return(res) # exit here
   }
 

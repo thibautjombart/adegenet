@@ -23,14 +23,13 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
     if (missing(i)) i <- TRUE
     if (missing(j)) j <- TRUE
 
-    pop <- NULL
-    if(is.null(x@pop)) { tab <- truenames(x) }
     if(!is.null(x@pop)) {
-        temp <- truenames(x)
-        tab <- temp$tab
-        pop <- temp$pop
-        pop <- factor(pop[i])
+        pop <- pop(x)[i]
+    } else {
+        pop <- NULL
     }
+
+    tab <- x@tab
 
     old.other <- other(x)
 
@@ -92,7 +91,7 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
     if (missing(i)) i <- TRUE
     if (missing(j)) j <- TRUE
 
-    tab <- truenames(x)
+    tab <- x@tab
     old.other <- other(x)
 
 
@@ -328,7 +327,7 @@ setMethod ("summary", signature(object="genind"), function(object, ...){
   ## handle heterozygosity
   if(x@ploidy > 1){
       ## auxiliary function to compute observed heterozygosity
-      temp <- seploc(x,truenames=FALSE,res.type="matrix")
+      temp <- seploc(x,res.type="matrix")
       f1 <- function(tab){
           H <- apply(tab, 1, function(vec) any(vec > 0 & vec < 1))
           H <- mean(H,na.rm=TRUE)

@@ -19,8 +19,7 @@
 #' (TRUE,default) or not (FALSE).
 #' @param missing treatment for missing values. Can be NA, 0 or "mean" (see
 #' details)
-#' @param truenames a logical indicating whether true labels (as opposed to
-#' generic labels) should be used to name the output.
+#' @param truenames deprecated; there for backward compatibility
 #' @param ... further arguments (curently unused)
 #'
 #' @return Returns a list with the following components: \item{tab}{matrix of
@@ -123,16 +122,6 @@ setMethod ("makefreq", signature(x="genpop"), function(x, quiet=FALSE, missing=N
   res$tab <- tabfreq
   res$nobs <- eff.pop
   res$call <- match.call()
-
-  ## handle truenames
-  if(truenames){
-      temp <- rep(x@loc.names,x@loc.nall)
-      colnames(res$tab) <- paste(temp,unlist(x@all.names),sep=".")
-      rownames(res$tab) <- x@pop.names
-
-      colnames(res$nobs) <- x@loc.names
-      rownames(res$nobs) <- x@pop.names
-  }
 
   return(res)
 }) #end makefreq for genpop

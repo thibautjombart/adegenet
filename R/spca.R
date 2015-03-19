@@ -87,7 +87,7 @@ spca <- function(obj, xy=NULL, cn=NULL, matWeight=NULL,
     }
 
     ## handle NAs, centring and scaling
-    X <- scaleGen(obj, center=TRUE, scale=scale, missing="mean", truenames=truenames)
+    X <- scaleGen(obj, center=TRUE, scale=scale, missing="mean")
 
     ## perform analyses
     pcaX <- dudi.pca(X, center=FALSE, scale=FALSE, scannf=FALSE)
@@ -224,11 +224,6 @@ summary.spca <- function (object, ..., printres=TRUE) {
   if(is.genpop(obj)) { X <- makefreq(obj, quiet=TRUE)$tab }
 
   X <- apply(X,2,f1)
-
-  if(appel$truenames){
-    rownames(X) <- rownames(truenames(obj))
-    colnames(X) <- colnames(truenames(obj))
-  }
 
   nfposi <- object$nfposi
   nfnega <- object$nfnega

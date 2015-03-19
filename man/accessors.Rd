@@ -154,6 +154,9 @@ pop(nancycats) # get the populations
 indNames(nancycats) # get the labels of individuals
 locNames(nancycats) # get the labels of the loci
 alleles(nancycats) # get the alleles
+head(tab(nancycats)) # get allele counts
+# get allele frequencies, replace NAs
+head(tab(nancycats, freq=TRUE, NA.method="mean")) 
 
 # let's isolate populations 4 and 8
 temp <- nancycats@pop=="P04" | nancycats@pop=="P08"
@@ -178,10 +181,6 @@ locNames(obj)
 nancycats[loc=c("L2","L7")]
 obj$loc.fac 
 locNames(obj)
-
-# using 'drop':
-truenames(nancycats[1:2])$tab
-truenames(nancycats[1:2, drop=TRUE])$tab
 
 # illustrate how 'other' slot is handled
 colonies <- genind2genpop(nancycats)
