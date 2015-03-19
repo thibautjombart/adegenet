@@ -54,7 +54,7 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
         tab <- tab[,toKeep, drop=FALSE]
     }
 
-    res <- genind(tab,pop=pop,prevcall=prevcall, ploidy=x@ploidy, type=x@type)
+    res <- genind(tab,pop=pop,prevcall=prevcall, ploidy=x@ploidy[i], type=x@type)
 
     ## handle 'other' slot
     nOther <- length(x@other)
