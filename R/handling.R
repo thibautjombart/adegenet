@@ -50,7 +50,7 @@ setMethod("truenames",signature(x="genpop"), function(x){
 #'
 #' @param x a \linkS4class{genind} or \linkS4class{genpop} object.
 #' @param freq a logical indicating if data should be transformed into relative frequencies (TRUE); defaults to FALSE.
-#'
+#' @param NA.method a method to replace NA; asis: leave NAs as is; mean: replace by the mean allele frequencies; zero: replace by zero
 #' @return a matrix of integers or numeric
 #'
 #' @examples
@@ -65,15 +65,59 @@ setGeneric("tab", function(x, ...) standardGeneric("tab"))
 #' @rdname tab
 #' @aliases tab,genind-methods
 #' @aliases tab.genind
-setMethod("tab", signature(x="genind"), function(x, freq=FALSE, ...){
-    if(freq) return(makefreq(x, missing=NA, quiet=TRUE)) else return(x@tab)
+setMethod("tab", signature(x="genind"), function(x, freq=FALSE, NA.method=c("asis","mean","zero"), ...){
+    ## handle arguments
+    NA.method <- match.arg(NA.method)
+
+    ## get matrix of data
+    if(freq) out <- makefreq(x, missing=NA, quiet=TRUE) else out <- x@tab
+
+    ## replace NAs if needed
+    if(NA.method=="mean"){
+        f1 <- function(vec){
+            m <- mean(vec,na.rm=TRUE)
+            vec[is.na(vec)] <- m
+            return(vec)
+        }
+
+        out <- apply(out, 2, f1)
+    }
+    if(NA.method=="zero"){
+        out[is.na(out)] <- ifelse(freq, 0, 0L)
+    }
+
+    ## return output
+    return(out)
 })
+
+
 
 #' @rdname tab
 #' @aliases tab,genpop-methods
 #' @aliases tab.genpop
-setMethod("tab", signature(x="genpop"), function(x, freq=FALSE, ...){
-    if(freq) return(makefreq(x, missing=NA, quiet=TRUE)) else return(x@tab)
+setMethod("tab", signature(x="genpop"), function(x, freq=FALSE, NA.method=c("asis","mean","zero"), ...){
+ ## handle arguments
+    NA.method <- match.arg(NA.method)
+
+    ## get matrix of data
+    if(freq) out <- makefreq(x, missing=NA, quiet=TRUE) else out <- x@tab
+
+    ## replace NAs if needed
+    if(NA.method=="mean"){
+        f1 <- function(vec){
+            m <- mean(vec,na.rm=TRUE)
+            vec[is.na(vec)] <- m
+            return(vec)
+        }
+
+        out <- apply(out, 2, f1)
+    }
+    if(NA.method=="zero"){
+        out[is.na(out)] <- ifelse(freq, 0, 0L)
+    }
+
+    ## return output
+    return(out)
 })
 
 
@@ -193,15 +237,13 @@ setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,re
     if(!is.genind(x)) stop("x is not a valid genind object")
     if(is.null(pop)) { # pop taken from @pop
         if(is.null(x@pop)) stop("pop not provided and x@pop is empty")
-        pop <- x@pop
-        levels(pop) <- x@pop.names
-    } else{
+        pop <- pop(x)
+    } else {
         pop <- factor(pop)
     }
 
 
     res.type <- match.arg(res.type)
-    if(res.type=="genind") { truenames <- TRUE }
 
     ## pop <- x@pop # comment to take pop arg into account
 
@@ -213,7 +255,7 @@ setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,re
     if(res.type=="genind"){ return(kObj) }
 
     ## res is list of matrices
-    res <- lapply(kObj, function(obj) truenames(obj))
+    res <- lapply(kObj, function(obj) tab(obj))
 
     return(res)
 }) # end seppop
@@ -224,91 +266,91 @@ setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,re
 
 
 
-#####################
-# Methods na.replace
-#####################
-setGeneric("na.replace", function(x, ...) standardGeneric("na.replace"))
+## #####################
+## # Methods na.replace
+## #####################
+## setGeneric("na.replace", function(x, ...) standardGeneric("na.replace"))
 
-## genind method
-setMethod("na.replace", signature(x="genind"), function(x,method, quiet=FALSE){
-    ## checkType(x)
+## ## genind method
+## setMethod("na.replace", signature(x="genind"), function(x, method, quiet=FALSE){
+##     ## checkType(x)
 
-    ## preliminary stuff
-    validObject(x)
-    if(!any(is.na(x@tab))) {
-        if(!quiet) cat("\n Replaced 0 missing values \n")
-        return(x)
-    }
-    method <- tolower(method)
-    method <- match.arg(method, c("0","mean"))
+##     ## preliminary stuff
+##     validObject(x)
+##     if(!any(is.na(x@tab))) {
+##         if(!quiet) cat("\n Replaced 0 missing values \n")
+##         return(x)
+##     }
+##     method <- tolower(method)
+##     method <- match.arg(method, c("0","mean"))
 
-    res <- x
+##     res <- x
 
-    if(method=="0"){
-        res@tab[is.na(x@tab)] <- 0
-    }
+##     if(method=="0"){
+##         res@tab[is.na(x@tab)] <- 0
+##     }
 
-    if(method=="mean"){
-        f1 <- function(vec){
-            m <- mean(vec,na.rm=TRUE)
-            vec[is.na(vec)] <- m
-            return(vec)
-        }
+##     if(method=="mean"){
+##         f1 <- function(vec){
+##             m <- mean(vec,na.rm=TRUE)
+##             vec[is.na(vec)] <- m
+##             return(vec)
+##         }
 
-        res@tab <- apply(x@tab, 2, f1)
-    }
+##         res@tab <- apply(x@tab, 2, f1)
+##     }
 
-    if(!quiet){
-        Nna <- sum(is.na(x@tab))
-        cat("\n Replaced",Nna,"missing values \n")
-    }
+##     if(!quiet){
+##         Nna <- sum(is.na(x@tab))
+##         cat("\n Replaced",Nna,"missing values \n")
+##     }
 
-    return(res)
+##     return(res)
 
-})
-
-
+## })
 
 
-## genpop method
-setMethod("na.replace", signature(x="genpop"), function(x,method, quiet=FALSE){
-    ## checkType(x)
 
-    ## preliminary stuff
-    validObject(x)
-    if(!any(is.na(x@tab))) {
-        if(!quiet) cat("\n Replaced 0 missing values \n")
-        return(x)
-    }
 
-    method <- tolower(method)
-    method <- match.arg(method, c("0","chi2"))
+## ## genpop method
+## setMethod("na.replace", signature(x="genpop"), function(x,method, quiet=FALSE){
+##     ## checkType(x)
 
-    res <- x
+##     ## preliminary stuff
+##     validObject(x)
+##     if(!any(is.na(x@tab))) {
+##         if(!quiet) cat("\n Replaced 0 missing values \n")
+##         return(x)
+##     }
 
-    if(method=="0"){
-        res@tab[is.na(x@tab)] <- 0
-    }
+##     method <- tolower(method)
+##     method <- match.arg(method, c("0","chi2"))
 
-    if(method=="chi2"){
-        ## compute theoretical counts
-        ## (same as in a Chi-squared)
-        X <- x@tab
-        sumPop <- apply(X,1,sum,na.rm=TRUE)
-        sumLoc <- apply(X,2,sum,na.rm=TRUE)
-        X.theo <- sumPop %o% sumLoc / sum(X,na.rm=TRUE)
+##     res <- x
 
-        X[is.na(X)] <- X.theo[is.na(X)]
-        res@tab <- X
-    }
+##     if(method=="0"){
+##         res@tab[is.na(x@tab)] <- 0
+##     }
 
-    if(!quiet){
-        Nna <- sum(is.na(x@tab))
-        cat("\n Replaced",Nna,"missing values \n")
-    }
+##     if(method=="chi2"){
+##         ## compute theoretical counts
+##         ## (same as in a Chi-squared)
+##         X <- x@tab
+##         sumPop <- apply(X,1,sum,na.rm=TRUE)
+##         sumLoc <- apply(X,2,sum,na.rm=TRUE)
+##         X.theo <- sumPop %o% sumLoc / sum(X,na.rm=TRUE)
 
-    return(res)
-})
+##         X[is.na(X)] <- X.theo[is.na(X)]
+##         res@tab <- X
+##     }
+
+##     if(!quiet){
+##         Nna <- sum(is.na(x@tab))
+##         cat("\n Replaced",Nna,"missing values \n")
+##     }
+
+##     return(res)
+## })
 
 
 
@@ -378,8 +420,7 @@ setMethod("selPopSize", signature(x="genind"), function(x,pop=NULL,nMin=10){
     if(!is.genind(x)) stop("x is not a valid genind object")
     if(is.null(pop)) { # pop taken from @pop
         if(is.null(x@pop)) stop("pop not provided and x@pop is empty")
-        pop <- x@pop
-        levels(pop) <- x@pop.names
+        pop <- pop(x)
     } else{
         pop <- factor(pop)
     }
@@ -649,15 +690,15 @@ setGeneric("indNames<-", function(x, value){
 })
 
 setMethod("indNames","genind", function(x, ...){
-    return(x@ind.names)
+    return(rownames(x@tab))
 })
 
 
 setReplaceMethod("indNames","genind",function(x,value) {
     value <- as.character(value)
     if(length(value) != nInd(x)) stop("Vector length does no match number of individuals")
-    names(value) <- names(indNames(x))
     slot(x,"ind.names",check=TRUE) <- value
+    rownames(x@tab) <- value
     return(x)
 })
 
@@ -723,8 +764,8 @@ setReplaceMethod("ploidy","genind",function(x,value) {
     value <- as.integer(value)
     if(any(value)<1) stop("Negative or null values provided")
     if(any(is.na(value))) stop("NA values provided")
-    if(length(value)>1) warning("Several ploidy numbers provided; using only the first integer")
-    slot(x,"ploidy",check=TRUE) <- value[1]
+    if(length(value)!=nInd(x)) value <- rep(value, length=nInd(x))
+    slot(x,"ploidy",check=TRUE) <- value
     return(x)
 })
 
