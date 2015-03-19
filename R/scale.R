@@ -99,7 +99,7 @@ setMethod("scaleGen", "genind", function(x, center=TRUE, scale=TRUE,
 #' @rdname scaleGen
 #' @export
 setMethod("scaleGen", "genpop", function(x, center=TRUE, scale=TRUE,
-                                         missing=c("NA","0","mean"), truenames=TRUE){
+                                         NA.method=c("asis","mean","zero"), truenames=TRUE){
 
     THRES <- 1e-10
 

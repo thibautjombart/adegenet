@@ -204,7 +204,7 @@ find.clusters.genind <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, stat=c
     maxRank <- min(dim(x@tab))
 
     X <- scaleGen(x, center = TRUE, scale = scale,
-                  missing = "mean")
+                  NA.method = "mean")
 
     ## CALL DATA.FRAME METHOD
     res <- find.clusters(X, clust=clust, n.pca=n.pca, n.clust=n.clust, stat=stat, max.n.clust=max.n.clust, n.iter=n.iter, n.start=n.start,

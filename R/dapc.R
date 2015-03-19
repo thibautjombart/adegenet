@@ -172,7 +172,7 @@ dapc.genind <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
     maxRank <- min(dim(x@tab))
 
     X <- scaleGen(x, center = TRUE, scale = scale,
-                  missing = "mean", truenames = truenames)
+                  NA.method = "mean")
 
     ## CALL DATA.FRAME METHOD ##
     res <- dapc(X, grp=pop.fac, n.pca=n.pca, n.da=n.da,

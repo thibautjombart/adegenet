@@ -14,7 +14,7 @@ scaleGen(x, ...)
   NA.method = c("asis", "mean", "zero"), truenames = TRUE)
 
 \S4method{scaleGen}{genpop}(x, center = TRUE, scale = TRUE,
-  missing = c("NA", "0", "mean"), truenames = TRUE)
+  NA.method = c("asis", "mean", "zero"), truenames = TRUE)
 }
 \arguments{
 \item{x}{a \linkS4class{genind} and \linkS4class{genpop} object}

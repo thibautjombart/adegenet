@@ -87,7 +87,7 @@ spca <- function(obj, xy=NULL, cn=NULL, matWeight=NULL,
     }
 
     ## handle NAs, centring and scaling
-    X <- scaleGen(obj, center=TRUE, scale=scale, missing="mean")
+    X <- scaleGen(obj, center=TRUE, scale=scale, NA.method="mean")
 
     ## perform analyses
     pcaX <- dudi.pca(X, center=FALSE, scale=FALSE, scannf=FALSE)
