@@ -64,7 +64,7 @@ Class \code{"\linkS4class{indInfo}"}, directly.
 \seealso{\code{\link{as.genind}}, \code{\link{genind2genpop}},
   \code{\link{genpop}}, \code{\link{import2genind}},
   \code{\link{read.genetix}}, \code{\link{read.genepop}},
-  \code{\link{read.fstat}}, \code{\link{na.replace}}\cr
+  \code{\link{read.fstat}}\cr
 
   Related classes:\cr
   - \linkS4class{genpop} for storing data per populations\cr

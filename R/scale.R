@@ -24,6 +24,7 @@
 #' frequencies.
 #' @param truenames no longer used; kept for backward compatibility
 #' @param NA.method a method to replace NA; asis: leave NAs as is; mean: replace by the mean allele frequencies; zero: replace by zero
+#' @param ... further arguments passed to other methods.
 #' @return A matrix of scaled allele frequencies with genotypes
 #' (\linkS4class{genind}) or populations in (\linkS4class{genpop}) in rows and
 #' alleles in columns.

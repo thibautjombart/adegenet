@@ -51,6 +51,7 @@ setMethod("truenames",signature(x="genpop"), function(x){
 #' @param x a \linkS4class{genind} or \linkS4class{genpop} object.
 #' @param freq a logical indicating if data should be transformed into relative frequencies (TRUE); defaults to FALSE.
 #' @param NA.method a method to replace NA; asis: leave NAs as is; mean: replace by the mean allele frequencies; zero: replace by zero
+#' @param ... further arguments passed to other methods.
 #' @return a matrix of integers or numeric
 #'
 #' @examples

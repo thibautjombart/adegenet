@@ -19,6 +19,8 @@ scaleGen(x, ...)
 \arguments{
 \item{x}{a \linkS4class{genind} and \linkS4class{genpop} object}
 
+\item{...}{further arguments passed to other methods.}
+
 \item{center}{a logical stating whether alleles frequencies should be
 centred to mean zero (default to TRUE). Alternatively, a vector of numeric
 values, one per allele, can be supplied: these values will be substracted
