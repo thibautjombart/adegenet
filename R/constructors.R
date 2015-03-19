@@ -17,7 +17,7 @@
 #' @rdname new.genind
 #'
 #' @param .Object prototyped object (generated automatically when calling 'new')
-#' @param tab A matrix of integers corresponding to the @tab slot of a genind object, with individuals in rows and alleles in columns, and containing either allele counts (if type="codom") or allele presence/absence (if type="PA")
+#' @param tab A matrix of integers corresponding to the @@tab slot of a genind object, with individuals in rows and alleles in columns, and containing either allele counts (if type="codom") or allele presence/absence (if type="PA")
 #' @param pop an optional factor with one value per row in \code{tab} indicating the population of each individual
 #' @param prevcall an optional call to be stored in the object
 #' @param ploidy an integer vector indicating the ploidy of the individual; each individual can have a different value; if only one value is provided, it is recycled to generate a vector of the right length.
@@ -25,6 +25,9 @@
 #' @param ... further arguments passed to other methods (currently not used)
 #'
 #' @return a \linkS4class{genind} object
+#'
+#' @seealso the description of the \linkS4class{genind} class; \code{\link{df2genind}}
+#'
 setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL, ploidy=2L, type=c("codom","PA"), ...){
    ## HANDLE ARGUMENTS ##
     out <- .Object
@@ -121,7 +124,17 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
     return(out)
 })
 
-as.genind <- genind <- function(...){
+
+#' @export
+#' @rdname new.genind
+genind <- function(...){
+    out <- new("genind", ...)
+    return(out)
+} # end genind
+
+#' @export
+#' @rdname new.genind
+as.genind <- function(...){
     out <- new("genind", ...)
     return(out)
 } # end genind
@@ -129,12 +142,42 @@ as.genind <- genind <- function(...){
 
 
 
+
+
+#' genpop constructor
+#'
+#' The function \code{new} has a method for building \linkS4class{genpop} objects.
+#' See the class description of \linkS4class{genpop} for more information on this data structure.
+#' The functions \code{genpop} and \code{as.genpop} are aliases for \code{new("genpop", ...)}.
+#'
+#' Most users do not need using the constructor, but merely to convert raw allele data using \code{\link{genind2genpop}}.
+#'
+#' @export
+#' @docType methods
+#'
+#' @aliases initialize,genpop-methods
+#' @aliases genpop
+#' @aliases as.genpop
+#'
+#' @rdname new.genpop
+#'
+#' @param .Object prototyped object (generated automatically when calling 'new')
+#' @param tab A matrix of integers corresponding to the @@tab slot of a genpop object, with individuals in rows and alleles in columns, and containing either allele counts
+#' @param prevcall an optional call to be stored in the object
+#' @param ploidy an integer vector indicating the ploidy of the individual; each individual can have a different value; if only one value is provided, it is recycled to generate a vector of the right length.
+#' @param type a character string indicating the type of marker: codominant ("codom") or presence/absence ("PA")
+#' @param ... further arguments passed to other methods (currently not used)
+#'
+#' @return a \linkS4class{genpop} object
+#'
+#' @seealso the description of the \linkS4class{genpop} class; \code{\link{df2genind}} and related functions for reading raw allele data
+#'
 ##################
 # Function genpop
 ##################
-genpop <- function(tab,prevcall=NULL,ploidy=as.integer(2),type=c("codom","PA")){
-
+setMethod("initialize", "genpop", function(.Object, tab, prevcall=NULL, ploidy=2L, type=c("codom","PA"), ...){
     ## HANDLE ARGS ##
+    out <- .Object
     if(is.null(colnames(tab))) stop("tab columns have no name.")
     if(is.null(rownames(tab))) {rownames(tab) <- 1:nrow(tab)}
 
@@ -196,28 +239,35 @@ genpop <- function(tab,prevcall=NULL,ploidy=as.integer(2),type=c("codom","PA")){
     }
 
     ## build final output
-    res <- new("genpop")
+    out <- new("genpop")
 
-    res@tab <- tab
-    res@pop.names <- pop.names
-    res@loc.names <- loc.names
-    res@loc.nall <- loc.nall
-    res@loc.fac <- loc.fac
-    res@all.names <- all.names
-    res@ploidy <- ploidy
-    res@type <- as.character(type)
+    out@tab <- tab
+    out@pop.names <- pop.names
+    out@loc.names <- loc.names
+    out@loc.nall <- loc.nall
+    out@loc.fac <- loc.fac
+    out@all.names <- all.names
+    out@ploidy <- ploidy
+    out@type <- as.character(type)
 
     if(is.null(prevcall)) {prevcall <- match.call()}
-    res@call <- prevcall
+    out@call <- prevcall
 
-    return(res)
+    return(out)
+})
 
+
+
+#' @export
+#' @rdname new.genpop
+genpop <- function(...){
+    out <- new("genpop", ...)
+    return(out)
 } # end genpop
 
-
-
-######################
-# alias for as.genpop
-######################
-as.genpop <- genpop
-
+#' @export
+#' @rdname new.genpop
+as.genpop <- function(...){
+    out <- new("genpop", ...)
+    return(out)
+} # end genpop

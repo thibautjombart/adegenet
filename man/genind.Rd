@@ -5,6 +5,7 @@
 \alias{show,genind-method}
 \alias{names,genind-method}
 \alias{summary,genind-method}
+\alias{is.genind}
 \alias{.valid.genind}
 \title{adegenet formal class (S4) for individual genotypes}
 \description{The S4 class \code{genind} is used to store individual genotypes.\cr
@@ -60,7 +61,7 @@ Class \code{"\linkS4class{indInfo}"}, directly.
       genind object, invisibly returning its content}
   }
 }
-\seealso{\code{\link{as.genind}}, \code{\link{is.genind}}, \code{\link{genind2genpop}},
+\seealso{\code{\link{as.genind}}, \code{\link{genind2genpop}},
   \code{\link{genpop}}, \code{\link{import2genind}},
   \code{\link{read.genetix}}, \code{\link{read.genepop}},
   \code{\link{read.fstat}}, \code{\link{na.replace}}\cr
