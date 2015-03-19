@@ -60,7 +60,7 @@ DNAbin2genind <- function(x, pop=NULL, exp.char=c("a","t","g","c"), polyThres=1/
     rownames(temp) <- rownames(x)
 
     ## create genind output ##
-    res <- genind(temp, ploidy=1, type="codom")
+    res <- genind(temp, ploidy=1, pop=pop, type="codom")
     rm(temp) # remove temp
     gc() # collect garbage
     res$call <- match.call()

@@ -92,7 +92,6 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
     }
 
     ## Ideally I should use an 'initialize' method here
-    out <- new("genind")
     out@tab <- tab
     out@ind.names <- ind.names
     out@loc.names <- loc.names
@@ -239,8 +238,6 @@ setMethod("initialize", "genpop", function(.Object, tab, prevcall=NULL, ploidy=2
     }
 
     ## build final output
-    out <- new("genpop")
-
     out@tab <- tab
     out@pop.names <- pop.names
     out@loc.names <- loc.names

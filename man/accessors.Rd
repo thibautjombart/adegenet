@@ -154,12 +154,14 @@ pop(nancycats) # get the populations
 indNames(nancycats) # get the labels of individuals
 locNames(nancycats) # get the labels of the loci
 alleles(nancycats) # get the alleles
+
 head(tab(nancycats)) # get allele counts
+
 # get allele frequencies, replace NAs
 head(tab(nancycats, freq=TRUE, NA.method="mean")) 
 
 # let's isolate populations 4 and 8
-temp <- nancycats@pop=="P04" | nancycats@pop=="P08"
+temp <- pop(nancycats) %in% c("1","8")
 obj <- nancycats[temp,]
 obj
 
@@ -170,7 +172,7 @@ locNames(nancycats)
 
 # they correspond to L2 and L7
 nancycats$loc.fac
-temp <- nancycats$loc.fac=="L2" | nancycats$loc.fac=="L7"
+temp <- nancycats$loc.fac %in% c("fca8","fca37")
 obj <- nancycats[,temp]
 obj
 
@@ -178,13 +180,13 @@ obj$loc.fac
 locNames(obj)
 
 # or more simply
-nancycats[loc=c("L2","L7")]
+nancycats[loc=c("fca8","fca37")]
 obj$loc.fac 
 locNames(obj)
 
 # illustrate how 'other' slot is handled
 colonies <- genind2genpop(nancycats)
-colonies@other$aChar <- "This will not be proceeded"
+colonies@other$aChar <- "This will not be processed"
 colonies123 <- colonies[1:3]
 colonies
 colonies@other$xy

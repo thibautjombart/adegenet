@@ -24,7 +24,7 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
     if (missing(j)) j <- TRUE
 
     if(!is.null(x@pop)) {
-        pop <- pop(x)[i]
+        pop <- factor(pop(x)[i])
     } else {
         pop <- NULL
     }
@@ -187,7 +187,7 @@ setMethod ("show", "genind", function(object){
       cat("\n@all.names: NULL")
   }
 
-  cat("\n@ploidy: ",x@ploidy)
+  cat("\n@ploidy: ", head(x@ploidy))
   cat("\n@type: ",x@type)
 
   cat("\n\nOptional contents: ")
