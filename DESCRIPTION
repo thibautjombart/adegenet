@@ -4,7 +4,7 @@ Date: 2015/03/01
 Title: adegenet: an R Package for the Exploratory Analysis of Genetic and Genomic Data
 Author:  Thibaut Jombart, Caitlin Collins, Zhian N. Kamvar, Roman Lustrik, Peter Solymos, Ismail Ahmed, Federico Calboli, Anne Cori, Klaus Schliep
 Maintainer: Thibaut Jombart <t.jombart@imperial.ac.uk>
-Suggest: pegas, hierfstat, akima, maps, splancs, adehabitat, tripack
+Suggests: pegas, hierfstat, akima, maps, splancs, adehabitat, tripack
 Depends: R (>= 2.14), methods, ade4
 Imports: utils, stats, MASS, igraph, ape, shiny, ggplot2, genetics, spdep, seqinr, parallel
 URL: http://adegenet.r-forge.r-project.org/
