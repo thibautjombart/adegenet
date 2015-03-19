@@ -2,7 +2,7 @@ Package: adegenet
 Version: 1.5-0
 Date: 2015/03/01
 Title: adegenet: an R Package for the Exploratory Analysis of Genetic and Genomic Data
-Author:  Thibaut Jombart, Caitlin Collins, Zhian N. Kamvar, Roman Lustrik, Peter Solymos, Ismail Ahmed, Federico Calboli, Anne Cori
+Author:  Thibaut Jombart, Caitlin Collins, Zhian N. Kamvar, Roman Lustrik, Peter Solymos, Ismail Ahmed, Federico Calboli, Anne Cori, Klaus Schliep
 Maintainer: Thibaut Jombart <t.jombart@imperial.ac.uk>
 Suggest: pegas
 Depends: R (>= 2.14), methods, ade4, hierfstat, akima, maps, splancs
