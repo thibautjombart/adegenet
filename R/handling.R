@@ -12,24 +12,8 @@
 setGeneric("truenames", function(x) standardGeneric("truenames"))
 
 setMethod("truenames", signature(x="genind"), function(x){
-    checkType(x)
-    X <- x@tab
-    if(!all(x@ind.names=="")) {rownames(X) <- x@ind.names}
-
-    labcol <- locNames(x, withAlleles=TRUE)
-    colnames(X) <- labcol
-
-    if(!is.null(x@pop)){
-        pop <- x@pop
-        levels(pop) <- x@pop.names
-        return(list(tab=X,pop=pop))
-    }
-
-    return(X)
-}
-          )
-
-
+    return(x@tab)
+})
 
 
 
@@ -37,19 +21,32 @@ setMethod("truenames", signature(x="genind"), function(x){
 # Method truenames for genpop
 ##############################
 setMethod("truenames",signature(x="genpop"), function(x){
-    checkType(x)
-
-    X <- x@tab
-    if(!all(x@pop.names=="")) {rownames(X) <- x@pop.names}
-
-    labcol <- locNames(x, withAlleles=TRUE)
-    colnames(X) <- labcol
-
-    return(X)
+    return(x@tab)
 })
 
 
 
+##############################
+# Method truenames for genpop
+##############################
+setMethod("truenames",signature(x="genpop"), function(x){
+    return(x@tab)
+})
+
+
+
+###########################
+## Generic / tethods 'tab'
+###########################
+setGeneric("tab", function(x, ...) standardGeneric("tab"))
+
+setMethod("tab", signature(x="genind"), function(x, freq=FALSE, ...){
+    if(freq) return(makefreq(x, missing=NA, quiet=TRUE)) else return(x@tab)
+})
+
+setMethod("tab", signature(x="genpop"), function(x, freq=FALSE, ...){
+    if(freq) return(makefreq(x, missing=NA, quiet=TRUE)) else return(x@tab)
+})
 
 
 
@@ -95,7 +92,8 @@ setMethod("seploc", signature(x="genind"), function(x,truenames=TRUE,res.type=c(
 # Method seploc for genpop
 ###########################
 setMethod("seploc", signature(x="genpop"), function(x,truenames=TRUE,res.type=c("genpop","matrix")){
-     if(x@type=="PA"){
+    truenames <- TRUE # this argument will be deprecated
+    if(x@type=="PA"){
          msg <- paste("seploc is not implemented for presence/absence markers")
          cat("\n",msg,"\n")
          return(invisible())
@@ -114,21 +112,9 @@ setMethod("seploc", signature(x="genpop"), function(x,truenames=TRUE,res.type=c(
 
     for(i in 1:nloc){
         kX[[i]] <- matrix(x@tab[,temp==i],ncol=x@loc.nall[i])
-
-        if(!truenames){
-            rownames(kX[[i]]) <- rownames(x@tab)
-            colnames(kX[[i]]) <- paste(names(x@loc.names)[i],names(x@all.names[[i]]),sep=".")
-        }else{
-            rownames(kX[[i]]) <- x@pop.names
-            colnames(kX[[i]]) <- paste(x@loc.names[i],x@all.names[[i]],sep=".")
-        }
     }
 
-    if(truenames) {
-        names(kX) <- x@loc.names
-    } else{
-        names(kX) <- names(x@loc.names)
-    }
+    names(kX) <- x@loc.names
 
     prevcall <- match.call()
     if(res.type=="genpop"){
@@ -170,8 +156,10 @@ setMethod("$<-","genind",function(x,name,value) {
 setGeneric("seppop", function(x, ...) standardGeneric("seppop"))
 
 ## genind
-setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,res.type=c("genind","matrix"), drop=FALSE, treatOther=TRUE, quiet=TRUE){
+setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,res.type=c("genind","matrix"),
+                              drop=FALSE, treatOther=TRUE, quiet=TRUE){
     ## checkType(x)
+    truenames <- TRUE # this argument will be deprecated
 
     ## misc checks
     if(!is.genind(x)) stop("x is not a valid genind object")
@@ -197,11 +185,7 @@ setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,re
     if(res.type=="genind"){ return(kObj) }
 
     ## res is list of matrices
-    if(truenames) {
-        res <- lapply(kObj, function(obj) truenames(obj)$tab)
-    } else{
-        res <- lapply(kObj, function(obj) obj$tab)
-    }
+    res <- lapply(kObj, function(obj) truenames(obj))
 
     return(res)
 }) # end seppop

@@ -6,9 +6,9 @@
 \alias{$<-,genind-method}
 \alias{$<-,genpop-method}
 \alias{[,genind-method}
-\alias{[,genind,ANY,NAY,ANY-method}
+\alias{[,genind,ANY,ANY,ANY-method}
 \alias{[,genpop-method}
-\alias{[,genpop,ANY,NAY,ANY-method}
+\alias{[,genpop,ANY,ANY,ANY-method}
 \alias{nLoc}
 \alias{nLoc,genind-method}
 \alias{nLoc,genpop-method}
