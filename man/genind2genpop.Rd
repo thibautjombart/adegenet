@@ -82,8 +82,7 @@ text(obj$other$xy, lab=row.names(obj$other$xy), col=c("blue","red"), cex=2, font
 Thibaut Jombart \email{t.jombart@imperial.ac.uk}
 }
 \seealso{
-\linkS4class{genind}, \linkS4class{genpop},
-\code{\link{na.replace}}
+\linkS4class{genind}, \linkS4class{genpop}
 }
 \keyword{classes}
 \keyword{manip}

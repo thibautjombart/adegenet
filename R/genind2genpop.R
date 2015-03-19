@@ -42,8 +42,7 @@
 #' @return A genpop object. The component @@other in 'x' is passed to the
 #' created genpop object.
 #' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
-#' @seealso \linkS4class{genind}, \linkS4class{genpop},
-#' \code{\link{na.replace}}
+#' @seealso \linkS4class{genind}, \linkS4class{genpop}
 #' @keywords classes manip multivariate
 #' @examples
 #'

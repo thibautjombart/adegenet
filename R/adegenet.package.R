@@ -81,8 +81,7 @@
 #' \linkS4class{genpop} \cr - \code{\link{seploc}}: creates one object per
 #' marker; for \linkS4class{genlight} objects, creates blocks of SNPs.\cr -
 #' \code{\link{seppop}}: creates one object per population \cr -
-#' \code{\link{na.replace}}: replaces missing data (NA) in an approriate way
-#' \cr - \code{\link{tab}}: access the allele data (counts or frequencies) of an object
+#' - \code{\link{tab}}: access the allele data (counts or frequencies) of an object
 #' (\linkS4class{genind} and \linkS4class{genpop}) \cr -
 #' x[i,j]: create a new object keeping only genotypes (or populations) indexed
 #' by 'i' and the alleles indexed by 'j'.\cr - \code{\link{makefreq}}: returns
