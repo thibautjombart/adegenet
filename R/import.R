@@ -529,6 +529,10 @@ read.genepop <- function(file, ncode=2L, quiet=FALSE){
     temp <- sapply(1:length(txt),function(i) strsplit(txt[i],","))
     ## temp is a list with nind elements, first being ind. name and 2nd, genotype
 
+    ind.names <- sapply(temp,function(e) e[1])
+    ind.names <- .rmspaces(ind.names)
+    ## individuals' name are now clean
+
     vec.genot <- sapply(temp,function(e) e[2])
     vec.genot <- .rmspaces(vec.genot)
 
@@ -593,6 +597,7 @@ read.genepop <- function(file, ncode=2L, quiet=FALSE){
 #' Note that in any case, series of zero (like "000") are interpreted as NA
 #' too.
 #' @param pop an optional factor giving the population of each individual.
+#' @param sep a character string used as separator between alleles.
 #' @param ask a logical specifying if the function should ask for optional
 #' informations about the dataset (TRUE, default), or try to be as quiet as
 #' possible (FALSE).
@@ -617,7 +622,8 @@ read.genepop <- function(file, ncode=2L, quiet=FALSE){
 #' @export read.structure
 read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL,
                            col.lab=NULL, col.pop=NULL, col.others=NULL,
-                           row.marknames=NULL, NA.char="-9", pop=NULL, ask=TRUE, quiet=FALSE){
+                           row.marknames=NULL, NA.char="-9", pop=NULL,
+                           sep=NULL, ask=TRUE, quiet=FALSE){
 
     ## if(!file.exists(file)) stop("Specified file does not exist.") <- not needed
     if(!toupper(.readExt(file)) %in% c("STR","STRU")) stop("File extension .stru expected")
@@ -760,7 +766,7 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL,
         temp <- seq(1,p-1,by=2)
         X <- paste(gen[,temp] , gen[,temp+1], sep="/")
         X <- matrix(X, nrow=n.ind)
-        sep <- NULL
+        sep <- "/"
     }
 
     ## replace missing values by NAs
