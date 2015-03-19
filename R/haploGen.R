@@ -16,8 +16,6 @@ haploGen <- function(seq.length=1e4, mu.transi=1e-4, mu.transv=mu.transi/2, t.ma
                      ini.n=1, ini.xy=NULL){
 
     ## CHECKS ##
-    ## if(!require(ape)) stop("The ape package is required.")
-
 
     ## HANDLE ARGUMENTS ##
     ## if numeric value, make it a function
@@ -559,8 +557,6 @@ sample.haploGen <- function(x, n){
 ## as.igraph.haploGen
 ######################
 as.igraph.haploGen <- function(x, col.pal=redpal, ...){
-    ## if(!require(igraph)) stop("package igraph is required for this operation")
-    ## if(!require(ape)) stop("package ape is required for this operation")
 
     ## GET DAG ##
     from <- x$ances
@@ -602,7 +598,6 @@ as.igraph.haploGen <- function(x, col.pal=redpal, ...){
 ## plot.haploGen
 #################
 plot.haploGen <- function(x, y=NULL, col.pal=redpal, ...){
-    ## if(!require(igraph)) stop("igraph is required")
 
     ## get graph ##
     g <- as.igraph(x, col.pal=col.pal)

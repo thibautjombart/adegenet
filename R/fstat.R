@@ -9,7 +9,7 @@ fstat <- function(x, pop=NULL, fstonly=FALSE){
     ## return(invisible())
     ## misc checks
     if(!is.genind(x)) stop("x is not a valid genind object")
-    if(!require(hierfstat)) stop("hierfstat package is required. Please install it.")
+    ## if(!require(hierfstat)) stop("hierfstat package is required. Please install it.")
     if(x@ploidy != as.integer(2)) stop("not implemented for non-diploid genotypes")
     checkType(x)
 
