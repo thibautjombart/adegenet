@@ -529,17 +529,13 @@ read.genepop <- function(file, ncode=2L, quiet=FALSE){
     temp <- sapply(1:length(txt),function(i) strsplit(txt[i],","))
     ## temp is a list with nind elements, first being ind. name and 2nd, genotype
 
-    ind.names <- sapply(temp,function(e) e[1])
-    ind.names <- .rmspaces(ind.names)
-    ## individuals' name are now clean
-
     vec.genot <- sapply(temp,function(e) e[2])
     vec.genot <- .rmspaces(vec.genot)
 
     ## X is a individual x locus genotypes matrix
     X <- matrix(unlist(strsplit(vec.genot,"[[:space:]]+")),ncol=nloc,byrow=TRUE)
 
-    rownames(X) <- ind.names
+    rownames(X) <- 1:nrow(X)
     colnames(X) <- loc.names
 
     ## give right pop names
