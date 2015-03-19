@@ -114,7 +114,7 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
         tab <- tab[,toKeep, drop=FALSE]
     }
 
-    res <- genpop(tab,prevcall=prevcall)
+    res <- genpop(tab,prevcall=prevcall,ploidy=x@ploidy)
 
     ## handle 'other' slot
     nOther <- length(x@other)
@@ -325,7 +325,7 @@ setMethod ("summary", signature(object="genind"), function(object, ...){
   res$NA.perc <- 100*(1-mean(propTyped(x,by="both")))
 
   ## handle heterozygosity
-  if(x@ploidy > 1){
+  if(any(x@ploidy > 1)){
       ## auxiliary function to compute observed heterozygosity
       temp <- seploc(x,res.type="matrix")
       f1 <- function(tab){

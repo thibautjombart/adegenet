@@ -180,10 +180,11 @@ setMethod("seploc", signature(x="genpop"), function(x,truenames=TRUE,res.type=c(
     nloc <- length(levels(temp))
     levels(temp) <- 1:nloc
 
+    ## make separate tables
     kX <- list()
-
-    for(i in 1:nloc){
-        kX[[i]] <- matrix(x@tab[,temp==i],ncol=x@loc.nall[i])
+    locfac.char <- as.character(x@loc.fac)
+    for(i in locNames(x)){
+        kX[[i]] <- x@tab[,i==locfac.char,drop=FALSE]
     }
 
     names(kX) <- x@loc.names
