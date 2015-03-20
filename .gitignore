@@ -4,3 +4,4 @@ adegenet.Rcheck
 *.so
 .RData
 .Rhistory
+.Rproj.user/
