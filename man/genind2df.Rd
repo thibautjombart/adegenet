@@ -13,11 +13,12 @@ genind2df(x, pop = NULL, sep = "", usepop = TRUE, oneColPerAll = FALSE)
 
 \item{sep}{a character string separating alleles. See details.}
 
-\item{usepop}{a logical stating whether the population (argument \code{pop}}
+\item{usepop}{a logical stating whether the population (argument \code{pop}
+or \code{x@pop} should be used (TRUE, default) or not (FALSE)).}
 
 \item{oneColPerAll}{a logical stating whether or not alleles should be split
-into columns.
-or \code{x@pop} should be used (TRUE, default) or not (FALSE)).}
+into columns (defaults to \code{FALSE}). This will only work with data with
+consistent ploidies.}
 }
 \value{
 a data.frame of raw allelic data, with individuals in rows and loci in column
