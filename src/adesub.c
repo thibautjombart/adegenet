@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "adesub.h"
+#include <R.h>
 
 /***********************************************************************/
 double traceXtdLXq (double **X, double **L, double *d, double *q)
@@ -145,7 +146,10 @@ void initvec (double *v1, double r)
 double alea (void)
 {
     double w;
-    w = ((double) rand())/ (double)RAND_MAX;
+    GetRNGstate();
+    /* w = ((double) rand())/ (double)RAND_MAX; */
+    w = unif_rand();
+    PutRNGstate();
     return (w);
 }
 /*************************/
@@ -488,13 +492,14 @@ void getpermutation (int *numero, int repet)
     /*-------------
     * affectation de nombres aleatoires dans alea
     ----------------*/
-    seed = clock();
-    seed = seed + repet;
-    srand(seed);
+    /* seed = clock(); */
+    /* seed = seed + repet; */
+    /* srand(seed); */
+    GetRNGstate();
     for (i=1;i<=n;i++) {
-        alea[i]=rand();
+        alea[i]=unif_rand();
     }
-    
+    PutRNGstate();
     trirapideint (alea , numero, 1, n);
     freeintvec (alea);
 }
