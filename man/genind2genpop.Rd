@@ -4,17 +4,14 @@
 \alias{genind2genpop}
 \title{Conversion from a genind to a genpop object}
 \usage{
-genind2genpop(x, pop = NULL, missing = c("NA", "0", "chi2"),
-  quiet = FALSE, process.other = FALSE, other.action = mean)
+genind2genpop(x, pop = NULL, quiet = FALSE, process.other = FALSE,
+  other.action = mean)
 }
 \arguments{
 \item{x}{an object of class \code{genind}.}
 
 \item{pop}{a factor giving the population of each genotype in 'x'. If note
 provided, sought in x@pop, but if given, the argument prevails on x@pop.}
-
-\item{missing}{can be "NA", "0", or "chi2". See details for more
-information.}
 
 \item{quiet}{logical stating whether a conversion message must be printed
 (TRUE,default) or not (FALSE).}
@@ -85,8 +82,7 @@ text(obj$other$xy, lab=row.names(obj$other$xy), col=c("blue","red"), cex=2, font
 Thibaut Jombart \email{t.jombart@imperial.ac.uk}
 }
 \seealso{
-\linkS4class{genind}, \linkS4class{genpop},
-\code{\link{na.replace}}
+\linkS4class{genind}, \linkS4class{genpop}
 }
 \keyword{classes}
 \keyword{manip}

@@ -59,7 +59,6 @@
 #'
 #' \dontrun{
 #' data(nancycats)
-#' if(require(spdep)){
 #'
 #' par(mfrow=c(2,2))
 #' cn1 <- chooseCN(nancycats@@other$xy,ask=FALSE,type=1)
@@ -68,10 +67,9 @@
 #' cn4 <- chooseCN(nancycats@@other$xy,ask=FALSE,type=4)
 #' par(mfrow=c(1,1))
 #' }
-#' }
 #'
 #' @export chooseCN
-#' @import spdep
+#' @importFrom spdep "tri2nb" "gabrielneigh" "graph2nb" "relativeneigh" "dnearneigh" "knearneigh" "knn2nb" "nb2listw" "mat2listw" "listw2mat" "lag.listw"
 #' @import ade4
 #'
 chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL, k=NULL,

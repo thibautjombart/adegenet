@@ -20,6 +20,8 @@ tab(x, ...)
 \arguments{
 \item{x}{a \linkS4class{genind} or \linkS4class{genpop} object.}
 
+\item{...}{further arguments passed to other methods.}
+
 \item{freq}{a logical indicating if data should be transformed into relative frequencies (TRUE); defaults to FALSE.}
 
 \item{NA.method}{a method to replace NA; asis: leave NAs as is; mean: replace by the mean allele frequencies; zero: replace by zero}

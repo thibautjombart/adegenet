@@ -33,8 +33,6 @@
 #' @param x an object of class \code{genind}.
 #' @param pop a factor giving the population of each genotype in 'x'. If note
 #' provided, sought in x@@pop, but if given, the argument prevails on x@@pop.
-#' @param missing can be "NA", "0", or "chi2". See details for more
-#' information.
 #' @param quiet logical stating whether a conversion message must be printed
 #' (TRUE,default) or not (FALSE).
 #' @param process.other a logical indicating whether the \code{@@other} slot
@@ -44,8 +42,7 @@
 #' @return A genpop object. The component @@other in 'x' is passed to the
 #' created genpop object.
 #' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
-#' @seealso \linkS4class{genind}, \linkS4class{genpop},
-#' \code{\link{na.replace}}
+#' @seealso \linkS4class{genind}, \linkS4class{genpop}
 #' @keywords classes manip multivariate
 #' @examples
 #'
@@ -75,7 +72,7 @@
 #'
 #'
 #' @export genind2genpop
-genind2genpop <- function(x,pop=NULL,missing=c("NA","0","chi2"),quiet=FALSE,
+genind2genpop <- function(x,pop=NULL, quiet=FALSE,
                           process.other=FALSE, other.action=mean){
 
   if(!is.genind(x)) stop("x is not a valid genind object")
@@ -85,8 +82,6 @@ genind2genpop <- function(x,pop=NULL,missing=c("NA","0","chi2"),quiet=FALSE,
       if(!quiet) warning("\npop is not provided either in x or in pop - assuming one single group")
       pop <- factor(rep(1, nrow(x@tab)))
   }
-
-  missing <- match.arg(missing)
 
   if(!quiet) cat("\n Converting data from a genind to a genpop object... \n")
 
@@ -138,7 +133,7 @@ genind2genpop <- function(x,pop=NULL,missing=c("NA","0","chi2"),quiet=FALSE,
 
   prevcall <- match.call()
 
-  res <- genpop(tab=tabcount, prevcall=prevcall, ploidy=x@ploidy, type=x@type)
+  res <- genpop(tab=tabcount, prevcall=prevcall, ploidy=x@ploidy[1], type=x@type)
 
   ## handle @other here
   res@other <- x@other
@@ -163,10 +158,6 @@ genind2genpop <- function(x,pop=NULL,missing=c("NA","0","chi2"),quiet=FALSE,
 
       res@other <- lapply(res@other, fOther)
   } # end if(process.other)
-
-  if(missing != "NA"){
-      res <- na.replace(res, method=missing, quiet=quiet)
-  }
 
   if(!quiet) cat("\n...done.\n\n")
 

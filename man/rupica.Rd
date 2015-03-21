@@ -23,7 +23,7 @@ individuals is known. Each genotype is georeferenced. These data also
 contain a raster map of elevation of the sampling area.
 }
 \examples{
-if(require(adehabitat) && require(spdep)){
+if(require(adehabitat)){
 
 data(rupica)
 rupica

@@ -6,8 +6,8 @@
 \usage{
 read.structure(file, n.ind = NULL, n.loc = NULL, onerowperind = NULL,
   col.lab = NULL, col.pop = NULL, col.others = NULL,
-  row.marknames = NULL, NA.char = "-9", pop = NULL, ask = TRUE,
-  quiet = FALSE)
+  row.marknames = NULL, NA.char = "-9", pop = NULL, sep = NULL,
+  ask = TRUE, quiet = FALSE)
 }
 \arguments{
 \item{file}{a character string giving the path to the file to convert, with
@@ -39,6 +39,8 @@ Note that in any case, series of zero (like "000") are interpreted as NA
 too.}
 
 \item{pop}{an optional factor giving the population of each individual.}
+
+\item{sep}{a character string used as separator between alleles.}
 
 \item{ask}{a logical specifying if the function should ask for optional
 informations about the dataset (TRUE, default), or try to be as quiet as
