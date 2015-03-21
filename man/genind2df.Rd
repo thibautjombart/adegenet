@@ -4,7 +4,7 @@
 \alias{genind2df}
 \title{Convert a genind object to a data.frame.}
 \usage{
-genind2df(x, pop = NULL, sep = "", usepop = TRUE)
+genind2df(x, pop = NULL, sep = "", usepop = TRUE, oneColPerAll = FALSE)
 }
 \arguments{
 \item{x}{a \linkS4class{genind} object}
@@ -13,7 +13,10 @@ genind2df(x, pop = NULL, sep = "", usepop = TRUE)
 
 \item{sep}{a character string separating alleles. See details.}
 
-\item{usepop}{a logical stating whether the population (argument \code{pop}
+\item{usepop}{a logical stating whether the population (argument \code{pop}}
+
+\item{oneColPerAll}{a logical stating whether or not alleles should be split
+into columns.
 or \code{x@pop} should be used (TRUE, default) or not (FALSE)).}
 }
 \value{

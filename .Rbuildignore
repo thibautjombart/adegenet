@@ -2,3 +2,5 @@
 ~.o
 tutorials
 ^\.travis\.yml$
+^.*\.Rproj$
+^\.Rproj\.user$
