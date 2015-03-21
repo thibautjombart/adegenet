@@ -72,7 +72,10 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
         rownames(tab) <- ind.names <- .genlab("", nind)
     }
 
-    rownames(hierarchy) <- rownames(tab)
+    if (!is.null(hierarchy)){
+      rownames(hierarchy) <- rownames(tab)      
+    }
+
 
     if(type=="codom"){
         ## loc.nall

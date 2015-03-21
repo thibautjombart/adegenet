@@ -32,7 +32,7 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
     tab <- x@tab
 
     old.other <- other(x)
-    hier <- gethierarchy(x)
+    hier <- x@hierarchy
 
     ## handle loc argument
     if(!is.null(loc)){
@@ -195,7 +195,7 @@ setMethod ("show", "genind", function(object){
   cat("\n\nOptional contents: ")
   cat("\n@hierarchy: ")
   if (is.null(x@hierarchy)){
-    "- empty -"
+    cat("- empty -")
   } else {
     levs <- names(x@hierarchy)
     if (length(levs) > 6){
