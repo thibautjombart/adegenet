@@ -32,6 +32,7 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
     tab <- x@tab
 
     old.other <- other(x)
+    hier <- gethierarchy(x)
 
     ## handle loc argument
     if(!is.null(loc)){
@@ -52,8 +53,9 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
         toKeep <- (allNb > 1e-10)
         tab <- tab[,toKeep, drop=FALSE]
     }
-
-    res <- genind(tab,pop=pop,prevcall=prevcall, ploidy=x@ploidy[i], type=x@type)
+    
+    res <- genind(tab, pop=pop, prevcall=prevcall, ploidy=x@ploidy[i], type=x@type, 
+                  hierarchy = hier[i, , drop = FALSE])
 
     ## handle 'other' slot
     nOther <- length(x@other)
@@ -191,9 +193,20 @@ setMethod ("show", "genind", function(object){
   cat("\n@type: ",x@type)
 
   cat("\n\nOptional contents: ")
+  cat("\n@hierarchy: ")
+  if (is.null(x@hierarchy)){
+    "- empty -"
+  } else {
+    levs <- names(x@hierarchy)
+    if (length(levs) > 6){
+      levs <- paste(head(levs), "...", collapse = ", ", sep = ", ")
+    } else {
+      levs <- paste(levs, collapse = ", ")
+    }
+    cat("a data frame with", length(x@hierarchy), "columns (", levs, ")")
+  }
   cat("\n@pop: ", ifelse(is.null(x@pop), "- empty -", "factor giving the population of each individual"))
-  cat("\n@pop.names: ", ifelse(is.null(x@pop.names), "- empty -", "factor giving the population of each individual"))
-
+  cat("\n@pop.names: ", ifelse(is.null(x@pop.names), "- empty -", "character giving the name of each population"))
   cat("\n\n@other: ")
   if(!is.null(x@other)){
     cat("a list containing: ")

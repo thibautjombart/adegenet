@@ -9,7 +9,7 @@
 \title{genind constructor}
 \usage{
 \S4method{initialize}{genind}(.Object, tab, pop = NULL, prevcall = NULL,
-  ploidy = 2L, type = c("codom", "PA"), ...)
+  ploidy = 2L, type = c("codom", "PA"), hierarchy = NULL, ...)
 
 genind(...)
 
@@ -27,6 +27,8 @@ as.genind(...)
 \item{ploidy}{an integer vector indicating the ploidy of the individual; each individual can have a different value; if only one value is provided, it is recycled to generate a vector of the right length.}
 
 \item{type}{a character string indicating the type of marker: codominant ("codom") or presence/absence ("PA")}
+
+\item{hierarchy}{a data frame containing population hierarchies or stratifications in columns. This must be the same length as the number of individuals in the data set.}
 
 \item{...}{further arguments passed to other methods (currently not used)}
 }

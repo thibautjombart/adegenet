@@ -555,7 +555,24 @@ setMethod("nLoc","genpop", function(x,...){
 })
 
 
+# #######
+# # nPop
+# #######
+# setGeneric("nPop", function(x,...){
+#     standardGeneric("nPop")
+# })
 
+
+
+# setMethod("nPop","genind", function(x,...){
+#     return(length(x@pop.names))
+# })
+
+
+
+# setMethod("nPop","genpop", function(x,...){
+#     return(length(x@pop.names))
+# })
 
 
 #######
@@ -704,7 +721,28 @@ setReplaceMethod("indNames","genind",function(x,value) {
     return(x)
 })
 
+# setGeneric("popNames", function(x,...){
+#   standardGeneric("popNames")
+# })
 
+# setGeneric("popNames<-", function(x, value){
+#   standardGeneric("popNames<-")
+# })
+
+# setMethod("popNames","genind", function(x, ...){
+#   return(levels(pop(x)))
+# })
+
+
+# setReplaceMethod("popNames","genind",function(x, value) {
+#   value <- as.character(value)
+#   if(length(value) != length(levels(pop(x)))){
+#     stop("Vector length does no match number of individuals")
+#   }
+#   slot(x, "pop.names", check=TRUE) <- value
+#   levels(pop(x)) <- value
+#   return(x)
+# })
 
 
 

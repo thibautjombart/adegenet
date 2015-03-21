@@ -41,6 +41,7 @@ setClassUnion("charOrNULL", c("character","NULL"))
 setClassUnion("callOrNULL", c("call","NULL"))
 setClassUnion("intOrNum", c("integer","numeric","NULL"))
 setClassUnion("intOrNULL", c("integer","NULL"))
+setClassUnion("dfOrNULL", c("data.frame", "NULL"))
 
 
 ####################
@@ -169,6 +170,22 @@ setClass("indInfo", representation(ind.names = "character",
 
     } # end check pop
 
+    # Check population hierarchy
+    if (!is.null(object@hierarchy)){
+      if (nrow(object@hierarchy) != nrow(object@tab)){
+        cat("\na hierarchy is defined has invalid length\n")
+        return(FALSE)
+      }
+
+      dups <- duplicated(colnames(object@hierarchy))
+      if (any(dups)){
+        cat("\nduplicated names found in @hierarchy slot:\n")
+        dups <- colnames(object@hierarchy)[dups]
+        cat(paste0(dups, collapse = ", "))
+        return(FALSE)
+      }
+    }
+
     ## check ploidy
     if(any(object@ploidy < 1L)){
         cat("\nploidy inferior to 1\n")
@@ -188,7 +205,8 @@ setClass("indInfo", representation(ind.names = "character",
     return(TRUE)
 } #end .genind.valid
 
-setClass("genind", contains=c("gen", "indInfo"))
+setClass("genind", contains=c("gen", "indInfo"), 
+          representation = representation(hierarchy = "dfOrNULL"))
 setValidity("genind", .genind.valid)
 
 
