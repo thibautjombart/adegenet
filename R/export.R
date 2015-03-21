@@ -133,6 +133,9 @@ genind2hierfstat <- function(x,pop=NULL){
 #' @param sep a character string separating alleles. See details.
 #' @param usepop a logical stating whether the population (argument \code{pop}
 #' or \code{x@@pop} should be used (TRUE, default) or not (FALSE)).
+#' @param oneColPerAll a logical stating whether or not alleles should be split
+#' into columns (defaults to \code{FALSE}). This will only work with data with
+#' consistent ploidies.
 #'
 #' @return a data.frame of raw allelic data, with individuals in rows and loci in column
 #'
@@ -160,7 +163,7 @@ genind2hierfstat <- function(x,pop=NULL){
 #'
 #' @export
 #'
-genind2df <- function(x, pop=NULL, sep="", usepop=TRUE){
+genind2df <- function(x, pop=NULL, sep="", usepop=TRUE, oneColPerAll = FALSE){
 
   if(!is.genind(x)) stop("x is not a valid genind object")
   ## checkType(x)
@@ -181,6 +184,9 @@ genind2df <- function(x, pop=NULL, sep="", usepop=TRUE){
   # make one table by locus from x@tab
   kX <- seploc(x,res.type="matrix")
 
+  if (oneColPerAll & all(x@ploidy == x@ploidy[1])){
+    sep <- "/"
+  }
   ## function to recode a genotype in form "A1[sep]...[sep]Ak" from frequencies
   recod <- function(vec,lab){
       if(any(is.na(vec))) return(NA)
@@ -193,24 +199,28 @@ genind2df <- function(x, pop=NULL, sep="", usepop=TRUE){
   kGen <- lapply(1:length(kX), function(i) apply(kX[[i]],1,recod,x@all.names[[i]]))
   names(kGen) <- x@loc.names
 
-  ## ## if use one column per allele
-  ## if(oneColPerAll){
-  ##     f1 <- function(vec){ # to repeat NA with seperators
-  ##         vec[is.na(vec)] <- paste(rep("NA",x@ploidy), collapse=sep)
-  ##         return(vec)
-  ##     }
-  ##     temp <- lapply(kGen, f1)
-  ##     temp <- lapply(temp, strsplit,sep)
+  ## if use one column per allele
+  if(oneColPerAll){
+    if (all(x@ploidy == x@ploidy[1])){
+      f1 <- function(vec){ # to repeat NA with seperators
+          vec[is.na(vec)] <- paste(rep("NA", x@ploidy[1]), collapse=sep)
+          return(vec)
+      }
+      temp <- lapply(kGen, f1)
+      temp <- lapply(temp, strsplit,sep)
 
-  ##     res <- lapply(temp, function(e) matrix(unlist(e), ncol=x@ploidy, byrow=TRUE))
-  ##     res <- data.frame(res,stringsAsFactors=FALSE)
-  ##     names(res) <- paste(rep(locNames(x),each=x@ploidy), 1:x@ploidy, sep=".")
+      res <- lapply(temp, function(e) matrix(unlist(e), ncol=x@ploidy[1], byrow=TRUE))
+      res <- data.frame(res,stringsAsFactors=FALSE)
+      names(res) <- paste(rep(locNames(x),each=x@ploidy[1]), 1:x@ploidy[1], sep=".")
 
-  ##     ## handle pop here
-  ##     if(!is.null(pop) & usepop) res <- cbind.data.frame(pop,res,stringsAsFactors=FALSE)
+      ## handle pop here
+      if(!is.null(pop) & usepop) res <- cbind.data.frame(pop,res,stringsAsFactors=FALSE)
 
-  ##     return(res) # exit here
-  ## } # end if oneColPerAll
+      return(res) # exit here
+    } else {
+      warning("All ploidies must be equal in order to separate the alleles.\nReturning one column per locus")
+    }
+  } # end if oneColPerAll
 
   ## build the final data.frame
   res <- cbind.data.frame(kGen,stringsAsFactors=FALSE)
