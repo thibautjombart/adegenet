@@ -9,7 +9,6 @@
 #####################
 monmonier <- function(xy, dist, cn, threshold=NULL, bd.length=NULL, nrun=1,
                       skip.local.diff=rep(0,nrun), scanthres=is.null(threshold), allowLoop=TRUE){
-## if(!require(spdep)) stop("The package spdep is required but not installed")
 if(!inherits(cn,"nb")) stop('cn is not a nb object')
 if(is.data.frame(xy)) xy <- as.matrix(xy)
 if(!is.matrix(xy)) stop('xy must be a matrix')

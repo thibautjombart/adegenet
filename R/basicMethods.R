@@ -327,7 +327,7 @@ setMethod ("summary", signature(object="genind"), function(object, ...){
   ## handle heterozygosity
   if(any(x@ploidy > 1)){
       ## auxiliary function to compute observed heterozygosity
-      temp <- seploc(x,res.type="matrix")
+      temp=lapply(seploc(x),tab, freq=TRUE)
       f1 <- function(tab){
           H <- apply(tab, 1, function(vec) any(vec > 0 & vec < 1))
           H <- mean(H,na.rm=TRUE)

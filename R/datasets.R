@@ -514,7 +514,7 @@ NULL
 #' @keywords datasets
 #' @examples
 #'
-#' if(require(adehabitat) && require(spdep)){
+#' if(require(adehabitat)){
 #'
 #' data(rupica)
 #' rupica
@@ -655,8 +655,6 @@ NULL
 #' @keywords datasets spatial
 #' @examples
 #'
-#' if(require(spdep)){
-#'
 #' data(spcaIllus)
 #' attach(spcaIllus)
 #' opar <- par(no.readonly=TRUE)
@@ -739,7 +737,7 @@ NULL
 #'
 #' # detach data
 #' detach(spcaIllus)
-#' }
+#'
 #'
 NULL
 

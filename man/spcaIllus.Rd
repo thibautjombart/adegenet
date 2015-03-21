@@ -25,8 +25,6 @@ dat4: patches and local alternance \cr
 See "source" for a reference providing simulation details.
 }
 \examples{
-if(require(spdep)){
-
 data(spcaIllus)
 attach(spcaIllus)
 opar <- par(no.readonly=TRUE)
@@ -109,7 +107,6 @@ text(spca4$xy[,1], spca4$xy[,2], dat4$other$sup.pop)
 
 # detach data
 detach(spcaIllus)
-}
 }
 \author{
 Thibaut Jombart \email{t.jombart@imperial.ac.uk}

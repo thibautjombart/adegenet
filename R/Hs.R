@@ -14,7 +14,7 @@ Hs <- function(x, truenames=TRUE) {
     ## MAIN COMPUTATIONS
     x.byloc <- seploc(x)
 
-    lX <- lapply(x.byloc, function(e) makefreq(e, quiet=TRUE, truenames=truenames)$tab)
+    lX <- lapply(x.byloc, function(e) makefreq(e, quiet=TRUE))
     lres <- lapply(lX, function(X) 1- apply(X^2,1,sum))
     res <- apply(as.matrix(data.frame(lres)),1,mean)
 
