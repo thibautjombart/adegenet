@@ -143,15 +143,15 @@
 #==============================================================================#
 
 #==============================================================================#
-#' Access and manipulate the population hierarchy for genind objects.
+#' Access and manipulate the population hierarchy for genind or genlight objects.
 #' 
 #' The following methods allow the user to quickly change the hierarchy or
-#' population of a genind object. 
+#' population of a genind or genlight object. 
 #' 
 #' @export 
 #' @rdname hierarchy-methods
-#' @aliases gethierarchy,genind-method
-#' @param x a genind object
+#' @aliases gethierarchy,genind-method gethierarchy,genlight-method
+#' @param x a genind or genlight object
 #' @param formula a nested formula indicating the order of the population
 #' hierarchy.
 #' @param combine if \code{TRUE}, the levels will be combined according to the
@@ -175,7 +175,7 @@ setMethod(
 #==============================================================================#
 #' @export
 #' @rdname hierarchy-methods
-#' @aliases sethierarchy<-,genind-method
+#' @aliases sethierarchy<-,genind-method sethierarchy<-,genlight-method
 #' @param value a data frame OR vector OR formula (see details).
 #' @docType methods
 #'   
@@ -267,10 +267,17 @@ setMethod(
     .setHier(x, value)
   })
 
+setMethod(
+  f = "sethierarchy",
+  signature(x = "genlight"),
+  definition = function(x, value){
+    .setHier(x, value)
+  })
+
 #==============================================================================#
 #' @export 
 #' @rdname hierarchy-methods
-#' @aliases sethierarchy,genind-method
+#' @aliases sethierarchy,genind-method sethierarchy,genlight-method
 #' @docType methods
 #==============================================================================#
 "sethierarchy<-" <- function(x, value){
@@ -287,10 +294,17 @@ setMethod(
     return(sethierarchy(x, value))
   })
 
+setMethod(
+  f = "sethierarchy<-",
+  signature(x = "genlight"),
+  definition = function(x, value){
+    return(sethierarchy(x, value))
+  })
+
 #==============================================================================#
 #' @export 
 #' @rdname hierarchy-methods
-#' @aliases namehierarchy,genind-method
+#' @aliases namehierarchy,genind-method namehierarchy,genlight-method
 #' @docType methods
 #==============================================================================#
 namehierarchy <- function(x, value){
@@ -307,10 +321,17 @@ setMethod(
     .nameHier(x, value)
   })
 
+setMethod(
+  f = "namehierarchy",
+  signature(x = "genlight"),
+  definition = function(x, value){
+    .nameHier(x, value)
+  })
+
 #==============================================================================#
 #' @export 
 #' @rdname hierarchy-methods
-#' @aliases namehierarchy<-,genind-method
+#' @aliases namehierarchy<-,genind-method namehierarchy<-,genlight-method
 #' @docType methods
 #==============================================================================#
 "namehierarchy<-" <- function(x, value){
@@ -327,10 +348,16 @@ setMethod(
     return(namehierarchy(x, value))
   })
 
+setMethod(
+  f = "namehierarchy<-",
+  signature(x = "genlight"),
+  definition = function(x, value){
+    return(namehierarchy(x, value))
+  })
 #==============================================================================#
 #' @export 
 #' @rdname hierarchy-methods
-#' @aliases splithierarchy,genind-method
+#' @aliases splithierarchy,genind-method splithierarchy,genlight-method
 #' @docType methods
 #' @param sep a \code{character} indicating the character used to separate
 #' hierarchical levels. This defaults to "_".
@@ -350,10 +377,17 @@ setMethod(
     .splitHier(x, value, sep = sep) 
   })
 
+setMethod(
+  f = "splithierarchy",
+  signature(x = "genlight"),
+  definition = function(x, value, sep = "_"){
+    .splitHier(x, value, sep = sep) 
+  })
+
 #==============================================================================#
 #' @export 
 #' @rdname hierarchy-methods
-#' @aliases splithierarchy<-,genind-method
+#' @aliases splithierarchy<-,genind-method splithierarchy<-,genlight-method
 #' @docType methods
 #==============================================================================#
 "splithierarchy<-" <- function(x, sep = "_", value){
@@ -370,10 +404,17 @@ setMethod(
     return(splithierarchy(x, value, sep))
   })
 
+setMethod(
+  f = "splithierarchy<-",
+  signature(x = "genlight"),
+  definition = function(x, sep = "_", value){
+    return(splithierarchy(x, value, sep))
+  })
+
 #==============================================================================#
 #' @export 
 #' @rdname hierarchy-methods
-#' @aliases addhierarchy,genind-method
+#' @aliases addhierarchy,genind-method addhierarchy,genlight-method
 #' @param name an optional name argument for use with addhierarchy if supplying
 #'   a vector. Defaults to "NEW".
 #' @docType methods
@@ -392,10 +433,17 @@ setMethod(
     .addHier(x, value, name = name)
   })
 
+setMethod(
+  f = "addhierarchy",
+  signature(x = "genlight"),
+  definition = function(x, value, name = "NEW"){
+    .addHier(x, value, name = name)
+  })
+
 #==============================================================================#
 #' @export 
 #' @rdname hierarchy-methods
-#' @aliases addhierarchy<-,genind-method
+#' @aliases addhierarchy<-,genind-method addhierarchy<-,genlight-method
 #' @docType methods
 #==============================================================================#
 "addhierarchy<-" <- function(x, name = "NEW", value){
@@ -412,6 +460,12 @@ setMethod(
     return(addhierarchy(x, value, name))
   })
 
+setMethod(
+  f = "addhierarchy<-",
+  signature(x = "genlight"),
+  definition = function(x, name = "NEW", value){
+    return(addhierarchy(x, value, name))
+  })
 
 #==============================================================================#
 #' Manipulate the population factor of genind objects.
@@ -421,11 +475,11 @@ setMethod(
 #' 
 #' @export 
 #' @rdname population-methods
-#' @param x a genind object
+#' @param x a genind or genlight object
 #' @param formula a nested formula indicating the order of the population
 #' hierarchy.
 #' @param value same as formula
-#' @aliases setpop,genind-method
+#' @aliases setpop,genind-method setpop,genlight-method
 #' @docType methods 
 #' @author Zhian N. Kamvar
 #' @examples
@@ -460,10 +514,16 @@ setMethod(
     .setPop(x, formula = formula)
   })
 
+setMethod(
+  f = "setpop",
+  signature(x = "genlight"),
+  definition = function(x, formula = NULL){
+    .setPop(x, formula = formula)
+  })
 #==============================================================================#
 #' @export
 #' @rdname population-methods
-#' @aliases setpop<-,genind-method
+#' @aliases setpop<-,genind-method setpop<-,genlight-method
 #' @docType methods
 #==============================================================================#
 "setpop<-" <- function(x, value) standardGeneric("setpop<-")
@@ -478,6 +538,12 @@ setMethod(
     return(setpop(x, value))
   })
 
+setMethod(
+  f = "setpop<-",
+  signature(x = "genlight"),
+  definition = function(x, value){
+    return(setpop(x, value))
+  })
 
 #==============================================================================#
 #==============================================================================#

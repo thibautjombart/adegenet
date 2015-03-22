@@ -4,23 +4,32 @@
 \name{gethierarchy}
 \alias{addhierarchy}
 \alias{addhierarchy,genind-method}
+\alias{addhierarchy,genlight-method}
 \alias{addhierarchy<-}
 \alias{addhierarchy<-,genind-method}
+\alias{addhierarchy<-,genlight-method}
 \alias{gethierarchy}
 \alias{gethierarchy,genind-method}
+\alias{gethierarchy,genlight-method}
 \alias{namehierarchy}
 \alias{namehierarchy,genind-method}
+\alias{namehierarchy,genlight-method}
 \alias{namehierarchy<-}
 \alias{namehierarchy<-,genind-method}
+\alias{namehierarchy<-,genlight-method}
 \alias{sethierarchy}
 \alias{sethierarchy,genind-method}
+\alias{sethierarchy,genlight-method}
 \alias{sethierarchy<-}
 \alias{sethierarchy<-,genind-method}
+\alias{sethierarchy<-,genlight-method}
 \alias{splithierarchy}
 \alias{splithierarchy,genind-method}
+\alias{splithierarchy,genlight-method}
 \alias{splithierarchy<-}
 \alias{splithierarchy<-,genind-method}
-\title{Access and manipulate the population hierarchy for genind objects.}
+\alias{splithierarchy<-,genlight-method}
+\title{Access and manipulate the population hierarchy for genind or genlight objects.}
 \usage{
 gethierarchy(x, formula = NULL, combine = TRUE)
 
@@ -41,7 +50,7 @@ addhierarchy(x, value, name = "NEW")
 addhierarchy(x, name = "NEW") <- value
 }
 \arguments{
-\item{x}{a genind object}
+\item{x}{a genind or genlight object}
 
 \item{formula}{a nested formula indicating the order of the population
 hierarchy.}
@@ -59,7 +68,7 @@ a vector. Defaults to "NEW".}
 }
 \description{
 The following methods allow the user to quickly change the hierarchy or
-population of a genind object.
+population of a genind or genlight object.
 }
 \details{
 \subsection{Function Specifics}{ \itemize{ \item

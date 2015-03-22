@@ -31,9 +31,10 @@ setClass("genlight", representation(gen = "list",
                                     position = "intOrNULL",
                                     ploidy = "intOrNULL",
                                     pop = "factorOrNULL",
+                                    hierarchy = "dfOrNULL",
                                     other = "list"),
          prototype(gen = list(), n.loc = 0L, ind.names = NULL, loc.names = NULL, loc.all = NULL,
-                   chromosome = NULL, position = NULL, ploidy=NULL, pop=NULL, other=list()))
+                   chromosome = NULL, position = NULL, hierarchy = NULL, ploidy=NULL, pop=NULL, other=list()))
 
 
 
@@ -421,6 +422,25 @@ setMethod("initialize", "genlight", function(.Object, ..., parallel=require("par
             }
         }
 
+        ## HANDLE INPUT$HIERARCHY ##
+        if(!is.null(input$hierarchy)){
+            ## check length consistency
+            if(nrow(input$hierarchy) != nInd(x)){
+                warning("Inconsistent length for hierarchy - ignoring this argument.")
+                if(is.null(input$other)) {
+                    input$other <- list(hierarchy.wrong.length=input$hierarchy)
+                } else {
+                    input$other$hierarchy.wrong.length <- input$hierarchy
+                }
+            } else {
+              # Make sure that the hierarchies are factors.
+              x@hierarchy <- data.frame(lapply(input$hierarchy, function(f) factor(f, unique(f))))
+              if(!is.null(x@ind.names)){
+                rownames(x@hierarchy) <- x@ind.names
+              }
+            }
+        }
+
 
     } # end if non-empty @gen
 
@@ -491,6 +511,16 @@ setMethod ("show", "genlight", function(object){
 
     if(!is.null(pop(object))){
         cat("\n @pop: individual membership for", length(levels(pop(object))), "populations")
+    }
+
+    if(!is.null(object@hierarchy)){
+        levs <- names(object@hierarchy)
+        if (length(levs) > 6){
+          levs <- paste(head(levs), "...", collapse = ", ", sep = ", ")
+        } else {
+          levs <- paste(levs, collapse = ", ")
+        }
+        cat("\n @hierarchy: ", length(object@hierarchy), "levels (", levs, ")")
     }
 
     if(!is.null(chr(object))){

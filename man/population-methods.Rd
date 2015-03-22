@@ -4,8 +4,10 @@
 \name{setpop}
 \alias{setpop}
 \alias{setpop,genind-method}
+\alias{setpop,genlight-method}
 \alias{setpop<-}
 \alias{setpop<-,genind-method}
+\alias{setpop<-,genlight-method}
 \title{Manipulate the population factor of genind objects.}
 \usage{
 setpop(x, formula = NULL)
@@ -13,7 +15,7 @@ setpop(x, formula = NULL)
 setpop(x) <- value
 }
 \arguments{
-\item{x}{a genind object}
+\item{x}{a genind or genlight object}
 
 \item{formula}{a nested formula indicating the order of the population
 hierarchy.}

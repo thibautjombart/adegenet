@@ -122,6 +122,7 @@
       position of the SNPs.}
     \item{\code{ploidy}:}{a vector of integers indicating the ploidy of each individual.}
     \item{\code{pop}:}{a factor indicating the population of each individual.}
+    \item{\code{hierarchy}:}{a data frame containing different levels of population definition. (For methods, see \code{\link{addhierarchy}} and \code{\link{setpop}})}
     \item{\code{other}:}{a list containing other miscellaneous information.}
   }
 }
