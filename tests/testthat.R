@@ -1,4 +1,3 @@
 library(testthat)
-library(adegenet)
-
+suppressPackageStartupMessages(library(adegenet))
 test_check("adegenet")
