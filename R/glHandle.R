@@ -41,6 +41,12 @@ setMethod("[", signature(x="genlight", i="ANY", j="ANY", drop="ANY"), function(x
     } else {
         ori.pop <- NULL
     }
+    ## hierarchy
+    if(!is.null(x@hierarchy)) {
+        ori.hierarchy <- x@hierarchy <- x@hierarchy[i, , drop = FALSE]
+    } else {
+        ori.hierarchy <- NULL
+    }
 
 
     ## HANDLE 'OTHER' SLOT ##
@@ -80,7 +86,7 @@ setMethod("[", signature(x="genlight", i="ANY", j="ANY", drop="ANY"), function(x
         new.gen <- lapply(x@gen, function(e) e[j])
         ##x <- as.matrix(x)[, j, drop=FALSE] # maybe need to process one row at a time
         x <- new("genlight", gen=new.gen, pop=ori.pop, ploidy=ori.ploidy,
-                 ind.names=old.ind.names, loc.names=new.loc.names,
+                 ind.names=old.ind.names, loc.names=new.loc.names, hierarchy = ori.hierarchy,
                  chromosome=new.chr, position=new.position, alleles=new.alleles, other=old.other, parallel=FALSE,...)
     }
 
@@ -175,6 +181,7 @@ cbind.genlight <- function(...){
     locNames(res) <- unlist(lapply(myList, locNames))
     alleles(res) <- unlist(lapply(myList, alleles))
     pop(res) <- pop(myList[[1]])
+    res@hierarchy <- myList[[1]]@hierarchy
     ploidy(res) <- ori.ploidy
 
     ## return object ##
@@ -210,7 +217,7 @@ rbind.genlight <- function(...){
     alleles(res) <- alleles(myList[[1]])
     indNames(res) <- unlist(lapply(myList, indNames))
     pop(res) <- factor(unlist(lapply(myList, pop)))
-
+    # TODO: hierarchies
     ## return object ##
     return(res)
 
