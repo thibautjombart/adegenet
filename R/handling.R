@@ -63,10 +63,7 @@ setMethod("truenames",signature(x="genpop"), function(x){
 #'
 setGeneric("tab", function(x, ...) standardGeneric("tab"))
 
-#' @rdname tab
-#' @aliases tab,genind-methods
-#' @aliases tab.genind
-setMethod("tab", signature(x="genind"), function(x, freq=FALSE, NA.method=c("asis","mean","zero"), ...){
+.tabGetter <- function(x, freq=FALSE, NA.method=c("asis","mean","zero"), ...){
     ## handle arguments
     NA.method <- match.arg(NA.method)
 
@@ -89,37 +86,25 @@ setMethod("tab", signature(x="genind"), function(x, freq=FALSE, NA.method=c("asi
 
     ## return output
     return(out)
-})
+}
+
+#' @rdname tab
+#' @aliases tab,genind-methods
+#' @aliases tab.genind
+setMethod("tab", signature(x = "genind"), 
+          function (x, freq = FALSE, NA.method = c("asis","mean","zero"), ...){
+            .tabGetter(x, freq = freq, NA.method = NA.method, ...)
+          })
 
 
 
 #' @rdname tab
 #' @aliases tab,genpop-methods
 #' @aliases tab.genpop
-setMethod("tab", signature(x="genpop"), function(x, freq=FALSE, NA.method=c("asis","mean","zero"), ...){
- ## handle arguments
-    NA.method <- match.arg(NA.method)
-
-    ## get matrix of data
-    if(freq) out <- makefreq(x, missing=NA, quiet=TRUE) else out <- x@tab
-
-    ## replace NAs if needed
-    if(NA.method=="mean"){
-        f1 <- function(vec){
-            m <- mean(vec,na.rm=TRUE)
-            vec[is.na(vec)] <- m
-            return(vec)
-        }
-
-        out <- apply(out, 2, f1)
-    }
-    if(NA.method=="zero"){
-        out[is.na(out)] <- ifelse(freq, 0, 0L)
-    }
-
-    ## return output
-    return(out)
-})
+setMethod("tab", signature(x = "genpop"), 
+          function (x, freq = FALSE, NA.method = c("asis","mean","zero"), ...){
+            .tabGetter(x, freq = freq, NA.method = NA.method, ...)
+          })
 
 
 
