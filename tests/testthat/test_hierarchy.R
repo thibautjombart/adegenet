@@ -25,7 +25,7 @@ test_that("Hierarchy methods work for genlight objects", {
   michier <- data.frame(other(microbov))
   make_gl <- function(n = 10, hier = michier){
     objs <- lapply(seq(n), function(x) sample(c(0, 1, NA), 10, replace = TRUE, prob = c(0.49, 0.49, 0.01)))
-    return(new("genlight", objs, hierarchy = hier[sample(704, 10), sample(3, 2)]))
+    return(new("genlight", objs, hierarchy = hier[sample(704, 10), sample(3, 2)], parallel = FALSE))
   }
   set.seed(9999)
   glTest <- lapply(1:10, function(x, y, z) make_gl(y, z), 10, michier)

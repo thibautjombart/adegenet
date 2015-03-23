@@ -1,8 +1,9 @@
 context("Genlight construction")
 
 test_that("Genlight objects can be created predictably", {
-  expect_warning(a <- new("genlight", list(c(1,0,1), c(0,0,1,0)) ))
-  expect_warning(b <- new("genlight", list(c(1,0,1,1,1,1), c(1,0)) ))
+  skip_on_cran()
+  expect_warning(a <- new("genlight", list(c(1,0,1), c(0,0,1,0)), parallel = FALSE ))
+  expect_warning(b <- new("genlight", list(c(1,0,1,1,1,1), c(1,0)), parallel = FALSE ))
   locNames(a) <- letters[1:4]
   locNames(b) <- 1:6
   c <- cbind(a, b)
@@ -14,7 +15,8 @@ test_that("Genlight objects can be created predictably", {
 
 
 test_that("subsetting with/without @other works", {
-  x <- new("genlight", list(a=1,b=0,c=1), other=list(1:3, letters, data.frame(2:4)))
+  skip_on_cran()
+  x <- new("genlight", list(a=1,b=0,c=1), other=list(1:3, letters, data.frame(2:4)), parallel = FALSE)
   pop(x) <- c("pop1","pop1", "pop2")
   expect_that(x[1:2, ]@other[[1]], equals(1:2))
   expect_that(x[1:2, ]@other[[2]], equals(letters))
