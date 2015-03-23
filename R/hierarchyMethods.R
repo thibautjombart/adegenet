@@ -172,6 +172,13 @@ setMethod(
     .getHier(x, formula = formula, combine = combine)
   })
 
+setMethod(
+  f = "gethierarchy",
+  signature(x = "genlight"),
+  definition = function(x, formula = NULL, combine = TRUE){
+    .getHier(x, formula = formula, combine = combine)
+  })
+
 #==============================================================================#
 #' @export
 #' @rdname hierarchy-methods
