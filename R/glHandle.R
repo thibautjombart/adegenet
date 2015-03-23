@@ -221,30 +221,31 @@ rbind.genlight <- function(...){
 
     # Hierarchies are tricky. Using dplyr's bind_rows. 
 
-    hierlist <- lapply(myList, slot, "hierarchy")
-    nullhier <- vapply(hierlist, is.null, TRUE)
-    if (!all(nullhier)){
-        # NULL hierarchies must be converted to data frames.
-        # Solution: take the first non-empty hierarchy, and create a new one 
-        # with one variable.
-        if (any(nullhier)){
+    # hierlist <- lapply(myList, slot, "hierarchy")
+    # nullhier <- vapply(hierlist, is.null, TRUE)
+    # if (!all(nullhier)){
+    #     # NULL hierarchies must be converted to data frames.
+    #     # Solution: take the first non-empty hierarchy, and create a new one 
+    #     # with one variable.
+    #     if (any(nullhier)){
 
-            # Extract the name of the first column of the first full hierarchy
-            fullname <- names(hierlist[[which(!nullhier)[1]]])[1]
+    #         # Extract the name of the first column of the first full hierarchy
+    #         fullname <- names(hierlist[[which(!nullhier)[1]]])[1]
             
-            # loop over all the empty hierarchies and replace them with a data
-            # frame that has the same number of elements as the samples in that
-            # genlight object.
-            for (i in which(nullhier)){
-                replacehier        <- data.frame(rep(NA, nInd(myList[[i]])))
-                names(replacehier) <- fullname
-                hierlist[[i]]      <- replacehier
-            }
-        }
-        sethierarchy(res) <- as.data.frame(suppressWarnings(bind_rows(hierlist)))        
-    } else {
-        res@hierarchy <- NULL
-    }
+    #         # loop over all the empty hierarchies and replace them with a data
+    #         # frame that has the same number of elements as the samples in that
+    #         # genlight object.
+    #         for (i in which(nullhier)){
+    #             replacehier        <- data.frame(rep(NA, nInd(myList[[i]])))
+    #             names(replacehier) <- fullname
+    #             hierlist[[i]]      <- replacehier
+    #         }
+    #     }
+    #     sethierarchy(res) <- as.data.frame(suppressWarnings(bind_rows(hierlist)))        
+    # } else {
+    #     res@hierarchy <- NULL
+    # }
+    res <- .rbind_hierarchies(myList, res)
 
     ## return object ##
     return(res)
