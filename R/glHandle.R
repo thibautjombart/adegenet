@@ -198,6 +198,7 @@ cbind.genlight <- function(...){
 ## rbind genlight
 ##################
 ##setMethod("cbind", signature(x="genlight"), function(..., deparse.level = 1) {
+#' @importFrom dplyr bind_rows
 rbind.genlight <- function(...){
     myList <- list(...)
     if(!all(sapply(myList, class)=="genlight")) stop("some objects are not genlight objects")
@@ -214,10 +215,37 @@ rbind.genlight <- function(...){
     ## build output
     res <- new("genlight", Reduce(c, lapply(myList, function(e) e@gen)), ...)
     locNames(res) <- locNames(myList[[1]])
-    alleles(res) <- alleles(myList[[1]])
+    alleles(res)  <- alleles(myList[[1]])
     indNames(res) <- unlist(lapply(myList, indNames))
-    pop(res) <- factor(unlist(lapply(myList, pop)))
-    # TODO: hierarchies
+    pop(res)      <- factor(unlist(lapply(myList, pop)))
+
+    # Hierarchies are tricky. Using dplyr's bind_rows. 
+
+    hierlist <- lapply(myList, slot, "hierarchy")
+    nullhier <- vapply(hierlist, is.null, TRUE)
+    if (!all(nullhier)){
+        # NULL hierarchies must be converted to data frames.
+        # Solution: take the first non-empty hierarchy, and create a new one 
+        # with one variable.
+        if (any(nullhier)){
+
+            # Extract the name of the first column of the first full hierarchy
+            fullname <- names(hierlist[[which(!nullhier)[1]]])[1]
+            
+            # loop over all the empty hierarchies and replace them with a data
+            # frame that has the same number of elements as the samples in that
+            # genlight object.
+            for (i in which(nullhier)){
+                replacehier        <- data.frame(rep(NA, nInd(myList[[i]])))
+                names(replacehier) <- fullname
+                hierlist[[i]]      <- replacehier
+            }
+        }
+        sethierarchy(res) <- as.data.frame(suppressWarnings(bind_rows(hierlist)))        
+    } else {
+        res@hierarchy <- NULL
+    }
+
     ## return object ##
     return(res)
 
@@ -294,17 +322,17 @@ setMethod("seploc", signature(x="genlight"), function(x, n.block=NULL, block.siz
 
     if(parallel){
         if(random){
-            res <- mclapply(levels(fac.block), function(lev) x[,sample(which(fac.block==lev))],
+            res <- mclapply(levels(fac.block), function(lev) x[, sample(which(fac.block==lev))],
                         mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE)
         } else {
-            res <- mclapply(levels(fac.block), function(lev) x[,which(fac.block==lev)],
+            res <- mclapply(levels(fac.block), function(lev) x[, which(fac.block==lev)],
                         mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE)
         }
     } else {
          if(random){
-             res <- lapply(levels(fac.block), function(lev) x[,sample(which(fac.block==lev))])
+             res <- lapply(levels(fac.block), function(lev) x[, sample(which(fac.block==lev))])
          } else {
-             res <- lapply(levels(fac.block), function(lev) x[,which(fac.block==lev)])
+             res <- lapply(levels(fac.block), function(lev) x[, which(fac.block==lev)])
          }
     }
 
