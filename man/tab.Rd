@@ -33,7 +33,8 @@ a matrix of integers or numeric
 This accessor is used to retrieve a matrix of allele data.
 By default, a matrix of integers representing allele counts is returned.
 If \code{freq} is TRUE, then data are standardised as frequencies, so that for any individual and any locus the data sum to 1.
-This accessor replaces the previous function \code{truenames}.
+The argument \code{NA.method} allows to replace missing data (NAs).
+This accessor replaces the previous function \code{truenames} as well as the function \code{makefreq}.
 }
 \examples{
 data(microbov)

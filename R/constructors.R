@@ -84,7 +84,7 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
         names(loc.nall) <- loc.names
 
         ## loc.fac
-        loc.fac <- rep(loc.names,loc.nall)
+        loc.fac <- factor(rep(loc.names,loc.nall),levels=loc.names)
 
         ## alleles name
         temp <- colnames(tab)
@@ -92,7 +92,6 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
         temp <- .rmspaces(temp)
         all.names <- split(temp,loc.fac)
         all.names <- all.names[loc.names]
-        loc.fac <- as.factor(loc.fac)
 
     } else { # end if type=="codom" <=> if type=="PA"
         loc.fac <- NULL

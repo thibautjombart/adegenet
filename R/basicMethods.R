@@ -477,3 +477,8 @@ is.genpop <- function(x){
   return(res)
 }
 
+
+
+.hasUniquePloidy <- function(x){
+    return(length(unique(x@ploidy))==1)
+}

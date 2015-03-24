@@ -38,7 +38,8 @@ setMethod("truenames",signature(x="genpop"), function(x){
 #' This accessor is used to retrieve a matrix of allele data.
 #' By default, a matrix of integers representing allele counts is returned.
 #' If \code{freq} is TRUE, then data are standardised as frequencies, so that for any individual and any locus the data sum to 1.
-#' This accessor replaces the previous function \code{truenames}.
+#' The argument \code{NA.method} allows to replace missing data (NAs).
+#' This accessor replaces the previous function \code{truenames} as well as the function \code{makefreq}.
 #'
 #' @export
 #'
@@ -68,7 +69,11 @@ setGeneric("tab", function(x, ...) standardGeneric("tab"))
     NA.method <- match.arg(NA.method)
 
     ## get matrix of data
-    if(freq) out <- makefreq(x, missing=NA, quiet=TRUE) else out <- x@tab
+    if(!freq){
+        out <- x@tab
+    } else {
+        out <- x@tab/x@ploidy
+    }
 
     ## replace NAs if needed
     if(NA.method=="mean"){
@@ -101,10 +106,46 @@ setMethod("tab", signature(x = "genind"),
 #' @rdname tab
 #' @aliases tab,genpop-methods
 #' @aliases tab.genpop
-setMethod("tab", signature(x = "genpop"), 
-          function (x, freq = FALSE, NA.method = c("asis","mean","zero"), ...){
-            .tabGetter(x, freq = freq, NA.method = NA.method, ...)
-          })
+
+setMethod("tab", signature(x="genpop"), function(x, freq=FALSE, NA.method=c("asis","mean","zero"), ...){
+ ## handle arguments
+    NA.method <- match.arg(NA.method)
+
+    ## get matrix of data
+    if(!freq) {
+        out <- x@tab
+    } else {
+        out <- x@tab
+        f1 <- function(vec) return(vec/sum(vec,na.rm=TRUE))
+        ## compute frequencies
+        out <- apply(x@tab, 1, tapply, x@loc.fac,f1)
+        ## reshape into matrix
+        col.names <- do.call(c,lapply(out[[1]],names))
+        row.names <- names(out)
+        out <- matrix(unlist(out), byrow=TRUE, nrow=nrow(x@tab),
+                      dimnames=list(row.names, col.names))
+        ## reorder columns
+        out <- out[,colnames(x@tab)]
+    }
+
+    ## replace NAs if needed
+    if(NA.method=="mean"){
+        f1 <- function(vec){
+            m <- mean(vec,na.rm=TRUE)
+            vec[is.na(vec)] <- m
+            return(vec)
+        }
+
+        out <- apply(out, 2, f1)
+    }
+    if(NA.method=="zero"){
+        out[is.na(out)] <- ifelse(freq, 0, 0L)
+    }
+
+    ## return output
+    return(out)
+})
+
 
 
 
@@ -381,13 +422,15 @@ repool <- function(...){
     if(!all(sapply(x,is.genind))) stop("x is does not contain only valid genind objects")
     temp <- sapply(x,function(e) e$loc.names)
     if(!all(table(temp)==length(x))) stop("markers are not the same for all objects")
-    temp <- unlist(lapply(x,function(e) e$ploidy))
-    if(length(unique(temp)) != as.integer(1)) stop("objects have different levels of ploidy")
+    ## temp <- sapply(x,function(e) e$ploidy)
+    ## if(length(unique(temp)) != as.integer(1)) stop("objects have different levels of ploidy")
 
 
 
     ## extract info
-    listTab <- lapply(x,genind2df,usepop=FALSE)
+    listTab <- lapply(x,genind2df,usepop=FALSE,sep="/")
+    newPloidy <- unlist(lapply(x,ploidy))
+
     getPop <- function(obj){
         if(is.null(obj$pop)) return(factor(rep(NA,nrow(obj$tab))))
         pop <- obj$pop
@@ -409,8 +452,8 @@ repool <- function(...){
     for(i in 2:length(x)){
         tab <- rbind(tab,listTab[[i]])
     }
-
-    res <- df2genind(tab, pop=pop, ploidy=x[[1]]@ploidy, type=x[[1]]@type)
+    
+    res <- df2genind(tab, pop=pop, ploidy=newPloidy, type=x[[1]]@type, sep="/")
     res <- .rbind_hierarchies(x, res)
     res$call <- match.call()
 
