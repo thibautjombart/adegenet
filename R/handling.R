@@ -385,13 +385,15 @@ repool <- function(...){
     if(!all(sapply(x,is.genind))) stop("x is does not contain only valid genind objects")
     temp <- sapply(x,function(e) e$loc.names)
     if(!all(table(temp)==length(x))) stop("markers are not the same for all objects")
-    temp <- sapply(x,function(e) e$ploidy)
-    if(length(unique(temp)) != as.integer(1)) stop("objects have different levels of ploidy")
+    ## temp <- sapply(x,function(e) e$ploidy)
+    ## if(length(unique(temp)) != as.integer(1)) stop("objects have different levels of ploidy")
 
 
 
     ## extract info
     listTab <- lapply(x,genind2df,usepop=FALSE)
+    newPloidy <- unlist(lapply(x,ploidy))
+
     getPop <- function(obj){
         if(is.null(obj$pop)) return(factor(rep(NA,nrow(obj$tab))))
         pop <- obj$pop
@@ -414,7 +416,7 @@ repool <- function(...){
         tab <- rbind(tab,listTab[[i]])
     }
 
-    res <- df2genind(tab, pop=pop, ploidy=x[[1]]@ploidy, type=x[[1]]@type)
+    res <- df2genind(tab, pop=pop, ploidy=newPloidy, type=x[[1]]@type)
     res$call <- match.call()
 
     return(res)
