@@ -38,7 +38,8 @@ setMethod("truenames",signature(x="genpop"), function(x){
 #' This accessor is used to retrieve a matrix of allele data.
 #' By default, a matrix of integers representing allele counts is returned.
 #' If \code{freq} is TRUE, then data are standardised as frequencies, so that for any individual and any locus the data sum to 1.
-#' This accessor replaces the previous function \code{truenames}.
+#' The argument \code{NA.method} allows to replace missing data (NAs).
+#' This accessor replaces the previous function \code{truenames} as well as the function \code{makefreq}.
 #'
 #' @export
 #'
@@ -101,7 +102,21 @@ setMethod("tab", signature(x="genpop"), function(x, freq=FALSE, NA.method=c("asi
     NA.method <- match.arg(NA.method)
 
     ## get matrix of data
-    if(freq) out <- makefreq(x, missing=NA, quiet=TRUE) else out <- x@tab
+    if(!freq) {
+        out <- x@tab
+    } else {
+        out <- x@tab
+        f1 <- function(vec) return(vec/sum(vec,na.rm=TRUE))
+        ## compute frequencies
+        out <- apply(x@tab, 1, tapply, x@loc.fac,f1)
+        ## reshape into matrix
+        col.names <- do.call(c,lapply(out[[1]],names))
+        row.names <- names(out)
+        out <- matrix(unlist(out), byrow=TRUE, nrow=nrow(x@tab),
+                      dimnames=list(row.names, col.names))
+        ## reorder columns
+        out <- out[,colnames(x@tab)]
+    }
 
     ## replace NAs if needed
     if(NA.method=="mean"){

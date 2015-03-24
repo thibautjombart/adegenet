@@ -9,13 +9,15 @@ hybridize <- function(x1, x2, n, pop=NULL,
     ## checks
     if(!is.genind(x1)) stop("x1 is not a valid genind object")
     if(!is.genind(x2)) stop("x2 is not a valid genind object")
-    if(x1@ploidy %% 2 != 0) stop("not implemented for odd levels of ploidy")
-    if(x2@ploidy != x1@ploidy) stop("not implemented for genotypes with different ploidy levels")
+    if(!all(ploidy(x1)==ploidy(x1)[1])) stop("varying ploidy (in x1) is not supported for this function")
+    if(!all(ploidy(x2)==ploidy(x2)[1])) stop("varying ploidy (in x2) is not supported for this function")
+    if(ploidy(x1)[1] %% 2 != 0) stop("not implemented for odd levels of ploidy")
+    if(ploidy(x1)[1] != ploidy(x2)[1]) stop("x1 and x2 have different ploidy")
     checkType(x1)
     checkType(x2)
 
     n <- as.integer(n)
-    ploidy <- ploidy(x1)
+    ploidy <- ploidy(x1)[1]
     res.type <- match.arg(res.type)
     if(!all(locNames(x1)==locNames(x2))) stop("names of markers in x1 and x2 do not correspond")
 
@@ -36,10 +38,10 @@ hybridize <- function(x1, x2, n, pop=NULL,
     #### sampling of gametes
     ## kX1 / kX2 are lists of tables of sampled gametes
     kX1 <- lapply(freq1, function(v) t(rmultinom(n,ploidy/2,v)))
-    names(kX1) <- x1$loc.names
+    names(kX1) <- locNames(x1)
     for(i in 1:k) { colnames(kX1[[i]]) <- alleles(x1)[[i]]}
     kX2 <- lapply(freq2, function(v) t(rmultinom(n,ploidy/2,v)))
-    names(kX2) <- x2$loc.names
+    names(kX2) <- locNames(x2)
     for(i in 1:k) { colnames(kX2[[i]]) <- alleles(x2)[[i]]}
 
     ## construction of zygotes ##
