@@ -5,7 +5,8 @@
 ##
 
 hybridize <- function(x1, x2, n, pop=NULL,
-                      res.type=c("genind","df","STRUCTURE"), file=NULL, quiet=FALSE, sep="/", hyb.label="h"){
+                      res.type=c("genind","df","STRUCTURE"),
+                      file=NULL, quiet=FALSE, sep="/", hyb.label="h"){
     ## checks
     if(!is.genind(x1)) stop("x1 is not a valid genind object")
     if(!is.genind(x2)) stop("x2 is not a valid genind object")
@@ -28,12 +29,14 @@ hybridize <- function(x1, x2, n, pop=NULL,
 
     #### get frequencies for each locus
     y1 <- genind2genpop(x1,pop=factor(rep(1,n1)),quiet=TRUE)
-    freq1 <- makefreq(y1,quiet=TRUE)
-    freq1 <- split(freq1, y1@loc.fac)
+    freq1 <- tab(y1, freq=TRUE) # get frequencies
+    freq1 <- split(freq1, y1@loc.fac) # split by locus
+    freq1 <- freq1[locNames(x1)] # ensure right order
 
     y2 <- genind2genpop(x2,pop=factor(rep(1,n2)),quiet=TRUE)
-    freq2 <- makefreq(y2,quiet=TRUE)
-    freq2 <- split(freq2, y2@loc.fac)
+    freq2 <- tab(y2, freq=TRUE) # get frequencies
+    freq2 <- split(freq2, y2@loc.fac) # split by locus
+    freq2 <- freq1[locNames(x2)] # ensure right order
 
     #### sampling of gametes
     ## kX1 / kX2 are lists of tables of sampled gametes
@@ -58,7 +61,7 @@ hybridize <- function(x1, x2, n, pop=NULL,
     ## add in the alleles
     zyg[, colnames(tab1)] <- zyg[, colnames(tab1)] + tab1
     zyg[, colnames(tab2)] <- zyg[, colnames(tab2)] + tab2
-    zyg <- zyg/ploidy
+    zyg <- zyg
     zyg <- genind(zyg, type="codom", ploidy=ploidy)
 
     ## res.type=="STRUCTURE"
