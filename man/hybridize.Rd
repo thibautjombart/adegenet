@@ -80,9 +80,9 @@ newDat <- repool(microbov, zebler, somgou)
 
 ## make a correspondance analysis
 ## and see where hybrids are placed
-X <- genind2genpop(newDat,missing="chi2",quiet=TRUE)
-coa1 <- dudi.coa(as.data.frame(X$tab),scannf=FALSE,nf=3)
-s.label(coa1$li,label=X$pop.names)
+X <- genind2genpop(newDat, quiet=TRUE)
+coa1 <- dudi.coa(tab(X),scannf=FALSE,nf=3)
+s.label(coa1$li)
 add.scatter.eig(coa1$eig,2,1,2)
 
 }

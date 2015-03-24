@@ -391,7 +391,7 @@ repool <- function(...){
 
 
     ## extract info
-    listTab <- lapply(x,genind2df,usepop=FALSE)
+    listTab <- lapply(x,genind2df,usepop=FALSE,sep="/")
     newPloidy <- unlist(lapply(x,ploidy))
 
     getPop <- function(obj){
@@ -416,7 +416,7 @@ repool <- function(...){
         tab <- rbind(tab,listTab[[i]])
     }
 
-    res <- df2genind(tab, pop=pop, ploidy=newPloidy, type=x[[1]]@type)
+    res <- df2genind(tab, pop=pop, ploidy=newPloidy, type=x[[1]]@type, sep="/")
     res$call <- match.call()
 
     return(res)
