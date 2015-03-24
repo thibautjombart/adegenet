@@ -72,7 +72,11 @@ setMethod("tab", signature(x="genind"), function(x, freq=FALSE, NA.method=c("asi
     NA.method <- match.arg(NA.method)
 
     ## get matrix of data
-    if(freq) out <- makefreq(x, missing=NA, quiet=TRUE) else out <- x@tab
+    if(!freq){
+        out <- x@tab
+    } else {
+        out <- x@tab/x@ploidy
+    }
 
     ## replace NAs if needed
     if(NA.method=="mean"){
