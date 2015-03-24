@@ -36,7 +36,7 @@ hybridize <- function(x1, x2, n, pop=NULL,
     y2 <- genind2genpop(x2,pop=factor(rep(1,n2)),quiet=TRUE)
     freq2 <- tab(y2, freq=TRUE) # get frequencies
     freq2 <- split(freq2, y2@loc.fac) # split by locus
-    freq2 <- freq1[locNames(x2)] # ensure right order
+    freq2 <- freq2[locNames(x2)] # ensure right order
 
     #### sampling of gametes
     ## kX1 / kX2 are lists of tables of sampled gametes

@@ -66,17 +66,14 @@ names(temp)
 
 salers <- temp$Salers
 zebu <- temp$Zebu
-borgou <- temp$Borgou
-somba <- temp$Somba
 
 ## let's make some... Zeblers
-zebler <- hybridize(salers, zebu, n=40)
+zebler <- hybridize(salers, zebu, n=40,
+                    pop="Zebler")
 
-## and some Somgou
-somgou <- hybridize(somba, borgou, n=40)
 
 ## now let's merge all data into a single genind
-newDat <- repool(microbov, zebler, somgou)
+newDat <- repool(microbov, zebler)
 
 ## make a correspondance analysis
 ## and see where hybrids are placed
