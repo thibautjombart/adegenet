@@ -66,23 +66,20 @@ names(temp)
 
 salers <- temp$Salers
 zebu <- temp$Zebu
-borgou <- temp$Borgou
-somba <- temp$Somba
 
 ## let's make some... Zeblers
-zebler <- hybridize(salers, zebu, n=40)
+zebler <- hybridize(salers, zebu, n=40,
+                    pop="Zebler")
 
-## and some Somgou
-somgou <- hybridize(somba, borgou, n=40)
 
 ## now let's merge all data into a single genind
-newDat <- repool(microbov, zebler, somgou)
+newDat <- repool(microbov, zebler)
 
 ## make a correspondance analysis
 ## and see where hybrids are placed
-X <- genind2genpop(newDat,missing="chi2",quiet=TRUE)
-coa1 <- dudi.coa(as.data.frame(X$tab),scannf=FALSE,nf=3)
-s.label(coa1$li,label=X$pop.names)
+X <- genind2genpop(newDat, quiet=TRUE)
+coa1 <- dudi.coa(tab(X),scannf=FALSE,nf=3)
+s.label(coa1$li)
 add.scatter.eig(coa1$eig,2,1,2)
 
 }
