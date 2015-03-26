@@ -24,6 +24,8 @@
 \alias{strata,genind-method}
 \alias{strata,genlight-method}
 \alias{strata<-}
+\alias{strata<-,genind-method}
+\alias{strata<-,genlight-method}
 \title{Access and manipulate the population strata for genind or genlight objects.}
 \usage{
 strata(x, formula = NULL, combine = TRUE, value)

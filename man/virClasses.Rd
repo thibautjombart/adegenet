@@ -10,6 +10,7 @@
 \alias{listOrNULL-class}
 \alias{intOrNULL-class}
 \alias{dfOrNULL-class}
+\alias{formOrNULL-class}
 \title{Virtual classes for adegenet}
 \description{These virtual classes are only for internal use in adegenet}
 \section{Objects from the Class}{A virtual Class: No objects may be created from it.}

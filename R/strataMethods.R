@@ -27,6 +27,10 @@
 }
 
 .setStrata <- function(x, value){
+  if (is.null(value)){
+    x@strata <- value
+    return(x)
+  }
   if (!inherits(value, "data.frame")){
     stop(paste(substitute(value), "is not a data frame"))
   }
@@ -270,7 +274,7 @@ setMethod(
 #==============================================================================#
 #' @export 
 #' @rdname strata-methods
-#' @aliases strata,genind-method strata,genlight-method
+#' @aliases strata<-,genind-method strata<-,genlight-method
 #' @docType methods
 #==============================================================================#
 "strata<-" <- function(x, value){

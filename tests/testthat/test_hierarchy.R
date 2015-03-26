@@ -4,17 +4,17 @@ test_that("strata methods work for genind objects.", {
   skip_on_cran()
 
   data(microbov, package = "adegenet")
-  expect_null(getstrata(microbov))
-  setstrata(microbov) <- data.frame(other(microbov))
+  expect_null(strata(microbov))
+  strata(microbov) <- data.frame(other(microbov))
   breeds <- c("Borgou", "Zebu", "Lagunaire", "NDama", "Somba", "Aubrac", "Bazadais", 
               "BlondeAquitaine", "BretPieNoire", "Charolais", "Gascon", "Limousin", 
               "MaineAnjou", "Montbeliard", "Salers")
 
-  expect_that(length(getstrata(microbov)), equals(3))
+  expect_that(length(strata(microbov)), equals(3))
   expect_that(microbov@pop.names, equals(breeds))
   expect_that({microbovsplit <- splitstrata(microbov, ~Pop/Subpop)}, throws_error())
   namestrata(microbov) <- ~Country/Breed/Species
-  expect_that(names(getstrata(microbov)), equals(c("Country", "Breed", "Species")))
+  expect_that(names(strata(microbov)), equals(c("Country", "Breed", "Species")))
   setpop(microbov) <- ~Country/Species
   expect_that(microbov@pop.names, equals(c("AF_BI", "AF_BT", "FR_BT")))
 })
@@ -33,7 +33,7 @@ test_that("strata methods work for genlight objects", {
   expect_that(res, is_a("genlight"))
   expect_that(nInd(res), equals(100))
   expect_that(nLoc(res), equals(10))
-  expect_that(length(getstrata(res)), equals(3))
+  expect_that(length(strata(res)), equals(3))
   namestrata(res) <- ~Hickory/Dickory/Doc
-  expect_that(names(getstrata(res)), equals(c("Hickory", "Dickory", "Doc")))
+  expect_that(names(strata(res)), equals(c("Hickory", "Dickory", "Doc")))
 })

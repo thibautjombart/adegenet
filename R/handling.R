@@ -402,7 +402,7 @@ setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,re
                 hierlist[[i]]      <- replacehier
             }
         }
-        setstrata(res) <- as.data.frame(suppressWarnings(bind_rows(hierlist)))        
+        strata(res) <- as.data.frame(suppressWarnings(bind_rows(hierlist)))        
     } else {
         res@strata <- NULL
     }
