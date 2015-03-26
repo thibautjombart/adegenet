@@ -538,6 +538,9 @@ setMethod ("show", "genlight", function(object){
         }
         cat("\n @strata: ", length(object@strata), "levels (", levs, ")")
     }
+    if (!is.null(object@hierarchy)){
+        cat("\n@hierarchy: ", paste(object@hierarchy, collapse = ""))
+    }
 
     if(!is.null(chr(object))){
         cat("\n @chromosome: chromosome of the SNPs")

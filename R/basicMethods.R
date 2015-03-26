@@ -205,6 +205,7 @@ setMethod ("show", "genind", function(object){
     }
     cat("a data frame with", length(x@strata), "columns (", levs, ")")
   }
+  cat("\n@hierarchy: ", ifelse(is.null(x@hierarchy), "- empty -", paste(x@hierarchy, collapse = "")))
   cat("\n@pop: ", ifelse(is.null(x@pop), "- empty -", "factor giving the population of each individual"))
   cat("\n@pop.names: ", ifelse(is.null(x@pop.names), "- empty -", "character giving the name of each population"))
   cat("\n\n@other: ")
