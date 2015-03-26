@@ -32,7 +32,7 @@ setClass("genlight", representation(gen = "list",
                                     ploidy = "intOrNULL",
                                     pop = "factorOrNULL",
                                     strata = "dfOrNULL",
-                                    hierarchy = "formORNULL",
+                                    hierarchy = "formOrNULL",
                                     other = "list"),
          prototype(gen = list(), n.loc = 0L, ind.names = NULL, loc.names = NULL, loc.all = NULL,
                    chromosome = NULL, position = NULL, strata = NULL, hierarchy = NULL, ploidy=NULL, pop=NULL, other=list()))
