@@ -18,7 +18,7 @@ setpop(x) <- value
 \item{x}{a genind or genlight object}
 
 \item{formula}{a nested formula indicating the order of the population
-hierarchy.}
+strata.}
 
 \item{value}{same as formula}
 }
@@ -29,12 +29,12 @@ genind object.
 \examples{
 data(microbov)
 
-sethierarchy(microbov) <- data.frame(other(microbov))
+setstrata(microbov) <- data.frame(other(microbov))
 
 # Currently set on just
 head(pop(microbov))
 
-# setting the hierarchy to both Pop and Subpop
+# setting the strata to both Pop and Subpop
 setpop(microbov) <- ~coun/breed
 head(pop(microbov))
 

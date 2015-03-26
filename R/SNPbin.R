@@ -32,9 +32,10 @@ setClass("genlight", representation(gen = "list",
                                     ploidy = "intOrNULL",
                                     pop = "factorOrNULL",
                                     strata = "dfOrNULL",
+                                    hierarchy = "formORNULL"
                                     other = "list"),
          prototype(gen = list(), n.loc = 0L, ind.names = NULL, loc.names = NULL, loc.all = NULL,
-                   chromosome = NULL, position = NULL, strata = NULL, ploidy=NULL, pop=NULL, other=list()))
+                   chromosome = NULL, position = NULL, strata = NULL, hierarchy = NULL, ploidy=NULL, pop=NULL, other=list()))
 
 
 
@@ -422,7 +423,7 @@ setMethod("initialize", "genlight", function(.Object, ..., parallel=require("par
             }
         }
 
-        ## HANDLE INPUT$strata ##
+        ## HANDLE INPUT$STRATA ##
         if(!is.null(input$strata)){
             ## check length consistency
             if(nrow(input$strata) != nInd(x)){
@@ -438,6 +439,21 @@ setMethod("initialize", "genlight", function(.Object, ..., parallel=require("par
               if(!is.null(x@ind.names)){
                 rownames(x@strata) <- x@ind.names
               }
+            }
+        }
+        ## HANDLE INPUT$STRATA ##
+        if (!is.null(x@strata) && !is.null(input$hierarchy)){
+
+            if (is.language(input$hierarchy)){
+                the_names <- all.vars(input$hierarchy)
+                if (all(the_names %in% names(x@strata))){
+                    ## TODO: CHECK HIERARCHY HERE
+                    x@hierarchy <- input$hierarchy
+                } else {
+                    warning("hierarchy names do not match names of strata. Setting slot to NULL")
+                }
+            } else {
+                warning("hierarchy must be a formula. Setting slot to NULL.")
             }
         }
 

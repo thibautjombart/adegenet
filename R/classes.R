@@ -42,6 +42,7 @@ setClassUnion("callOrNULL", c("call","NULL"))
 setClassUnion("intOrNum", c("integer","numeric","NULL"))
 setClassUnion("intOrNULL", c("integer","NULL"))
 setClassUnion("dfOrNULL", c("data.frame", "NULL"))
+setClassUnion("formOrNULL", c("formula", "NULL"))
 
 
 ####################
@@ -186,6 +187,8 @@ setClass("indInfo", representation(ind.names = "character",
       }
     }
 
+    # TODO: CHECK HIERARCHY FORMULA
+
     ## check ploidy
     if(any(object@ploidy < 1L)){
         cat("\nploidy inferior to 1\n")
@@ -206,7 +209,7 @@ setClass("indInfo", representation(ind.names = "character",
 } #end .genind.valid
 
 setClass("genind", contains=c("gen", "indInfo"), 
-          representation = representation(strata = "dfOrNULL"))
+          representation = representation(strata = "dfOrNULL", hierarchy = "formOrNULL"))
 setValidity("genind", .genind.valid)
 
 
