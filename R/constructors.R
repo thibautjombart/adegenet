@@ -22,14 +22,14 @@
 #' @param prevcall an optional call to be stored in the object
 #' @param ploidy an integer vector indicating the ploidy of the individual; each individual can have a different value; if only one value is provided, it is recycled to generate a vector of the right length.
 #' @param type a character string indicating the type of marker: codominant ("codom") or presence/absence ("PA")
-#' @param hierarchy a data frame containing population hierarchies or stratifications in columns. This must be the same length as the number of individuals in the data set.
+#' @param strata a data frame containing population hierarchies or stratifications in columns. This must be the same length as the number of individuals in the data set.
 #' @param ... further arguments passed to other methods (currently not used)
 #'
 #' @return a \linkS4class{genind} object
 #'
 #' @seealso the description of the \linkS4class{genind} class; \code{\link{df2genind}}
 #'
-setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL, ploidy=2L, type=c("codom","PA"), hierarchy = NULL, ...){
+setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL, ploidy=2L, type=c("codom","PA"), strata = NULL, ...){
    ## HANDLE ARGUMENTS ##
     out <- .Object
     if(is.null(colnames(tab))) stop("tab columns have no name.")
@@ -50,9 +50,9 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
     ploidy <- as.integer(ploidy)
     ploidy <- rep(ploidy, length=nind)
 
-    if (!is.null(hierarchy)){
+    if (!is.null(strata)){
       # Make sure that the hierarchies are factors.
-      hierarchy <- data.frame(lapply(hierarchy, function(f) factor(f, unique(f))))
+      strata <- data.frame(lapply(strata, function(f) factor(f, unique(f))))
     }
     ## HANDLE LABELS ##
     ## loc names is not type-dependent
@@ -72,8 +72,8 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
         rownames(tab) <- ind.names <- .genlab("", nind)
     }
 
-    if (!is.null(hierarchy)){
-      rownames(hierarchy) <- rownames(tab)      
+    if (!is.null(strata)){
+      rownames(strata) <- rownames(tab)      
     }
 
 
@@ -106,7 +106,7 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
     out@loc.nall <- loc.nall
     out@loc.fac <- loc.fac
     out@all.names <- all.names
-    out@hierarchy <- hierarchy
+    out@strata <- strata
     ## populations name (optional)
     ## beware, keep levels of pop sorted in
     ## there order of appearance

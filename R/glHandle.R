@@ -41,11 +41,11 @@ setMethod("[", signature(x="genlight", i="ANY", j="ANY", drop="ANY"), function(x
     } else {
         ori.pop <- NULL
     }
-    ## hierarchy
-    if(!is.null(x@hierarchy)) {
-        ori.hierarchy <- x@hierarchy <- x@hierarchy[i, , drop = FALSE]
+    ## strata
+    if(!is.null(x@strata)) {
+        ori.strata <- x@strata <- x@strata[i, , drop = FALSE]
     } else {
-        ori.hierarchy <- NULL
+        ori.strata <- NULL
     }
 
 
@@ -86,7 +86,7 @@ setMethod("[", signature(x="genlight", i="ANY", j="ANY", drop="ANY"), function(x
         new.gen <- lapply(x@gen, function(e) e[j])
         ##x <- as.matrix(x)[, j, drop=FALSE] # maybe need to process one row at a time
         x <- new("genlight", gen=new.gen, pop=ori.pop, ploidy=ori.ploidy,
-                 ind.names=old.ind.names, loc.names=new.loc.names, hierarchy = ori.hierarchy,
+                 ind.names=old.ind.names, loc.names=new.loc.names, strata = ori.strata,
                  chromosome=new.chr, position=new.position, alleles=new.alleles, other=old.other, parallel=FALSE,...)
     }
 
@@ -181,7 +181,7 @@ cbind.genlight <- function(...){
     locNames(res) <- unlist(lapply(myList, locNames))
     alleles(res) <- unlist(lapply(myList, alleles))
     pop(res) <- pop(myList[[1]])
-    res@hierarchy <- myList[[1]]@hierarchy
+    res@strata <- myList[[1]]@strata
     ploidy(res) <- ori.ploidy
 
     ## return object ##
@@ -221,15 +221,15 @@ rbind.genlight <- function(...){
 
     # Hierarchies are tricky. Using dplyr's bind_rows. 
 
-    # hierlist <- lapply(myList, slot, "hierarchy")
+    # hierlist <- lapply(myList, slot, "strata")
     # nullhier <- vapply(hierlist, is.null, TRUE)
     # if (!all(nullhier)){
     #     # NULL hierarchies must be converted to data frames.
-    #     # Solution: take the first non-empty hierarchy, and create a new one 
+    #     # Solution: take the first non-empty strata, and create a new one 
     #     # with one variable.
     #     if (any(nullhier)){
 
-    #         # Extract the name of the first column of the first full hierarchy
+    #         # Extract the name of the first column of the first full strata
     #         fullname <- names(hierlist[[which(!nullhier)[1]]])[1]
             
     #         # loop over all the empty hierarchies and replace them with a data
@@ -241,9 +241,9 @@ rbind.genlight <- function(...){
     #             hierlist[[i]]      <- replacehier
     #         }
     #     }
-    #     sethierarchy(res) <- as.data.frame(suppressWarnings(bind_rows(hierlist)))        
+    #     setstrata(res) <- as.data.frame(suppressWarnings(bind_rows(hierlist)))        
     # } else {
-    #     res@hierarchy <- NULL
+    #     res@strata <- NULL
     # }
     res <- .rbind_hierarchies(myList, res)
 

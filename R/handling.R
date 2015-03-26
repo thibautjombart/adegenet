@@ -382,15 +382,15 @@ setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,re
 
 
 .rbind_hierarchies <- function(myList, res){
-    hierlist <- lapply(myList, slot, "hierarchy")
+    hierlist <- lapply(myList, slot, "strata")
     nullhier <- vapply(hierlist, is.null, TRUE)
     if (!all(nullhier)){
         # NULL hierarchies must be converted to data frames.
-        # Solution: take the first non-empty hierarchy, and create a new one 
+        # Solution: take the first non-empty strata, and create a new one 
         # with one variable.
         if (any(nullhier)){
 
-            # Extract the name of the first column of the first full hierarchy
+            # Extract the name of the first column of the first full strata
             fullname <- names(hierlist[[which(!nullhier)[1]]])[1]
             
             # loop over all the empty hierarchies and replace them with a data
@@ -402,9 +402,9 @@ setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,re
                 hierlist[[i]]      <- replacehier
             }
         }
-        sethierarchy(res) <- as.data.frame(suppressWarnings(bind_rows(hierlist)))        
+        setstrata(res) <- as.data.frame(suppressWarnings(bind_rows(hierlist)))        
     } else {
-        res@hierarchy <- NULL
+        res@strata <- NULL
     }
     return(res)
 }
