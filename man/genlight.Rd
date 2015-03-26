@@ -123,6 +123,7 @@
     \item{\code{ploidy}:}{a vector of integers indicating the ploidy of each individual.}
     \item{\code{pop}:}{a factor indicating the population of each individual.}
     \item{\code{strata}:}{a data frame containing different levels of population definition. (For methods, see \code{\link{addstrata}} and \code{\link{setpop}})}
+    \item{\code{hierarchy}:}{a hierarchical \code{\link{formula}} defining the hierarchical levels in the \code{@@strata} slot.}
     \item{\code{other}:}{a list containing other miscellaneous information.}
   }
 }
