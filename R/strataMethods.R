@@ -1,32 +1,36 @@
 ########################################################################
-# hierarchy methods definitions. 
+# strata methods definitions. 
 #
 # Zhian Kamvar, March 2015
 # kamvarz@science.oregonstate.edu
 ########################################################################
 #==============================================================================#
 #==============================================================================#
-# Workhorse functions for hierarchy methods. These avoids needless copying and
+# Workhorse functions for strata methods. These avoids needless copying and
 # pasting of code to dispatch the methods to two unrelated classes 
 # (genind and genlight).
 #==============================================================================#
 #==============================================================================#
-.getHier <- function(x, formula = NULL, combine = TRUE){
-  if (is.null(x@hierarchy)) return(NULL)
-  if (is.null(formula)) return(x@hierarchy)
+.getStrata <- function(x, formula = NULL, combine = TRUE){
+  if (is.null(x@strata)) return(NULL)
+  if (is.null(formula)) return(x@strata)
   vars <- all.vars(formula)
-  if (any(!vars %in% names(x@hierarchy))){
-    stop(.hier_incompatible_warning(vars, x@hierarchy))
+  if (any(!vars %in% names(x@strata))){
+    stop(.hier_incompatible_warning(vars, x@strata))
   }
   if (combine){
-    hier <- .make_hierarchy(formula, x@hierarchy)
+    hier <- .make_strata(formula, x@strata)
   } else {
-    hier <- x@hierarchy[all.vars(formula)]
+    hier <- x@strata[all.vars(formula)]
   }
   invisible(return(hier))
 }
 
-.setHier <- function(x, value){
+.setStrata <- function(x, value){
+  if (is.null(value)){
+    x@strata <- value
+    return(x)
+  }
   if (!inherits(value, "data.frame")){
     stop(paste(substitute(value), "is not a data frame"))
   }
@@ -34,28 +38,31 @@
     stop("Number of rows in data frame not equal to number of individuals in object.")
   }
   value <- data.frame(lapply(value, function(f) factor(f, unique(f))))
-  x@hierarchy <- value
+  x@strata <- value
   return(x)
 }
 
-.nameHier <- function(x, value){
-  if (is.null(x@hierarchy)){
-    warning("Cannot name an empty hierarchy")
+.nameStrata <- function(x, value){
+  if (missing(value)){
+    return(names(x@strata))
+  }
+  if (is.null(x@strata)){
+    warning("Cannot name an empty strata")
     return(x)
   }
   if (is.language(value)){
     value <- all.vars(value)
   }
-  if (!is.vector(value) | length(value) != length(x@hierarchy)){
-    stop(paste("Hierarchy, needs a vector argument of length", length(x@hierarchy)))
+  if (!is.vector(value) | length(value) != length(x@strata)){
+    stop(paste("strata, needs a vector argument of length", length(x@strata)))
   }
-  names(x@hierarchy) <- value
+  names(x@strata) <- value
   return(x)
 }
 
-.splitHier <- function(x, value, sep = "_"){
-  if (is.null(x@hierarchy)){
-    warning("Cannot split an empty hierarchy")
+.splitStrata <- function(x, value, sep = "_"){
+  if (is.null(x@strata)){
+    warning("Cannot split an empty strata")
     return(x)
   }
   if (is.language(value)){
@@ -69,12 +76,12 @@
   if (length(value) < 1){
     stop("value must have more than one hierarchical level.")
   }
-  hierarchy  <- x@hierarchy
-  if (length(hierarchy) > 1){
-    warning("Hierarchy must be length 1. Taking the first column.")
-    hierarchy <- hierarchy[1]
+  strata  <- x@strata
+  if (length(strata) > 1){
+    warning("strata must be length 1. Taking the first column.")
+    strata <- strata[1]
   }
-  seps     <- gregexpr(sep, hierarchy[[1]])
+  seps     <- gregexpr(sep, strata[[1]])
   sepmatch <- vapply(seps, function(val) all(as.integer(val) > 0), logical(1))
   seps     <- vapply(seps, length, numeric(1))
   all_seps_match <- all(sepmatch)
@@ -82,57 +89,57 @@
   if (!all_seps_match | all(seps != given_seps)){
     seps <- ifelse(all_seps_match, seps[1], 0) + 1
     msg1 <- paste("\n  Data has", seps, ifelse(seps == 1, "level", "levels"),
-                  "of hierarchy with the separator", sep, ".")
-    msg2 <- paste("Here is the fist column of the data:", hierarchy[1, ])
+                  "of strata with the separator", sep, ".")
+    msg2 <- paste("Here is the fist column of the data:", strata[1, ])
     stop(paste(msg1, "\n ", msg2))
   }
-  x@hierarchy <- colsplit(as.character(hierarchy[[1]]), pattern = sep, value)
-  x@hierarchy <- data.frame(lapply(x@hierarchy, function(f) factor(f, levels = unique(f))))
-  # names(hierarchy) <- value
-  # x@hierarchy      <- hierarchy
+  x@strata <- colsplit(as.character(strata[[1]]), pattern = sep, value)
+  x@strata <- data.frame(lapply(x@strata, function(f) factor(f, levels = unique(f))))
+  # names(strata) <- value
+  # x@strata      <- strata
   return(x) 
 }
 
-.addHier <- function(x, value, name = "NEW"){
-  if (is.null(x@hierarchy)){
-    hierarchy <- data.frame(vector(mode = "character", length = nInd(x)))
+.addStrata <- function(x, value, name = "NEW"){
+  if (is.null(x@strata)){
+    strata <- data.frame(vector(mode = "character", length = nInd(x)))
     wasNULL <- TRUE
   } else {
-    hierarchy  <- x@hierarchy  
+    strata  <- x@strata  
     wasNULL <- FALSE    
   }
 
-  if ((is.vector(value) | is.factor(value)) & length(value) == nrow(hierarchy)){
+  if ((is.vector(value) | is.factor(value)) & length(value) == nrow(strata)){
     value <- factor(value, levels = unique(value))
     NEW <- data.frame(value)
     names(NEW) <- name
-    hierarchy <- cbind(hierarchy, NEW)
-  } else if (is.data.frame(value) && nrow(value) == nrow(hierarchy)){
+    strata <- cbind(strata, NEW)
+  } else if (is.data.frame(value) && nrow(value) == nrow(strata)){
     value <- data.frame(lapply(value, function(f) factor(f, unique(f))))
-    hierarchy <- cbind(hierarchy, value)
+    strata <- cbind(strata, value)
   } else {
     stop("value must be a vector or data frame.")
   }
   if (wasNULL){
-    hierarchy <- hierarchy[-1, , drop = FALSE]
+    strata <- strata[-1, , drop = FALSE]
   }
-  x@hierarchy <- hierarchy
+  x@strata <- strata
   return(x) 
 }
 
 .setPop <- function(x, formula = NULL){
-  if (is.null(x@hierarchy)){
-    warning("Cannot set the population from an empty hierarchy")
+  if (is.null(x@strata)){
+    warning("Cannot set the population from an empty strata")
     return(x)
   }
   if (is.null(formula) | !is.language(formula)){
     stop(paste(substitute(formula), "must be a valid formula object."))
   }
   vars <- all.vars(formula)
-  if (!all(vars %in% names(x@hierarchy))){
-    stop(.hier_incompatible_warning(vars, x@hierarchy))
+  if (!all(vars %in% names(x@strata))){
+    stop(.hier_incompatible_warning(vars, x@strata))
   }
-  pop(x) <- .make_hierarchy(formula, x@hierarchy)[[length(vars)]]
+  pop(x) <- .make_strata(formula, x@strata)[[length(vars)]]
   return(x)
 }
 
@@ -143,65 +150,38 @@
 #==============================================================================#
 
 #==============================================================================#
-#' Access and manipulate the population hierarchy for genind or genlight objects.
+#' Access and manipulate the population strata for genind or genlight objects.
 #' 
-#' The following methods allow the user to quickly change the hierarchy or
+#' The following methods allow the user to quickly change the strata or
 #' population of a genind or genlight object. 
 #' 
 #' @export 
-#' @rdname hierarchy-methods
-#' @aliases gethierarchy,genind-method gethierarchy,genlight-method
+#' @rdname strata-methods
+#' @aliases strata,genind-method strata,genlight-method
 #' @param x a genind or genlight object
 #' @param formula a nested formula indicating the order of the population
-#' hierarchy.
+#' strata.
 #' @param combine if \code{TRUE}, the levels will be combined according to the
 #' formula argument. If it is \code{FALSE}, the levels will not be combined.
-#' @docType methods
-#==============================================================================#
-gethierarchy <- function(x, formula = NULL, combine = TRUE){
-  standardGeneric("gethierarchy")
-} 
-
-#' @export
-setGeneric("gethierarchy")
-
-setMethod(
-  f = "gethierarchy",
-  signature(x = "genind"),
-  definition = function(x, formula = NULL, combine = TRUE){
-    .getHier(x, formula = formula, combine = combine)
-  })
-
-setMethod(
-  f = "gethierarchy",
-  signature(x = "genlight"),
-  definition = function(x, formula = NULL, combine = TRUE){
-    .getHier(x, formula = formula, combine = combine)
-  })
-
-#==============================================================================#
-#' @export
-#' @rdname hierarchy-methods
-#' @aliases sethierarchy<-,genind-method sethierarchy<-,genlight-method
 #' @param value a data frame OR vector OR formula (see details).
 #' @docType methods
 #'   
 #' @details \subsection{Function Specifics}{ \itemize{ \item
-#' \strong{gethierarchy()} - This will retrieve the data from the
-#' \emph{hierarchy} slot in the \linkS4class{genind} object. You have the
+#' \strong{strata()} - This will retrieve the data from the
+#' \emph{strata} slot in the \linkS4class{genind} object. You have the
 #' option to choose specific heirarchical levels using a formula (see below) and
 #' you can choose to combine the hierarchical levels (default) \item
-#' \strong{sethierarchy()} - Set or reset the hierarchical levels in your
-#' \linkS4class{genind} object. \item \strong{namehierarchy()} - Rename the
-#' hierarchical levels. \item \strong{splithierarchy()} - It is often
-#' difficult to import files with several levels of hierarchy as most data
+#' \strong{strata()} - Set or reset the hierarchical levels in your
+#' \linkS4class{genind} object. \item \strong{namestrata()} - Rename the
+#' hierarchical levels. \item \strong{splitstrata()} - It is often
+#' difficult to import files with several levels of strata as most data
 #' formats do not allow unlimited population levels. This is circumvented by
 #' collapsing all hierarchical levels into a single population factor with a
 #' common separator for each observation. This function will then split those
-#' hierarchies for you, but it works best on a hierarchy that only has a single
-#' column in it. See the rootrot example below. \item \strong{addhierarchy()} -
-#' Add levels to your population hierarchy. If you have extra hierarchical
-#' levels you want to add to your population hierarchy, you can use this method
+#' hierarchies for you, but it works best on a strata that only has a single
+#' column in it. See the rootrot example below. \item \strong{addstrata()} -
+#' Add levels to your population strata. If you have extra hierarchical
+#' levels you want to add to your population strata, you can use this method
 #' to do so. You can input a data frame or a vector, but if you put in a vector,
 #' you have the option to name it. }}
 #' 
@@ -209,18 +189,18 @@ setMethod(
 #' 
 #' These functions allow the user to seamlessly assign the hierarchical levels
 #' of their \code{\linkS4class{genind}} object. Note that there are two ways
-#' of performing all methods (except for \code{gethierarchy()}). They
+#' of performing all methods (except for \code{strata()}). They
 #' essentially do the same thing except that the assignment method (the one with
 #' the "\code{<-}") will modify the object in place whereas the non-assignment 
 #' method will not modify the original object. Due to convention, everything 
 #' right of the assignment is termed \code{value}. To avoid confusion, here is a
-#' guide to the inputs: \itemize{ \item \strong{sethierarchy()} This will be a 
-#' \code{\link{data.frame}} that defines the hierarchy for each individual in 
-#' the rows. \item \strong{namehierarchy()} This will be either a 
+#' guide to the inputs: \itemize{ \item \strong{strata()} This will be a 
+#' \code{\link{data.frame}} that defines the strata for each individual in 
+#' the rows. \item \strong{namestrata()} This will be either a 
 #' \code{\link{vector}} or a \code{\link{formula}} that will define the names. 
-#' \item \strong{splithierarchy()} This will be a \code{\link{formula}} argument
-#' with the same number of levels as the hierarchy you wish to split. \item 
-#' \strong{addhierarchy()} This will be a \code{\link{vector}} or 
+#' \item \strong{splitstrata()} This will be a \code{\link{formula}} argument
+#' with the same number of levels as the strata you wish to split. \item 
+#' \strong{addstrata()} This will be a \code{\link{vector}} or 
 #' \code{\link{data.frame}} with the same length as the number of individuals in
 #' your data. }}
 #' 
@@ -228,7 +208,7 @@ setMethod(
 #' 
 #' The preferred use of these functions is with a \code{\link{formula}} object. 
 #' Specifically, a hierarchical formula argument is used to assign the levels of
-#' the hierarchy. An example of a hierarchical formula would be:\cr 
+#' the strata. An example of a hierarchical formula would be:\cr 
 #' \code{~Country/City/Neighborhood}\cr or \cr \code{~Country + Country:City + 
 #' Country:City:Neighborhood}\cr of course, the first method is slightly easier 
 #' to read. It is important to use hiearchical formulas when specifying 
@@ -249,229 +229,239 @@ setMethod(
 #' # These are Country, Breed, and Species
 #' names(other(microbov))
 #' 
-#' # Let's set the hierarchy
-#' sethierarchy(microbov) <- data.frame(other(microbov))
+#' # Let's set the strata
+#' strata(microbov) <- data.frame(other(microbov))
 #' microbov
 #' 
 #' # And change the names so we know what they are
-#' namehierarchy(microbov) <- ~Country/Breed/Species
+#' namestrata(microbov) <- ~Country/Breed/Species
 #' 
-#' # let's see what the hierarchy looks like by Species and Breed:
-#' head(gethierarchy(microbov, ~Breed/Species))
+#' # let's see what the strata looks like by Species and Breed:
+#' head(strata(microbov, ~Breed/Species))
 #' 
 #==============================================================================#
-sethierarchy <- function(x, value){
-  standardGeneric("sethierarchy")
+strata <- function(x, formula = NULL, combine = TRUE, value){
+  standardGeneric("strata")
 } 
 
 #' @export
-setGeneric("sethierarchy")
+setGeneric("strata")
 
 setMethod(
-  f = "sethierarchy",
+  f = "strata",
   signature(x = "genind"),
-  definition = function(x, value){
-    .setHier(x, value)
+  definition = function(x, formula = NULL, combine = TRUE, value){
+    if (missing(value)){
+      .getStrata(x, formula = formula, combine = combine)  
+    } else {
+      .setStrata(x, value)
+    }
   })
 
 setMethod(
-  f = "sethierarchy",
+  f = "strata",
   signature(x = "genlight"),
-  definition = function(x, value){
-    .setHier(x, value)
+  definition = function(x, formula = NULL, combine = TRUE, value){
+    if (missing(value)){
+      .getStrata(x, formula = formula, combine = combine)  
+    } else {
+      .setStrata(x, value)
+    }
+    
   })
+
 
 #==============================================================================#
 #' @export 
-#' @rdname hierarchy-methods
-#' @aliases sethierarchy,genind-method sethierarchy,genlight-method
+#' @rdname strata-methods
+#' @aliases strata<-,genind-method strata<-,genlight-method
 #' @docType methods
 #==============================================================================#
-"sethierarchy<-" <- function(x, value){
-  standardGeneric("sethierarchy<-")
+"strata<-" <- function(x, value){
+  standardGeneric("strata<-")
 }  
 
 #' @export
-setGeneric("sethierarchy<-")
+setGeneric("strata<-")
 
 setMethod(
-  f = "sethierarchy<-",
+  f = "strata<-",
   signature(x = "genind"),
   definition = function(x, value){
-    return(sethierarchy(x, value))
+    return(.setStrata(x, value))
   })
 
 setMethod(
-  f = "sethierarchy<-",
+  f = "strata<-",
   signature(x = "genlight"),
   definition = function(x, value){
-    return(sethierarchy(x, value))
+    return(.setStrata(x, value))
   })
 
 #==============================================================================#
 #' @export 
-#' @rdname hierarchy-methods
-#' @aliases namehierarchy,genind-method namehierarchy,genlight-method
+#' @rdname strata-methods
+#' @aliases namestrata,genind-method namestrata,genlight-method
 #' @docType methods
 #==============================================================================#
-namehierarchy <- function(x, value){
-  standardGeneric("namehierarchy")
+namestrata <- function(x, value){
+  standardGeneric("namestrata")
 }  
 
 #' @export
-setGeneric("namehierarchy")
+setGeneric("namestrata")
 
 setMethod(
-  f = "namehierarchy",
+  f = "namestrata",
   signature(x = "genind"),
   definition = function(x, value){
-    .nameHier(x, value)
+    .nameStrata(x, value)
   })
 
 setMethod(
-  f = "namehierarchy",
+  f = "namestrata",
   signature(x = "genlight"),
   definition = function(x, value){
-    .nameHier(x, value)
+    .nameStrata(x, value)
   })
 
 #==============================================================================#
 #' @export 
-#' @rdname hierarchy-methods
-#' @aliases namehierarchy<-,genind-method namehierarchy<-,genlight-method
+#' @rdname strata-methods
+#' @aliases namestrata<-,genind-method namestrata<-,genlight-method
 #' @docType methods
 #==============================================================================#
-"namehierarchy<-" <- function(x, value){
-  standardGeneric("namehierarchy<-")
+"namestrata<-" <- function(x, value){
+  standardGeneric("namestrata<-")
 }  
 
 #' @export
-setGeneric("namehierarchy<-")
+setGeneric("namestrata<-")
 
 setMethod(
-  f = "namehierarchy<-",
+  f = "namestrata<-",
   signature(x = "genind"),
   definition = function(x, value){
-    return(namehierarchy(x, value))
+    return(namestrata(x, value))
   })
 
 setMethod(
-  f = "namehierarchy<-",
+  f = "namestrata<-",
   signature(x = "genlight"),
   definition = function(x, value){
-    return(namehierarchy(x, value))
+    return(namestrata(x, value))
   })
 #==============================================================================#
 #' @export 
-#' @rdname hierarchy-methods
-#' @aliases splithierarchy,genind-method splithierarchy,genlight-method
+#' @rdname strata-methods
+#' @aliases splitstrata,genind-method splitstrata,genlight-method
 #' @docType methods
 #' @param sep a \code{character} indicating the character used to separate
 #' hierarchical levels. This defaults to "_".
 #' @importFrom reshape2 colsplit
 #==============================================================================#
-splithierarchy <- function(x, value, sep = "_"){
-  standardGeneric("splithierarchy")
+splitstrata <- function(x, value, sep = "_"){
+  standardGeneric("splitstrata")
 }  
 
 #' @export
-setGeneric("splithierarchy")
+setGeneric("splitstrata")
 
 setMethod(
-  f = "splithierarchy",
+  f = "splitstrata",
   signature(x = "genind"),
   definition = function(x, value, sep = "_"){
-    .splitHier(x, value, sep = sep) 
+    .splitStrata(x, value, sep = sep) 
   })
 
 setMethod(
-  f = "splithierarchy",
+  f = "splitstrata",
   signature(x = "genlight"),
   definition = function(x, value, sep = "_"){
-    .splitHier(x, value, sep = sep) 
+    .splitStrata(x, value, sep = sep) 
   })
 
 #==============================================================================#
 #' @export 
-#' @rdname hierarchy-methods
-#' @aliases splithierarchy<-,genind-method splithierarchy<-,genlight-method
+#' @rdname strata-methods
+#' @aliases splitstrata<-,genind-method splitstrata<-,genlight-method
 #' @docType methods
 #==============================================================================#
-"splithierarchy<-" <- function(x, sep = "_", value){
-  standardGeneric("splithierarchy<-")
+"splitstrata<-" <- function(x, sep = "_", value){
+  standardGeneric("splitstrata<-")
 }  
 
 #' @export
-setGeneric("splithierarchy<-")
+setGeneric("splitstrata<-")
 
 setMethod(
-  f = "splithierarchy<-",
+  f = "splitstrata<-",
   signature(x = "genind"),
   definition = function(x, sep = "_", value){
-    return(splithierarchy(x, value, sep))
+    return(splitstrata(x, value, sep))
   })
 
 setMethod(
-  f = "splithierarchy<-",
+  f = "splitstrata<-",
   signature(x = "genlight"),
   definition = function(x, sep = "_", value){
-    return(splithierarchy(x, value, sep))
+    return(splitstrata(x, value, sep))
   })
 
 #==============================================================================#
 #' @export 
-#' @rdname hierarchy-methods
-#' @aliases addhierarchy,genind-method addhierarchy,genlight-method
-#' @param name an optional name argument for use with addhierarchy if supplying
+#' @rdname strata-methods
+#' @aliases addstrata,genind-method addstrata,genlight-method
+#' @param name an optional name argument for use with addstrata if supplying
 #'   a vector. Defaults to "NEW".
 #' @docType methods
 #==============================================================================#
-addhierarchy <- function(x, value, name = "NEW"){
-  standardGeneric("addhierarchy")
+addstrata <- function(x, value, name = "NEW"){
+  standardGeneric("addstrata")
 }  
 
 #' @export
-setGeneric("addhierarchy")
+setGeneric("addstrata")
 
 setMethod(
-  f = "addhierarchy",
+  f = "addstrata",
   signature(x = "genind"),
   definition = function(x, value, name = "NEW"){
-    .addHier(x, value, name = name)
+    .addStrata(x, value, name = name)
   })
 
 setMethod(
-  f = "addhierarchy",
+  f = "addstrata",
   signature(x = "genlight"),
   definition = function(x, value, name = "NEW"){
-    .addHier(x, value, name = name)
+    .addStrata(x, value, name = name)
   })
 
 #==============================================================================#
 #' @export 
-#' @rdname hierarchy-methods
-#' @aliases addhierarchy<-,genind-method addhierarchy<-,genlight-method
+#' @rdname strata-methods
+#' @aliases addstrata<-,genind-method addstrata<-,genlight-method
 #' @docType methods
 #==============================================================================#
-"addhierarchy<-" <- function(x, name = "NEW", value){
-  standardGeneric("addhierarchy<-")
+"addstrata<-" <- function(x, name = "NEW", value){
+  standardGeneric("addstrata<-")
 }  
 
 #' @export
-setGeneric("addhierarchy<-")
+setGeneric("addstrata<-")
 
 setMethod(
-  f = "addhierarchy<-",
+  f = "addstrata<-",
   signature(x = "genind"),
   definition = function(x, name = "NEW", value){
-    return(addhierarchy(x, value, name))
+    return(addstrata(x, value, name))
   })
 
 setMethod(
-  f = "addhierarchy<-",
+  f = "addstrata<-",
   signature(x = "genlight"),
   definition = function(x, name = "NEW", value){
-    return(addhierarchy(x, value, name))
+    return(addstrata(x, value, name))
   })
 
 #==============================================================================#
@@ -484,7 +474,7 @@ setMethod(
 #' @rdname population-methods
 #' @param x a genind or genlight object
 #' @param formula a nested formula indicating the order of the population
-#' hierarchy.
+#' strata.
 #' @param value same as formula
 #' @aliases setpop,genind-method setpop,genlight-method
 #' @docType methods 
@@ -493,12 +483,12 @@ setMethod(
 #' 
 #' data(microbov)
 #' 
-#' sethierarchy(microbov) <- data.frame(other(microbov))
+#' strata(microbov) <- data.frame(other(microbov))
 #' 
 #' # Currently set on just 
 #' head(pop(microbov)) 
 #' 
-#' # setting the hierarchy to both Pop and Subpop
+#' # setting the strata to both Pop and Subpop
 #' setpop(microbov) <- ~coun/breed 
 #' head(pop(microbov))
 #' 
@@ -559,7 +549,7 @@ setMethod(
 #==============================================================================#
 
 #==============================================================================#
-# A function for creating a population hierarchy using a formula and data frame
+# A function for creating a population strata using a formula and data frame
 # 
 # hier = a nested formula such as ~ A/B/C where C is nested within B, which is
 # nested within A.
@@ -568,17 +558,17 @@ setMethod(
 #
 # example:
 # df <- data.frame(list(a = letters, b = LETTERS, c = 1:26))
-# newdf <- .make_hierarchy(~ a/b/c, df)
+# newdf <- .make_strata(~ a/b/c, df)
 # df[names(newdf)] <- newdf # Add new columns.
 #
 # Public functions utilizing this function:
 #
-# # setpop, gethierarchy
+# # setpop, strata
 #
 # Internal functions utilizing this function:
 # # none
 #==============================================================================#
-.make_hierarchy <- function(hier, df, expand_label = FALSE){
+.make_strata <- function(hier, df, expand_label = FALSE){
   newlevs <- attr(terms(hier), "term.labels")
   levs <- all.vars(hier)
   if (length(levs) > 1){
@@ -597,12 +587,12 @@ setMethod(
 
 #==============================================================================#
 # This will be used to join heirarchical population vectors for the purposes of
-# maintaining hierarchy. 
+# maintaining strata. 
 # Public functions utilizing this function:
 # # 
 #
 # Internal functions utilizing this function:
-# # .make_hierarchy
+# # .make_strata
 #==============================================================================#
 
 .pop_combiner <- function(df, hier=c(1), sep="_"){
@@ -624,19 +614,19 @@ setMethod(
 }
 
 #==============================================================================#
-# A function that will quit the function if a level in the hierarchy is not
+# A function that will quit the function if a level in the strata is not
 # present in the given data frame.
 #
 # Public functions utilizing this function:
-# # setpop gethierarchy poppr.amova
+# # setpop strata poppr.amova
 #
 # Internal functions utilizing this function:
-# # .make_hierarchy make_ade_df
+# # .make_strata make_ade_df
 #==============================================================================#
 .hier_incompatible_warning <- function(levs, df){
-  msg <- paste("One or more levels in the given hierarchy is not present", 
+  msg <- paste("One or more levels in the given strata is not present", 
                "in the data frame.",
-               "\nHierarchy:\t", paste(levs, collapse = ", "), "\nData:\t\t", 
+               "\nstrata:\t", paste(levs, collapse = ", "), "\nData:\t\t", 
                paste(names(df), collapse = ", "))
   return(msg)
 }

@@ -42,6 +42,7 @@ setClassUnion("callOrNULL", c("call","NULL"))
 setClassUnion("intOrNum", c("integer","numeric","NULL"))
 setClassUnion("intOrNULL", c("integer","NULL"))
 setClassUnion("dfOrNULL", c("data.frame", "NULL"))
+setClassUnion("formOrNULL", c("formula", "NULL"))
 
 
 ####################
@@ -170,21 +171,23 @@ setClass("indInfo", representation(ind.names = "character",
 
     } # end check pop
 
-    # Check population hierarchy
-    if (!is.null(object@hierarchy)){
-      if (nrow(object@hierarchy) != nrow(object@tab)){
-        cat("\na hierarchy is defined has invalid length\n")
+    # Check population strata
+    if (!is.null(object@strata)){
+      if (nrow(object@strata) != nrow(object@tab)){
+        cat("\na strata is defined has invalid length\n")
         return(FALSE)
       }
 
-      dups <- duplicated(colnames(object@hierarchy))
+      dups <- duplicated(colnames(object@strata))
       if (any(dups)){
-        cat("\nduplicated names found in @hierarchy slot:\n")
-        dups <- colnames(object@hierarchy)[dups]
+        cat("\nduplicated names found in @strata slot:\n")
+        dups <- colnames(object@strata)[dups]
         cat(paste0(dups, collapse = ", "))
         return(FALSE)
       }
     }
+
+    # TODO: CHECK HIERARCHY FORMULA
 
     ## check ploidy
     if(any(object@ploidy < 1L)){
@@ -206,7 +209,7 @@ setClass("indInfo", representation(ind.names = "character",
 } #end .genind.valid
 
 setClass("genind", contains=c("gen", "indInfo"), 
-          representation = representation(hierarchy = "dfOrNULL"))
+          representation = representation(strata = "dfOrNULL", hierarchy = "formOrNULL"))
 setValidity("genind", .genind.valid)
 
 

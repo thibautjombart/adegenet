@@ -31,10 +31,11 @@ setClass("genlight", representation(gen = "list",
                                     position = "intOrNULL",
                                     ploidy = "intOrNULL",
                                     pop = "factorOrNULL",
-                                    hierarchy = "dfOrNULL",
+                                    strata = "dfOrNULL",
+                                    hierarchy = "formOrNULL",
                                     other = "list"),
          prototype(gen = list(), n.loc = 0L, ind.names = NULL, loc.names = NULL, loc.all = NULL,
-                   chromosome = NULL, position = NULL, hierarchy = NULL, ploidy=NULL, pop=NULL, other=list()))
+                   chromosome = NULL, position = NULL, strata = NULL, hierarchy = NULL, ploidy=NULL, pop=NULL, other=list()))
 
 
 
@@ -422,22 +423,37 @@ setMethod("initialize", "genlight", function(.Object, ..., parallel=require("par
             }
         }
 
-        ## HANDLE INPUT$HIERARCHY ##
-        if(!is.null(input$hierarchy)){
+        ## HANDLE INPUT$STRATA ##
+        if(!is.null(input$strata)){
             ## check length consistency
-            if(nrow(input$hierarchy) != nInd(x)){
-                warning("Inconsistent length for hierarchy - ignoring this argument.")
+            if(nrow(input$strata) != nInd(x)){
+                warning("Inconsistent length for strata - ignoring this argument.")
                 if(is.null(input$other)) {
-                    input$other <- list(hierarchy.wrong.length=input$hierarchy)
+                    input$other <- list(strata.wrong.length=input$strata)
                 } else {
-                    input$other$hierarchy.wrong.length <- input$hierarchy
+                    input$other$strata.wrong.length <- input$strata
                 }
             } else {
               # Make sure that the hierarchies are factors.
-              x@hierarchy <- data.frame(lapply(input$hierarchy, function(f) factor(f, unique(f))))
+              x@strata <- data.frame(lapply(input$strata, function(f) factor(f, unique(f))))
               if(!is.null(x@ind.names)){
-                rownames(x@hierarchy) <- x@ind.names
+                rownames(x@strata) <- x@ind.names
               }
+            }
+        }
+        ## HANDLE INPUT$STRATA ##
+        if (!is.null(x@strata) && !is.null(input$hierarchy)){
+
+            if (is.language(input$hierarchy)){
+                the_names <- all.vars(input$hierarchy)
+                if (all(the_names %in% names(x@strata))){
+                    ## TODO: CHECK HIERARCHY HERE
+                    x@hierarchy <- input$hierarchy
+                } else {
+                    warning("hierarchy names do not match names of strata. Setting slot to NULL")
+                }
+            } else {
+                warning("hierarchy must be a formula. Setting slot to NULL.")
             }
         }
 
@@ -513,14 +529,17 @@ setMethod ("show", "genlight", function(object){
         cat("\n @pop: individual membership for", length(levels(pop(object))), "populations")
     }
 
-    if(!is.null(object@hierarchy)){
-        levs <- names(object@hierarchy)
+    if(!is.null(object@strata)){
+        levs <- names(object@strata)
         if (length(levs) > 6){
           levs <- paste(head(levs), "...", collapse = ", ", sep = ", ")
         } else {
           levs <- paste(levs, collapse = ", ")
         }
-        cat("\n @hierarchy: ", length(object@hierarchy), "levels (", levs, ")")
+        cat("\n @strata: ", length(object@strata), "levels (", levs, ")")
+    }
+    if (!is.null(object@hierarchy)){
+        cat("\n@hierarchy: ", paste(object@hierarchy, collapse = ""))
     }
 
     if(!is.null(chr(object))){
