@@ -11,7 +11,7 @@
 # (genind and genlight).
 #==============================================================================#
 #==============================================================================#
-.getHier <- function(x, formula = NULL, combine = TRUE){
+.getStrata <- function(x, formula = NULL, combine = TRUE){
   if (is.null(x@strata)) return(NULL)
   if (is.null(formula)) return(x@strata)
   vars <- all.vars(formula)
@@ -26,7 +26,7 @@
   invisible(return(hier))
 }
 
-.setHier <- function(x, value){
+.setStrata <- function(x, value){
   if (!inherits(value, "data.frame")){
     stop(paste(substitute(value), "is not a data frame"))
   }
@@ -38,7 +38,10 @@
   return(x)
 }
 
-.nameHier <- function(x, value){
+.nameStrata <- function(x, value){
+  if (missing(value)){
+    return(names(x@strata))
+  }
   if (is.null(x@strata)){
     warning("Cannot name an empty strata")
     return(x)
@@ -53,7 +56,7 @@
   return(x)
 }
 
-.splitHier <- function(x, value, sep = "_"){
+.splitStrata <- function(x, value, sep = "_"){
   if (is.null(x@strata)){
     warning("Cannot split an empty strata")
     return(x)
@@ -93,7 +96,7 @@
   return(x) 
 }
 
-.addHier <- function(x, value, name = "NEW"){
+.addStrata <- function(x, value, name = "NEW"){
   if (is.null(x@strata)){
     strata <- data.frame(vector(mode = "character", length = nInd(x)))
     wasNULL <- TRUE
@@ -150,48 +153,21 @@
 #' 
 #' @export 
 #' @rdname strata-methods
-#' @aliases getstrata,genind-method getstrata,genlight-method
+#' @aliases strata,genind-method strata,genlight-method
 #' @param x a genind or genlight object
 #' @param formula a nested formula indicating the order of the population
 #' strata.
 #' @param combine if \code{TRUE}, the levels will be combined according to the
 #' formula argument. If it is \code{FALSE}, the levels will not be combined.
-#' @docType methods
-#==============================================================================#
-getstrata <- function(x, formula = NULL, combine = TRUE){
-  standardGeneric("getstrata")
-} 
-
-#' @export
-setGeneric("getstrata")
-
-setMethod(
-  f = "getstrata",
-  signature(x = "genind"),
-  definition = function(x, formula = NULL, combine = TRUE){
-    .getHier(x, formula = formula, combine = combine)
-  })
-
-setMethod(
-  f = "getstrata",
-  signature(x = "genlight"),
-  definition = function(x, formula = NULL, combine = TRUE){
-    .getHier(x, formula = formula, combine = combine)
-  })
-
-#==============================================================================#
-#' @export
-#' @rdname strata-methods
-#' @aliases setstrata<-,genind-method setstrata<-,genlight-method
 #' @param value a data frame OR vector OR formula (see details).
 #' @docType methods
 #'   
 #' @details \subsection{Function Specifics}{ \itemize{ \item
-#' \strong{getstrata()} - This will retrieve the data from the
+#' \strong{strata()} - This will retrieve the data from the
 #' \emph{strata} slot in the \linkS4class{genind} object. You have the
 #' option to choose specific heirarchical levels using a formula (see below) and
 #' you can choose to combine the hierarchical levels (default) \item
-#' \strong{setstrata()} - Set or reset the hierarchical levels in your
+#' \strong{strata()} - Set or reset the hierarchical levels in your
 #' \linkS4class{genind} object. \item \strong{namestrata()} - Rename the
 #' hierarchical levels. \item \strong{splitstrata()} - It is often
 #' difficult to import files with several levels of strata as most data
@@ -209,12 +185,12 @@ setMethod(
 #' 
 #' These functions allow the user to seamlessly assign the hierarchical levels
 #' of their \code{\linkS4class{genind}} object. Note that there are two ways
-#' of performing all methods (except for \code{getstrata()}). They
+#' of performing all methods (except for \code{strata()}). They
 #' essentially do the same thing except that the assignment method (the one with
 #' the "\code{<-}") will modify the object in place whereas the non-assignment 
 #' method will not modify the original object. Due to convention, everything 
 #' right of the assignment is termed \code{value}. To avoid confusion, here is a
-#' guide to the inputs: \itemize{ \item \strong{setstrata()} This will be a 
+#' guide to the inputs: \itemize{ \item \strong{strata()} This will be a 
 #' \code{\link{data.frame}} that defines the strata for each individual in 
 #' the rows. \item \strong{namestrata()} This will be either a 
 #' \code{\link{vector}} or a \code{\link{formula}} that will define the names. 
@@ -250,62 +226,72 @@ setMethod(
 #' names(other(microbov))
 #' 
 #' # Let's set the strata
-#' setstrata(microbov) <- data.frame(other(microbov))
+#' strata(microbov) <- data.frame(other(microbov))
 #' microbov
 #' 
 #' # And change the names so we know what they are
 #' namestrata(microbov) <- ~Country/Breed/Species
 #' 
 #' # let's see what the strata looks like by Species and Breed:
-#' head(getstrata(microbov, ~Breed/Species))
+#' head(strata(microbov, ~Breed/Species))
 #' 
 #==============================================================================#
-setstrata <- function(x, value){
-  standardGeneric("setstrata")
+strata <- function(x, formula = NULL, combine = TRUE, value){
+  standardGeneric("strata")
 } 
 
 #' @export
-setGeneric("setstrata")
+setGeneric("strata")
 
 setMethod(
-  f = "setstrata",
+  f = "strata",
   signature(x = "genind"),
-  definition = function(x, value){
-    .setHier(x, value)
+  definition = function(x, formula = NULL, combine = TRUE, value){
+    if (missing(value)){
+      .getStrata(x, formula = formula, combine = combine)  
+    } else {
+      .setStrata(x, value)
+    }
   })
 
 setMethod(
-  f = "setstrata",
+  f = "strata",
   signature(x = "genlight"),
-  definition = function(x, value){
-    .setHier(x, value)
+  definition = function(x, formula = NULL, combine = TRUE, value){
+    if (missing(value)){
+      .getStrata(x, formula = formula, combine = combine)  
+    } else {
+      .setStrata(x, value)
+    }
+    
   })
+
 
 #==============================================================================#
 #' @export 
 #' @rdname strata-methods
-#' @aliases setstrata,genind-method setstrata,genlight-method
+#' @aliases strata,genind-method strata,genlight-method
 #' @docType methods
 #==============================================================================#
-"setstrata<-" <- function(x, value){
-  standardGeneric("setstrata<-")
+"strata<-" <- function(x, value){
+  standardGeneric("strata<-")
 }  
 
 #' @export
-setGeneric("setstrata<-")
+setGeneric("strata<-")
 
 setMethod(
-  f = "setstrata<-",
+  f = "strata<-",
   signature(x = "genind"),
   definition = function(x, value){
-    return(setstrata(x, value))
+    return(.setStrata(x, value))
   })
 
 setMethod(
-  f = "setstrata<-",
+  f = "strata<-",
   signature(x = "genlight"),
   definition = function(x, value){
-    return(setstrata(x, value))
+    return(.setStrata(x, value))
   })
 
 #==============================================================================#
@@ -325,14 +311,14 @@ setMethod(
   f = "namestrata",
   signature(x = "genind"),
   definition = function(x, value){
-    .nameHier(x, value)
+    .nameStrata(x, value)
   })
 
 setMethod(
   f = "namestrata",
   signature(x = "genlight"),
   definition = function(x, value){
-    .nameHier(x, value)
+    .nameStrata(x, value)
   })
 
 #==============================================================================#
@@ -381,14 +367,14 @@ setMethod(
   f = "splitstrata",
   signature(x = "genind"),
   definition = function(x, value, sep = "_"){
-    .splitHier(x, value, sep = sep) 
+    .splitStrata(x, value, sep = sep) 
   })
 
 setMethod(
   f = "splitstrata",
   signature(x = "genlight"),
   definition = function(x, value, sep = "_"){
-    .splitHier(x, value, sep = sep) 
+    .splitStrata(x, value, sep = sep) 
   })
 
 #==============================================================================#
@@ -437,14 +423,14 @@ setMethod(
   f = "addstrata",
   signature(x = "genind"),
   definition = function(x, value, name = "NEW"){
-    .addHier(x, value, name = name)
+    .addStrata(x, value, name = name)
   })
 
 setMethod(
   f = "addstrata",
   signature(x = "genlight"),
   definition = function(x, value, name = "NEW"){
-    .addHier(x, value, name = name)
+    .addStrata(x, value, name = name)
   })
 
 #==============================================================================#
@@ -493,7 +479,7 @@ setMethod(
 #' 
 #' data(microbov)
 #' 
-#' setstrata(microbov) <- data.frame(other(microbov))
+#' strata(microbov) <- data.frame(other(microbov))
 #' 
 #' # Currently set on just 
 #' head(pop(microbov)) 
@@ -573,7 +559,7 @@ setMethod(
 #
 # Public functions utilizing this function:
 #
-# # setpop, getstrata
+# # setpop, strata
 #
 # Internal functions utilizing this function:
 # # none
@@ -628,7 +614,7 @@ setMethod(
 # present in the given data frame.
 #
 # Public functions utilizing this function:
-# # setpop getstrata poppr.amova
+# # setpop strata poppr.amova
 #
 # Internal functions utilizing this function:
 # # .make_strata make_ade_df

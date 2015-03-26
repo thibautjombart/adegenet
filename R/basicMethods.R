@@ -199,7 +199,7 @@ setMethod ("show", "genind", function(object){
   } else {
     levs <- names(x@strata)
     if (length(levs) > 6){
-      levs <- paste(head(levs), "...", collapse = ", ", sep = ", ")
+      levs <- paste(paste(head(levs), collapse = ", "), "...", sep = ", ")
     } else {
       levs <- paste(levs, collapse = ", ")
     }

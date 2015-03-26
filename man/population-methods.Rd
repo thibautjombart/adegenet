@@ -29,7 +29,7 @@ genind object.
 \examples{
 data(microbov)
 
-setstrata(microbov) <- data.frame(other(microbov))
+strata(microbov) <- data.frame(other(microbov))
 
 # Currently set on just
 head(pop(microbov))
