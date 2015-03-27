@@ -19,6 +19,12 @@ test_that("strata methods work for genind objects.", {
   expect_that(microbov@pop.names, equals(c("AF_BI", "AF_BT", "FR_BT")))
 })
 
+test_that("strata produce proper errors", {
+  skip_on_cran()
+  
+  
+})
+
 test_that("strata methods work for genlight objects", {
   skip_on_cran()
   

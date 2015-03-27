@@ -70,7 +70,7 @@ population of a genind or genlight object.
 \strong{strata()} - This will retrieve the data from the
 \emph{strata} slot in the \linkS4class{genind} object. You have the
 option to choose specific heirarchical levels using a formula (see below) and
-you can choose to combine the hierarchical levels (default) \item
+you can choose to combine the strataarchical levels (default) \item
 \strong{strata()} - Set or reset the hierarchical levels in your
 \linkS4class{genind} object. \item \strong{namestrata()} - Rename the
 hierarchical levels. \item \strong{splitstrata()} - It is often

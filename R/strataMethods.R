@@ -11,58 +11,59 @@
 # (genind and genlight).
 #==============================================================================#
 #==============================================================================#
-.getStrata <- function(x, formula = NULL, combine = TRUE){
+.getStrata <- function(x, formula = NULL, combine = TRUE, call = match.call()){
   if (is.null(x@strata)) return(NULL)
   if (is.null(formula)) return(x@strata)
   vars <- all.vars(formula)
   if (any(!vars %in% names(x@strata))){
-    stop(.hier_incompatible_warning(vars, x@strata))
+    stop(.strata_incompatible_warning(vars, x@strata), call. = FALSE)
   }
   if (combine){
-    hier <- .make_strata(formula, x@strata)
+    strata <- .make_strata(formula, x@strata)
   } else {
-    hier <- x@strata[all.vars(formula)]
+    strata <- x@strata[all.vars(formula)]
   }
-  invisible(return(hier))
+  invisible(return(strata))
 }
 
-.setStrata <- function(x, value){
+.setStrata <- function(x, value, call = match.call()){
   if (is.null(value)){
     x@strata <- value
     return(x)
   }
   if (!inherits(value, "data.frame")){
-    stop(paste(substitute(value), "is not a data frame"))
+    callval <- as.character(call["value"])
+    stop(paste(callval, "is not a data frame"), call. = FALSE)
   }
   if (nrow(value) != nInd(x)){
-    stop("Number of rows in data frame not equal to number of individuals in object.")
+    stop("Number of rows in data frame not equal to number of individuals in object.", call. = FALSE)
   }
   value <- data.frame(lapply(value, function(f) factor(f, unique(f))))
   x@strata <- value
   return(x)
 }
 
-.nameStrata <- function(x, value){
+.nameStrata <- function(x, value, call = match.call()){
   if (missing(value)){
     return(names(x@strata))
   }
   if (is.null(x@strata)){
-    warning("Cannot name an empty strata")
+    warning("Cannot name an empty strata", call. = FALSE)
     return(x)
   }
   if (is.language(value)){
     value <- all.vars(value)
   }
   if (!is.vector(value) | length(value) != length(x@strata)){
-    stop(paste("strata, needs a vector argument of length", length(x@strata)))
+    stop(paste("namestrata needs a vector argument of length", length(x@strata)), call. = FALSE)
   }
   names(x@strata) <- value
   return(x)
 }
 
-.splitStrata <- function(x, value, sep = "_"){
+.splitStrata <- function(x, value, sep = "_", call = match.call()){
   if (is.null(x@strata)){
-    warning("Cannot split an empty strata")
+    warning("Cannot split empty strata", call. = FALSE)
     return(x)
   }
   if (is.language(value)){
@@ -71,14 +72,14 @@
     # valterms <- gsub(":", sep, valterms)
     value    <- all.vars(value)
   } else {
-    stop("value must be a formula.")
+    stop("Value must be a formula.", call. = FALSE)
   }
   if (length(value) < 1){
-    stop("value must have more than one hierarchical level.")
+    stop("Value must have more than one level.", call. = FALSE)
   }
   strata  <- x@strata
   if (length(strata) > 1){
-    warning("strata must be length 1. Taking the first column.")
+    warning("Strata must be length 1. Taking the first column.", call. = FALSE)
     strata <- strata[1]
   }
   seps     <- gregexpr(sep, strata[[1]])
@@ -91,7 +92,7 @@
     msg1 <- paste("\n  Data has", seps, ifelse(seps == 1, "level", "levels"),
                   "of strata with the separator", sep, ".")
     msg2 <- paste("Here is the fist column of the data:", strata[1, ])
-    stop(paste(msg1, "\n ", msg2))
+    stop(paste(msg1, "\n ", msg2), call. = FALSE)
   }
   x@strata <- colsplit(as.character(strata[[1]]), pattern = sep, value)
   x@strata <- data.frame(lapply(x@strata, function(f) factor(f, levels = unique(f))))
@@ -100,7 +101,7 @@
   return(x) 
 }
 
-.addStrata <- function(x, value, name = "NEW"){
+.addStrata <- function(x, value, name = "NEW", call = match.call()){
   if (is.null(x@strata)){
     strata <- data.frame(vector(mode = "character", length = nInd(x)))
     wasNULL <- TRUE
@@ -117,8 +118,12 @@
   } else if (is.data.frame(value) && nrow(value) == nrow(strata)){
     value <- data.frame(lapply(value, function(f) factor(f, unique(f))))
     strata <- cbind(strata, value)
+  } else if (is.data.frame(value)){
+    callval <- as.character(call["value"])
+    msg     <- .not_enough_rows_warning(callval, nrow(value), nrow(strata))
+    stop(msg, call. = FALSE)
   } else {
-    stop("value must be a vector or data frame.")
+    stop("value must be a vector or data frame.", call. = FALSE)
   }
   if (wasNULL){
     strata <- strata[-1, , drop = FALSE]
@@ -127,17 +132,18 @@
   return(x) 
 }
 
-.setPop <- function(x, formula = NULL){
+.setPop <- function(x, formula = NULL, call = match.call()){
   if (is.null(x@strata)){
-    warning("Cannot set the population from an empty strata")
+    warning("Cannot set the population from an empty strata", call. = FALSE)
     return(x)
   }
   if (is.null(formula) | !is.language(formula)){
-    stop(paste(substitute(formula), "must be a valid formula object."))
+    callform <- as.character(call["formula"])
+    stop(paste(callform, "must be a valid formula object."), call. = FALSE)
   }
   vars <- all.vars(formula)
   if (!all(vars %in% names(x@strata))){
-    stop(.hier_incompatible_warning(vars, x@strata))
+    stop(.strata_incompatible_warning(vars, x@strata), call. = FALSE)
   }
   pop(x) <- .make_strata(formula, x@strata)[[length(vars)]]
   return(x)
@@ -170,7 +176,7 @@
 #' \strong{strata()} - This will retrieve the data from the
 #' \emph{strata} slot in the \linkS4class{genind} object. You have the
 #' option to choose specific heirarchical levels using a formula (see below) and
-#' you can choose to combine the hierarchical levels (default) \item
+#' you can choose to combine the strataarchical levels (default) \item
 #' \strong{strata()} - Set or reset the hierarchical levels in your
 #' \linkS4class{genind} object. \item \strong{namestrata()} - Rename the
 #' hierarchical levels. \item \strong{splitstrata()} - It is often
@@ -251,10 +257,11 @@ setMethod(
   f = "strata",
   signature(x = "genind"),
   definition = function(x, formula = NULL, combine = TRUE, value){
+    theCall <- match.call()
     if (missing(value)){
-      .getStrata(x, formula = formula, combine = combine)  
+      .getStrata(x, formula = formula, combine = combine, theCall)  
     } else {
-      .setStrata(x, value)
+      .setStrata(x, value, theCall)
     }
   })
 
@@ -262,10 +269,11 @@ setMethod(
   f = "strata",
   signature(x = "genlight"),
   definition = function(x, formula = NULL, combine = TRUE, value){
+    theCall <- match.call()
     if (missing(value)){
-      .getStrata(x, formula = formula, combine = combine)  
+      .getStrata(x, formula = formula, combine = combine, theCall)  
     } else {
-      .setStrata(x, value)
+      .setStrata(x, value, theCall)
     }
     
   })
@@ -288,14 +296,16 @@ setMethod(
   f = "strata<-",
   signature(x = "genind"),
   definition = function(x, value){
-    return(.setStrata(x, value))
+    theCall <- match.call()
+    return(.setStrata(x, value, theCall))
   })
 
 setMethod(
   f = "strata<-",
   signature(x = "genlight"),
   definition = function(x, value){
-    return(.setStrata(x, value))
+    theCall <- match.call()
+    return(.setStrata(x, value, theCall))
   })
 
 #==============================================================================#
@@ -427,14 +437,16 @@ setMethod(
   f = "addstrata",
   signature(x = "genind"),
   definition = function(x, value, name = "NEW"){
-    .addStrata(x, value, name = name)
+    theCall <- match.call()
+    .addStrata(x, value, name = name, theCall)
   })
 
 setMethod(
   f = "addstrata",
   signature(x = "genlight"),
   definition = function(x, value, name = "NEW"){
-    .addStrata(x, value, name = name)
+    theCall <- match.call()
+    .addStrata(x, value, name = name, theCall)
   })
 
 #==============================================================================#
@@ -454,14 +466,16 @@ setMethod(
   f = "addstrata<-",
   signature(x = "genind"),
   definition = function(x, name = "NEW", value){
-    return(addstrata(x, value, name))
+    theCall <- match.call()
+    return(.addStrata(x, value, name = name, theCall))
   })
 
 setMethod(
   f = "addstrata<-",
   signature(x = "genlight"),
   definition = function(x, name = "NEW", value){
-    return(addstrata(x, value, name))
+    theCall <- match.call()
+    return(.addStrata(x, value, name = name, theCall))
   })
 
 #==============================================================================#
@@ -568,14 +582,14 @@ setMethod(
 # Internal functions utilizing this function:
 # # none
 #==============================================================================#
-.make_strata <- function(hier, df, expand_label = FALSE){
-  newlevs <- attr(terms(hier), "term.labels")
-  levs <- all.vars(hier)
+.make_strata <- function(strata, df, expand_label = FALSE){
+  newlevs <- attr(terms(strata), "term.labels")
+  levs <- all.vars(strata)
   if (length(levs) > 1){
     newlevs <- gsub(":", "_", newlevs)
   }
   if (!all(levs %in% names(df))){
-    stop(.hier_incompatible_warning(levs, df))
+    stop(.strata_incompatible_warning(levs, df), call. = FALSE)
   }
   newdf <- df[levs[1]]
   if (!expand_label){
@@ -595,19 +609,19 @@ setMethod(
 # # .make_strata
 #==============================================================================#
 
-.pop_combiner <- function(df, hier=c(1), sep="_"){
+.pop_combiner <- function(df, strata=c(1), sep="_"){
   if(!is.list(df)){
-    warning("df must be a data frame or a list")
+    warning("df must be a data frame or a list", call. = FALSE)
     return(df)
   }
   else{
-    if(length(hier)==1){
-      return(df[[hier]])
+    if(length(strata)==1){
+      return(df[[strata]])
     }
     else{
-      comb <- vector(length=length(df[[hier[1]]]))
+      comb <- vector(length=length(df[[strata[1]]]))
       comb <- df[[hier[1]]]
-      lapply(hier[-1], function(x) comb <<- paste(comb, df[[x]], sep=sep))
+      lapply(strata[-1], function(x) comb <<- paste(comb, df[[x]], sep=sep))
       return(comb)
     }
   }
@@ -623,10 +637,27 @@ setMethod(
 # Internal functions utilizing this function:
 # # .make_strata make_ade_df
 #==============================================================================#
-.hier_incompatible_warning <- function(levs, df){
+.strata_incompatible_warning <- function(levs, df){
   msg <- paste("One or more levels in the given strata is not present", 
-               "in the data frame.",
-               "\nstrata:\t", paste(levs, collapse = ", "), "\nData:\t\t", 
+               "in the data frame.\n", paste(rep("-", 78), collapse = ""),
+               "\nstrata:\t", paste(levs, collapse = ", "), "\nData:\t", 
                paste(names(df), collapse = ", "))
+  return(msg)
+}
+
+#==============================================================================#
+# A function that will send a message if the number of rows in a data frame does
+# not match what is expected.
+#
+# Public functions utilizing this function:
+# # addstrata
+#
+# Internal functions utilizing this function:
+# # .addStrata
+#==============================================================================#
+.not_enough_rows_warning <- function(dfname, dfrow, nind){
+  msg <- paste("The data frame or vector does not have enough rows\n", 
+               paste(rep("-", 78), collapse = ""),
+               "\n", dfname, ":\t", dfrow, "\nData :\t", nind)
   return(msg)
 }
