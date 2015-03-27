@@ -21,8 +21,13 @@ test_that("strata methods work for genind objects.", {
 
 test_that("strata produce proper errors", {
   skip_on_cran()
-  
-  
+  expect_warning(setpop(microbov, ~bippity/boppity/boo))
+  strata(microbov) <- data.frame(other(microbov))
+  expect_error({strata(microbov) <- data.frame(a = 1)})
+  expect_error({addstrata(microbov) <- data.frame(a = 1:10)})
+  expect_error(setpop(microbov, ~bippity/boppity/boo))
+  expect_error({strata(microbov) <- "a stratum"})
+  expect_error({setpop(microbov) <- "thepop"})
 })
 
 test_that("strata methods work for genlight objects", {

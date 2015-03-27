@@ -620,7 +620,7 @@ setMethod(
     }
     else{
       comb <- vector(length=length(df[[strata[1]]]))
-      comb <- df[[hier[1]]]
+      comb <- df[[strata[1]]]
       lapply(strata[-1], function(x) comb <<- paste(comb, df[[x]], sep=sep))
       return(comb)
     }
