@@ -27,9 +27,9 @@
 # GRP is the group identities of the samples, PCA is the result of dudi.pca
 # on the full data set, KEEP is the subset of samples based on the training
 # set (mle). Note that this function only has two inputs, dat, and mle.
-.boot_group_sampler <- function(dat = list(DATA = dat, GRP = grp, PCA = pcaX, 
-                                           KEEP = 1:nrow(dat)), 
-                                mle = training.set){
+.boot_group_sampler <- function(dat = list(DATA = NULL, GRP = NULL, PCA = NULL, 
+                                           KEEP = NULL), 
+                                mle = NULL){
   to_keep    <- unlist(lapply(levels(dat$GRP), .group_sampler, dat$GRP, mle))
   dat$PCA$li <- dat$PCA$li[to_keep, , drop = FALSE]
   dat$KEEP   <- to_keep

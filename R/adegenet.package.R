@@ -213,7 +213,7 @@
 #'
 #' @import ade4
 #'
-#' @import genetics
+# @import genetics # Removing this.
 #'
 #' @importFrom utils "packageDescription"
 #'
