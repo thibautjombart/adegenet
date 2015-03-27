@@ -79,22 +79,13 @@ genind2genpop <- function(x,pop=NULL, quiet=FALSE,
     if(!is.genind(x)) stop("x is not a valid genind object")
     checkType(x)
     if(!all(ploidy(x)[1]==ploidy(x))) stop("conversion to genpop not supported for varying ploidy")
-    if(is.null(x@pop) && is.null(pop)) {
+    if(!is.null(pop)) pop(x) <- pop
+    if(is.null(pop(x))) {
         if(!quiet) warning("\npop is not provided either in x or in pop - assuming one single group")
         pop <- factor(rep(1, nInd(x)))
     }
 
     if(!quiet) cat("\n Converting data from a genind to a genpop object... \n")
-
-    ## choose pop argument over x@pop
-    if(!is.null(pop)) {
-        if(length(pop) != nInd(x)) stop("inconsistent length for factor pop")
-                                        # keep levels in order of appearance
-        pop <- as.character(pop)
-        pop <- factor(pop, levels=unique(pop))
-    } else {
-        pop <- pop(x)
-    }
 
     ## tabcount is a matrix pop x alleles, counting alleles per pop
     tabcount <- apply(tab(x), 2, tapply, pop(x), sum, na.rm=TRUE)
