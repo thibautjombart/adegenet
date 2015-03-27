@@ -3,6 +3,7 @@
 \alias{glPlot}
 \alias{plot.genlight}
 \alias{plot,genlight-method}
+\alias{plot,genlight,ANY-method}
 \title{Plotting genlight objects}
 \description{
   \linkS4class{genlight} object can be plotted using the function

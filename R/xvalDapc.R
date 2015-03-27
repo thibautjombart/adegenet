@@ -119,8 +119,29 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
   }else{
     groups1 <- (levels(grp))[(as.vector(which.min((lapply(groups, function(e) sum(as.vector(unclass(grp==e))))))))]
     popmin <- length(which(grp%in%groups1))
+    if(popmin==1){
+      ## exclude smallest group; proceed with second smallest group:
+      counter <- 0
+      while(popmin==1){
+        groups.temp <- factor(as.vector(grp[-which(grp %in% groups1)]), exclude=groups1)
+        groups1.ori <- groups1
+        groups1 <- levels(groups.temp)[(as.vector(which.min((lapply(levels(groups.temp), 
+                                                              function(e) sum(as.vector(unclass(groups.temp==e))))))))]
+        popmin <- length(which(groups.temp%in%groups1))
+        groups1 <- c(groups1.ori, groups1)
+        counter <- sum(counter, 1)           
+      }
+      if(counter==1){        
+        msg <- "1 group has only 1 member so it cannot be represented in both training and validation sets."
+      }else{
+        msg <- paste(counter, "groups have only 1 member: these groups cannot be represented in both training and validation sets.") 
+                      
+      }      
+      warning(msg)
+    }
     training.set2 <- ((popmin - 1)/popmin)
-    N.training <- round(N*training.set2)}
+    N.training <- round(N*training.set2)   
+  }
   
   
   ## GET FULL PCA ##
@@ -138,6 +159,43 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
     n.pca <- round(pretty(1:n.pca.max, runs))
   }
   n.pca <- n.pca[n.pca>0 & n.pca<(N.training-1)]
+
+  ## FUNCTION GETTING THE % OF ACCURATE PREDICTION FOR ONE NUMBER OF PCA PCs ##
+  ## n.pca is a number of retained PCA PCs
+  get.prop.pred <- function(n.pca){
+    f1 <- function(){
+      if(all(lapply(groups, function(e) sum(as.vector(unclass(grp==e))))>=10)==TRUE){
+        toKeep <- unlist(lapply(groups, function(e) sample(which(grp==e), 
+                                                           size=(round(training.set*sum(as.vector(unclass(grp==e))))))))}
+      else{
+        ## check if any groups have only 1 member
+        grp.n.1 <- levels(grp)[which(lapply(groups, function(e) sum(as.vector(unclass(grp==e))))==1)]                
+        if(length(grp.n.1)!=0){
+          ## for groups with 1 member, keep that member in the training set
+          toKeep <- which(grp %in% grp.n.1) 
+          toKeep <- c(toKeep, unlist(lapply(groups[-which(groups %in% grp.n.1)], function(e) sample(which(grp==e), 
+                                                      size=(round(training.set2*sum(as.vector(unclass(grp==e)))))))))
+        }else{
+          ## if no group has only 1 member, proceed normally
+          toKeep <- unlist(lapply(groups, function(e) sample(which(grp==e), 
+                                                             size=(round(training.set2*sum(as.vector(unclass(grp==e))))))))
+        }
+        }
+      temp.pca <- pcaX
+      temp.pca$li <- temp.pca$li[toKeep,,drop=FALSE]
+      temp.dapc <- suppressWarnings(dapc(x[toKeep,,drop=FALSE], grp[toKeep], 
+                                         n.pca=n.pca, n.da=n.da, dudi=temp.pca))
+      temp.pred <- predict.dapc(temp.dapc, newdata=x[-toKeep,,drop=FALSE])
+      if(result=="overall"){
+        out <- mean(temp.pred$assign==grp[-toKeep])
+      }
+      if(result=="groupMean"){
+        out <- mean(tapply(temp.pred$assign==grp[-toKeep], grp[-toKeep], mean), na.rm=TRUE)
+      }
+      return(out)
+    }
+    return(replicate(n.rep, f1()))
+  } # end get.prop.pred
   
   
   ## GET %SUCCESSFUL OF ACCURATE PREDICTION FOR ALL VALUES ##

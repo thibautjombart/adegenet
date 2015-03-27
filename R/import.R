@@ -9,60 +9,126 @@
 ## .stru (STRUCTURE)
 ##
 ## Thibaut Jombart, avril 2006
+## Revised March 2015
 ## t.jombart@imperial.ac.uk
 ##
 ##################################################################
 
 
+######################
+## Function df2genind
+######################
+#' Convert a data.frame of allele data to a genind object.
+#'
+#' The function \code{df2genind} converts a data.frame (or a matrix) into a
+#' \linkS4class{genind} object. The data.frame must meet the following
+#' requirements:\cr
+#' - genotypes are in row (one row per genotype)\cr
+#' - markers/loci are in columns\cr
+#' - each element is a string of characters coding alleles, ideally separated by a character string (argument \code{sep});
+#' if no separator is used, the number of characters coding alleles must be indicated (argument \code{ncode}).\cr
+#'
+#' See \code{\link{genind2df}} to convert \linkS4class{genind} objects back to such a
+#' data.frame.
+#'
+#' === Details for the \code{sep} argument ===\cr this character is directly
+#' used in reguar expressions like \code{gsub}, and thus require some
+#' characters to be preceeded by double backslashes. For instance, "/" works
+#' but "|" must be coded as "\\|".
+#'
+#' @aliases df2genind
+#' @param X a matrix or a data.frame containing allelle data only (see decription)
+#' @param sep a character string separating alleles. See details.
+#' @param ncode an optional integer giving the number of characters used for
+#' coding one genotype at one locus. If not provided, this is determined from
+#' data.
+#' @param ind.names an optional character vector giving the individuals names;
+#' if NULL, taken from rownames of X.
+#' @param loc.names an optional character vector giving the markers names; if
+#' NULL, taken from colnames of X.
+#' @param pop an optional factor giving the population of each individual.
+#' @param NA.char a vector of character strings which are to be treated as NA
+#' @param ploidy an integer indicating the degree of ploidy of the genotypes.
+#' @param type a character string indicating the type of marker: 'codom' stands
+#' for 'codominant' (e.g. microstallites, allozymes); 'PA' stands for
+#' 'presence/absence' markers (e.g. AFLP, RAPD).
+#'
+#' @return an object of the class \linkS4class{genind} for \code{df2genind}; a
+#' matrix of biallelic genotypes for \code{genind2df}
+#'
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#'
+#' @seealso \code{\link{genind2df}}, \code{\link{import2genind}}, \code{\link{read.genetix}},
+#' \code{\link{read.fstat}}, \code{\link{read.structure}}
+#'
+#' @keywords manip
+#' @examples
+#'
+#' ## simple example
+#' df <- data.frame(locusA=c("11","11","12","32"),
+#' locusB=c(NA,"34","55","15"),locusC=c("22","22","21","22"))
+#' row.names(df) <- .genlab("genotype",4)
+#' df
+#'
+#' obj <- df2genind(df, ploidy=2, ncode=1)
+#' obj
+#' obj@@tab
+#'
+#'
+#' ## converting a genind as data.frame
+#' genind2df(obj)
+#' genind2df(obj, sep="/")
+#'
+#' @export
+#'
+df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, pop=NULL,
+                      NA.char="", ploidy=2, type=c("codom","PA")){
 
-#####################
-# Function df2genind
-#####################
-df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, pop=NULL, missing=NA, ploidy=2, type=c("codom","PA")){
-
+    ## CHECKS ##
     if(is.data.frame(X)) X <- as.matrix(X)
     if (!inherits(X, "matrix")) stop ("X is not a matrix")
-
     res <- list()
     type <- match.arg(type)
-    ## checkType(type)
+    if(is.null(sep) && is.null(ncode)) stop("Not enough information to convert data: please indicate the separator (sep=...) or the number of characters coding an allele (ncode=...)")
 
 
-    ## type-independent stuff ##
+    ## TYPE-INDEPENDENT STUFF ##
+    ## misc variables
     n <- nrow(X)
     nloc <- ncol(X)
-    ploidy <- as.integer(ploidy)
-    if(ploidy < 1L) stop("ploidy cannot be less than 1")
+    ploidy <- rep(as.integer(ploidy), length=n)
+    if(any(ploidy < 1L)) stop("ploidy cannot be less than 1")
 
     if(is.null(ind.names)) {ind.names <- rownames(X)}
     if(is.null(loc.names)) {loc.names <- colnames(X)}
 
-    ## pop optionnelle
+    ## pop argument
     if(!is.null(pop)){
         if(length(pop)!= n) stop("length of factor pop differs from nrow(X)")
         pop <- as.factor(pop)
     }
 
 
-    ## PA case ##
+    ## PRESENCE/ABSENCE MARKERS ##
     if(toupper(type)=="PA"){
         ## preliminary stuff
-        mode(X) <- "numeric"
         rownames(X) <- ind.names
         colnames(X) <- loc.names
 
         ## Erase entierely non-typed loci
-        temp <- apply(X,2,function(c) all(is.na(c)))
+        temp <- colSums(is.na(X))==nrow(X)
         if(any(temp)){
             X <- X[,!temp]
             warning("entirely non-type marker(s) deleted")
         }
 
         ## Erase entierely non-type individuals
-        temp <- apply(X,1,function(r) all(is.na(r)))
+        temp <- rowSums(is.na(X))==ncol(X)
         if(any(temp)){
             X <- X[!temp,,drop=FALSE]
-            pop <- pop[!temp]
+            if(!is.null(pop)) pop <- pop[!temp]
+            ploidy <- ploidy[!temp]
+            ind.names <- ind.names[!temp]
             warning("entirely non-type individual(s) deleted")
         }
 
@@ -70,210 +136,153 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
         temp <- apply(X, 2, function(loc) length(unique(loc[!is.na(loc)]))==1)
         if(any(temp)){
             X <- X[,!temp,drop=FALSE]
+            loc.names <- loc.names[!temp]
+            nloc <- ncol(X)
             warning("non-polymorphic marker(s) deleted")
         }
 
         prevcall <- match.call()
 
-        res <- genind( tab=X, pop=pop, prevcall=prevcall, ploidy=ploidy, type="PA")
+        res <- genind(tab=X, pop=pop, prevcall=prevcall, ploidy=ploidy, type="PA")
 
         return(res)
     } # end type PA
 
 
-    ## codom case ##
-
+    ## CODOMINANT MARKERS ##
     ## make sure X is in character mode
     mode(X) <- "character"
 
 
-    ## find or check the number of coding characters, 'ncode'
-    if(is.null(sep)){
-        if(!is.null(ncode)) {
-            temp <- nchar(X[!is.na(X)])
-            if(ncode <  max(temp) ) stop("some character strings exceed the provided ncode.")
-        }
-        if(is.null(ncode)) {
-            temp <- nchar(X[!is.na(X)])
-            ncode <- max(temp)
-        }
-        if((ncode %% ploidy)>0) stop(paste(ploidy,"alleles cannot be coded by a total of",
-                                           ncode,"characters", sep=" "))
+    ## HANDLE MISSING SEPARATORS
+    if(is.null(sep) && any(ploidy>1)){
+        ## check that ncode is provided
+        if(is.null(ncode)) stop("please indicate either the separator (sep) or the number of characters coding an allele (ncode).")
+
+        ## add "/" as separator
+        X <- gsub(paste("([[:alnum:]]{",ncode,"})",sep=""), "\\1/", X)
+        X <- sub("/$","",X)
+        sep <- "/"
     }
 
-    ## ERASE ENTIRELY NON-TYPE LOCI AND INDIVIDUALS
-    tempX <- X
-    if(!is.null(sep)) tempX <- gsub(sep,"",X)
-    ## turn NANANA, 00000, ... into NA
-    tempX <- gsub("^0*$",NA,tempX)
-    tempX <- gsub("(NA)+",NA,tempX)
+    ## HANDLE NAs
+    ## find all strings which are in fact NAs
+    NA.list <- unlist(lapply(unique(ploidy), function(nrep) paste(rep(NA.char, nrep), collapse="/")))
+    NA.list <- unique(c(NA.list, NA.char))
 
-    ## Erase entierely non-typed loci
-    temp <- apply(tempX,2,function(c) all(is.na(c)))
-    if(any(temp)){
-        X <- X[,!temp,drop=FALSE]
-        tempX <- tempX[,!temp,drop=FALSE]
-        loc.names <- loc.names[!temp]
-        nloc <- ncol(X)
+    ## replace NAs
+    X[X %in% NA.list] <- NA
+
+    ## erase entirely non-type loci
+    toRemove <- which(colSums(is.na(X))==nrow(X))
+    if(length(toRemove)>1){
+        X <- X[,-toRemove]
+        loc.names <- loc.names[-toRemove]
         warning("entirely non-type marker(s) deleted")
     }
 
-    ## Erase entierely non-type individuals
-    temp <- apply(tempX,1,function(r) all(is.na(r)))
-    if(any(temp)){
-        X <- X[!temp,,drop=FALSE]
-        tempX <- tempX[!temp,,drop=FALSE]
-        pop <- pop[!temp]
-        ind.names <- ind.names[!temp]
-        n <- nrow(X)
+
+    ## erase entierely non-type individuals
+    toRemove <- which(rowSums(is.na(X))==ncol(X))
+    if(length(toRemove)>1){
+        X <- X[-toRemove, ]
+        ind.names <- rownames(X)
+        ploidy <- ploidy[-toRemove]
+        if(!is.null(pop)) pop <- pop[-toRemove]
         warning("entirely non-type individual(s) deleted")
     }
 
-    n <- nrow(X)
-    ## SET NAs IN X
-    X[is.na(tempX)] <- NA
 
-    # ind.names <- rownames(X) this erases the real labels
-    # note: if X is kept as a matrix, duplicate row names are no problem
+    ## TRANSLATE DATA INTO ALLELE FREQUENCIES ##
+    ## get dimensions of X
+    nloc <- ncol(X)
+    nind <- nrow(X)
 
+    ## unfold data for each cell of the table
+    allele.data <- strsplit(X, sep)
+    n.items <- sapply(allele.data, length)
+    locus.data <- rep(rep(loc.names, each=nind), n.items)
+    ind.data <- rep(rep(ind.names,ncol(X)), n.items)
+    allele.data <- unlist(allele.data)
 
-    ## function to fill a matrix of char 'M' with the required
-    ## number of zero, targetN being the total number of char required
-    fillWithZero <- function(M, targetN){
-        naIdx <- is.na(M)
-        keepCheck <- any(nchar(M) < targetN)
-        while(keepCheck){
-            mat0 <- matrix("", ncol=ncol(M), nrow=nrow(M))
-            mat0[nchar(M) < targetN] <- "0"
-            M <-  matrix(paste(mat0, M, sep=""), nrow=nrow(mat0))
-            keepCheck <- any(nchar(M) < targetN)
-        }
+    ## identify NAs
+    NA.posi <- which(is.na(allele.data))
+    NA.ind <- ind.data[NA.posi]
+    NA.locus <- locus.data[NA.posi]
 
-        ## restore NA (otherwise we're left with "NA")
-        M[naIdx] <- NA
-        return(M)
+    ## remove NAs
+    if(length(NA.posi)>0){
+        allele.data <- allele.data[-NA.posi]
+        locus.data <- locus.data[-NA.posi]
+        ind.data <- ind.data[-NA.posi]
     }
 
-    ## CHECK STRING LENGTH IF NO SEPARATOR PROVIDED
-    if(is.null(sep) | ploidy==as.integer(1)){
-        ##     ## now check all strings and make sure they all have 'ncode' characters
-        ##         ## NA are temporarily coded as "00", "000" or "000000" to fit the check
-        ##         keepCheck <- any(nchar(X) < ncode)
-        ##         missAll <- paste(rep("0",ncode/ploidy),collapse="")
-        ##         missTyp <- paste(rep("0",ncode),collapse="")
-        ##         X[is.na(X)] <- missTyp
+    ## get matrix of allele counts
+    allele.data <- paste(locus.data, allele.data, sep=".")
+    allele.data <- factor(allele.data, levels=unique(allele.data))
+    out <- table(ind.data, allele.data)
 
-        ##         while(keepCheck){
-        ##             mat0 <- matrix("", ncol=ncol(X), nrow=nrow(X))
-        ##             mat0[nchar(X) < ncode] <- "0"
-        ##             X <-  matrix(paste(mat0, X, sep=""), nrow=nrow(mat0))
-        ##             keepCheck <- any(nchar(X) < ncode)
-        ##         }
+    ## force type 'matrix'
+    class(out) <- NULL
+    dimnames(out) <- list(rownames(out), colnames(out))
 
-        X <- fillWithZero(X,targetN=ncode)
+    ## restore NAs
+     if(length(NA.posi)>0){
+         out.colnames <- colnames(out)
+         for(i in 1:length(NA.ind)){
+             out[NA.ind[i], grep(NA.locus[i], out.colnames)] <- NA
+         }
+     }
 
-        ## now split X by allele
-        splitX <- list()
-        for(i in 1:ploidy){
-            splitX[[i]] <- substr(X,1,ncode/ploidy)
-            X <- sub(paste("^.{",ncode/ploidy,"}",sep=""),"",X)
-        }
-
-    } # END CHECK STRING LENGTH WITHOUT SEP
-
-
-    ## CHECK STRING LENGTH WITH SEPARATOR PROVIDED
-    if(!is.null(sep)){
-        if(ploidy > 1){
-            temp <- t(as.matrix(as.data.frame(strsplit(X,sep))))
-            splitX <- list()
-            for(i in 1:ncol(temp)){
-                splitX[[i]] <- matrix(temp[,i], nrow=n)
-            } # each matrix of splitX contains typing for 1 allele
-        } else {
-            splitX <- list()
-            splitX[[1]] <- X
-        }
-
-        ## get the right ncode
-        temp <- unlist(splitX)
-        temp <- temp[!is.na(temp)]
-        ncode <- max(nchar(temp))*ploidy
-        splitX <- lapply(splitX, function(Y) fillWithZero(Y,targetN=ncode/ploidy))
-    } # END CHECK STRING LENGTH WITH SEP
-
-
-    ## AT THIS STAGE, splitX IS A LIST OF MATRICES,
-    ## EACH GIVING TYPING FOR AN ALLELE
-
-    ## fetch all possible alleles per locus
-    loc.all <- list()
-    for(i in 1:nloc){
-        temp <- unlist(lapply(splitX,function(e) e[,i]))
-        loc.all[[i]] <- sort(unique(temp[!is.na(temp)]))
-    }
-
-    names(loc.all) <- loc.names
-    ## loc.all is a list whose element are vectors of sorted possible alleles at a locus
-    temp <- lapply(1:nloc, function(i) matrix(0,nrow=n,ncol=length(loc.all[[i]]),
-       dimnames=list(NULL,loc.all[[i]])) )
-
-    names(temp) <- loc.names
-    # note: keep rownames as NULL in case of duplicates
-    ## temp is a list whose elements are one matrix (indiv x alleles) for each marker
-
-    ## now tables in 'temp' are filled up
-    findall <- function(cha,loc.all){
-        if(is.na(cha)) return(NULL)
-        return(which(cha==loc.all))
-    }
-
-    for(k in 1:ploidy){
-        for(i in 1:n){
-            for(j in 1:nloc){
-                allIdx <- findall(splitX[[k]][i,j],loc.all[[j]])
-                temp[[j]][i,allIdx] <- temp[[j]][i,allIdx] + 1
-                if(is.null(allIdx)) {temp[[j]][i,] <- NA}
-            }
-        }
-    }
-
-    ## beware: colnames are wrong when there is only one allele in a locus
-    ## right colnames are first generated
-    nall <- unlist(lapply(temp,ncol))
-    loc.rep <- rep(names(nall),nall)
-    col.lab <- paste(loc.rep,unlist(loc.all,use.names=FALSE),sep=".")
-
-    ## mat <- as.matrix(cbind.data.frame(temp)) # ! does not work for huge numbers of alleles
-    mat <- matrix(unlist(temp), nrow=nrow(temp[[1]]))
-    mat <- mat/ploidy
-    colnames(mat) <- col.lab
-    rownames(mat) <- ind.names
-
-    if(!is.na(missing)){
-      if(missing==0) {mat[is.na(mat)] <- 0}
-      if(toupper(missing)=="MEAN") {
-        moy <- apply(mat,2,function(c) mean(c,na.rm=TRUE))
-        for(j in 1:ncol(mat)) {mat[,j][is.na(mat[,j])] <- moy[j]}
-      }
-    }
-
+    ## call upon genind constructor
     prevcall <- match.call()
+    out <- genind(tab=out, pop=pop, prevcall=prevcall, ploidy=ploidy, type=type)
 
-    res <- genind( tab=mat, pop=pop, prevcall=prevcall, ploidy=ploidy, type=type)
-
-    return(res)
+    return(out)
 } # end df2genind
 
 
 
 
 
+
+
 ########################################
-# Function read.genetix
-# code based on previous ade4 functions
+## Function read.genetix
+## code based on previous ade4 functions
 ########################################
-read.genetix <- function(file=NULL,missing=NA,quiet=FALSE) {
+#'
+#' Reading data from GENETIX
+#'
+#' The function \code{read.genetix} reads GENETIX data files (.gtx) and convert
+#' them into a \linkS4class{genind} object.
+#'
+#' Note: \code{read.genetix} is meant for DIPLOID DATA ONLY. Haploid data with
+#' the GENETIX format can be read into R using \code{read.table} or
+#' \code{read.csv} after removing headers and 'POP' lines, and then converted
+#' using \code{\link{df2genind}}.
+#'
+#' @param file a character string giving the path to the file to convert, with
+#' the appropriate extension.
+#' @param quiet logical stating whether a conversion message must be printed
+#' (TRUE,default) or not (FALSE).
+#' @return an object of the class \code{genind}
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#' @seealso \code{\link{import2genind}}, \code{\link{df2genind}},
+#' \code{\link{read.fstat}}, \code{\link{read.structure}},
+#' \code{\link{read.genepop}}
+#' @references Belkhir K., Borsa P., Chikhi L., Raufaste N. & Bonhomme F.
+#' (1996-2004) GENETIX 4.05, logiciel sous Windows TM pour la genetique des
+#' populations. Laboratoire Genome, Populations, Interactions, CNRS UMR 5000,
+#' Universite de Montpellier II, Montpellier (France). \cr
+#' @keywords manip
+#' @examples
+#'
+#' obj <- read.genetix(system.file("files/nancycats.gtx",package="adegenet"))
+#' obj
+#'
+#' @export read.genetix
+read.genetix <- function(file=NULL,quiet=FALSE) {
     if(!quiet) cat("\n Converting data from GENETIX to a genind object... \n")
 
 
@@ -331,7 +340,7 @@ read.genetix <- function(file=NULL,missing=NA,quiet=FALSE) {
     pop <- factor(rep(pop.names,pop.nind))
 
     ## pass X to df2genind
-    res <- df2genind(X=X, ncode=6, pop=pop, missing=missing, ploidy=2)
+    res <- df2genind(X=X, ncode=3, pop=pop, ploidy=2, NA.char="000")
     res@call <- match.call()
 
     if(!quiet) cat("\n...done.\n\n")
@@ -344,9 +353,37 @@ read.genetix <- function(file=NULL,missing=NA,quiet=FALSE) {
 
 
 ######################
-# Function read.fstat
+## Function read.fstat
 ######################
-read.fstat <- function(file,missing=NA,quiet=FALSE){
+#' Reading data from Fstat
+#'
+#' The function \code{read.fstat} reads Fstat data files (.dat) and convert
+#' them into a \linkS4class{genind} object.
+#'
+#' Note: \code{read.fstat} is meant for DIPLOID DATA ONLY. Haploid data with
+#' the Hierfstat format can be read into R using \code{read.table} or
+#' \code{read.csv} after removing headers and 'POP' lines, and then converted
+#' using \code{\link{df2genind}}.
+#'
+#' @param file a character string giving the path to the file to convert, with
+#' the appropriate extension.
+#' @param quiet logical stating whether a conversion message must be printed
+#' (TRUE,default) or not (FALSE).
+#' @return an object of the class \code{genind}
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#' @seealso \code{\link{import2genind}}, \code{\link{df2genind}},
+#' \code{\link{read.genetix}}, \code{\link{read.structure}},
+#' \code{\link{read.genepop}}
+#' @references Fstat (version 2.9.3). Software by Jerome Goudet.
+#' http://www2.unil.ch/popgen/softwares/fstat.htm\cr
+#' @keywords manip
+#' @examples
+#'
+#' obj <- read.fstat(system.file("files/nancycats.dat",package="adegenet"))
+#' obj
+#'
+#' @export read.fstat
+read.fstat <- function(file,quiet=FALSE){
     ##if(!file.exists(file)) stop("Specified file does not exist.") <- not needed
     if(toupper(.readExt(file)) != "DAT") stop("File extension .dat expected")
 
@@ -356,14 +393,18 @@ read.fstat <- function(file,missing=NA,quiet=FALSE){
     txt <- scan(file,what="character",sep="\n",quiet=TRUE)
     txt <- gsub("\t"," ",txt)
 
-                                        # read first infos
+    ## read length of allele
+    ncode <- as.integer(unlist(strsplit(txt[1], " "))[4])
+    NA.char <- sapply(1:ncode, function(i) paste(rep("0",i),collapse=""))
+
+    ## read first infos
     info <- unlist(strsplit(txt[1],"([[:space:]]+)"))
-                                        # npop <- as.numeric(info[1]) ## no longer used
+    ## npop <- as.numeric(info[1]) ## no longer used
     nloc <- as.numeric(info[2])
 
     loc.names <- txt[2:(nloc+1)]
 
-                                        # build genotype matrix
+    ## build genotype matrix
     txt <- txt[-(1:(nloc+1))]
     txt <- .rmspaces(txt)
     txt <- sapply(1:length(txt),function(i) unlist(strsplit(txt[i],"([[:space:]]+)|([[:blank:]]+)")) )
@@ -375,8 +416,8 @@ read.fstat <- function(file,missing=NA,quiet=FALSE){
     colnames(X) <- loc.names
     rownames(X) <- 1:nrow(X)
 
-    res <- df2genind(X=X,pop=pop,missing=missing, ploidy=2)
-                                        # beware : fstat files do not yield ind names
+    res <- df2genind(X=X,pop=pop, ploidy=2, ncode=ncode, NA.char=NA.char)
+    ## beware : fstat files do not yield ind names
     res@ind.names <- rep("",length(res@ind.names))
     names(res@ind.names) <- rownames(res@tab)
     res@call <- call
@@ -392,9 +433,39 @@ read.fstat <- function(file,missing=NA,quiet=FALSE){
 
 
 ##########################
-# Function read.genepop
+## Function read.genepop
 ##########################
-read.genepop <- function(file,missing=NA,quiet=FALSE){
+#' Reading data from Genepop
+#'
+#' The function \code{read.genepop} reads Genepop data files (.gen) and convert
+#' them into a \linkS4class{genind} object.
+#'
+#' Note: \code{read.genepop} is meant for DIPLOID DATA ONLY. Haploid data with
+#' the Genepop format can be read into R using \code{read.table} or
+#' \code{read.csv} after removing headers and 'POP' lines, and then converted
+#' using \code{\link{df2genind}}.
+#'
+#' @param file a character string giving the path to the file to convert, with
+#' the appropriate extension.
+#' @param ncode an integer indicating the number of characters used to code an allele.
+#' @param quiet logical stating whether a conversion message must be printed
+#' (TRUE,default) or not (FALSE).
+#' @return an object of the class \code{genind}
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#' @seealso \code{\link{import2genind}}, \code{\link{df2genind}},
+#' \code{\link{read.fstat}}, \code{\link{read.structure}},
+#' \code{\link{read.genetix}}
+#' @references Raymond M. & Rousset F, (1995). GENEPOP (version 1.2):
+#' population genetics software for exact tests and ecumenicism. \emph{J.
+#' Heredity}, \bold{86}:248-249 \cr
+#' @keywords manip
+#' @examples
+#'
+#' obj <- read.genepop(system.file("files/nancycats.gen",package="adegenet"))
+#' obj
+#'
+#' @export read.genepop
+read.genepop <- function(file, ncode=2L, quiet=FALSE){
     ## if(!file.exists(file)) stop("Specified file does not exist.") <- not needed
     if(toupper(.readExt(file)) != "GEN") stop("File extension .gen expected")
 
@@ -418,23 +489,6 @@ read.genepop <- function(file,missing=NA,quiet=FALSE){
   # loc2,
   # ...
 
-  ### former version
-  #1
-  #if(length(grep(",",txt[1])) > 0){
-  #  loc.names <- unlist(strsplit(txt[1],","))
-  #  loc.names <- gsub("^([[:blank:]]*)([[:space:]]*)","",loc.names)
-  #  loc.names <- gsub("([[:blank:]]*)([[:space:]]*)$","",loc.names)
-  #  nloc <- length(loc.names)
-
-  #  txt <- txt[-1]
-  #} else { #2
-  #  nloc <- min(grep("POP",toupper(txt)))-1
-  #  loc.names <- txt[1:nloc]
-  #  loc.names <- gsub("^([[:blank:]]*)([[:space:]]*)","",loc.names)
-  #  loc.names <- gsub("([[:blank:]]*)([[:space:]]*)$","",loc.names)
-
-  #  txt <- txt[-(1:nloc)]
-  #}
 
     ## new strategy (shorter): isolate the 'locus names' part and then parse it.
     locinfo.idx <- 1:(min(grep("POP",toupper(txt)))-1)
@@ -485,20 +539,8 @@ read.genepop <- function(file,missing=NA,quiet=FALSE){
     ## X is a individual x locus genotypes matrix
     X <- matrix(unlist(strsplit(vec.genot,"[[:space:]]+")),ncol=nloc,byrow=TRUE)
 
-    rownames(X) <- ind.names
+    rownames(X) <- 1:nrow(X)
     colnames(X) <- loc.names
-
- ##  # correct X to fulfill the genetix format
-##   f1 <- function(char){
-##     paste("00", substr(char,1,1), "00", substr(char,2,2), sep="")
-##   }
-
-##   f2 <- function(char){
-##     paste("0", substr(char,1,2), "0", substr(char,3,4), sep="")
-##   }
-
-##   if(all(nchar(X)==2)) {X <- apply(X,c(1,2),f1)}
-##   if(all(nchar(X)==4)) {X <- apply(X,c(1,2),f2)}
 
     ## give right pop names
     ## beware: genepop takes the name of the last individual of a sample as this sample's name
@@ -506,7 +548,7 @@ read.genepop <- function(file,missing=NA,quiet=FALSE){
     pop.names <- ind.names[pop.names.idx]
     levels(pop) <- pop.names
 
-    res <- df2genind(X=X,pop=pop,missing=missing, ploidy=2)
+    res <- df2genind(X=X,pop=pop, ploidy=2, ncode=ncode)
     res@call <- prevcall
 
     if(!quiet) cat("\n...done.\n\n")
@@ -520,9 +562,68 @@ read.genepop <- function(file,missing=NA,quiet=FALSE){
 
 
 ############################
-# Function read.structure
+## Function read.structure
 ############################
-read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL, col.lab=NULL, col.pop=NULL, col.others=NULL, row.marknames=NULL, NA.char="-9", pop=NULL, missing=NA, ask=TRUE, quiet=FALSE){
+#' Reading data from STRUCTURE
+#'
+#' The function \code{read.structure} reads STRUCTURE data files (.str ou
+#' .stru) and convert them into a \linkS4class{genind} object. By default, this
+#' function is interactive and asks a few questions about data content. This
+#' can be disabled (for optional questions) by turning the 'ask' argument to
+#' FALSE. However, one has to know the number of genotypes, of markers and if
+#' genotypes are coded on a single or on two rows before importing data.
+#'
+#' Note: \code{read.structure} is meant for DIPLOID DATA ONLY. Haploid data
+#' with the STRUCTURE format can easily be read into R using \code{read.table}
+#' or \code{read.csv} and then converted using \code{\link{df2genind}}.
+#'
+#' @param file a character string giving the path to the file to convert, with
+#' the appropriate extension.
+#' @param n.ind an integer giving the number of genotypes (or 'individuals') in
+#' the dataset
+#' @param n.loc an integer giving the number of markers in the dataset
+#' @param onerowperind a STRUCTURE coding option: are genotypes coded on a
+#' single row (TRUE), or on two rows (FALSE, default)
+#' @param col.lab an integer giving the index of the column containing labels
+#' of genotypes. '0' if absent.
+#' @param col.pop an integer giving the index of the column containing
+#' population to which genotypes belong. '0' if absent.
+#' @param col.others an vector of integers giving the indexes of the columns
+#' containing other informations to be read. Will be available in @@other of the
+#' created object.
+#' @param row.marknames an integer giving the index of the row containing the
+#' names of the markers. '0' if absent.
+#' @param NA.char the character string coding missing data. "-9" by default.
+#' Note that in any case, series of zero (like "000") are interpreted as NA
+#' too.
+#' @param pop an optional factor giving the population of each individual.
+#' @param sep a character string used as separator between alleles.
+#' @param ask a logical specifying if the function should ask for optional
+#' informations about the dataset (TRUE, default), or try to be as quiet as
+#' possible (FALSE).
+#' @param quiet logical stating whether a conversion message must be printed
+#' (TRUE,default) or not (FALSE).
+#' @return an object of the class \code{genind}
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#' @seealso \code{\link{import2genind}}, \code{\link{df2genind}},
+#' \code{\link{read.fstat}}, \code{\link{read.genetix}},
+#' \code{\link{read.genepop}}
+#' @references Pritchard, J.; Stephens, M. & Donnelly, P. (2000) Inference of
+#' population structure using multilocus genotype data. \emph{Genetics},
+#' \bold{155}: 945-959
+#' @keywords manip
+#' @examples
+#'
+#' obj <- read.structure(system.file("files/nancycats.str",package="adegenet"),
+#'   onerowperind=FALSE, n.ind=237, n.loc=9, col.lab=1, col.pop=2, ask=FALSE)
+#'
+#' obj
+#'
+#' @export read.structure
+read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL,
+                           col.lab=NULL, col.pop=NULL, col.others=NULL,
+                           row.marknames=NULL, NA.char="-9", pop=NULL,
+                           sep=NULL, ask=TRUE, quiet=FALSE){
 
     ## if(!file.exists(file)) stop("Specified file does not exist.") <- not needed
     if(!toupper(.readExt(file)) %in% c("STR","STRU")) stop("File extension .stru expected")
@@ -661,10 +762,11 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL, col
         ## reorder matrix of genotypes
         X <- t(sapply(temp, function(i) paste(gen[i,],gen[i+1,],sep="") ))
 
-    } else { # else of "if(!onerowperind)"
+    } else { # if onerowperind
         temp <- seq(1,p-1,by=2)
-        X <- paste(gen[,temp] , gen[,temp+1], sep="")
+        X <- paste(gen[,temp] , gen[,temp+1], sep="/")
         X <- matrix(X, nrow=n.ind)
+        sep <- "/"
     }
 
     ## replace missing values by NAs
@@ -672,7 +774,7 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL, col
     rownames(X) <- ind.names
     colnames(X) <- loc.names
 
-    res <- df2genind(X=X,pop=pop,missing=missing, ploidy=2)
+    res <- df2genind(X=X,pop=pop, ploidy=2,sep=sep,ncode=ncode)
 
     res@call <- match.call()
 
@@ -686,24 +788,89 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL, col
 
 
 #########################
-# Function import2genind
+## Function import2genind
 #########################
-import2genind <- function(file,missing=NA,quiet=FALSE, ...){
+#'
+#' Importing data from several softwares to a genind object
+#'
+#' Their are several ways to import genotype data to a \linkS4class{genind}
+#' object: i) from a data.frame with a given format (see
+#' \code{\link{df2genind}}), ii) from a file with a recognized extension, or
+#' iii) from an alignement of sequences (see \code{\link{DNAbin2genind}}).\cr
+#'
+#' The function \code{import2genind} detects the extension of the file given in
+#' argument and seeks for an appropriate import function to create a
+#' \code{genind} object.\cr Current recognized formats are :\cr - GENETIX files
+#' (.gtx) \cr - Genepop files (.gen) \cr - Fstat files (.dat) \cr - STRUCTURE
+#' files (.str or .stru) \cr
+#'
+#' Beware: same data in different formats are not expected to produce exactly
+#' the same \code{genind} objects.\cr For instance, conversions made by GENETIX
+#' to Fstat may change the the sorting of the genotypes; GENETIX stores
+#' individual names whereas Fstat does not; Genepop chooses a sample's name
+#' from the name of its last genotype; etc.
+#'
+#' @aliases import2genind
+#' @param file a character string giving the path to the file to convert, with
+#' the appropriate extension.
+#' @param quiet logical stating whether a conversion message must be printed
+#' (TRUE,default) or not (FALSE).
+#' @param \dots other arguments passed to the appropriate 'read' function
+#' (currently passed to \code{read.structure})
+#' @return an object of the class \code{genind}
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#' @seealso \code{\link{import2genind}}, \code{\link{read.genetix}},
+#' \code{\link{read.fstat}}, \code{\link{read.structure}},
+#' \code{\link{read.genepop}}
+#' @references Belkhir K., Borsa P., Chikhi L., Raufaste N. & Bonhomme F.
+#' (1996-2004) GENETIX 4.05, logiciel sous Windows TM pour la genetique des
+#' populations. Laboratoire Genome, Populations, Interactions, CNRS UMR 5000,
+#' Universite de Montpellier II, Montpellier (France). \cr
+#'
+#' Pritchard, J.; Stephens, M. & Donnelly, P. (2000) Inference of population
+#' structure using multilocus genotype data. \emph{Genetics}, \bold{155}:
+#' 945-959
+#'
+#' Raymond M. & Rousset F, (1995). GENEPOP (version 1.2): population genetics
+#' software for exact tests and ecumenicism. \emph{J. Heredity},
+#' \bold{86}:248-249 \cr
+#'
+#' Fstat (version 2.9.3). Software by Jerome Goudet.
+#' http://www2.unil.ch/popgen/softwares/fstat.htm\cr
+#'
+#' Excoffier L. & Heckel G.(2006) Computer programs for population genetics
+#' data analysis: a survival guide \emph{Nature}, \bold{7}: 745-758
+#' @keywords manip
+#' @examples
+#'
+#' import2genind(system.file("files/nancycats.gtx",
+#' package="adegenet"))
+#'
+#' import2genind(system.file("files/nancycats.dat",
+#' package="adegenet"))
+#'
+#' import2genind(system.file("files/nancycats.gen",
+#' package="adegenet"))
+#'
+#' import2genind(system.file("files/nancycats.str",
+#' package="adegenet"), onerowperind=FALSE, n.ind=237, n.loc=9, col.lab=1, col.pop=2, ask=FALSE)
+#'
+import2genind <- function(file, quiet=FALSE, ...){
     ## if(!file.exists(file)) stop("Specified file does not exist.") <- not needed
     ext <- .readExt(file)
     ext <- toupper(ext)
 
     if(ext == "GTX")
-        return(read.genetix(file,missing=missing,quiet=quiet))
+        return(read.genetix(file,quiet=quiet))
 
     if(ext == "DAT")
-        return(read.fstat(file,missing=missing,quiet=quiet))
+        return(read.fstat(file, quiet=quiet))
 
     if(ext == "GEN")
-        return(read.genepop(file,missing=missing,quiet=quiet))
+        return(read.genepop(file, quiet=quiet))
 
     if(ext %in% c("STR","STRU"))
-        return(read.structure(file,missing=missing,quiet=quiet, ...))
+        return(read.structure(file, quiet=quiet, ...))
 
     ## evaluated only if extension is not supported
     cat("\n File format (",ext,") not supported.\n")
@@ -719,15 +886,92 @@ import2genind <- function(file,missing=NA,quiet=FALSE, ...){
 
 
 #######################
-# Function read.snp
+## Function read.snp
 #######################
+#' Reading Single Nucleotide Polymorphism data
+#'
+#' The function \code{read.snp} reads a SNP data file with extension '.snp' and
+#' converts it into a \linkS4class{genlight} object. This format is devoted to
+#' handle biallelic SNP only, but can accommodate massive datasets such as
+#' complete genomes with considerably less memory than other formats.
+#'
+#' The function reads data by chunks of a few genomes (minimum 1, no maximum)
+#' at a time, which allows one to read massive datasets with negligible RAM
+#' requirements (albeit at a cost of computational time). The argument
+#' \code{chunkSize} indicates the number of genomes read at a time. Increasing
+#' this value decreases the computational time required to read data in, while
+#' increasing memory requirements.
+#'
+#' A description of the .snp format is provided in an example file distributed
+#' with adegenet (see example below).
+#'
+#' === The .snp format ===
+#'
+#' Details of the .snp format can be found in the example file distributed with
+#' adegenet (see below), or on the adegenet website (type \code{adegenetWeb()}
+#' in R).
+#'
+#' @param file a character string giving the path to the file to convert, with
+#' the extension ".snp".
+#' @param quiet logical stating whether a conversion messages should be printed
+#' (TRUE,default) or not (FALSE).
+#' @param chunkSize an integer indicating the number of genomes to be read at a
+#' time; larger values require more RAM but decrease the time needed to read
+#' the data.
+#' @param parallel a logical indicating whether multiple cores -if available-
+#' should be used for the computations (TRUE, default), or not (FALSE);
+#' requires the package \code{parallel} to be installed (see details).
+#' @param n.cores if \code{parallel} is TRUE, the number of cores to be used in
+#' the computations; if NULL, then the maximum number of cores available on the
+#' computer is used.
+#' @param \dots other arguments to be passed to other functions - currently not
+#' used.
+#' @return an object of the class \code{"\linkS4class{genlight}"}
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#' @seealso - \code{?genlight} for a description of the class
+#' \code{"\linkS4class{genlight}"}.
+#'
+#' - \code{\link{read.PLINK}}: read SNPs in PLINK's '.raw' format.
+#'
+#' - \code{\link{fasta2genlight}}: extract SNPs from alignments with fasta
+#' format.
+#'
+#' - \code{\link{df2genind}}: convert any multiallelic markers into adegenet
+#' \code{"\linkS4class{genlight}"}.
+#'
+#' - \code{\link{import2genind}}: read multiallelic markers from various
+#' software into adegenet.\cr
+#' @keywords manip
+#' @examples
+#'
+#' \dontrun{
+#' ## show the example file ##
+#' ## this is the path to the file:
+#' system.file("files/exampleSnpDat.snp",package="adegenet")
+#'
+#' ## show its content:
+#' file.show(system.file("files/exampleSnpDat.snp",package="adegenet"))
+#'
+#'
+#' ## read the file
+#' obj <-
+#' read.snp(system.file("files/exampleSnpDat.snp",package="adegenet"), chunk=2)
+#' obj
+#' as.matrix(obj)
+#' ploidy(obj)
+#' alleles(obj)
+#' locNames(obj)
+#' }
+#'
+#' @export read.snp
+#'
 read.snp <- function(file, quiet=FALSE, chunkSize=1000,
                      parallel=require("parallel"), n.cores=NULL, ...){
     ext <- .readExt(file)
     ext <- toupper(ext)
     if(ext != "SNP") warning("wrong file extension - '.snp' expected")
     if(!quiet) cat("\n Reading biallelic SNP data file into a genlight object... \n\n")
-    if(parallel && !require(parallel)) stop("parallel package requested but not installed")
+    ## if(parallel && !require(parallel)) stop("parallel package requested but not installed")
     if(parallel && is.null(n.cores)){
         n.cores <- parallel::detectCores()
     }
@@ -878,6 +1122,16 @@ read.snp <- function(file, quiet=FALSE, chunkSize=1000,
 ####################
 ## extract.PLINKmap
 ####################
+#' @export
+#' @rdname read.PLINK
+#' @aliases extract.PLINKmap
+#'
+#' @param x an optional object of the class \code{"\linkS4class{genlight}"}, in which
+#' the information read is stored; if provided, information is matched against
+#' the names of the loci in \code{x}, as returned by \code{locNames(x)}; if not
+#' provided, a list of two components is returned, containing chromosome and
+#' position information.
+#'
 extract.PLINKmap <- function(file, x=NULL){
     ## CHECK EXTENSION ##
     ext <- .readExt(file)
@@ -922,6 +1176,80 @@ extract.PLINKmap <- function(file, x=NULL){
 ########################
 ## Function read.PLINK
 ########################
+#' Reading PLINK Single Nucleotide Polymorphism data
+#'
+#' The function \code{read.PLINK} reads a data file exported by the PLINK
+#' software with extension '.raw' and converts it into a \code{"\linkS4class{genlight}"}
+#' object. Optionally, information about SNPs can be read from a ".map" file,
+#' either by specifying the argument \code{map.file} in \code{read.PLINK}, or
+#' using \code{extract.PLINKmap} to add information to an existing
+#' \code{"\linkS4class{genlight}"} object.
+#'
+#' The function reads data by chunks of several genomes (minimum 1, no maximum)
+#' at a time, which allows one to read massive datasets with negligible RAM
+#' requirements (albeit at a cost of computational time). The argument
+#' \code{chunkSize} indicates the number of genomes read at a time. Increasing
+#' this value decreases the computational time required to read data in, while
+#' increasing memory requirements.
+#'
+#' See details for the documentation about how to export data using PLINK to
+#' the '.raw' format.
+#'
+#' === Exporting data from PLINK ===
+#'
+#' Data need to be exported from PLINK using the option "--recodeA" (and NOT
+#' "--recodeAD"). The PLINK command should therefore look like: \code{plink
+#' --file data --recodeA}. For more information on this topic, please look at
+#' this webpage: \url{http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml}
+#'
+#' @aliases read.PLINK read.plink
+#' @param file for \code{read.PLINK} a character string giving the path to the
+#' file to convert, with the extension ".raw"; for \code{extract.PLINKmap}, a
+#' character string giving the path to a file with extension ".map".
+#' @param map.file an optional character string indicating the path to a ".map"
+#' file, which contains information about the SNPs (chromosome, position). If
+#' provided, this information is processed by \code{extract.PLINKmap} and
+#' stored in the \code{@@other} slot.
+#' @param quiet logical stating whether a conversion messages should be printed
+#' (TRUE,default) or not (FALSE).
+#' @param chunkSize an integer indicating the number of genomes to be read at a
+#' time; larger values require more RAM but decrease the time needed to read
+#' the data.
+#' @param parallel a logical indicating whether multiple cores -if available-
+#' should be used for the computations (TRUE, default), or not (FALSE);
+#' requires the package \code{parallel} to be installed (see details).
+#' @param n.cores if \code{parallel} is TRUE, the number of cores to be used in
+#' the computations; if NULL, then the maximum number of cores available on the
+#' computer is used.
+#' @param \dots other arguments to be passed to other functions - currently not
+#' used.
+#'
+#' @return - read.PLINK: an object of the class \code{"\linkS4class{genlight}"}
+#'
+#' - extract.PLINKmap: if a \code{"\linkS4class{genlight}"} is provided as argument
+#' \code{x}, this object incorporating the new information about SNPs in the
+#' \code{@@other} slot (with new components 'chromosome' and 'position');
+#' otherwise, a list with two components containing chromosome and position
+#' information.
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#' @seealso - \code{?genlight} for a description of the class
+#' \code{"\linkS4class{genlight}"}.
+#'
+#' - \code{\link{read.snp}}: read SNPs in adegenet's '.snp' format.
+#'
+#' - \code{\link{fasta2genlight}}: extract SNPs from alignments with fasta
+#' format.
+#'
+#' - other import function in adegenet: \code{\link{import2genind}},
+#' \code{\link{df2genind}}, \code{\link{read.genetix}}
+#' \code{\link{read.fstat}}, \code{\link{read.structure}},
+#' \code{\link{read.genepop}}.
+#'
+#' - another function \code{read.plink} is available in the package
+#' \code{snpMatrix}.
+#' @keywords manip
+#' @export
+#' @rdname read.PLINK
 read.PLINK <- function(file, map.file=NULL, quiet=FALSE, chunkSize=1000,
                        parallel=require("parallel"), n.cores=NULL, ...){
     ## HANDLE ARGUMENTS ##
@@ -929,7 +1257,7 @@ read.PLINK <- function(file, map.file=NULL, quiet=FALSE, chunkSize=1000,
     ext <- toupper(ext)
     if(ext != "RAW") warning("wrong file extension - '.raw' expected")
     if(!quiet) cat("\n Reading PLINK raw format into a genlight object... \n\n")
-    if(parallel && !require(parallel)) stop("parallel package requested but not installed")
+    ## if(parallel && !require(parallel)) stop("parallel package requested but not installed")
     if(parallel && is.null(n.cores)){
         n.cores <- parallel::detectCores()
     }
@@ -1043,7 +1371,7 @@ fasta2genlight <- function(file, quiet=FALSE, chunkSize=1000, saveNbAlleles=FALS
     ext <- toupper(ext)
     if(!ext %in% c("FASTA", "FA", "FAS")) warning("wrong file extension - '.fasta', '.fa' or '.fas' expected")
     if(!quiet) cat("\n Converting FASTA alignment into a genlight object... \n\n")
-    if(parallel && !require(parallel)) stop("parallel package requested but not installed")
+    ## if(parallel && !require(parallel)) stop("parallel package requested but not installed")
     if(parallel && is.null(n.cores)){
         n.cores <- parallel::detectCores()
     }

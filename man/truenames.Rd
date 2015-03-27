@@ -10,7 +10,12 @@
 \description{
   The function \code{truenames} returns some elements of an object
   (\linkS4class{genind} or \linkS4class{genpop}) using true names
-  (as opposed to generic labels) for individuals, markers, alleles, and population.\cr
+  (as opposed to generic labels) for individuals, markers, alleles, and
+  population.\cr
+
+  Important: as of adegenet_1.5-0, these functions are deprecated as
+  true labels are used whenever possible. Please use the function
+  \code{\link{tab}} instead.
 }
 \usage{
 \S4method{truenames}{genind}(x)
@@ -28,11 +33,4 @@
   
 }
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
-\examples{
-data(microbov)
-microbov
-
-microbov$tab[1:5,1:5]
-truenames(microbov)$tab[1:5,1:5]
-}
-\keyword{manip}
+\seealso{\code{\link{tab}}}

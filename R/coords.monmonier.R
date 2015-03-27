@@ -1,6 +1,5 @@
 coords.monmonier <- function(x){
 
-# require(adegenet) no longer use since in adegenet
 if (!inherits(x, "monmonier")) stop("Use only with 'monmonier' objects")
 
 xy.full <- x$xy

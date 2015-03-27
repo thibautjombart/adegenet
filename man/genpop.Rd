@@ -5,6 +5,7 @@
 \alias{names,genpop-method}
 \alias{show,genpop-method}
 \alias{summary,genpop-method}
+\alias{is.genpop}
 \title{adegenet formal class (S4) for allele counts in populations}
 \description{An object of class \code{genpop} contain alleles counts
   for several loci.\cr
@@ -49,7 +50,7 @@ Class \code{"\linkS4class{popInfo}"}, directly.
       genpop object, invisibly returning its content}
   }
 }
-\seealso{\code{\link{as.genpop}}, \code{\link{is.genpop}},\code{\link{makefreq}}, \code{\link{genind}}, \code{\link{import2genind}}, \code{\link{read.genetix}}, \code{\link{read.genepop}}, \code{\link{read.fstat}}, \code{\link{na.replace}}
+\seealso{\code{\link{as.genpop}}, \code{\link{is.genpop}},\code{\link{makefreq}}, \code{\link{genind}}, \code{\link{import2genind}}, \code{\link{read.genetix}}, \code{\link{read.genepop}}, \code{\link{read.fstat}}
 }
 \author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{

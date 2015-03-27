@@ -5,17 +5,20 @@
 ##
 
 hybridize <- function(x1, x2, n, pop=NULL,
-                      res.type=c("genind","df","STRUCTURE"), file=NULL, quiet=FALSE, sep="/", hyb.label="h"){
+                      res.type=c("genind","df","STRUCTURE"),
+                      file=NULL, quiet=FALSE, sep="/", hyb.label="h"){
     ## checks
     if(!is.genind(x1)) stop("x1 is not a valid genind object")
     if(!is.genind(x2)) stop("x2 is not a valid genind object")
-    if(x1@ploidy %% 2 != 0) stop("not implemented for odd levels of ploidy")
-    if(x2@ploidy != x1@ploidy) stop("not implemented for genotypes with different ploidy levels")
+    if(!all(ploidy(x1)==ploidy(x1)[1])) stop("varying ploidy (in x1) is not supported for this function")
+    if(!all(ploidy(x2)==ploidy(x2)[1])) stop("varying ploidy (in x2) is not supported for this function")
+    if(ploidy(x1)[1] %% 2 != 0) stop("not implemented for odd levels of ploidy")
+    if(ploidy(x1)[1] != ploidy(x2)[1]) stop("x1 and x2 have different ploidy")
     checkType(x1)
     checkType(x2)
 
     n <- as.integer(n)
-    ploidy <- ploidy(x1)
+    ploidy <- ploidy(x1)[1]
     res.type <- match.arg(res.type)
     if(!all(locNames(x1)==locNames(x2))) stop("names of markers in x1 and x2 do not correspond")
 
@@ -25,21 +28,23 @@ hybridize <- function(x1, x2, n, pop=NULL,
     k <- nLoc(x1)
 
     #### get frequencies for each locus
-    y1 <- genind2genpop(x1,pop=factor(rep(1,n1)),missing="0",quiet=TRUE)
-    freq1 <- makefreq(y1,quiet=TRUE)$tab
-    freq1 <- split(freq1, y1@loc.fac)
+    y1 <- genind2genpop(x1,pop=factor(rep(1,n1)),quiet=TRUE)
+    freq1 <- tab(y1, freq=TRUE) # get frequencies
+    freq1 <- split(freq1, y1@loc.fac) # split by locus
+    freq1 <- freq1[locNames(x1)] # ensure right order
 
-    y2 <- genind2genpop(x2,pop=factor(rep(1,n2)),missing="0",quiet=TRUE)
-    freq2 <- makefreq(y2,quiet=TRUE)$tab
-    freq2 <- split(freq2, y2@loc.fac)
+    y2 <- genind2genpop(x2,pop=factor(rep(1,n2)),quiet=TRUE)
+    freq2 <- tab(y2, freq=TRUE) # get frequencies
+    freq2 <- split(freq2, y2@loc.fac) # split by locus
+    freq2 <- freq2[locNames(x2)] # ensure right order
 
     #### sampling of gametes
     ## kX1 / kX2 are lists of tables of sampled gametes
     kX1 <- lapply(freq1, function(v) t(rmultinom(n,ploidy/2,v)))
-    names(kX1) <- x1$loc.names
+    names(kX1) <- locNames(x1)
     for(i in 1:k) { colnames(kX1[[i]]) <- alleles(x1)[[i]]}
     kX2 <- lapply(freq2, function(v) t(rmultinom(n,ploidy/2,v)))
-    names(kX2) <- x2$loc.names
+    names(kX2) <- locNames(x2)
     for(i in 1:k) { colnames(kX2[[i]]) <- alleles(x2)[[i]]}
 
     ## construction of zygotes ##
@@ -56,7 +61,7 @@ hybridize <- function(x1, x2, n, pop=NULL,
     ## add in the alleles
     zyg[, colnames(tab1)] <- zyg[, colnames(tab1)] + tab1
     zyg[, colnames(tab2)] <- zyg[, colnames(tab2)] + tab2
-    zyg <- zyg/ploidy
+    zyg <- zyg
     zyg <- genind(zyg, type="codom", ploidy=ploidy)
 
     ## res.type=="STRUCTURE"

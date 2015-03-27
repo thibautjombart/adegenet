@@ -4,6 +4,7 @@
 \alias{genlight-class}
 \alias{[,genlight-method}
 \alias{[,genlight,ANY,ANY-method}
+\alias{[,genlight,ANY,ANY,ANY-method}
 \alias{initialize,genlight-method}
 \alias{show,genlight-method}
 \alias{nLoc,genlight-method}

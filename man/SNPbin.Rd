@@ -4,6 +4,7 @@
 \alias{SNPbin-class}
 \alias{[,SNPbin-method}
 \alias{[,SNPbin,ANY,ANY-method}
+\alias{[,SNPbin,ANY,ANY,ANY-method}
 \alias{initialize,SNPbin-method}
 \alias{show,SNPbin-method}
 \alias{nLoc,SNPbin-method}

@@ -56,7 +56,7 @@ locNames(x) # list of polymorphic sites
 genind2df(x)
 
 ## look at Euclidean distances
-D <- dist(truenames(x))
+D <- dist(tab(x))
 D
 
 ## summarise with a PCoA

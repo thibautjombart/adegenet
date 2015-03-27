@@ -23,14 +23,13 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
     if (missing(i)) i <- TRUE
     if (missing(j)) j <- TRUE
 
-    pop <- NULL
-    if(is.null(x@pop)) { tab <- truenames(x) }
     if(!is.null(x@pop)) {
-        temp <- truenames(x)
-        tab <- temp$tab
-        pop <- temp$pop
-        pop <- factor(pop[i])
+        pop <- factor(pop(x)[i])
+    } else {
+        pop <- NULL
     }
+
+    tab <- x@tab
 
     old.other <- other(x)
 
@@ -54,7 +53,7 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
         tab <- tab[,toKeep, drop=FALSE]
     }
 
-    res <- genind(tab,pop=pop,prevcall=prevcall, ploidy=x@ploidy, type=x@type)
+    res <- genind(tab,pop=pop,prevcall=prevcall, ploidy=x@ploidy[i], type=x@type)
 
     ## handle 'other' slot
     nOther <- length(x@other)
@@ -92,7 +91,7 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
     if (missing(i)) i <- TRUE
     if (missing(j)) j <- TRUE
 
-    tab <- truenames(x)
+    tab <- x@tab
     old.other <- other(x)
 
 
@@ -115,7 +114,7 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
         tab <- tab[,toKeep, drop=FALSE]
     }
 
-    res <- genpop(tab,prevcall=prevcall)
+    res <- genpop(tab,prevcall=prevcall,ploidy=x@ploidy)
 
     ## handle 'other' slot
     nOther <- length(x@other)
@@ -188,7 +187,7 @@ setMethod ("show", "genind", function(object){
       cat("\n@all.names: NULL")
   }
 
-  cat("\n@ploidy: ",x@ploidy)
+  cat("\n@ploidy: ", head(x@ploidy))
   cat("\n@type: ",x@type)
 
   cat("\n\nOptional contents: ")
@@ -326,9 +325,9 @@ setMethod ("summary", signature(object="genind"), function(object, ...){
   res$NA.perc <- 100*(1-mean(propTyped(x,by="both")))
 
   ## handle heterozygosity
-  if(x@ploidy > 1){
+  if(any(x@ploidy > 1)){
       ## auxiliary function to compute observed heterozygosity
-      temp <- seploc(x,truenames=FALSE,res.type="matrix")
+      temp=lapply(seploc(x),tab, freq=TRUE)
       f1 <- function(tab){
           H <- apply(tab, 1, function(vec) any(vec > 0 & vec < 1))
           H <- mean(H,na.rm=TRUE)
@@ -344,15 +343,9 @@ setMethod ("summary", signature(object="genind"), function(object, ...){
           return(H)
       }
 
-      temp <- genind2genpop(x,pop=rep(1,nrow(x@tab)),quiet=TRUE)
-      temp <- makefreq(temp,quiet=TRUE)$tab
-      temp.names <- colnames(temp)
-      temp <- as.vector(temp)
-      names(temp) <- temp.names
-      temp <- split(temp,x@loc.fac)
-      ## temp is a list of alleles frequencies (one element per locus)
-
-      res$Hexp <- unlist(lapply(temp,f2))
+      temp <- genind2genpop(x,pop=rep(1,nInd(x)),quiet=TRUE)
+      temp <- tab(temp, freq=TRUE, quiet=TRUE)
+      res$Hexp <-tapply(temp^2, x@loc.fac, function(e) 1-sum(e, na.rm=TRUE))
   } else { # no possible heterozygosity for haploid genotypes
       res$Hobs <- 0
       res$Xexp <- 0
@@ -465,3 +458,8 @@ is.genpop <- function(x){
   return(res)
 }
 
+
+
+.hasUniquePloidy <- function(x){
+    return(length(unique(x@ploidy))==1)
+}
