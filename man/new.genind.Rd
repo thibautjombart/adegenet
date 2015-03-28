@@ -19,17 +19,29 @@ as.genind(...)
 \arguments{
 \item{.Object}{prototyped object (generated automatically when calling 'new')}
 
-\item{tab}{A matrix of integers corresponding to the @tab slot of a genind object, with individuals in rows and alleles in columns, and containing either allele counts (if type="codom") or allele presence/absence (if type="PA")}
+\item{tab}{A matrix of integers corresponding to the @tab slot of a genind
+object, with individuals in rows and alleles in columns, and containing
+either allele counts (if type="codom") or allele presence/absence (if
+type="PA")}
 
-\item{pop}{an optional factor with one value per row in \code{tab} indicating the population of each individual}
+\item{pop}{an optional factor with one value per row in \code{tab} indicating
+the population of each individual}
 
 \item{prevcall}{an optional call to be stored in the object}
 
-\item{ploidy}{an integer vector indicating the ploidy of the individual; each individual can have a different value; if only one value is provided, it is recycled to generate a vector of the right length.}
+\item{ploidy}{an integer vector indicating the ploidy of the individual; each
+individual can have a different value; if only one value is provided, it is
+recycled to generate a vector of the right length.}
 
-\item{type}{a character string indicating the type of marker: codominant ("codom") or presence/absence ("PA")}
+\item{type}{a character string indicating the type of marker: codominant
+("codom") or presence/absence ("PA")}
 
-\item{strata}{a data frame containing population hierarchies or stratifications in columns. This must be the same length as the number of individuals in the data set.}
+\item{strata}{a data frame containing population hierarchies or
+stratifications in columns. This must be the same length as the number of
+individuals in the data set.}
+
+\item{hierarchy}{a hierarchical formula defining the columns of the strata
+slot that are hierarchical. Defaults to NULL.}
 
 \item{...}{further arguments passed to other methods (currently not used)}
 }

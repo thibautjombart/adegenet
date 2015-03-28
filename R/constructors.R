@@ -9,20 +9,31 @@
 #'
 #' @export
 #' @docType methods
-#'
+#'   
 #' @aliases initialize,genind-methods
 #' @aliases genind
 #' @aliases as.genind
-#'
+#'   
 #' @rdname new.genind
-#'
+#'   
 #' @param .Object prototyped object (generated automatically when calling 'new')
-#' @param tab A matrix of integers corresponding to the @@tab slot of a genind object, with individuals in rows and alleles in columns, and containing either allele counts (if type="codom") or allele presence/absence (if type="PA")
-#' @param pop an optional factor with one value per row in \code{tab} indicating the population of each individual
+#' @param tab A matrix of integers corresponding to the @@tab slot of a genind
+#'   object, with individuals in rows and alleles in columns, and containing
+#'   either allele counts (if type="codom") or allele presence/absence (if
+#'   type="PA")
+#' @param pop an optional factor with one value per row in \code{tab} indicating
+#'   the population of each individual
 #' @param prevcall an optional call to be stored in the object
-#' @param ploidy an integer vector indicating the ploidy of the individual; each individual can have a different value; if only one value is provided, it is recycled to generate a vector of the right length.
-#' @param type a character string indicating the type of marker: codominant ("codom") or presence/absence ("PA")
-#' @param strata a data frame containing population hierarchies or stratifications in columns. This must be the same length as the number of individuals in the data set.
+#' @param ploidy an integer vector indicating the ploidy of the individual; each
+#'   individual can have a different value; if only one value is provided, it is
+#'   recycled to generate a vector of the right length.
+#' @param type a character string indicating the type of marker: codominant
+#'   ("codom") or presence/absence ("PA")
+#' @param strata a data frame containing population hierarchies or
+#'   stratifications in columns. This must be the same length as the number of
+#'   individuals in the data set.
+#' @param hierarchy a hierarchical formula defining the columns of the strata
+#'   slot that are hierarchical. Defaults to NULL.
 #' @param ... further arguments passed to other methods (currently not used)
 #'
 #' @return a \linkS4class{genind} object
