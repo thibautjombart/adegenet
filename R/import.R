@@ -35,28 +35,34 @@
 #' used in reguar expressions like \code{gsub}, and thus require some
 #' characters to be preceeded by double backslashes. For instance, "/" works
 #' but "|" must be coded as "\\|".
-#'
+#' 
 #' @aliases df2genind
-#' @param X a matrix or a data.frame containing allelle data only (see decription)
+#' @param X a matrix or a data.frame containing allelle data only (see 
+#'   decription)
 #' @param sep a character string separating alleles. See details.
-#' @param ncode an optional integer giving the number of characters used for
-#' coding one genotype at one locus. If not provided, this is determined from
-#' data.
-#' @param ind.names an optional character vector giving the individuals names;
-#' if NULL, taken from rownames of X.
-#' @param loc.names an optional character vector giving the markers names; if
-#' NULL, taken from colnames of X.
+#' @param ncode an optional integer giving the number of characters used for 
+#'   coding one genotype at one locus. If not provided, this is determined from 
+#'   data.
+#' @param ind.names an optional character vector giving the individuals names; 
+#'   if NULL, taken from rownames of X.
+#' @param loc.names an optional character vector giving the markers names; if 
+#'   NULL, taken from colnames of X.
 #' @param pop an optional factor giving the population of each individual.
 #' @param NA.char a vector of character strings which are to be treated as NA
 #' @param ploidy an integer indicating the degree of ploidy of the genotypes.
-#' @param type a character string indicating the type of marker: 'codom' stands
-#' for 'codominant' (e.g. microstallites, allozymes); 'PA' stands for
-#' 'presence/absence' markers (e.g. AFLP, RAPD).
+#' @param type a character string indicating the type of marker: 'codom' stands 
+#'   for 'codominant' (e.g. microstallites, allozymes); 'PA' stands for 
+#'   'presence/absence' markers (e.g. AFLP, RAPD).
+#' @param strata an optional data frame that defines population stratifications
+#'   for your samples. This is especially useful if you have a hierarchical or
+#'   factorial sampling design.
+#' @param hierarchy a hierarchical formula that explicitely defines hierarchical
+#'   levels in your strata. see \code{\link{hierarchy}} for details.
 #'
 #' @return an object of the class \linkS4class{genind} for \code{df2genind}; a
 #' matrix of biallelic genotypes for \code{genind2df}
 #'
-#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk} Zhian N. Kamvar \email{kamvarz@@science.oregonstate.edu}
 #'
 #' @seealso \code{\link{genind2df}}, \code{\link{import2genind}}, \code{\link{read.genetix}},
 #' \code{\link{read.fstat}}, \code{\link{read.structure}}
@@ -81,15 +87,16 @@
 #'
 #' @export
 #'
-df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, pop=NULL,
-                      NA.char="", ploidy=2, type=c("codom","PA")){
+df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, 
+                      pop=NULL, NA.char="", ploidy=2, type=c("codom","PA"), 
+                      strata = NULL, hierarchy = NULL){
 
     ## CHECKS ##
     if(is.data.frame(X)) X <- as.matrix(X)
     if (!inherits(X, "matrix")) stop ("X is not a matrix")
     res <- list()
     type <- match.arg(type)
-    if (is.null(sep) && is.null(ncode) && ploidy > 1){
+    if (is.null(sep) && is.null(ncode) && any(ploidy > 1)){
         stop("Not enough information to convert data: please indicate the separator (sep=...) or the number of characters coding an allele (ncode=...)")
     }
 
@@ -98,7 +105,21 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
     ## misc variables
     n <- nrow(X)
     nloc <- ncol(X)
-    ploidy <- rep(as.integer(ploidy), length=n)
+    if (length(ploidy) < n){
+      if (length(ploidy) == 1){
+        ploidy <- rep(as.integer(ploidy), length=n)        
+      } else {
+        undefined <- length(ploidy)/n
+        msg <- paste0("\nPloidy is undefined for ", 
+                      undefined*100, 
+                      "% of data.\n",
+                      "This must be a single integer indicating the ploidy of",
+                      "the entire data set or vector of integers the same",
+                      "length as the number of samples.")
+        stop(msg)
+      }
+
+    }
     if(any(ploidy < 1L)) stop("ploidy cannot be less than 1")
 
     if (is.null(ind.names)){
@@ -155,7 +176,8 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
 
         prevcall <- match.call()
 
-        res <- genind(tab=X, pop=pop, prevcall=prevcall, ploidy=ploidy, type="PA")
+        res <- genind(tab=X, pop=pop, prevcall=prevcall, ploidy=ploidy, 
+                      type = "PA", strata = strata, hierarchy = hierarchy)
 
         return(res)
     } # end type PA
@@ -256,7 +278,8 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
 
     ## call upon genind constructor
     prevcall <- match.call()
-    out <- genind(tab=out, pop=pop, prevcall=prevcall, ploidy=ploidy, type=type)
+    out <- genind(tab=out, pop=pop, prevcall=prevcall, ploidy=ploidy, type=type,
+                  strata = strata, hierarchy = hierarchy)
 
     return(out)
 } # end df2genind

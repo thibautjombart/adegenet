@@ -380,29 +380,30 @@ setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,re
 ##     return(res)
 ## })
 
-
-.rbind_hierarchies <- function(myList, res){
-    hierlist <- lapply(myList, slot, "strata")
-    nullhier <- vapply(hierlist, is.null, TRUE)
-    if (!all(nullhier)){
-        # NULL hierarchies must be converted to data frames.
+# Function to bind strata from a list of genind objects and return a single
+# genind object.
+.rbind_strata <- function(myList, res){
+    strata_list <- lapply(myList, slot, "strata")
+    null_strata <- vapply(strata_list, is.null, TRUE)
+    if (!all(null_strata)){
+        # NULL strata must be converted to data frames.
         # Solution: take the first non-empty strata, and create a new one 
         # with one variable.
-        if (any(nullhier)){
+        if (any(null_strata)){
 
             # Extract the name of the first column of the first full strata
-            fullname <- names(hierlist[[which(!nullhier)[1]]])[1]
+            fullname <- names(strata_list[[which(!null_strata)[1]]])[1]
             
-            # loop over all the empty hierarchies and replace them with a data
+            # loop over all the empty strata and replace them with a data
             # frame that has the same number of elements as the samples in that
             # genlight object.
-            for (i in which(nullhier)){
-                replacehier        <- data.frame(rep(NA, nInd(myList[[i]])))
-                names(replacehier) <- fullname
-                hierlist[[i]]      <- replacehier
+            for (i in which(null_strata)){
+                replace_strata        <- data.frame(rep(NA, nInd(myList[[i]])))
+                names(replace_strata) <- fullname
+                strata_list[[i]]      <- replace_strata
             }
         }
-        strata(res) <- as.data.frame(suppressWarnings(bind_rows(hierlist)))        
+        strata(res) <- as.data.frame(suppressWarnings(dplyr::bind_rows(strata_list)))        
     } else {
         res@strata <- NULL
     }
@@ -454,7 +455,8 @@ repool <- function(...){
     }
     
     res <- df2genind(tab, pop=pop, ploidy=newPloidy, type=x[[1]]@type, sep="/")
-    res <- .rbind_hierarchies(x, res)
+    res <- .rbind_strata(x, res)
+    res@hierarchy <- NULL
     res$call <- match.call()
 
     return(res)
