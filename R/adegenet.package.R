@@ -63,8 +63,7 @@
 #' using \code{\link{fasta2genlight}}\cr
 #'
 #' === EXPORTING DATA ===\cr \code{adegenet} exports data from
-#' \linkS4class{genind} object to formats recognized by other R packages:\cr -
-#' the genetics package: see \code{\link{genind2genotype}}\cr - the hierfstat
+#' \linkS4class{genind} object to formats recognized by other R packages:\cr - the hierfstat
 #' package: see \code{\link{genind2hierfstat}}\cr
 #'
 #' Genotypes can also be recoded from a \linkS4class{genind} object into a
@@ -212,8 +211,6 @@
 #' @import parallel
 #'
 #' @import ade4
-#'
-# @import genetics # Removing this.
 #'
 #' @importFrom utils "packageDescription"
 #'
