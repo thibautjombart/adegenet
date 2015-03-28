@@ -89,7 +89,9 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
     if (!inherits(X, "matrix")) stop ("X is not a matrix")
     res <- list()
     type <- match.arg(type)
-    if(is.null(sep) && is.null(ncode)) stop("Not enough information to convert data: please indicate the separator (sep=...) or the number of characters coding an allele (ncode=...)")
+    if (is.null(sep) && is.null(ncode) && ploidy > 1){
+        stop("Not enough information to convert data: please indicate the separator (sep=...) or the number of characters coding an allele (ncode=...)")
+    }
 
 
     ## TYPE-INDEPENDENT STUFF ##
@@ -99,8 +101,18 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
     ploidy <- rep(as.integer(ploidy), length=n)
     if(any(ploidy < 1L)) stop("ploidy cannot be less than 1")
 
-    if(is.null(ind.names)) {ind.names <- rownames(X)}
-    if(is.null(loc.names)) {loc.names <- colnames(X)}
+    if (is.null(ind.names)){
+      ind.names <- rownames(X)
+      if (is.null(ind.names)){
+        rownames(X) <- ind.names <- .genlab("", n)
+      }
+    }
+    if (is.null(loc.names)){
+      loc.names <- colnames(X)
+      if (is.null(loc.names)){
+        colnames(X) <- loc.names <- .genlab("L", nloc)
+      }
+    }
 
     ## pop argument
     if(!is.null(pop)){
@@ -199,11 +211,19 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
     nind <- nrow(X)
 
     ## unfold data for each cell of the table
-    allele.data <- strsplit(X, sep)
-    n.items <- sapply(allele.data, length)
-    locus.data <- rep(rep(loc.names, each=nind), n.items)
-    ind.data <- rep(rep(ind.names,ncol(X)), n.items)
-    allele.data <- unlist(allele.data)
+    if (any(ploidy > 1)){
+        allele.data <- strsplit(X, sep)
+        n.items <- sapply(allele.data, length)
+        locus.data <- rep(rep(loc.names, each=nind), n.items)
+        ind.data <- rep(rep(ind.names,ncol(X)), n.items)
+        allele.data <- unlist(allele.data)
+    } else {
+        n.items     <- rep(1, length(X))
+        locus.data  <- rep(rep(loc.names, each=nind), n.items)
+        ind.data    <- rep(rep(ind.names, ncol(X)), n.items)
+        allele.data <- unlist(X)  
+    }
+
 
     ## identify NAs
     NA.posi <- which(is.na(allele.data))
@@ -220,7 +240,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
     ## get matrix of allele counts
     allele.data <- paste(locus.data, allele.data, sep=".")
     allele.data <- factor(allele.data, levels=unique(allele.data))
-    out <- table(ind.data, allele.data)
+    out         <- table(ind.data, allele.data)
 
     ## force type 'matrix'
     class(out) <- NULL
