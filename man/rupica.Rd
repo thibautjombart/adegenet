@@ -23,10 +23,12 @@ individuals is known. Each genotype is georeferenced. These data also
 contain a raster map of elevation of the sampling area.
 }
 \examples{
-if(require(adehabitat)){
-
 data(rupica)
 rupica
+
+
+\dontrun{
+if(require(adehabitat)){
 
 ## see the sampling area
 showBauges <- rupica$other$showBauges
@@ -50,7 +52,6 @@ add.scatter.eig(spca1$eig,2,2,2,posi="topleft",sub="Eigenvalues")
 rupica$other$showBauges()
 colorplot(spca1$xy,spca1$li,cex=1.5,add.plot=TRUE)
 
-\dontrun{
 ## global and local tests
 Gtest <- global.rtest(rupica@tab,spca1$lw,nperm=999)
 Gtest
