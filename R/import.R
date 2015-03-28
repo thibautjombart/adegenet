@@ -62,11 +62,13 @@
 #' @return an object of the class \linkS4class{genind} for \code{df2genind}; a
 #' matrix of biallelic genotypes for \code{genind2df}
 #'
-#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk} Zhian N. Kamvar \email{kamvarz@@science.oregonstate.edu}
-#'
-#' @seealso \code{\link{genind2df}}, \code{\link{import2genind}}, \code{\link{read.genetix}},
-#' \code{\link{read.fstat}}, \code{\link{read.structure}}
-#'
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}, Zhian N. Kamvar
+#'   \email{kamvarz@@science.oregonstate.edu}
+#'   
+#' @seealso \code{\link{genind2df}}, \code{\link{import2genind}},
+#'   \code{\link{read.genetix}}, \code{\link{read.fstat}},
+#'   \code{\link{read.structure}}
+#'   
 #' @keywords manip
 #' @examples
 #'
