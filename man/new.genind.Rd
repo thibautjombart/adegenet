@@ -9,7 +9,8 @@
 \title{genind constructor}
 \usage{
 \S4method{initialize}{genind}(.Object, tab, pop = NULL, prevcall = NULL,
-  ploidy = 2L, type = c("codom", "PA"), strata = NULL, ...)
+  ploidy = 2L, type = c("codom", "PA"), strata = NULL, hierarchy = NULL,
+  ...)
 
 genind(...)
 

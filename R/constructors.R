@@ -29,7 +29,7 @@
 #'
 #' @seealso the description of the \linkS4class{genind} class; \code{\link{df2genind}}
 #'
-setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL, ploidy=2L, type=c("codom","PA"), strata = NULL, ...){
+setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL, ploidy=2L, type=c("codom","PA"), strata = NULL, hierarchy = NULL, ...){
    ## HANDLE ARGUMENTS ##
     out <- .Object
     if(is.null(colnames(tab))) stop("tab columns have no name.")
@@ -50,10 +50,6 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
     ploidy <- as.integer(ploidy)
     ploidy <- rep(ploidy, length=nind)
 
-    if (!is.null(strata)){
-      # Make sure that the hierarchies are factors.
-      strata <- data.frame(lapply(strata, function(f) factor(f, unique(f))))
-    }
     ## HANDLE LABELS ##
     ## loc names is not type-dependent
     temp <- gsub("[.][^.]*$", "", old.colnames)
@@ -73,7 +69,24 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
     }
 
     if (!is.null(strata)){
-      rownames(strata) <- rownames(tab)      
+      # Make sure that the hierarchies are factors.
+      strata <- data.frame(lapply(strata, function(f) factor(f, unique(f))))
+      rownames(strata) <- rownames(tab)  
+    } 
+    
+    if (!is.null(strata) && !is.null(hierarchy)){
+      if (is.language(hierarchy)){
+        the_names <- all.vars(hierarchy)
+        if (all(the_names %in% names(strata))){
+          ## TODO: CHECK HIERARCHY HERE
+        } else {
+          warning("hierarchy names do not match names of strata. Setting slot to NULL")
+          hierarchy <- NULL
+        }
+      } else {
+        warning("hierarchy must be a formula. Setting slot to NULL.")
+        hierarchy <- NULL
+      }
     }
 
 
@@ -94,19 +107,20 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
         all.names <- all.names[loc.names]
 
     } else { # end if type=="codom" <=> if type=="PA"
-        loc.fac <- NULL
+        loc.fac   <- NULL
         all.names <- NULL
-        loc.nall <- NULL
+        loc.nall  <- NULL
     }
 
     ## Ideally I should use an 'initialize' method here
-    out@tab <- tab
+    out@tab       <- tab
     out@ind.names <- ind.names
     out@loc.names <- loc.names
-    out@loc.nall <- loc.nall
-    out@loc.fac <- loc.fac
+    out@loc.nall  <- loc.nall
+    out@loc.fac   <- loc.fac
     out@all.names <- all.names
-    out@strata <- strata
+    out@strata    <- strata
+    out@hierarchy <- hierarchy
     ## populations name (optional)
     ## beware, keep levels of pop sorted in
     ## there order of appearance
