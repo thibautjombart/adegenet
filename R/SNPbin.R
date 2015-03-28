@@ -441,7 +441,7 @@ setMethod("initialize", "genlight", function(.Object, ..., parallel=require("par
               }
             }
         }
-        ## HANDLE INPUT$STRATA ##
+        ## HANDLE INPUT$HIERARCHY ##
         if (!is.null(x@strata) && !is.null(input$hierarchy)){
 
             if (is.language(input$hierarchy)){
@@ -451,9 +451,11 @@ setMethod("initialize", "genlight", function(.Object, ..., parallel=require("par
                     x@hierarchy <- input$hierarchy
                 } else {
                     warning("hierarchy names do not match names of strata. Setting slot to NULL")
+                    x@hierarchy <- NULL
                 }
             } else {
                 warning("hierarchy must be a formula. Setting slot to NULL.")
+                x@hierarchy <- NULL
             }
         }
 
