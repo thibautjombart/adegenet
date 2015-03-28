@@ -357,15 +357,9 @@ setMethod ("summary", signature(object="genind"), function(object, ...){
           return(H)
       }
 
-      temp <- genind2genpop(x,pop=rep(1,nrow(x@tab)),quiet=TRUE)
-      temp <- makefreq(temp,quiet=TRUE)
-      temp.names <- colnames(temp)
-      temp <- as.vector(temp)
-      names(temp) <- temp.names
-      temp <- split(temp,x@loc.fac)
-      ## temp is a list of alleles frequencies (one element per locus)
-
-      res$Hexp <- unlist(lapply(temp,f2))
+      temp <- genind2genpop(x,pop=rep(1,nInd(x)),quiet=TRUE)
+      temp <- tab(temp, freq=TRUE, quiet=TRUE)
+      res$Hexp <-tapply(temp^2, x@loc.fac, function(e) 1-sum(e, na.rm=TRUE))
   } else { # no possible heterozygosity for haploid genotypes
       res$Hobs <- 0
       res$Xexp <- 0

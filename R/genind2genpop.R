@@ -79,22 +79,13 @@ genind2genpop <- function(x,pop=NULL, quiet=FALSE,
     if(!is.genind(x)) stop("x is not a valid genind object")
     checkType(x)
     if(!all(ploidy(x)[1]==ploidy(x))) stop("conversion to genpop not supported for varying ploidy")
-    if(is.null(x@pop) && is.null(pop)) {
+    if(!is.null(pop)) pop(x) <- pop
+    if(is.null(pop(x))) {
         if(!quiet) warning("\npop is not provided either in x or in pop - assuming one single group")
         pop <- factor(rep(1, nInd(x)))
     }
 
     if(!quiet) cat("\n Converting data from a genind to a genpop object... \n")
-
-    ## choose pop argument over x@pop
-    if(!is.null(pop)) {
-        if(length(pop) != nInd(x)) stop("inconsistent length for factor pop")
-                                        # keep levels in order of appearance
-        pop <- as.character(pop)
-        pop <- factor(pop, levels=unique(pop))
-    } else {
-        pop <- pop(x)
-    }
 
     ## tabcount is a matrix pop x alleles, counting alleles per pop
     tabcount <- apply(tab(x), 2, tapply, pop(x), sum, na.rm=TRUE)
@@ -109,7 +100,7 @@ genind2genpop <- function(x,pop=NULL, quiet=FALSE,
 
     ## MAKE FINAL OBJECT ##
     prevcall <- match.call()
-    res <- genpop(tab=tabcount, prevcall=prevcall, ploidy=x@ploidy[1], type=x@type)
+    res <- new("genpop", tab=tabcount, prevcall=prevcall, ploidy=x@ploidy[1], type=x@type)
 
     ## handle @other here
     res@other <- x@other
@@ -118,14 +109,14 @@ genind2genpop <- function(x,pop=NULL, quiet=FALSE,
         fOther <- function(e){
             N <- nrow(x@tab)
             if(is.vector(e) && is.numeric(e) && length(e)==N){ # numeric vector
-                res <- tapply(e, pop, other.action)
+                res <- tapply(e, pop(x), other.action)
                 return(res)
             } else if(is.matrix(e) && is.numeric(e) && nrow(e)==N){ # numeric matrix
-                res <- apply(e, 2, function(vec) tapply(vec, pop, other.action))
+                res <- apply(e, 2, function(vec) tapply(vec, pop(x), other.action))
                 colnames(res) <- colnames(e)
                 return(res)
             } else if(is.data.frame(e) && nrow(e)==N && all(sapply(e,is.numeric)) ){ # df of numeric vectors
-                res <- lapply(e, function(vec) tapply(vec, pop, other.action))
+                res <- lapply(e, function(vec) tapply(vec, pop(x), other.action))
                 res <- data.frame(res)
                 names(res) <- names(e)
                 return(res)
