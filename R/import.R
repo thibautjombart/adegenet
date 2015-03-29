@@ -211,8 +211,8 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
 
     ## erase entirely non-type loci
     toRemove <- which(colSums(is.na(X))==nrow(X))
-    if(length(toRemove)>1){
-        X <- X[,-toRemove]
+    if(length(toRemove) > 0){
+        X <- X[,-toRemove, drop = FALSE]
         loc.names <- loc.names[-toRemove]
         warning("entirely non-type marker(s) deleted")
     }
@@ -220,8 +220,8 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
 
     ## erase entierely non-type individuals
     toRemove <- which(rowSums(is.na(X))==ncol(X))
-    if(length(toRemove)>1){
-        X <- X[-toRemove, ]
+    if(length(toRemove) > 0){
+        X <- X[-toRemove, , drop = FALSE]
         ind.names <- rownames(X)
         ploidy <- ploidy[-toRemove]
         if(!is.null(pop)) pop <- pop[-toRemove]
