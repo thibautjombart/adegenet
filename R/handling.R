@@ -612,24 +612,24 @@ setMethod("nLoc","genpop", function(x,...){
 })
 
 
-# #######
-# # nPop
-# #######
-# setGeneric("nPop", function(x,...){
-#     standardGeneric("nPop")
-# })
+#######
+# nPop
+#######
+setGeneric("nPop", function(x,...){
+    standardGeneric("nPop")
+})
 
 
 
-# setMethod("nPop","genind", function(x,...){
-#     return(length(x@pop.names))
-# })
+setMethod("nPop","genind", function(x,...){
+    return(length(x@pop.names))
+})
 
 
 
-# setMethod("nPop","genpop", function(x,...){
-#     return(length(x@pop.names))
-# })
+setMethod("nPop","genpop", function(x,...){
+    return(length(x@pop.names))
+})
 
 
 #######
@@ -772,35 +772,49 @@ setMethod("indNames","genind", function(x, ...){
 
 setReplaceMethod("indNames","genind",function(x,value) {
     value <- as.character(value)
-    if(length(value) != nInd(x)) stop("Vector length does no match number of individuals")
+    if(length(value) != nInd(x)) stop("Vector length does not match number of individuals")
     slot(x,"ind.names",check=TRUE) <- value
     rownames(x@tab) <- value
     return(x)
 })
 
-# setGeneric("popNames", function(x,...){
-#   standardGeneric("popNames")
-# })
+setGeneric("popNames", function(x,...){
+  standardGeneric("popNames")
+})
 
-# setGeneric("popNames<-", function(x, value){
-#   standardGeneric("popNames<-")
-# })
+setGeneric("popNames<-", function(x, value){
+  standardGeneric("popNames<-")
+})
 
-# setMethod("popNames","genind", function(x, ...){
-#   return(levels(pop(x)))
-# })
+setMethod("popNames","genind", function(x, ...){
+  return(levels(pop(x)))
+})
 
 
-# setReplaceMethod("popNames","genind",function(x, value) {
-#   value <- as.character(value)
-#   if(length(value) != length(levels(pop(x)))){
-#     stop("Vector length does no match number of individuals")
-#   }
-#   slot(x, "pop.names", check=TRUE) <- value
-#   levels(pop(x)) <- value
-#   return(x)
-# })
+setReplaceMethod("popNames","genind",function(x, value) {
+  value <- as.character(value)
+  if(length(value) != length(levels(pop(x)))){
+    stop("Vector length does not match number of populations")
+  }
+  slot(x, "pop.names", check=TRUE) <- value
+  levels(pop(x)) <- value
+  return(x)
+})
 
+setMethod("popNames","genpop", function(x, ...){
+  return(x@pop.names)
+})
+
+
+setReplaceMethod("popNames","genpop",function(x, value) {
+  value <- as.character(value)
+  if (length(value) != nrow(x@tab)){
+    stop("Vector length does not match number of populations")
+  }
+  slot(x, "pop.names", check=TRUE) <- value
+  rownames(x@tab) <- value
+  return(x)
+})
 
 
 ##########

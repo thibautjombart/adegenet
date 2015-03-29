@@ -13,7 +13,7 @@
   (as opposed to generic labels) for individuals, markers, alleles, and
   population.\cr
 
-  Important: as of adegenet_1.5-0, these functions are deprecated as
+  Important: as of adegenet_2.0-0, these functions are deprecated as
   true labels are used whenever possible. Please use the function
   \code{\link{tab}} instead.
 }
