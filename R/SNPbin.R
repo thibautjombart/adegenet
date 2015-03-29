@@ -594,6 +594,11 @@ setMethod("nInd","genlight", function(x,...){
     return(length(x@gen))
 })
 
+## nPop
+setMethod("nPop","genlight", function(x,...){
+    return(length(levels(pop(x))))
+})
+
 
 ## $
 setMethod("$","SNPbin",function(x,name) {
@@ -718,6 +723,25 @@ setReplaceMethod("indNames","genlight",function(x,value) {
     return(x)
 })
 
+## popNames
+setMethod("popNames","genlight", function(x,...){
+    if(length(levels(pop(x)))==0) return(NULL)
+    return(levels(pop(x)))
+})
+
+
+setReplaceMethod("popNames","genlight",function(x,value) {
+    if (is.null(value) || any(is.na(value))){
+        stop("Can't set population names to NULL or NA")
+        return(x)
+    }
+    value <- as.character(value)
+    if(length(value) != length(levels(pop(x)))){
+      stop("Vector length does no match number of populations")  
+    } 
+    levels(pop(x)) <- value
+    return(x)
+})
 
 ## alleles
 setMethod("alleles","genlight", function(x,...){
