@@ -158,8 +158,8 @@
 #==============================================================================#
 #' Access and manipulate the population strata for genind or genlight objects.
 #' 
-#' The following methods allow the user to quickly change the strata or
-#' population of a genind or genlight object. 
+#' The following methods allow the user to quickly change the strata of a genind
+#' or genlight object.
 #' 
 #' @export 
 #' @rdname strata-methods
@@ -167,60 +167,59 @@
 #' @param x a genind or genlight object
 #' @param formula a nested formula indicating the order of the population
 #' strata.
-#' @param combine if \code{TRUE}, the levels will be combined according to the
+#' @param combine if \code{TRUE} (default), the levels will be combined according to the
 #' formula argument. If it is \code{FALSE}, the levels will not be combined.
 #' @param value a data frame OR vector OR formula (see details).
 #' @docType methods
 #'   
-#' @details \subsection{Function Specifics}{ \itemize{ \item
-#' \strong{strata()} - This will retrieve the data from the
-#' \emph{strata} slot in the \linkS4class{genind} object. You have the
-#' option to choose specific heirarchical levels using a formula (see below) and
-#' you can choose to combine the strataarchical levels (default) \item
-#' \strong{strata()} - Set or reset the hierarchical levels in your
-#' \linkS4class{genind} object. \item \strong{namestrata()} - Rename the
-#' hierarchical levels. \item \strong{splitstrata()} - It is often
-#' difficult to import files with several levels of strata as most data
-#' formats do not allow unlimited population levels. This is circumvented by
-#' collapsing all hierarchical levels into a single population factor with a
-#' common separator for each observation. This function will then split those
-#' hierarchies for you, but it works best on a strata that only has a single
-#' column in it. See the rootrot example below. \item \strong{addstrata()} -
-#' Add levels to your population strata. If you have extra hierarchical
-#' levels you want to add to your population strata, you can use this method
-#' to do so. You can input a data frame or a vector, but if you put in a vector,
-#' you have the option to name it. }}
-#' 
-#' \subsection{Argument Specifics}{
-#' 
-#' These functions allow the user to seamlessly assign the hierarchical levels
-#' of their \code{\linkS4class{genind}} object. Note that there are two ways
-#' of performing all methods (except for \code{strata()}). They
-#' essentially do the same thing except that the assignment method (the one with
-#' the "\code{<-}") will modify the object in place whereas the non-assignment 
-#' method will not modify the original object. Due to convention, everything 
-#' right of the assignment is termed \code{value}. To avoid confusion, here is a
-#' guide to the inputs: \itemize{ \item \strong{strata()} This will be a 
-#' \code{\link{data.frame}} that defines the strata for each individual in 
-#' the rows. \item \strong{namestrata()} This will be either a 
-#' \code{\link{vector}} or a \code{\link{formula}} that will define the names. 
-#' \item \strong{splitstrata()} This will be a \code{\link{formula}} argument
-#' with the same number of levels as the strata you wish to split. \item 
-#' \strong{addstrata()} This will be a \code{\link{vector}} or 
-#' \code{\link{data.frame}} with the same length as the number of individuals in
-#' your data. }}
-#' 
-#' \subsection{Details on Formulas}{
-#' 
-#' The preferred use of these functions is with a \code{\link{formula}} object. 
-#' Specifically, a hierarchical formula argument is used to assign the levels of
-#' the strata. An example of a hierarchical formula would be:\cr 
-#' \code{~Country/City/Neighborhood}\cr or \cr \code{~Country + Country:City + 
-#' Country:City:Neighborhood}\cr of course, the first method is slightly easier 
-#' to read. It is important to use hiearchical formulas when specifying 
-#' hierarchies as other types of formulas (eg. 
-#' \code{~Country*City*Neighborhood}) might give spurious results.}
-#' 
+#' @details \subsection{Function Specifics}{ \itemize{ \item \strong{strata()} -
+#'   Use this function to view or define population stratification of a 
+#'   \linkS4class{genind} or \linkS4class{genlight} object. \item 
+#'   \strong{namestrata()} - View or rename the different levels of strata. 
+#'   \item \strong{splitstrata()} - Split strata that are combined with a common
+#'   separator. This function should only be used once during a workflow. 
+#'   \itemize{ \item \emph{Rationale:} It is often difficult to import files 
+#'   with several levels of strata as most data formats do not allow unlimited 
+#'   population levels. This is circumvented by collapsing all population strata
+#'   into a single population factor with a common separator for each 
+#'   observation. } \item \strong{addstrata()} - Add levels to your population 
+#'   strata. This is ideal for adding groups defined by 
+#'   \code{\link{find.clusters}}. You can input a data frame or a vector, but if
+#'   you put in a vector, you have the option to name it. }}
+#'   
+#'   \subsection{Argument Specifics}{
+#'   
+#'   These functions allow the user to seamlessly carry all possible population 
+#'   stratification with their \linkS4class{genind} or \linkS4class{genlight} 
+#'   object. Note that there are two ways of performing all methods: \itemize{ 
+#'   \item modifying: \code{strata(myData) <- myStrata} \item preserving: 
+#'   \code{myNewData <- strata(myData, value = myStrata)} } They essentially do 
+#'   the same thing except that the modifying assignment method (the one with 
+#'   the "\code{<-}") will modify the object in place whereas the non-assignment
+#'   method will preserve the original object (unless you overwrite it). Due to 
+#'   convention, everything right of the assignment is termed \code{value}. To 
+#'   avoid confusion, here is a guide to the argument \strong{\code{value}} for 
+#'   each function: \itemize{ \item \strong{strata()} \code{value = }a 
+#'   \code{\link{data.frame}} that defines the strata for each individual in the
+#'   rows. \item \strong{namestrata()} \code{value = }a \code{\link{vector}} or 
+#'   a \code{\link{formula}} that will define the names. \item 
+#'   \strong{splitstrata()} \code{value = }a \code{\link{formula}} argument with
+#'   the same number of levels as the strata you wish to split. \item 
+#'   \strong{addstrata()} \code{value = }a \code{\link{vector}} or 
+#'   \code{\link{data.frame}} with the same length as the number of individuals 
+#'   in your data. }}
+#'   
+#'   \subsection{Details on Formulas}{
+#'   
+#'   The preferred use of these functions is with a \code{\link{formula}} 
+#'   object. Specifically, a hierarchical formula argument is used to assign the
+#'   levels of the strata. An example of a hierarchical formula would
+#'   be:\tabular{r}{ \code{~Country/City/Neighborhood}} This convention was
+#'   chosen as it becomes easier to type and makes intuitive sense when defining
+#'   a \code{\link{hierarchy}}. Note: it is important to use hiearchical
+#'   formulas when specifying hierarchies as other types of formulas (eg. 
+#'   \code{~Country*City*Neighborhood}) will give incorrect results.}
+#'   
 #' @seealso \code{\link{setpop}} \code{\link{genind}}
 #'   \code{\link{as.genind}}
 #'   
@@ -231,7 +230,7 @@
 #' microbov
 #' 
 #' # We see that we have three vectors of different names in the 'other' slot. 
-#' ?microbov
+#' # ?microbov
 #' # These are Country, Breed, and Species
 #' names(other(microbov))
 #' 
@@ -242,9 +241,33 @@
 #' # And change the names so we know what they are
 #' namestrata(microbov) <- ~Country/Breed/Species
 #' 
+#' \dontrun{
 #' # let's see what the strata looks like by Species and Breed:
 #' head(strata(microbov, ~Breed/Species))
 #' 
+#' # If we didn't want the last column combined with the first, we can set
+#' # combine = FALSE
+#' head(strata(microbov, ~Breed/Species, combine = FALSE))
+#' 
+#' #### USING splitstrata ####
+#' 
+#' # For the sake of example, we'll imagine that we have imported our data set
+#' # with all of the stratifications combined. 
+#' setpop(microbov) <- ~Country/Breed/Species
+#' strata(microbov) <- NULL
+#' 
+#' # This is what our data would look like after import.
+#' microbov
+#' 
+#' # To set our strata here, we need to use the functions strata and splitstrata
+#' strata(microbov) <- data.frame(x = pop(microbov))
+#' microbov # shows us that we have "one" level of stratification
+#' head(strata(microbov)) # all strata are separated by "_"
+#' 
+#' splitstrata(microbov) <- ~Country/Breed/Species
+#' microbov # Now we have all of our strata named and split
+#' head(strata(microbov)) # all strata are appropriately named and split.
+#' }
 #==============================================================================#
 strata <- function(x, formula = NULL, combine = TRUE, value){
   standardGeneric("strata")

@@ -80,19 +80,34 @@
 #' The following methods allow the user to quickly change the hierarchy or
 #' population of a genind or genlight object. 
 #' 
-#' @export 
+#' @export
 #' @rdname hierarchy-methods
 #' @aliases hierarchy,genind-method hierarchy,genlight-method
 #' @param x a genind or genlight object
-#' @param formula a nested formula indicating the order of the population
-#' hierarchy to be returned.
-#' @param combine if \code{TRUE}, the levels will be combined according to the
-#' formula argument. If it is \code{FALSE}, the levels will not be combined.
+#' @param formula a nested formula indicating the order of the population 
+#'   hierarchy to be returned.
+#' @param combine if \code{TRUE} (default), the levels will be combined according to the 
+#'   formula argument. If it is \code{FALSE}, the levels will not be combined.
 #' @param value a formula specifying the full hierarchy of columns in the strata
-#' 	slot.
+#'   slot. \strong{(See Details below)}
 #' @docType methods
 #'   
-#' @details You must first specify your strata before you can specify your hierarchies. Hierarchies are special cases of strata in that the levels must be nested within each other. An error will occur if you specify a hierarchy that is not truely hierarchical. 
+#' @details You must first specify your strata before you can specify your 
+#'   hierarchies. Hierarchies are special cases of strata in that the levels 
+#'   must be nested within each other. An error will occur if you specify a 
+#'   hierarchy that is not truely hierarchical.
+#'   
+#'   \subsection{Details on Formulas}{
+#'   
+#'   The preferred use of these functions is with a \code{\link{formula}} 
+#'   object. Specifically, a hierarchical formula argument is used to name which
+#'   strata are hierarchical. An example of a hierarchical formula would
+#'   be:\tabular{r}{ \code{~Country/City/Neighborhood}} This convention was
+#'   chosen as it becomes easier to type and makes intuitive sense when defining
+#'   a hierarchy. Note: it is important to use hiearchical formulas when
+#'   specifying hierarchies as other types of formulas (eg. 
+#'   \code{~Country*City*Neighborhood}) will give incorrect results.}
+#'   
 #' @seealso \code{\link{strata}} \code{\link{genind}}
 #'   \code{\link{as.genind}}
 #'   
