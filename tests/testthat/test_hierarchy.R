@@ -1,4 +1,4 @@
-context("strata methods")
+context("Strata methods")
 
 test_that("strata methods work for genind objects.", {
   skip_on_cran()

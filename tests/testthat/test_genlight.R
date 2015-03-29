@@ -14,11 +14,23 @@ test_that("Genlight objects can be created predictably", {
 })
 
 
+x <- new("genlight", list(a=1,b=0,c=1), other=list(1:3, letters, data.frame(2:4)), parallel = FALSE)
+pop(x) <- c("pop1","pop1", "pop2")
+
 test_that("subsetting with/without @other works", {
-  skip_on_cran()
-  x <- new("genlight", list(a=1,b=0,c=1), other=list(1:3, letters, data.frame(2:4)), parallel = FALSE)
-  pop(x) <- c("pop1","pop1", "pop2")
+  skip_on_cran()  
   expect_that(x[1:2, ]@other[[1]], equals(1:2))
   expect_that(x[1:2, ]@other[[2]], equals(letters))
   expect_that(x[1:2, ]@other[[3]], equals(x@other[[3]][1:2, , drop = FALSE]))
+})
+
+test_that("population accessors work", {
+  skip_on_cran()
+  expect_that(nPop(x), equals(2))
+  expect_that(pop(x), is_equivalent_to(factor(c("pop1","pop1", "pop2"))))
+  expect_that(popNames(x), equals(levels(pop(x))))
+  popNames(x)[1] <- "replacement"
+  expect_that(popNames(x), equals(c("replacement", "pop2")))
+  expect_error(popNames(x) <- NULL)
+  expect_error(popNames(x)[2] <- NA)
 })
