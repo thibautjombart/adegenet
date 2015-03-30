@@ -17,19 +17,22 @@ test_that("slots are equivalent", {
 #     x <- paste0("expect_that(slot(microbov, '", i, "'), is_equivalent_to(slot(retemp, '", i, "')))", "\n")
 #     cat(x)
 #   }
+  # Alleles in repooled samples are out of order. 
+  # This makes sure they are ordered.
   retempallnames <- lapply(retemp@all.names, sort)
-
-  expect_that(slot(microbov, 'all.names'), is_equivalent_to(retempallnames))
-  expect_that(slot(microbov, 'strata'), is_equivalent_to(slot(retemp, 'strata')))
-  expect_that(slot(microbov, 'hierarchy'), is_equivalent_to(slot(retemp, 'hierarchy')))
-  expect_that(slot(microbov, 'tab'), is_equivalent_to(slot(retemp, 'tab')))
-  expect_that(slot(microbov, 'loc.names'), is_equivalent_to(slot(retemp, 'loc.names')))
-  expect_that(slot(microbov, 'loc.fac'), is_equivalent_to(slot(retemp, 'loc.fac')))
-  expect_that(slot(microbov, 'loc.nall'), is_equivalent_to(slot(retemp, 'loc.nall')))
-  expect_that(slot(microbov, 'ind.names'), is_equivalent_to(slot(retemp, 'ind.names')))
-  expect_that(slot(microbov, 'pop'), is_equivalent_to(slot(retemp, 'pop')))
-  expect_that(slot(microbov, 'pop.names'), is_equivalent_to(slot(retemp, 'pop.names')))
-  expect_that(slot(microbov, 'ploidy'), is_equivalent_to(slot(retemp, 'ploidy')))
-  expect_that(slot(microbov, 'type'), is_equivalent_to(slot(retemp, 'type')))
+  retemptab      <- retemp@tab[, colnames(microbov@tab)]
+  
+  expect_equivalent(slot(microbov, 'tab'), retemptab)
+  expect_equivalent(slot(microbov, 'all.names'), retempallnames)
+  expect_equivalent(slot(microbov, 'strata'), slot(retemp, 'strata'))
+  expect_equivalent(slot(microbov, 'hierarchy'), slot(retemp, 'hierarchy'))
+  expect_equivalent(slot(microbov, 'loc.names'), slot(retemp, 'loc.names'))
+  expect_equivalent(slot(microbov, 'loc.fac'), slot(retemp, 'loc.fac'))
+  expect_equivalent(slot(microbov, 'loc.nall'), slot(retemp, 'loc.nall'))
+  expect_equivalent(slot(microbov, 'ind.names'), slot(retemp, 'ind.names'))
+  expect_equivalent(slot(microbov, 'pop'), slot(retemp, 'pop'))
+  expect_equivalent(slot(microbov, 'pop.names'), slot(retemp, 'pop.names'))
+  expect_equivalent(slot(microbov, 'ploidy'), slot(retemp, 'ploidy'))
+  expect_equivalent(slot(microbov, 'type'), slot(retemp, 'type'))
   
 })
