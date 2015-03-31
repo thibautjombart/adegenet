@@ -223,7 +223,11 @@ genind2df <- function(x, pop=NULL, sep="", usepop=TRUE, oneColPerAll = FALSE){
   } # end if oneColPerAll
 
   ## build the final data.frame
-  res <- cbind.data.frame(kGen,stringsAsFactors=FALSE)
+  ## res <- as.data.frame(cbind(kGen,stringsAsFactors=FALSE))
+  ## faster option
+  res <- as.data.frame(do.call(cbind, kGen), stringsAsFactors=FALSE)
+  rownames(res) <- indNames(x)
+  colnames(res) <- locNames(x)
 
   ## handle pop here
   if(!is.null(pop) & usepop) res <- cbind.data.frame(pop,res,stringsAsFactors=FALSE)
