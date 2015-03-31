@@ -31,9 +31,11 @@ setClass("genlight", representation(gen = "list",
                                     position = "intOrNULL",
                                     ploidy = "intOrNULL",
                                     pop = "factorOrNULL",
+                                    strata = "dfOrNULL",
+                                    hierarchy = "formOrNULL",
                                     other = "list"),
          prototype(gen = list(), n.loc = 0L, ind.names = NULL, loc.names = NULL, loc.all = NULL,
-                   chromosome = NULL, position = NULL, ploidy=NULL, pop=NULL, other=list()))
+                   chromosome = NULL, position = NULL, strata = NULL, hierarchy = NULL, ploidy=NULL, pop=NULL, other=list()))
 
 
 
@@ -421,6 +423,42 @@ setMethod("initialize", "genlight", function(.Object, ..., parallel=require("par
             }
         }
 
+        ## HANDLE INPUT$STRATA ##
+        if(!is.null(input$strata)){
+            ## check length consistency
+            if(nrow(input$strata) != nInd(x)){
+                warning("Inconsistent length for strata - ignoring this argument.")
+                if(is.null(input$other)) {
+                    input$other <- list(strata.wrong.length=input$strata)
+                } else {
+                    input$other$strata.wrong.length <- input$strata
+                }
+            } else {
+              # Make sure that the hierarchies are factors.
+              x@strata <- data.frame(lapply(input$strata, function(f) factor(f, unique(f))))
+              if(!is.null(x@ind.names)){
+                rownames(x@strata) <- x@ind.names
+              }
+            }
+        }
+        ## HANDLE INPUT$HIERARCHY ##
+        if (!is.null(x@strata) && !is.null(input$hierarchy)){
+
+            if (is.language(input$hierarchy)){
+                the_names <- all.vars(input$hierarchy)
+                if (all(the_names %in% names(x@strata))){
+                    ## TODO: CHECK HIERARCHY HERE
+                    x@hierarchy <- input$hierarchy
+                } else {
+                    warning("hierarchy names do not match names of strata. Setting slot to NULL")
+                    x@hierarchy <- NULL
+                }
+            } else {
+                warning("hierarchy must be a formula. Setting slot to NULL.")
+                x@hierarchy <- NULL
+            }
+        }
+
 
     } # end if non-empty @gen
 
@@ -493,6 +531,19 @@ setMethod ("show", "genlight", function(object){
         cat("\n @pop: individual membership for", length(levels(pop(object))), "populations")
     }
 
+    if(!is.null(object@strata)){
+        levs <- names(object@strata)
+        if (length(levs) > 6){
+          levs <- paste(head(levs), "...", collapse = ", ", sep = ", ")
+        } else {
+          levs <- paste(levs, collapse = ", ")
+        }
+        cat("\n @strata: ", length(object@strata), "levels (", levs, ")")
+    }
+    if (!is.null(object@hierarchy)){
+        cat("\n@hierarchy: ", paste(object@hierarchy, collapse = ""))
+    }
+
     if(!is.null(chr(object))){
         cat("\n @chromosome: chromosome of the SNPs")
     }
@@ -541,6 +592,11 @@ setMethod("nLoc","genlight", function(x,...){
 ## nInd
 setMethod("nInd","genlight", function(x,...){
     return(length(x@gen))
+})
+
+## nPop
+setMethod("nPop","genlight", function(x,...){
+    return(length(levels(pop(x))))
 })
 
 
@@ -667,6 +723,25 @@ setReplaceMethod("indNames","genlight",function(x,value) {
     return(x)
 })
 
+## popNames
+setMethod("popNames","genlight", function(x,...){
+    if(length(levels(pop(x)))==0) return(NULL)
+    return(levels(pop(x)))
+})
+
+
+setReplaceMethod("popNames","genlight",function(x,value) {
+    if (is.null(value) || any(is.na(value))){
+        stop("Can't set population names to NULL or NA")
+        return(x)
+    }
+    value <- as.character(value)
+    if(length(value) != length(levels(pop(x)))){
+      stop("Vector length does no match number of populations")  
+    } 
+    levels(pop(x)) <- value
+    return(x)
+})
 
 ## alleles
 setMethod("alleles","genlight", function(x,...){

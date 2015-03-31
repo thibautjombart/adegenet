@@ -64,10 +64,7 @@ setMethod("truenames",signature(x="genpop"), function(x){
 #'
 setGeneric("tab", function(x, ...) standardGeneric("tab"))
 
-#' @rdname tab
-#' @aliases tab,genind-methods
-#' @aliases tab.genind
-setMethod("tab", signature(x="genind"), function(x, freq=FALSE, NA.method=c("asis","mean","zero"), ...){
+.tabGetter <- function(x, freq=FALSE, NA.method=c("asis","mean","zero"), ...){
     ## handle arguments
     NA.method <- match.arg(NA.method)
 
@@ -94,13 +91,22 @@ setMethod("tab", signature(x="genind"), function(x, freq=FALSE, NA.method=c("asi
 
     ## return output
     return(out)
-})
+}
+
+#' @rdname tab
+#' @aliases tab,genind-methods
+#' @aliases tab.genind
+setMethod("tab", signature(x = "genind"), 
+          function (x, freq = FALSE, NA.method = c("asis","mean","zero"), ...){
+            .tabGetter(x, freq = freq, NA.method = NA.method, ...)
+          })
 
 
 
 #' @rdname tab
 #' @aliases tab,genpop-methods
 #' @aliases tab.genpop
+
 setMethod("tab", signature(x="genpop"), function(x, freq=FALSE, NA.method=c("asis","mean","zero"), ...){
  ## handle arguments
     NA.method <- match.arg(NA.method)
@@ -139,6 +145,7 @@ setMethod("tab", signature(x="genpop"), function(x, freq=FALSE, NA.method=c("asi
     ## return output
     return(out)
 })
+
 
 
 
@@ -373,8 +380,35 @@ setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,re
 ##     return(res)
 ## })
 
+# Function to bind strata from a list of genind objects and return a single
+# genind object.
+.rbind_strata <- function(myList, res){
+    strata_list <- lapply(myList, slot, "strata")
+    null_strata <- vapply(strata_list, is.null, TRUE)
+    if (!all(null_strata)){
+        # NULL strata must be converted to data frames.
+        # Solution: take the first non-empty strata, and create a new one 
+        # with one variable.
+        if (any(null_strata)){
 
-
+            # Extract the name of the first column of the first full strata
+            fullname <- names(strata_list[[which(!null_strata)[1]]])[1]
+            
+            # loop over all the empty strata and replace them with a data
+            # frame that has the same number of elements as the samples in that
+            # genlight object.
+            for (i in which(null_strata)){
+                replace_strata        <- data.frame(rep(NA, nInd(myList[[i]])))
+                names(replace_strata) <- fullname
+                strata_list[[i]]      <- replace_strata
+            }
+        }
+        strata(res) <- as.data.frame(suppressWarnings(dplyr::bind_rows(strata_list)))        
+    } else {
+        res@strata <- NULL
+    }
+    return(res)
+}
 
 
 ##################
@@ -419,8 +453,10 @@ repool <- function(...){
     for(i in 2:length(x)){
         tab <- rbind(tab,listTab[[i]])
     }
-
+    
     res <- df2genind(tab, pop=pop, ploidy=newPloidy, type=x[[1]]@type, sep="/")
+    res <- .rbind_strata(x, res)
+    res@hierarchy <- NULL
     res$call <- match.call()
 
     return(res)
@@ -576,7 +612,24 @@ setMethod("nLoc","genpop", function(x,...){
 })
 
 
+#######
+# nPop
+#######
+setGeneric("nPop", function(x,...){
+    standardGeneric("nPop")
+})
 
+
+
+setMethod("nPop","genind", function(x,...){
+    return(length(x@pop.names))
+})
+
+
+
+setMethod("nPop","genpop", function(x,...){
+    return(length(x@pop.names))
+})
 
 
 #######
@@ -719,14 +772,49 @@ setMethod("indNames","genind", function(x, ...){
 
 setReplaceMethod("indNames","genind",function(x,value) {
     value <- as.character(value)
-    if(length(value) != nInd(x)) stop("Vector length does no match number of individuals")
+    if(length(value) != nInd(x)) stop("Vector length does not match number of individuals")
     slot(x,"ind.names",check=TRUE) <- value
     rownames(x@tab) <- value
     return(x)
 })
 
+setGeneric("popNames", function(x,...){
+  standardGeneric("popNames")
+})
+
+setGeneric("popNames<-", function(x, value){
+  standardGeneric("popNames<-")
+})
+
+setMethod("popNames","genind", function(x, ...){
+  return(levels(pop(x)))
+})
 
 
+setReplaceMethod("popNames","genind",function(x, value) {
+  value <- as.character(value)
+  if(length(value) != length(levels(pop(x)))){
+    stop("Vector length does not match number of populations")
+  }
+  slot(x, "pop.names", check=TRUE) <- value
+  levels(pop(x)) <- value
+  return(x)
+})
+
+setMethod("popNames","genpop", function(x, ...){
+  return(x@pop.names)
+})
+
+
+setReplaceMethod("popNames","genpop",function(x, value) {
+  value <- as.character(value)
+  if (length(value) != nrow(x@tab)){
+    stop("Vector length does not match number of populations")
+  }
+  slot(x, "pop.names", check=TRUE) <- value
+  rownames(x@tab) <- value
+  return(x)
+})
 
 
 ##########

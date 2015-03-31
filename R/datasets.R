@@ -514,11 +514,14 @@ NULL
 #' @keywords datasets
 #' @examples
 #'
-#' if(require(adehabitat)){
 #'
 #' data(rupica)
 #' rupica
 #'
+#'
+#' \dontrun{
+#' if(require(adehabitat)){
+#' 
 #' ## see the sampling area
 #' showBauges <- rupica$other$showBauges
 #' showBauges()
@@ -541,7 +544,6 @@ NULL
 #' rupica$other$showBauges()
 #' colorplot(spca1$xy,spca1$li,cex=1.5,add.plot=TRUE)
 #'
-#' \dontrun{
 #' ## global and local tests
 #' Gtest <- global.rtest(rupica@@tab,spca1$lw,nperm=999)
 #' Gtest

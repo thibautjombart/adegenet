@@ -6,10 +6,11 @@
 \usage{
 df2genind(X, sep = NULL, ncode = NULL, ind.names = NULL,
   loc.names = NULL, pop = NULL, NA.char = "", ploidy = 2,
-  type = c("codom", "PA"))
+  type = c("codom", "PA"), strata = NULL, hierarchy = NULL)
 }
 \arguments{
-\item{X}{a matrix or a data.frame containing allelle data only (see decription)}
+\item{X}{a matrix or a data.frame containing allelle data only (see
+decription)}
 
 \item{sep}{a character string separating alleles. See details.}
 
@@ -32,6 +33,13 @@ NULL, taken from colnames of X.}
 \item{type}{a character string indicating the type of marker: 'codom' stands
 for 'codominant' (e.g. microstallites, allozymes); 'PA' stands for
 'presence/absence' markers (e.g. AFLP, RAPD).}
+
+\item{strata}{an optional data frame that defines population stratifications
+for your samples. This is especially useful if you have a hierarchical or
+factorial sampling design.}
+
+\item{hierarchy}{a hierarchical formula that explicitely defines hierarchical
+  levels in your strata. see \code{\link{hierarchy}} for details.}
 }
 \value{
 an object of the class \linkS4class{genind} for \code{df2genind}; a
@@ -72,11 +80,13 @@ genind2df(obj)
 genind2df(obj, sep="/")
 }
 \author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}, Zhian N. Kamvar
+  \email{kamvarz@science.oregonstate.edu}
 }
 \seealso{
-\code{\link{genind2df}}, \code{\link{import2genind}}, \code{\link{read.genetix}},
-\code{\link{read.fstat}}, \code{\link{read.structure}}
+\code{\link{genind2df}}, \code{\link{import2genind}},
+  \code{\link{read.genetix}}, \code{\link{read.fstat}},
+  \code{\link{read.structure}}
 }
 \keyword{manip}
 

@@ -9,6 +9,7 @@
 \alias{show,genlight-method}
 \alias{nLoc,genlight-method}
 \alias{nInd,genlight-method}
+\alias{nPop,genlight-method}
 \alias{$,genlight-method}
 \alias{$<-,genlight-method}
 \alias{names,genlight-method}
@@ -18,6 +19,8 @@
 \alias{locNames<-,genlight-method}
 \alias{indNames,genlight-method}
 \alias{indNames<-,genlight-method}
+\alias{popNames,genlight-method}
+\alias{popNames<-,genlight-method}
 \alias{alleles,genlight-method}
 \alias{alleles<-,genlight-method}
 \alias{chromosome}
@@ -122,6 +125,8 @@
       position of the SNPs.}
     \item{\code{ploidy}:}{a vector of integers indicating the ploidy of each individual.}
     \item{\code{pop}:}{a factor indicating the population of each individual.}
+    \item{\code{strata}:}{a data frame containing different levels of population definition. (For methods, see \code{\link{addstrata}} and \code{\link{setpop}})}
+    \item{\code{hierarchy}:}{a hierarchical \code{\link{formula}} defining the hierarchical levels in the \code{@@strata} slot.}
     \item{\code{other}:}{a list containing other miscellaneous information.}
   }
 }
@@ -148,6 +153,8 @@
     
     \item{nInd}{\code{signature(x = "genlight")}: returns the number of
       individuals in the object.}
+    \item{nPop}{\code{signature(x = "genlight")}: returns the number of
+      populations in the object.}
     \item{nLoc}{\code{signature(x = "genlight")}: returns the number of
       SNPs in the object.}
     
@@ -159,6 +166,11 @@
     \item{indNames<-}{\code{signature(x = "genlight")}: sets the names of
       the individuals using a character vector of length
       \code{nInd(x)}.}
+    \item{popNames}{\code{signature(x = "genlight")}: returns the names of
+      the populations, if provided when the object was contructed.}
+    \item{popNames<-}{\code{signature(x = "genlight")}: sets the names of
+      the populations using a character vector of length
+      \code{nPop(x)}.}
     
     \item{locNames}{\code{signature(x = "genlight")}: returns the names of
       the loci, if provided when the object was contructed.}

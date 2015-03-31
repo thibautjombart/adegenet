@@ -39,6 +39,8 @@
     \item{\code{type}:}{ a character string indicating the type of
       marker: 'codom' stands for 'codominant' (e.g. microstallites,
       allozymes); 'PA' stands for 'presence/absence' (e.g. AFLP).}
+    \item{\code{strata}:}{(optional) data frame giving levels of population stratification for each individual}
+    \item{\code{hierarchy}:}{a hierarchical \code{\link{formula}} defining the hierarchical levels in the \code{@@strata} slot.}
     \item{\code{pop}:}{(optional) factor giving the population of each individual}
     \item{\code{pop.names}:}{(optional) vector giving the real names of the
       populations}
