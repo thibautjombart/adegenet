@@ -2,24 +2,24 @@
 % Please edit documentation in R/strataMethods.R
 \docType{methods}
 \name{strata}
-\alias{addstrata}
-\alias{addstrata,genind-method}
-\alias{addstrata,genlight-method}
-\alias{addstrata<-}
-\alias{addstrata<-,genind-method}
-\alias{addstrata<-,genlight-method}
-\alias{namestrata}
-\alias{namestrata,genind-method}
-\alias{namestrata,genlight-method}
-\alias{namestrata<-}
-\alias{namestrata<-,genind-method}
-\alias{namestrata<-,genlight-method}
-\alias{splitstrata}
-\alias{splitstrata,genind-method}
-\alias{splitstrata,genlight-method}
-\alias{splitstrata<-}
-\alias{splitstrata<-,genind-method}
-\alias{splitstrata<-,genlight-method}
+\alias{addStrata}
+\alias{addStrata,genind-method}
+\alias{addStrata,genlight-method}
+\alias{addStrata<-}
+\alias{addStrata<-,genind-method}
+\alias{addStrata<-,genlight-method}
+\alias{nameStrata}
+\alias{nameStrata,genind-method}
+\alias{nameStrata,genlight-method}
+\alias{nameStrata<-}
+\alias{nameStrata<-,genind-method}
+\alias{nameStrata<-,genlight-method}
+\alias{splitStrata}
+\alias{splitStrata,genind-method}
+\alias{splitStrata,genlight-method}
+\alias{splitStrata<-}
+\alias{splitStrata<-,genind-method}
+\alias{splitStrata<-,genlight-method}
 \alias{strata}
 \alias{strata,genind-method}
 \alias{strata,genlight-method}
@@ -32,17 +32,17 @@ strata(x, formula = NULL, combine = TRUE, value)
 
 strata(x) <- value
 
-namestrata(x, value)
+nameStrata(x, value)
 
-namestrata(x) <- value
+nameStrata(x) <- value
 
-splitstrata(x, value, sep = "_")
+splitStrata(x, value, sep = "_")
 
-splitstrata(x, sep = "_") <- value
+splitStrata(x, sep = "_") <- value
 
-addstrata(x, value, name = "NEW")
+addStrata(x, value, name = "NEW")
 
-addstrata(x, name = "NEW") <- value
+addStrata(x, name = "NEW") <- value
 }
 \arguments{
 \item{x}{a genind or genlight object}
@@ -58,7 +58,7 @@ formula argument. If it is \code{FALSE}, the levels will not be combined.}
 \item{sep}{a \code{character} indicating the character used to separate
 hierarchical levels. This defaults to "_".}
 
-\item{name}{an optional name argument for use with addstrata if supplying
+\item{name}{an optional name argument for use with addStrata if supplying
 a vector. Defaults to "NEW".}
 }
 \description{
@@ -69,14 +69,14 @@ or genlight object.
 \subsection{Function Specifics}{ \itemize{ \item \strong{strata()} -
   Use this function to view or define population stratification of a
   \linkS4class{genind} or \linkS4class{genlight} object. \item
-  \strong{namestrata()} - View or rename the different levels of strata.
-  \item \strong{splitstrata()} - Split strata that are combined with a common
+  \strong{nameStrata()} - View or rename the different levels of strata.
+  \item \strong{splitStrata()} - Split strata that are combined with a common
   separator. This function should only be used once during a workflow.
   \itemize{ \item \emph{Rationale:} It is often difficult to import files
   with several levels of strata as most data formats do not allow unlimited
   population levels. This is circumvented by collapsing all population strata
   into a single population factor with a common separator for each
-  observation. } \item \strong{addstrata()} - Add levels to your population
+  observation. } \item \strong{addStrata()} - Add levels to your population
   strata. This is ideal for adding groups defined by
   \code{\link{find.clusters}}. You can input a data frame or a vector, but if
   you put in a vector, you have the option to name it. }}
@@ -95,11 +95,11 @@ or genlight object.
   avoid confusion, here is a guide to the argument \strong{\code{value}} for
   each function: \itemize{ \item \strong{strata()} \code{value = }a
   \code{\link{data.frame}} that defines the strata for each individual in the
-  rows. \item \strong{namestrata()} \code{value = }a \code{\link{vector}} or
+  rows. \item \strong{nameStrata()} \code{value = }a \code{\link{vector}} or
   a \code{\link{formula}} that will define the names. \item
-  \strong{splitstrata()} \code{value = }a \code{\link{formula}} argument with
+  \strong{splitStrata()} \code{value = }a \code{\link{formula}} argument with
   the same number of levels as the strata you wish to split. \item
-  \strong{addstrata()} \code{value = }a \code{\link{vector}} or
+  \strong{addStrata()} \code{value = }a \code{\link{vector}} or
   \code{\link{data.frame}} with the same length as the number of individuals
   in your data. }}
 
@@ -129,7 +129,7 @@ strata(microbov) <- data.frame(other(microbov))
 microbov
 
 # And change the names so we know what they are
-namestrata(microbov) <- ~Country/Breed/Species
+nameStrata(microbov) <- ~Country/Breed/Species
 
 \dontrun{
 # let's see what the strata looks like by Species and Breed:
@@ -139,22 +139,22 @@ head(strata(microbov, ~Breed/Species))
 # combine = FALSE
 head(strata(microbov, ~Breed/Species, combine = FALSE))
 
-#### USING splitstrata ####
+#### USING splitStrata ####
 
 # For the sake of example, we'll imagine that we have imported our data set
 # with all of the stratifications combined.
-setpop(microbov) <- ~Country/Breed/Species
+setPop(microbov) <- ~Country/Breed/Species
 strata(microbov) <- NULL
 
 # This is what our data would look like after import.
 microbov
 
-# To set our strata here, we need to use the functions strata and splitstrata
+# To set our strata here, we need to use the functions strata and splitStrata
 strata(microbov) <- data.frame(x = pop(microbov))
 microbov # shows us that we have "one" level of stratification
 head(strata(microbov)) # all strata are separated by "_"
 
-splitstrata(microbov) <- ~Country/Breed/Species
+splitStrata(microbov) <- ~Country/Breed/Species
 microbov # Now we have all of our strata named and split
 head(strata(microbov)) # all strata are appropriately named and split.
 }
@@ -163,7 +163,7 @@ head(strata(microbov)) # all strata are appropriately named and split.
 Zhian N. Kamvar
 }
 \seealso{
-\code{\link{setpop}} \code{\link{genind}}
+\code{\link{setPop}} \code{\link{genind}}
   \code{\link{as.genind}}
 }
 

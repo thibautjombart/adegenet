@@ -55,7 +55,7 @@
     value <- all.vars(value)
   }
   if (!is.vector(value) | length(value) != length(x@strata)){
-    stop(paste("namestrata needs a vector argument of length", length(x@strata)), call. = FALSE)
+    stop(paste("nameStrata needs a vector argument of length", length(x@strata)), call. = FALSE)
   }
   names(x@strata) <- value
   return(x)
@@ -175,14 +175,14 @@
 #' @details \subsection{Function Specifics}{ \itemize{ \item \strong{strata()} -
 #'   Use this function to view or define population stratification of a 
 #'   \linkS4class{genind} or \linkS4class{genlight} object. \item 
-#'   \strong{namestrata()} - View or rename the different levels of strata. 
-#'   \item \strong{splitstrata()} - Split strata that are combined with a common
+#'   \strong{nameStrata()} - View or rename the different levels of strata. 
+#'   \item \strong{splitStrata()} - Split strata that are combined with a common
 #'   separator. This function should only be used once during a workflow. 
 #'   \itemize{ \item \emph{Rationale:} It is often difficult to import files 
 #'   with several levels of strata as most data formats do not allow unlimited 
 #'   population levels. This is circumvented by collapsing all population strata
 #'   into a single population factor with a common separator for each 
-#'   observation. } \item \strong{addstrata()} - Add levels to your population 
+#'   observation. } \item \strong{addStrata()} - Add levels to your population 
 #'   strata. This is ideal for adding groups defined by 
 #'   \code{\link{find.clusters}}. You can input a data frame or a vector, but if
 #'   you put in a vector, you have the option to name it. }}
@@ -201,11 +201,11 @@
 #'   avoid confusion, here is a guide to the argument \strong{\code{value}} for 
 #'   each function: \itemize{ \item \strong{strata()} \code{value = }a 
 #'   \code{\link{data.frame}} that defines the strata for each individual in the
-#'   rows. \item \strong{namestrata()} \code{value = }a \code{\link{vector}} or 
+#'   rows. \item \strong{nameStrata()} \code{value = }a \code{\link{vector}} or 
 #'   a \code{\link{formula}} that will define the names. \item 
-#'   \strong{splitstrata()} \code{value = }a \code{\link{formula}} argument with
+#'   \strong{splitStrata()} \code{value = }a \code{\link{formula}} argument with
 #'   the same number of levels as the strata you wish to split. \item 
-#'   \strong{addstrata()} \code{value = }a \code{\link{vector}} or 
+#'   \strong{addStrata()} \code{value = }a \code{\link{vector}} or 
 #'   \code{\link{data.frame}} with the same length as the number of individuals 
 #'   in your data. }}
 #'   
@@ -220,7 +220,7 @@
 #'   formulas when specifying hierarchies as other types of formulas (eg. 
 #'   \code{~Country*City*Neighborhood}) will give incorrect results.}
 #'   
-#' @seealso \code{\link{setpop}} \code{\link{genind}}
+#' @seealso \code{\link{setPop}} \code{\link{genind}}
 #'   \code{\link{as.genind}}
 #'   
 #' @author Zhian N. Kamvar
@@ -239,7 +239,7 @@
 #' microbov
 #' 
 #' # And change the names so we know what they are
-#' namestrata(microbov) <- ~Country/Breed/Species
+#' nameStrata(microbov) <- ~Country/Breed/Species
 #' 
 #' \dontrun{
 #' # let's see what the strata looks like by Species and Breed:
@@ -249,22 +249,22 @@
 #' # combine = FALSE
 #' head(strata(microbov, ~Breed/Species, combine = FALSE))
 #' 
-#' #### USING splitstrata ####
+#' #### USING splitStrata ####
 #' 
 #' # For the sake of example, we'll imagine that we have imported our data set
 #' # with all of the stratifications combined. 
-#' setpop(microbov) <- ~Country/Breed/Species
+#' setPop(microbov) <- ~Country/Breed/Species
 #' strata(microbov) <- NULL
 #' 
 #' # This is what our data would look like after import.
 #' microbov
 #' 
-#' # To set our strata here, we need to use the functions strata and splitstrata
+#' # To set our strata here, we need to use the functions strata and splitStrata
 #' strata(microbov) <- data.frame(x = pop(microbov))
 #' microbov # shows us that we have "one" level of stratification
 #' head(strata(microbov)) # all strata are separated by "_"
 #' 
-#' splitstrata(microbov) <- ~Country/Breed/Species
+#' splitStrata(microbov) <- ~Country/Breed/Species
 #' microbov # Now we have all of our strata named and split
 #' head(strata(microbov)) # all strata are appropriately named and split.
 #' }
@@ -334,25 +334,25 @@ setMethod(
 #==============================================================================#
 #' @export 
 #' @rdname strata-methods
-#' @aliases namestrata,genind-method namestrata,genlight-method
+#' @aliases nameStrata,genind-method nameStrata,genlight-method
 #' @docType methods
 #==============================================================================#
-namestrata <- function(x, value){
-  standardGeneric("namestrata")
+nameStrata <- function(x, value){
+  standardGeneric("nameStrata")
 }  
 
 #' @export
-setGeneric("namestrata")
+setGeneric("nameStrata")
 
 setMethod(
-  f = "namestrata",
+  f = "nameStrata",
   signature(x = "genind"),
   definition = function(x, value){
     .nameStrata(x, value)
   })
 
 setMethod(
-  f = "namestrata",
+  f = "nameStrata",
   signature(x = "genlight"),
   definition = function(x, value){
     .nameStrata(x, value)
@@ -361,54 +361,54 @@ setMethod(
 #==============================================================================#
 #' @export 
 #' @rdname strata-methods
-#' @aliases namestrata<-,genind-method namestrata<-,genlight-method
+#' @aliases nameStrata<-,genind-method nameStrata<-,genlight-method
 #' @docType methods
 #==============================================================================#
-"namestrata<-" <- function(x, value){
-  standardGeneric("namestrata<-")
+"nameStrata<-" <- function(x, value){
+  standardGeneric("nameStrata<-")
 }  
 
 #' @export
-setGeneric("namestrata<-")
+setGeneric("nameStrata<-")
 
 setMethod(
-  f = "namestrata<-",
+  f = "nameStrata<-",
   signature(x = "genind"),
   definition = function(x, value){
-    return(namestrata(x, value))
+    return(nameStrata(x, value))
   })
 
 setMethod(
-  f = "namestrata<-",
+  f = "nameStrata<-",
   signature(x = "genlight"),
   definition = function(x, value){
-    return(namestrata(x, value))
+    return(nameStrata(x, value))
   })
 #==============================================================================#
 #' @export 
 #' @rdname strata-methods
-#' @aliases splitstrata,genind-method splitstrata,genlight-method
+#' @aliases splitStrata,genind-method splitStrata,genlight-method
 #' @docType methods
 #' @param sep a \code{character} indicating the character used to separate
 #' hierarchical levels. This defaults to "_".
 #' @importFrom reshape2 colsplit
 #==============================================================================#
-splitstrata <- function(x, value, sep = "_"){
-  standardGeneric("splitstrata")
+splitStrata <- function(x, value, sep = "_"){
+  standardGeneric("splitStrata")
 }  
 
 #' @export
-setGeneric("splitstrata")
+setGeneric("splitStrata")
 
 setMethod(
-  f = "splitstrata",
+  f = "splitStrata",
   signature(x = "genind"),
   definition = function(x, value, sep = "_"){
     .splitStrata(x, value, sep = sep) 
   })
 
 setMethod(
-  f = "splitstrata",
+  f = "splitStrata",
   signature(x = "genlight"),
   definition = function(x, value, sep = "_"){
     .splitStrata(x, value, sep = sep) 
@@ -417,47 +417,47 @@ setMethod(
 #==============================================================================#
 #' @export 
 #' @rdname strata-methods
-#' @aliases splitstrata<-,genind-method splitstrata<-,genlight-method
+#' @aliases splitStrata<-,genind-method splitStrata<-,genlight-method
 #' @docType methods
 #==============================================================================#
-"splitstrata<-" <- function(x, sep = "_", value){
-  standardGeneric("splitstrata<-")
+"splitStrata<-" <- function(x, sep = "_", value){
+  standardGeneric("splitStrata<-")
 }  
 
 #' @export
-setGeneric("splitstrata<-")
+setGeneric("splitStrata<-")
 
 setMethod(
-  f = "splitstrata<-",
+  f = "splitStrata<-",
   signature(x = "genind"),
   definition = function(x, sep = "_", value){
-    return(splitstrata(x, value, sep))
+    return(splitStrata(x, value, sep))
   })
 
 setMethod(
-  f = "splitstrata<-",
+  f = "splitStrata<-",
   signature(x = "genlight"),
   definition = function(x, sep = "_", value){
-    return(splitstrata(x, value, sep))
+    return(splitStrata(x, value, sep))
   })
 
 #==============================================================================#
 #' @export 
 #' @rdname strata-methods
-#' @aliases addstrata,genind-method addstrata,genlight-method
-#' @param name an optional name argument for use with addstrata if supplying
+#' @aliases addStrata,genind-method addStrata,genlight-method
+#' @param name an optional name argument for use with addStrata if supplying
 #'   a vector. Defaults to "NEW".
 #' @docType methods
 #==============================================================================#
-addstrata <- function(x, value, name = "NEW"){
-  standardGeneric("addstrata")
+addStrata <- function(x, value, name = "NEW"){
+  standardGeneric("addStrata")
 }  
 
 #' @export
-setGeneric("addstrata")
+setGeneric("addStrata")
 
 setMethod(
-  f = "addstrata",
+  f = "addStrata",
   signature(x = "genind"),
   definition = function(x, value, name = "NEW"){
     theCall <- match.call()
@@ -465,7 +465,7 @@ setMethod(
   })
 
 setMethod(
-  f = "addstrata",
+  f = "addStrata",
   signature(x = "genlight"),
   definition = function(x, value, name = "NEW"){
     theCall <- match.call()
@@ -475,18 +475,18 @@ setMethod(
 #==============================================================================#
 #' @export 
 #' @rdname strata-methods
-#' @aliases addstrata<-,genind-method addstrata<-,genlight-method
+#' @aliases addStrata<-,genind-method addStrata<-,genlight-method
 #' @docType methods
 #==============================================================================#
-"addstrata<-" <- function(x, name = "NEW", value){
-  standardGeneric("addstrata<-")
+"addStrata<-" <- function(x, name = "NEW", value){
+  standardGeneric("addStrata<-")
 }  
 
 #' @export
-setGeneric("addstrata<-")
+setGeneric("addStrata<-")
 
 setMethod(
-  f = "addstrata<-",
+  f = "addStrata<-",
   signature(x = "genind"),
   definition = function(x, name = "NEW", value){
     theCall <- match.call()
@@ -494,7 +494,7 @@ setMethod(
   })
 
 setMethod(
-  f = "addstrata<-",
+  f = "addStrata<-",
   signature(x = "genlight"),
   definition = function(x, name = "NEW", value){
     theCall <- match.call()
@@ -513,7 +513,7 @@ setMethod(
 #' @param formula a nested formula indicating the order of the population
 #' strata.
 #' @param value same as formula
-#' @aliases setpop,genind-method setpop,genlight-method
+#' @aliases setPop,genind-method setPop,genlight-method
 #' @docType methods 
 #' @author Zhian N. Kamvar
 #' @examples
@@ -526,30 +526,30 @@ setMethod(
 #' head(pop(microbov)) 
 #' 
 #' # setting the strata to both Pop and Subpop
-#' setpop(microbov) <- ~coun/breed 
+#' setPop(microbov) <- ~coun/breed 
 #' head(pop(microbov))
 #' 
 #' \dontrun{
 #' 
 #' # Can be used to create objects as well.
-#' microbov.old <- setpop(microbov, ~spe) 
+#' microbov.old <- setPop(microbov, ~spe) 
 #' head(pop(microbov.old))
 #' }
 #==============================================================================#
-setpop <- function(x, formula = NULL) standardGeneric("setpop")
+setPop <- function(x, formula = NULL) standardGeneric("setPop")
 
 #' @export
-setGeneric("setpop")
+setGeneric("setPop")
 
 setMethod(
-  f = "setpop",
+  f = "setPop",
   signature(x = "genind"),
   definition = function(x, formula = NULL){
     .setPop(x, formula = formula)
   })
 
 setMethod(
-  f = "setpop",
+  f = "setPop",
   signature(x = "genlight"),
   definition = function(x, formula = NULL){
     .setPop(x, formula = formula)
@@ -557,26 +557,26 @@ setMethod(
 #==============================================================================#
 #' @export
 #' @rdname population-methods
-#' @aliases setpop<-,genind-method setpop<-,genlight-method
+#' @aliases setPop<-,genind-method setPop<-,genlight-method
 #' @docType methods
 #==============================================================================#
-"setpop<-" <- function(x, value) standardGeneric("setpop<-")
+"setPop<-" <- function(x, value) standardGeneric("setPop<-")
 
 #' @export
-setGeneric("setpop<-")
+setGeneric("setPop<-")
 
 setMethod(
-  f = "setpop<-",
+  f = "setPop<-",
   signature(x = "genind"),
   definition = function(x, value){
-    return(setpop(x, value))
+    return(setPop(x, value))
   })
 
 setMethod(
-  f = "setpop<-",
+  f = "setPop<-",
   signature(x = "genlight"),
   definition = function(x, value){
-    return(setpop(x, value))
+    return(setPop(x, value))
   })
 
 #==============================================================================#
@@ -600,7 +600,7 @@ setMethod(
 #
 # Public functions utilizing this function:
 #
-# # setpop, strata
+# # setPop, strata
 #
 # Internal functions utilizing this function:
 # # none
@@ -655,7 +655,7 @@ setMethod(
 # present in the given data frame.
 #
 # Public functions utilizing this function:
-# # setpop strata poppr.amova
+# # setPop strata poppr.amova
 #
 # Internal functions utilizing this function:
 # # .make_strata make_ade_df
@@ -673,7 +673,7 @@ setMethod(
 # not match what is expected.
 #
 # Public functions utilizing this function:
-# # addstrata
+# # addStrata
 #
 # Internal functions utilizing this function:
 # # .addStrata

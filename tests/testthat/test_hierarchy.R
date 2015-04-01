@@ -12,22 +12,22 @@ test_that("strata methods work for genind objects.", {
 
   expect_that(length(strata(microbov)), equals(3))
   expect_that(microbov@pop.names, equals(breeds))
-  expect_that({microbovsplit <- splitstrata(microbov, ~Pop/Subpop)}, throws_error())
-  namestrata(microbov) <- ~Country/Breed/Species
+  expect_that({microbovsplit <- splitStrata(microbov, ~Pop/Subpop)}, throws_error())
+  nameStrata(microbov) <- ~Country/Breed/Species
   expect_that(names(strata(microbov)), equals(c("Country", "Breed", "Species")))
-  setpop(microbov) <- ~Country/Species
+  setPop(microbov) <- ~Country/Species
   expect_that(microbov@pop.names, equals(c("AF_BI", "AF_BT", "FR_BT")))
 })
 
 test_that("strata produce proper errors", {
   skip_on_cran()
-  expect_warning(setpop(microbov, ~bippity/boppity/boo))
+  expect_warning(setPop(microbov, ~bippity/boppity/boo))
   strata(microbov) <- data.frame(other(microbov))
   expect_error({strata(microbov) <- data.frame(a = 1)})
-  expect_error({addstrata(microbov) <- data.frame(a = 1:10)})
-  expect_error(setpop(microbov, ~bippity/boppity/boo))
+  expect_error({addStrata(microbov) <- data.frame(a = 1:10)})
+  expect_error(setPop(microbov, ~bippity/boppity/boo))
   expect_error({strata(microbov) <- "a stratum"})
-  expect_error({setpop(microbov) <- "thepop"})
+  expect_error({setPop(microbov) <- "thepop"})
 })
 
 test_that("strata methods work for genlight objects", {
@@ -45,6 +45,6 @@ test_that("strata methods work for genlight objects", {
   expect_that(nInd(res), equals(100))
   expect_that(nLoc(res), equals(10))
   expect_that(length(strata(res)), equals(3))
-  namestrata(res) <- ~Hickory/Dickory/Doc
+  nameStrata(res) <- ~Hickory/Dickory/Doc
   expect_that(names(strata(res)), equals(c("Hickory", "Dickory", "Doc")))
 })
