@@ -125,7 +125,8 @@ xval
 system.time(xval <- xvalDapc(sim2pop@tab, pop(sim2pop), n.pca.max=100, n.rep=100))
 
 # Parallel version (faster!)
-system.time(xval <- xvalDapc(sim2pop@tab, pop(sim2pop), n.pca.max=100, n.rep=100, parallel = "multicore", ncpus = 2))
+system.time(xval <- xvalDapc(sim2pop@tab, pop(sim2pop), n.pca.max=100, n.rep=100, 
+                             parallel = "multicore", ncpus = 2))
 }
 }
 \keyword{multivariate}
