@@ -82,12 +82,13 @@
 #' 
 #' @export
 #' @rdname hierarchy-methods
-#' @aliases hierarchy,genind-method hierarchy,genlight-method
+#' @aliases hier,genind-method hier,genlight-method
 #' @param x a genind or genlight object
 #' @param formula a nested formula indicating the order of the population 
 #'   hierarchy to be returned.
-#' @param combine if \code{TRUE} (default), the levels will be combined according to the 
-#'   formula argument. If it is \code{FALSE}, the levels will not be combined.
+#' @param combine if \code{TRUE} (default), the levels will be combined
+#'   according to the formula argument. If it is \code{FALSE}, the levels will
+#'   not be combined.
 #' @param value a formula specifying the full hierarchy of columns in the strata
 #'   slot. \strong{(See Details below)}
 #' @docType methods
@@ -95,7 +96,7 @@
 #' @details You must first specify your strata before you can specify your 
 #'   hierarchies. Hierarchies are special cases of strata in that the levels 
 #'   must be nested within each other. An error will occur if you specify a 
-#'   hierarchy that is not truely hierarchical.
+#'   hierarchy that is not truly hierarchical.
 #'   
 #'   \subsection{Details on Formulas}{
 #'   
@@ -104,7 +105,7 @@
 #'   strata are hierarchical. An example of a hierarchical formula would
 #'   be:\tabular{r}{ \code{~Country/City/Neighborhood}} This convention was
 #'   chosen as it becomes easier to type and makes intuitive sense when defining
-#'   a hierarchy. Note: it is important to use hiearchical formulas when
+#'   a hierarchy. Note: it is important to use hierarchical formulas when
 #'   specifying hierarchies as other types of formulas (eg. 
 #'   \code{~Country*City*Neighborhood}) will give incorrect results.}
 #'   
@@ -127,22 +128,22 @@
 #' microbov
 #' 
 #' # And change the names so we know what they are
-#' namestrata(microbov) <- ~Country/Breed/Species
+#' nameStrata(microbov) <- ~Country/Breed/Species
 #' 
 #' # let's see what the hierarchy looks like by Species and Breed:
-#' hierarchy(microbov) <- ~Species/Breed
-#' head(hierarchy(microbov, ~Species/Breed))
+#' hier(microbov) <- ~Species/Breed
+#' head(hier(microbov, ~Species/Breed))
 #' 
 #==============================================================================#
-hierarchy <- function(x, formula = NULL, combine = TRUE, value){
-  standardGeneric("hierarchy")
+hier <- function(x, formula = NULL, combine = TRUE, value){
+  standardGeneric("hier")
 } 
 
 #' @export
-setGeneric("hierarchy")
+setGeneric("hier")
 
 setMethod(
-  f = "hierarchy",
+  f = "hier",
   signature(x = "genind"),
   definition = function(x, formula = NULL, combine = TRUE, value){
     theCall <- match.call()
@@ -154,7 +155,7 @@ setMethod(
   })
 
 setMethod(
-  f = "hierarchy",
+  f = "hier",
   signature(x = "genlight"),
   definition = function(x, formula = NULL, combine = TRUE, value){
     theCall <- match.call()
@@ -170,18 +171,18 @@ setMethod(
 #==============================================================================#
 #' @export 
 #' @rdname hierarchy-methods
-#' @aliases hierarchy<-,genind-method hierarchy<-,genlight-method
+#' @aliases hier<-,genind-method hier<-,genlight-method
 #' @docType methods
 #==============================================================================#
-"hierarchy<-" <- function(x, value){
-  standardGeneric("hierarchy<-")
+"hier<-" <- function(x, value){
+  standardGeneric("hier<-")
 }  
 
 #' @export
-setGeneric("hierarchy<-")
+setGeneric("hier<-")
 
 setMethod(
-  f = "hierarchy<-",
+  f = "hier<-",
   signature(x = "genind"),
   definition = function(x, value){
     theCall <- match.call()
@@ -189,7 +190,7 @@ setMethod(
   })
 
 setMethod(
-  f = "hierarchy<-",
+  f = "hier<-",
   signature(x = "genlight"),
   definition = function(x, value){
     theCall <- match.call()
