@@ -54,34 +54,48 @@ xvalDapc(x, grp, n.pca.max = 300, n.da = NULL,
     PC retention; defaults to 30.}
   \item{xval.plot}{a logical indicating whether a plot of the cross-validation
     results should be generated.}
-  \item{\dots}{further arguments to be passed to \code{\link[boot]{boot}}.}
-}
-\details{
-  The Discriminant Analysis of Principal Components (DAPC) relies on
-  dimension reduction of the data using PCA followed by a linear
-  discriminant analysis. How many PCA axes to retain is often a
-  non-trivial question. Cross validation provides an objective way to
-  decide how many axes to retain: different numbers are tried and the
-  quality of the corresponding DAPC is assessed by cross-validation:
-  DAPC is performed on a training set, typically made of 90\% of the
-  observations (comprising 90\% of the observations in each subpopulation)
-  , and then used to predict the groups of the 10\% of remaining observations. 
-  The current method uses the average prediction success per group (result="groupMean"), 
-  or the overall prediction success (result="overall"). The number of PCs associated
-  with the lowest Mean Squared Error is then retained in the DAPC. 
+  \item{\dots}{further arguments to be passed to \code{\link[boot]{boot}}.
+    \strong{see Details.}} }
+\details{ The Discriminant Analysis of Principal Components (DAPC) relies on
+  dimension reduction of the data using PCA followed by a linear discriminant
+  analysis. How many PCA axes to retain is often a non-trivial question. Cross
+  validation provides an objective way to decide how many axes to retain:
+  different numbers are tried and the quality of the corresponding DAPC is
+  assessed by cross- validation: DAPC is performed on a training set, typically
+  made of 90\% of the observations (comprising 90\% of the observations in each
+  subpopulation) , and then used to predict the groups of the 10\% of remaining
+  observations. The current method uses the average prediction success per group
+  (result="groupMean"), or the overall prediction success (result="overall").
+  The number of PCs associated with the lowest Mean Squared Error is then
+  retained in the DAPC.
+  \subsection{Parallel Computing}{
+    The permutation of the data for cross-validation is performed in part by the
+    function\code{\link[boot]{boot}}. If you have a modern computer, it is
+    likely that you have multiple cores on your system. R by default utilizes
+    only one of these cores unless you tell it otherwise. For details, please
+    see the documentation of \code{\link[boot]{boot}}. Basically, if you want to
+    use multiple cores, you need two arguments:
+    \enumerate{
+      \item \code{parallel} - what R parallel system to use (see below)
+      \item \code{ncpus} - number of cores you want to use
+    } 
+    If you are on a unix system (Linux or OSX), you will want to specify
+    \code{parallel = "multicore"}. If you are on Windows, you will want to
+    specify \code{parallel = "snow"}.
+  } 
 }
 \value{
- A \code{list} containing seven items, and a \code{plot} of the results.
- The first is a \code{data.frame} with two columns, the first giving the number 
- of PCs of PCA retained in the corresponding DAPC, and the second giving the proportion 
- of successful group assignment for each replicate. 
- The second item gives the mean and confidence interval for random chance. 
- The third gives the mean successful assignment at each level of PC retention.
- The fourth indicates which number of PCs is associated with the highest mean success. 
- The fifth gives the Root Mean Squared Error at each level of PC retention. 
- The sixth indicates which number of PCs is associated with the lowest MSE. 
- The seventh item contains the DAPC carried out with the optimal number of PCs, 
- determined with reference to MSE.  
+ A \code{list} containing seven items, and a \code{plot} of the results. The
+ first is a \code{data.frame} with two columns, the first giving the number of
+ PCs of PCA retained in the corresponding DAPC, and the second giving the
+ proportion of successful group assignment for each replicate. The second item
+ gives the mean and confidence interval for random chance. The third gives the
+ mean successful assignment at each level of PC retention. The fourth indicates
+ which number of PCs is associated with the highest mean success. The fifth
+ gives the Root Mean Squared Error at each level of PC retention. The sixth
+ indicates which number of PCs is associated with the lowest MSE. The seventh
+ item contains the DAPC carried out with the optimal number of PCs, determined
+ with reference to MSE.
  
  If \code{xval.plot=TRUE} a scatterplot of the results of cross-validation 
  will be displayed. 
@@ -96,7 +110,8 @@ xvalDapc(x, grp, n.pca.max = 300, n.da = NULL,
   \code{\link{dapc}}
 }
 \author{ Caitlin Collins \email{caitlin.collins12@imperial.ac.uk},
-Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
+Thibaut Jombart \email{t.jombart@imperial.ac.uk},
+Zhian N. Kamvar \email{kamvarz@science.oregonstate.edu} }
 \examples{
 \dontrun{
 ## CROSS-VALIDATION ##
@@ -104,6 +119,13 @@ data(sim2pop)
 xval <- xvalDapc(sim2pop@tab, pop(sim2pop), n.pca.max=100, n.rep=3)
 xval
 
+## 100 replicates ##
+
+# Serial version (SLOW!)
+system.time(xval <- xvalDapc(sim2pop@tab, pop(sim2pop), n.pca.max=100, n.rep=100))
+
+# Parallel version (faster!)
+system.time(xval <- xvalDapc(sim2pop@tab, pop(sim2pop), n.pca.max=100, n.rep=100, parallel = "multicore", ncpus = 2))
 }
 }
 \keyword{multivariate}
