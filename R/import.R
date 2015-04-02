@@ -265,6 +265,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     allele.data <- paste(locus.data, allele.data, sep=".")
     allele.data <- factor(allele.data, levels=unique(allele.data))
     out         <- table(ind.data, allele.data)
+    out         <- out[ind.names, ] # table sorts alphabetically. This resets.
 
     ## force type 'matrix'
     class(out) <- NULL
