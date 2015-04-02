@@ -55,9 +55,6 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
       tab <- tab[i, j, ..., drop=FALSE]
     }
 
-    # res <- genind(tab, pop=pop, prevcall=prevcall, ploidy=x@ploidy[i], type=x@type, 
-    #               strata = hier[i, , drop = FALSE])
-
     ## handle 'other' slot
     nOther <- length(x@other)
     namesOther <- names(x@other)
@@ -131,13 +128,22 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
     prevcall <- match.call()
     tab <- tab[i, j, ...,drop=FALSE]
 
-    if(drop){
-        allNb <- apply(tab, 2, sum, na.rm=TRUE) # allele absolute frequencies
-        toKeep <- (allNb > 1e-10)
-        tab <- tab[,toKeep, drop=FALSE]
+    # if(drop){
+    #     allNb <- apply(tab, 2, sum, na.rm=TRUE) # allele absolute frequencies
+    #     toKeep <- (allNb > 1e-10)
+    #     tab <- tab[,toKeep, drop=FALSE]
+    # }
+    if (drop){
+      tab    <- tab[i, , ..., drop = FALSE]
+      allNb  <- colSums(tab, na.rm=TRUE) # allele absolute frequencies
+      toKeep <- (allNb > 1e-10)
+      j      <- j & toKeep
+      tab    <- tab[, j, ..., drop=FALSE]
+    } else {
+      tab <- tab[i, j, ..., drop=FALSE]
     }
 
-    res <- genpop(tab,prevcall=prevcall,ploidy=x@ploidy)
+    # res <- genpop(tab,prevcall=prevcall,ploidy=x@ploidy)
 
     ## handle 'other' slot
     nOther <- length(x@other)
@@ -156,14 +162,29 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
             return(obj)
         } # end f1
 
-        res@other <- lapply(x@other, f1) # treat all elements
+        x@other <- lapply(x@other, f1) # treat all elements
 
     } else {
-        other(res) <- old.other
+        other(x) <- old.other
     } # end treatOther
 
+    x@tab    <- tab
+    x@call   <- prevcall
+    x@type   <- x@type
+    
+    # Treat populations
+    x@ploidy    <- x@ploidy
+    x@pop.names <- x@pop.names[i]
 
-    return(res)
+    # Treat locus items
+    loc.fac     <- factor(x@loc.fac[j])
+    loc_to_keep <- x@loc.names %in% levels(loc.fac)
+    x@loc.fac   <- loc.fac
+    x@loc.nall  <- x@loc.nall[loc_to_keep]
+    x@loc.names <- x@loc.names[loc_to_keep]
+    x@all.names <- x@all.names[loc_to_keep]
+
+    return(x)
 })
 
 
