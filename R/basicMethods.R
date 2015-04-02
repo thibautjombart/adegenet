@@ -11,7 +11,15 @@ setMethod("$<-","genpop",function(x,name,value) {
 })
 
 
+.drop_allelels <- function(x, toKeep){
+  all.vec <- unlist(x@all.names, use.names = FALSE)[toKeep]
+  loc.fac <- factor(x@loc.fac[toKeep])
 
+  x@all.names <- split(all.vec, loc.fac)
+  x@loc.nall  <- setNames(tabulate(loc.fac), levels(loc.fac))
+  x@loc.fac   <- loc.fac
+  return(x)
+}
 
 
 ###############
@@ -91,12 +99,8 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
     x@strata    <- hier[i, , drop = FALSE]
 
     # Treat locus items
-    loc.fac     <- factor(x@loc.fac[j])
-    loc_to_keep <- x@loc.names %in% levels(loc.fac)
-    x@loc.fac   <- loc.fac
-    x@loc.nall  <- x@loc.nall[loc_to_keep]
-    x@loc.names <- x@loc.names[loc_to_keep]
-    x@all.names <- x@all.names[loc_to_keep]
+    x <- .drop_allelels(x, j)
+    x@loc.names <- x@loc.names[x@loc.names %in% levels(x@loc.fac)]
 
     return(x)
 })
@@ -177,12 +181,8 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
     x@pop.names <- x@pop.names[i]
 
     # Treat locus items
-    loc.fac     <- factor(x@loc.fac[j])
-    loc_to_keep <- x@loc.names %in% levels(loc.fac)
-    x@loc.fac   <- loc.fac
-    x@loc.nall  <- x@loc.nall[loc_to_keep]
-    x@loc.names <- x@loc.names[loc_to_keep]
-    x@all.names <- x@all.names[loc_to_keep]
+    x <- .drop_allelels(x, j)
+    x@loc.names <- x@loc.names[x@loc.names %in% levels(x@loc.fac)]
 
     return(x)
 })
