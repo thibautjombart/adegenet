@@ -215,7 +215,7 @@ genind2df <- function(x, pop=NULL, sep="", usepop=TRUE, oneColPerAll = FALSE){
 
       ## handle pop here
       if(!is.null(pop) & usepop) res <- cbind.data.frame(pop,res,stringsAsFactors=FALSE)
-
+      rownames(res) <- indNames(x)
       return(res) # exit here
     } else {
       warning("All ploidies must be equal in order to separate the alleles.\nReturning one column per locus")

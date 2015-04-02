@@ -169,7 +169,7 @@ setMethod("seploc", signature(x="genind"), function(x,truenames=TRUE,res.type=c(
     kX <- list()
     locfac.char <- as.character(x@loc.fac)
     for(i in locNames(x)){
-        kX[[i]] <- x@tab[,i==locfac.char,drop=FALSE]
+        kX[[i]] <- x@tab[, i==locfac.char,drop=FALSE]
     }
 
     prevcall <- match.call()
