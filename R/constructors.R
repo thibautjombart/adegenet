@@ -43,8 +43,24 @@
 setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL, ploidy=2L, type=c("codom","PA"), strata = NULL, hierarchy = NULL, ...){
    ## HANDLE ARGUMENTS ##
     out <- .Object
-    if(is.null(colnames(tab))) stop("tab columns have no name.")
-    if(is.null(rownames(tab))) {rownames(tab) <- 1:nrow(tab)}
+    if (missing(tab)){
+        .Object@tab       <- matrix(0L, ncol = 0, nrow = 0)
+        .Object@pop       <- NULL
+        .Object@pop.names <- NULL
+        .Object@strata    <- NULL
+        .Object@hierarchy <- NULL
+        .Object@call      <- NULL
+        .Object@ind.names <- character(0)
+        .Object@loc.names <- character(0)
+        .Object@loc.nall  <- integer(0)
+        .Object@loc.fac   <- NULL
+        .Object@ploidy    <- integer(0)
+        .Object@other     <- NULL
+        .Object@type      <- "codom"
+        return(.Object)
+    }
+    if(is.null(colnames(tab))) {colnames(tab) <- seq(ncol(tab))}
+    if(is.null(rownames(tab))) {rownames(tab) <- seq(nrow(tab))}
 
     ## force matrix & integer
     old.rownames <- rownames(tab)
@@ -210,6 +226,18 @@ as.genind <- function(...){
 setMethod("initialize", "genpop", function(.Object, tab, prevcall=NULL, ploidy=2L, type=c("codom","PA"), ...){
     ## HANDLE ARGS ##
     out <- .Object
+    if (missing(tab)){
+        .Object@tab       <- matrix(0L, ncol = 0, nrow = 0)
+        .Object@pop.names <- character(0)
+        .Object@call      <- NULL
+        .Object@loc.names <- character(0)
+        .Object@loc.nall  <- integer(0)
+        .Object@loc.fac   <- NULL
+        .Object@ploidy    <- integer(0)
+        .Object@other     <- NULL
+        .Object@type      <- "codom"
+        return(.Object)
+    }
     if(is.null(colnames(tab))) stop("tab columns have no name.")
     if(is.null(rownames(tab))) {rownames(tab) <- 1:nrow(tab)}
 
