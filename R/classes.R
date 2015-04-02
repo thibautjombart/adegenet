@@ -126,11 +126,13 @@ setClass("indInfo", representation(ind.names = "character",
 # Class genind
 ###############
 .genind.valid <- function(object){
+
+    validation <- TRUE
     if(!.gen.valid(object)) return(FALSE)
 
     if(length(object@ind.names) != nrow(object@tab)) {
-        cat("\ninvalid length in ind.names\n")
-        return(FALSE)
+        message("\ninvalid length in ind.names\n")
+        validation <- FALSE
     }
 
     temp <- table(object@ind.names[object@ind.names!=""])
@@ -140,27 +142,27 @@ setClass("indInfo", representation(ind.names = "character",
     }
 
     if(typeof(object@tab)!="integer"){
-        warning("@tab does not contain integers; as of adegenet_1.5-0, numeric values are no longer used")
-        ## cat("\ntab does not contain integers; as of adegenet_1.5-0, numeric values are no longer used")
-        ## return(FALSE)
+        warning("@tab does not contain integers; as of adegenet_2.0-0, numeric values are no longer used")
+        ## message("\ntab does not contain integers; as of adegenet_1.5-0, numeric values are no longer used")
+        ## validation <- FALSE
     }
 
 
     if(!is.null(object@pop)){ # check pop
 
         if(length(object@pop) != nrow(object@tab)) {
-            cat("\npop is given but has invalid length\n")
-            return(FALSE)
+            message("\npop is given but has invalid length\n")
+            validation <- FALSE
         }
 
         if(is.null(object@pop.names)) {
-            cat("\npop is provided without pop.names")
+            message("\npop is provided without pop.names")
         }
 
 
         if(length(object@pop.names) != length(levels(object@pop))) {
-            cat("\npop.names has invalid length\n")
-            return(FALSE)
+            message("\npop.names has invalid length\n")
+            validation <- FALSE
         }
 
         temp <- table(object@pop.names[object@pop.names!=""])
@@ -174,16 +176,16 @@ setClass("indInfo", representation(ind.names = "character",
     # Check population strata
     if (!is.null(object@strata)){
       if (nrow(object@strata) != nrow(object@tab)){
-        cat("\na strata is defined has invalid length\n")
-        return(FALSE)
+        message("\na strata is defined has invalid length\n")
+        validation <- FALSE
       }
 
       dups <- duplicated(colnames(object@strata))
       if (any(dups)){
-        cat("\nduplicated names found in @strata slot:\n")
+        message("\nduplicated names found in @strata slot:\n")
         dups <- colnames(object@strata)[dups]
-        cat(paste0(dups, collapse = ", "))
-        return(FALSE)
+        message(paste0(dups, collapse = ", "))
+        validation <- FALSE
       }
     }
 
@@ -191,21 +193,21 @@ setClass("indInfo", representation(ind.names = "character",
 
     ## check ploidy
     if(any(object@ploidy < 1L)){
-        cat("\nploidy inferior to 1\n")
-        return(FALSE)
+        message("\nploidy inferior to 1\n")
+        validation <- FALSE
     }
     if(length(object@ploidy)!=nInd(object)){
-        warning("as of adegenet_1.5-0, @ploidy should contain one value per individual")
+        warning("as of adegenet_2.0-0, @ploidy should contain one value per individual")
     }
 
     ## check type of marker
     if(!object@type %in% c("codom","PA") ){
-        cat("\nunknown type of marker\n")
-        return(FALSE)
+        message("\nunknown type of marker\n")
+        validation <- FALSE
     }
 
 
-    return(TRUE)
+    return(validation)
 } #end .genind.valid
 
 setClass("genind", contains=c("gen", "indInfo"), 
@@ -227,10 +229,13 @@ setClass("popInfo", representation(pop.names = "character", ploidy = "integer",
 # Class genpop
 ###############
 .genpop.valid <- function(object){
+
+    validation <- TRUE
+
     if(!.gen.valid(object)) return(FALSE)
     if(length(object@pop.names) != nrow(object@tab)) {
-        cat("\ninvalid length in pop.names\n")
-        return(FALSE)
+        message("\ninvalid length in pop.names\n")
+        validation <- FALSE
     }
 
     temp <- table(object@pop.names[object@pop.names!=""])
@@ -240,18 +245,18 @@ setClass("popInfo", representation(pop.names = "character", ploidy = "integer",
     }
 
      ## check ploidy
-    if(object@ploidy < 1L){
-        cat("\nploidy inferior to 1\n")
-        return(FALSE)
+    if(length(object@ploidy) > 1 && object@ploidy < 1L){
+        message("\nploidy inferior to 1\n")
+        validation <- FALSE
     }
 
     ## check type of marker
     if(!object@type %in% c("codom","PA") ){
-        cat("\nunknown type of marker\n")
-        return(FALSE)
+        message("\nunknown type of marker\n")
+        validation <- FALSE
     }
 
-    return(TRUE)
+    return(validation)
 } #end .genpop.valid
 
 setClass("genpop", contains=c("gen", "popInfo"))
