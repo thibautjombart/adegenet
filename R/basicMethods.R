@@ -29,33 +29,34 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
         pop <- NULL
     }
 
-    tab <- x@tab
-
+    tab       <- x@tab
     old.other <- other(x)
-    hier <- x@strata
+    hier      <- x@strata
 
     ## handle loc argument
     if(!is.null(loc)){
-        loc <- as.character(loc)
-        temp <- !loc %in% x@loc.fac
-        if(any(temp)) { # si mauvais loci
-            warning(paste("the following specified loci do not exist:", loc[temp]))
-        }
-        j <- x$loc.fac %in% loc
+      loc <- as.character(loc)
+      temp <- !loc %in% x@loc.fac
+      if (any(temp)) { # si mauvais loci
+          warning(paste("the following specified loci do not exist:", loc[temp]))
+      }
+      j <- x$loc.fac %in% loc
     } # end loc argument
 
     prevcall <- match.call()
 
-    tab <- tab[i, j, ...,drop=FALSE]
-
-    if(drop){
-        allNb <- apply(tab, 2, sum, na.rm=TRUE) # allele absolute frequencies
-        toKeep <- (allNb > 1e-10)
-        tab <- tab[,toKeep, drop=FALSE]
+    if (drop){
+      tab    <- tab[i, , ..., drop = FALSE]
+      allNb  <- colSums(tab, na.rm=TRUE) # allele absolute frequencies
+      toKeep <- (allNb > 1e-10)
+      j      <- j & toKeep
+      tab    <- tab[, j, ..., drop=FALSE]
+    } else {
+      tab <- tab[i, j, ..., drop=FALSE]
     }
-    
-    res <- genind(tab, pop=pop, prevcall=prevcall, ploidy=x@ploidy[i], type=x@type, 
-                  strata = hier[i, , drop = FALSE])
+
+    # res <- genind(tab, pop=pop, prevcall=prevcall, ploidy=x@ploidy[i], type=x@type, 
+    #               strata = hier[i, , drop = FALSE])
 
     ## handle 'other' slot
     nOther <- length(x@other)
@@ -74,13 +75,33 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
             return(obj)
         } # end f1
 
-        res@other <- lapply(x@other, f1) # treat all elements
+        x@other <- lapply(x@other, f1) # treat all elements
 
     } else {
-        other(res) <- old.other
+        other(x) <- old.other
     } # end treatOther
 
-    return(res)
+    x@tab    <- tab
+    x@pop    <- pop
+    x@call   <- prevcall
+    x@type   <- x@type
+    
+    # Treat sample and strata
+    x@ploidy    <- x@ploidy[i]
+    x@ind.names <- x@ind.names[i]
+    x@hierarchy <- x@hierarchy
+    x@pop.names <- levels(pop)
+    x@strata    <- hier[i, , drop = FALSE]
+
+    # Treat locus items
+    loc.fac     <- factor(x@loc.fac[j])
+    loc_to_keep <- x@loc.names %in% levels(loc.fac)
+    x@loc.fac   <- loc.fac
+    x@loc.nall  <- x@loc.nall[loc_to_keep]
+    x@loc.names <- x@loc.names[loc_to_keep]
+    x@all.names <- x@all.names[loc_to_keep]
+
+    return(x)
 })
 
 
