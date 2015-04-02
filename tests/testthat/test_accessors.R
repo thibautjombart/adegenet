@@ -129,8 +129,9 @@ test_that("'[' method works for genind objects with drop = TRUE", {
   expect_that(mic2Loc@loc.fac, equals(loci))
   expect_that(mic2Loc10@loc.fac, equals(ten_ind_loci2))
   
-  expect_that(mic10@loc.nall, equals(microbov@loc.nall))
+  expect_true(all(mic10@loc.nall <= microbov@loc.nall))
   expect_that(mic2Loc@loc.nall, equals(microbov@loc.nall[two_random_loci]))
-  expect_that(mic2Loc10@loc.nall, equals(microbov@loc.nall[two_random_loci]))
+  expect_that(names(mic2Loc10@loc.nall), equals(names(microbov@loc.nall[two_random_loci])))
+  expect_true(all(mic2Loc10@loc.nall <= microbov@loc.nall[two_random_loci]))
   
 })
