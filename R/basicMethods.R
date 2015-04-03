@@ -40,28 +40,31 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
     tab       <- x@tab
     old.other <- other(x)
     hier      <- x@strata
+    prevcall  <- match.call()
 
-    ## handle loc argument
-    if(!is.null(loc)){
-      loc <- as.character(loc)
-      temp <- !loc %in% x@loc.fac
-      if (any(temp)) { # si mauvais loci
-          warning(paste("the following specified loci do not exist:", loc[temp]))
-      }
-      j <- x$loc.fac %in% loc
-    } # end loc argument
-
-    prevcall <- match.call()
-
-    if (drop){
-      tab    <- tab[i, , ..., drop = FALSE]
-      allNb  <- colSums(tab, na.rm=TRUE) # allele absolute frequencies
-      toKeep <- (allNb > 1e-10)
-      j      <- j & toKeep
-      tab    <- tab[, j, ..., drop=FALSE]
-    } else {
-      tab <- tab[i, j, ..., drop=FALSE]
+    if (x@type == "codom"){
+      ## handle loc argument
+      if(!is.null(loc)){
+        loc <- as.character(loc)
+        temp <- !loc %in% x@loc.fac
+        if (any(temp)) { # si mauvais loci
+            warning(paste("the following specified loci do not exist:", loc[temp]))
+        }
+        j <- x$loc.fac %in% loc
+      } # end loc argument
+      if (drop){
+        tab    <- tab[i, , ..., drop = FALSE]
+        allNb  <- colSums(tab, na.rm=TRUE) # allele absolute frequencies
+        toKeep <- (allNb > 1e-10)
+        j      <- j & toKeep
+        tab    <- tab[, j, ..., drop=FALSE]
+      } else {
+        tab <- tab[i, j, ..., drop=FALSE]
+      }      
+    } else { # PA case
+      tab <- tab[i, j, ..., drop = FALSE]
     }
+
 
     ## handle 'other' slot
     nOther <- length(x@other)
@@ -98,9 +101,14 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
     x@pop.names <- levels(pop)
     x@strata    <- hier[i, , drop = FALSE]
 
-    # Treat locus items
-    x <- .drop_allelels(x, j)
-    x@loc.names <- x@loc.names[x@loc.names %in% levels(x@loc.fac)]
+    if (x@type == "codom"){
+      # Treat locus items
+      x <- .drop_allelels(x, j)
+      x@loc.names <- x@loc.names[x@loc.names %in% levels(x@loc.fac)]      
+    } else { # PA case
+      x@loc.names <- x@loc.names[j]
+    }
+
 
     return(x)
 })
