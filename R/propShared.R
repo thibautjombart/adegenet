@@ -12,7 +12,7 @@ propShared <- function(obj){
 
 
     ## GET MATRIX OF NB OF ALLELES ##
-    x <- round(obj@tab*ploidy(obj))
+    x <- tab(obj)
     x[is.na(x)] <- 0L
 
     ## COMPUTE NB OF SHARED ALLELES ##
@@ -31,7 +31,7 @@ propShared <- function(obj){
     tabNA <- propTyped(obj, by="both")
     tabTypCom <- tabNA %*% t(tabNA) * ploidy(obj)
 
-    
+
     ## GET PROPORTIONS OF SHARED ALLELES ##
     res <- res/tabTypCom
     diag(res) <- 1L
