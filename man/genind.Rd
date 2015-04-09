@@ -5,6 +5,7 @@
 \alias{show,genind-method}
 \alias{names,genind-method}
 \alias{summary,genind-method}
+\alias{is.genind}
 \alias{.valid.genind}
 \title{adegenet formal class (S4) for individual genotypes}
 \description{The S4 class \code{genind} is used to store individual genotypes.\cr
@@ -38,6 +39,8 @@
     \item{\code{type}:}{ a character string indicating the type of
       marker: 'codom' stands for 'codominant' (e.g. microstallites,
       allozymes); 'PA' stands for 'presence/absence' (e.g. AFLP).}
+    \item{\code{strata}:}{(optional) data frame giving levels of population stratification for each individual}
+    \item{\code{hierarchy}:}{a hierarchical \code{\link{formula}} defining the hierarchical levels in the \code{@@strata} slot.}
     \item{\code{pop}:}{(optional) factor giving the population of each individual}
     \item{\code{pop.names}:}{(optional) vector giving the real names of the
       populations}
@@ -60,10 +63,10 @@ Class \code{"\linkS4class{indInfo}"}, directly.
       genind object, invisibly returning its content}
   }
 }
-\seealso{\code{\link{as.genind}}, \code{\link{is.genind}}, \code{\link{genind2genpop}},
+\seealso{\code{\link{as.genind}}, \code{\link{genind2genpop}},
   \code{\link{genpop}}, \code{\link{import2genind}},
   \code{\link{read.genetix}}, \code{\link{read.genepop}},
-  \code{\link{read.fstat}}, \code{\link{na.replace}}\cr
+  \code{\link{read.fstat}}\cr
 
   Related classes:\cr
   - \linkS4class{genpop} for storing data per populations\cr
@@ -74,7 +77,7 @@ Class \code{"\linkS4class{indInfo}"}, directly.
 \examples{
 showClass("genind")
 
-obj <- read.genetix(system.file("files/nancycats.gtx",package="adegenet"),missing="mean")
+obj <- read.genetix(system.file("files/nancycats.gtx",package="adegenet"))
 obj
 validObject(obj)
 summary(obj)
@@ -88,7 +91,7 @@ plot(gtest)
 }
 
 # perform a between-class PCA
-pca1 <- dudi.pca(obj@tab,scannf=FALSE,scale=FALSE)
+pca1 <- dudi.pca(scaleGen(obj, NA.method="mean"),scannf=FALSE,scale=FALSE)
 pcabet1 <- between(pca1,obj@pop,scannf=FALSE)
 pcabet1
 

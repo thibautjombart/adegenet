@@ -11,7 +11,15 @@ setMethod("$<-","genpop",function(x,name,value) {
 })
 
 
+.drop_allelels <- function(x, toKeep){
+  all.vec <- unlist(x@all.names, use.names = FALSE)[toKeep]
+  loc.fac <- factor(x@loc.fac[toKeep])
 
+  x@all.names <- split(all.vec, loc.fac)
+  x@loc.nall  <- setNames(tabulate(loc.fac), levels(loc.fac))
+  x@loc.fac   <- loc.fac
+  return(x)
+}
 
 
 ###############
@@ -23,38 +31,40 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
     if (missing(i)) i <- TRUE
     if (missing(j)) j <- TRUE
 
-    pop <- NULL
-    if(is.null(x@pop)) { tab <- truenames(x) }
     if(!is.null(x@pop)) {
-        temp <- truenames(x)
-        tab <- temp$tab
-        pop <- temp$pop
-        pop <- factor(pop[i])
+        pop <- factor(pop(x)[i])
+    } else {
+        pop <- NULL
     }
 
+    tab       <- x@tab
     old.other <- other(x)
+    hier      <- x@strata
+    prevcall  <- match.call()
 
-    ## handle loc argument
-    if(!is.null(loc)){
+    if (x@type == "codom"){
+      ## handle loc argument
+      if(!is.null(loc)){
         loc <- as.character(loc)
         temp <- !loc %in% x@loc.fac
-        if(any(temp)) { # si mauvais loci
+        if (any(temp)) { # si mauvais loci
             warning(paste("the following specified loci do not exist:", loc[temp]))
         }
         j <- x$loc.fac %in% loc
-    } # end loc argument
-
-    prevcall <- match.call()
-
-    tab <- tab[i, j, ...,drop=FALSE]
-
-    if(drop){
-        allNb <- apply(tab, 2, sum, na.rm=TRUE) # allele absolute frequencies
+      } # end loc argument
+      if (drop){
+        tab    <- tab[i, , ..., drop = FALSE]
+        allNb  <- colSums(tab, na.rm=TRUE) # allele absolute frequencies
         toKeep <- (allNb > 1e-10)
-        tab <- tab[,toKeep, drop=FALSE]
+        j      <- j & toKeep
+        tab    <- tab[, j, ..., drop=FALSE]
+      } else {
+        tab <- tab[i, j, ..., drop=FALSE]
+      }      
+    } else { # PA case
+      tab <- tab[i, j, ..., drop = FALSE]
     }
 
-    res <- genind(tab,pop=pop,prevcall=prevcall, ploidy=x@ploidy, type=x@type)
 
     ## handle 'other' slot
     nOther <- length(x@other)
@@ -73,13 +83,34 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
             return(obj)
         } # end f1
 
-        res@other <- lapply(x@other, f1) # treat all elements
+        x@other <- lapply(x@other, f1) # treat all elements
 
     } else {
-        other(res) <- old.other
+        other(x) <- old.other
     } # end treatOther
 
-    return(res)
+    x@tab    <- tab
+    x@pop    <- pop
+    x@call   <- prevcall
+    x@type   <- x@type
+    
+    # Treat sample and strata
+    x@ploidy    <- x@ploidy[i]
+    x@ind.names <- x@ind.names[i]
+    x@hierarchy <- x@hierarchy
+    x@pop.names <- levels(pop)
+    x@strata    <- hier[i, , drop = FALSE]
+
+    if (x@type == "codom"){
+      # Treat locus items
+      x <- .drop_allelels(x, j)
+      x@loc.names <- x@loc.names[x@loc.names %in% levels(x@loc.fac)]      
+    } else { # PA case
+      x@loc.names <- x@loc.names[j]
+    }
+
+
+    return(x)
 })
 
 
@@ -92,7 +123,7 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
     if (missing(i)) i <- TRUE
     if (missing(j)) j <- TRUE
 
-    tab <- truenames(x)
+    tab <- x@tab
     old.other <- other(x)
 
 
@@ -109,13 +140,22 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
     prevcall <- match.call()
     tab <- tab[i, j, ...,drop=FALSE]
 
-    if(drop){
-        allNb <- apply(tab, 2, sum, na.rm=TRUE) # allele absolute frequencies
-        toKeep <- (allNb > 1e-10)
-        tab <- tab[,toKeep, drop=FALSE]
+    # if(drop){
+    #     allNb <- apply(tab, 2, sum, na.rm=TRUE) # allele absolute frequencies
+    #     toKeep <- (allNb > 1e-10)
+    #     tab <- tab[,toKeep, drop=FALSE]
+    # }
+    if (drop){
+      tab    <- tab[i, , ..., drop = FALSE]
+      allNb  <- colSums(tab, na.rm=TRUE) # allele absolute frequencies
+      toKeep <- (allNb > 1e-10)
+      j      <- j & toKeep
+      tab    <- tab[, j, ..., drop=FALSE]
+    } else {
+      tab <- tab[i, j, ..., drop=FALSE]
     }
 
-    res <- genpop(tab,prevcall=prevcall)
+    # res <- genpop(tab,prevcall=prevcall,ploidy=x@ploidy)
 
     ## handle 'other' slot
     nOther <- length(x@other)
@@ -134,14 +174,25 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
             return(obj)
         } # end f1
 
-        res@other <- lapply(x@other, f1) # treat all elements
+        x@other <- lapply(x@other, f1) # treat all elements
 
     } else {
-        other(res) <- old.other
+        other(x) <- old.other
     } # end treatOther
 
+    x@tab    <- tab
+    x@call   <- prevcall
+    x@type   <- x@type
+    
+    # Treat populations
+    x@ploidy    <- x@ploidy
+    x@pop.names <- x@pop.names[i]
 
-    return(res)
+    # Treat locus items
+    x <- .drop_allelels(x, j)
+    x@loc.names <- x@loc.names[x@loc.names %in% levels(x@loc.fac)]
+
+    return(x)
 })
 
 
@@ -188,13 +239,25 @@ setMethod ("show", "genind", function(object){
       cat("\n@all.names: NULL")
   }
 
-  cat("\n@ploidy: ",x@ploidy)
+  cat("\n@ploidy: ", head(x@ploidy))
   cat("\n@type: ",x@type)
 
   cat("\n\nOptional contents: ")
+  cat("\n@strata: ")
+  if (is.null(x@strata)){
+    cat("- empty -")
+  } else {
+    levs <- names(x@strata)
+    if (length(levs) > 6){
+      levs <- paste(paste(head(levs), collapse = ", "), "...", sep = ", ")
+    } else {
+      levs <- paste(levs, collapse = ", ")
+    }
+    cat("a data frame with", length(x@strata), "columns (", levs, ")")
+  }
+  cat("\n@hierarchy: ", ifelse(is.null(x@hierarchy), "- empty -", paste(x@hierarchy, collapse = "")))
   cat("\n@pop: ", ifelse(is.null(x@pop), "- empty -", "factor giving the population of each individual"))
-  cat("\n@pop.names: ", ifelse(is.null(x@pop.names), "- empty -", "factor giving the population of each individual"))
-
+  cat("\n@pop.names: ", ifelse(is.null(x@pop.names), "- empty -", "character giving the name of each population"))
   cat("\n\n@other: ")
   if(!is.null(x@other)){
     cat("a list containing: ")
@@ -326,9 +389,9 @@ setMethod ("summary", signature(object="genind"), function(object, ...){
   res$NA.perc <- 100*(1-mean(propTyped(x,by="both")))
 
   ## handle heterozygosity
-  if(x@ploidy > 1){
+  if(any(x@ploidy > 1)){
       ## auxiliary function to compute observed heterozygosity
-      temp <- seploc(x,truenames=FALSE,res.type="matrix")
+      temp=lapply(seploc(x),tab, freq=TRUE)
       f1 <- function(tab){
           H <- apply(tab, 1, function(vec) any(vec > 0 & vec < 1))
           H <- mean(H,na.rm=TRUE)
@@ -344,15 +407,9 @@ setMethod ("summary", signature(object="genind"), function(object, ...){
           return(H)
       }
 
-      temp <- genind2genpop(x,pop=rep(1,nrow(x@tab)),quiet=TRUE)
-      temp <- makefreq(temp,quiet=TRUE)$tab
-      temp.names <- colnames(temp)
-      temp <- as.vector(temp)
-      names(temp) <- temp.names
-      temp <- split(temp,x@loc.fac)
-      ## temp is a list of alleles frequencies (one element per locus)
-
-      res$Hexp <- unlist(lapply(temp,f2))
+      temp <- genind2genpop(x,pop=rep(1,nInd(x)),quiet=TRUE)
+      temp <- tab(temp, freq=TRUE, quiet=TRUE)
+      res$Hexp <-tapply(temp^2, x@loc.fac, function(e) 1-sum(e, na.rm=TRUE))
   } else { # no possible heterozygosity for haploid genotypes
       res$Hobs <- 0
       res$Xexp <- 0
@@ -465,3 +522,8 @@ is.genpop <- function(x){
   return(res)
 }
 
+
+
+.hasUniquePloidy <- function(x){
+    return(length(unique(x@ploidy))==1)
+}

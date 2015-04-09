@@ -13,7 +13,6 @@
 # global.rtest
 ###############
 global.rtest <- function(X, listw, k=1, nperm=499){
-  if (!require(spdep)) stop("Package spdep is required.")
   if (!inherits(listw, "listw")) stop("object of class 'listw' expected")
   if (listw$style != "W") stop("object of class 'listw' with style 'W' expected")
   if(any(is.na(X))) stop("NA entries in X")
@@ -54,7 +53,6 @@ global.rtest <- function(X, listw, k=1, nperm=499){
 # local.rtest
 ###############
 local.rtest <- function(X, listw, k=1, nperm=499){
-  if (!require(spdep)) stop("Package spdep is required.")
   if (!inherits(listw, "listw")) stop("object of class 'listw' expected")
   if (listw$style != "W") stop("object of class 'listw' with style 'W' expected")
   if(any(is.na(X))) stop("NA entries in X")

@@ -27,7 +27,7 @@ propShared(obj)
 \dontrun{
 ## make a small object
 data(microbov)
-obj <- microbov[1:5,microbov@loc.fac \%in\% c("L01","L02")]
+obj <- microbov[1:5, loc = locNames(microbov)[1:2]]
 
 ## verify results
 propShared(obj)

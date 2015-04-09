@@ -53,7 +53,7 @@
 \examples{
 \dontrun{
 data(microbov)
-x <- na.replace(microbov,method="0")
+x <- tab(microbov,NA.method="mean")
 as(x[1:3],"data.frame")
 
 ## dudi functions attempt to convert their first argument

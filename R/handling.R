@@ -12,24 +12,9 @@
 setGeneric("truenames", function(x) standardGeneric("truenames"))
 
 setMethod("truenames", signature(x="genind"), function(x){
-    checkType(x)
-    X <- x@tab
-    if(!all(x@ind.names=="")) {rownames(X) <- x@ind.names}
-
-    labcol <- locNames(x, withAlleles=TRUE)
-    colnames(X) <- labcol
-
-    if(!is.null(x@pop)){
-        pop <- x@pop
-        levels(pop) <- x@pop.names
-        return(list(tab=X,pop=pop))
-    }
-
-    return(X)
-}
-          )
-
-
+    message("This accessor is now deprecated. Please use 'tab' instead.")
+    return(x@tab)
+})
 
 
 
@@ -37,18 +22,129 @@ setMethod("truenames", signature(x="genind"), function(x){
 # Method truenames for genpop
 ##############################
 setMethod("truenames",signature(x="genpop"), function(x){
-    checkType(x)
-
-    X <- x@tab
-    if(!all(x@pop.names=="")) {rownames(X) <- x@pop.names}
-
-    labcol <- locNames(x, withAlleles=TRUE)
-    colnames(X) <- labcol
-
-    return(X)
+    message("This accessor is now deprecated. Please use 'tab' instead.")
+    return(x@tab)
 })
 
 
+
+
+###########################
+## Generic / methods 'tab'
+###########################
+#'
+#' Access allele counts or frequencies
+#'
+#' This accessor is used to retrieve a matrix of allele data.
+#' By default, a matrix of integers representing allele counts is returned.
+#' If \code{freq} is TRUE, then data are standardised as frequencies, so that for any individual and any locus the data sum to 1.
+#' The argument \code{NA.method} allows to replace missing data (NAs).
+#' This accessor replaces the previous function \code{truenames} as well as the function \code{makefreq}.
+#'
+#' @export
+#'
+#' @aliases tab
+#'
+#' @rdname tab
+#'
+#' @docType methods
+#'
+#' @param x a \linkS4class{genind} or \linkS4class{genpop} object.
+#' @param freq a logical indicating if data should be transformed into relative frequencies (TRUE); defaults to FALSE.
+#' @param NA.method a method to replace NA; asis: leave NAs as is; mean: replace by the mean allele frequencies; zero: replace by zero
+#' @param ... further arguments passed to other methods.
+#' @return a matrix of integers or numeric
+#'
+#' @examples
+#'
+#' data(microbov)
+#' head(tab(microbov))
+#' head(tab(microbov,freq=TRUE))
+#'
+#'
+setGeneric("tab", function(x, ...) standardGeneric("tab"))
+
+.tabGetter <- function(x, freq=FALSE, NA.method=c("asis","mean","zero"), ...){
+    ## handle arguments
+    NA.method <- match.arg(NA.method)
+
+    ## get matrix of data
+    if(!freq){
+        out <- x@tab
+    } else {
+        out <- x@tab/x@ploidy
+    }
+
+    ## replace NAs if needed
+    if(NA.method=="mean"){
+        f1 <- function(vec){
+            m <- mean(vec,na.rm=TRUE)
+            vec[is.na(vec)] <- m
+            return(vec)
+        }
+
+        out <- apply(out, 2, f1)
+    }
+    if(NA.method=="zero"){
+        out[is.na(out)] <- ifelse(freq, 0, 0L)
+    }
+
+    ## return output
+    return(out)
+}
+
+#' @rdname tab
+#' @aliases tab,genind-methods
+#' @aliases tab.genind
+setMethod("tab", signature(x = "genind"), 
+          function (x, freq = FALSE, NA.method = c("asis","mean","zero"), ...){
+            .tabGetter(x, freq = freq, NA.method = NA.method, ...)
+          })
+
+
+
+#' @rdname tab
+#' @aliases tab,genpop-methods
+#' @aliases tab.genpop
+
+setMethod("tab", signature(x="genpop"), function(x, freq=FALSE, NA.method=c("asis","mean","zero"), ...){
+ ## handle arguments
+    NA.method <- match.arg(NA.method)
+
+    ## get matrix of data
+    if(!freq) {
+        out <- x@tab
+    } else {
+        out <- x@tab
+        f1 <- function(vec) return(vec/sum(vec,na.rm=TRUE))
+        ## compute frequencies
+        out <- apply(x@tab, 1, tapply, x@loc.fac,f1)
+        ## reshape into matrix
+        col.names <- do.call(c,lapply(out[[1]],names))
+        row.names <- names(out)
+        out <- matrix(unlist(out), byrow=TRUE, nrow=nrow(x@tab),
+                      dimnames=list(row.names, col.names))
+        ## reorder columns
+        out <- out[,colnames(x@tab)]
+    }
+
+    ## replace NAs if needed
+    if(NA.method=="mean"){
+        f1 <- function(vec){
+            m <- mean(vec,na.rm=TRUE)
+            vec[is.na(vec)] <- m
+            return(vec)
+        }
+
+        out <- apply(out, 2, f1)
+    }
+    if(NA.method=="zero"){
+        out[is.na(out)] <- ifelse(freq, 0, 0L)
+    }
+
+    ## return output
+    return(out)
+})
 
 
 
@@ -59,39 +155,21 @@ setMethod("truenames",signature(x="genpop"), function(x){
 setGeneric("seploc", function(x, ...) standardGeneric("seploc"))
 
 setMethod("seploc", signature(x="genind"), function(x,truenames=TRUE,res.type=c("genind","matrix")){
+    truenames <- TRUE # this argument will be deprecated
     if(x@type=="PA"){
         msg <- paste("seploc is not implemented for presence/absence markers")
         cat("\n",msg,"\n")
         return(invisible())
     }
 
-
     if(!is.genind(x)) stop("x is not a valid genind object")
     res.type <- match.arg(res.type)
-    if(res.type=="genind") { truenames <- TRUE }
 
-    temp <- x@loc.fac
-    nloc <- length(levels(temp))
-    levels(temp) <- 1:nloc
-
+    ## make separate tables
     kX <- list()
-
-    for(i in 1:nloc){
-        kX[[i]] <- matrix(x@tab[,temp==i],ncol=x@loc.nall[i])
-
-        if(!truenames){
-            rownames(kX[[i]]) <- rownames(x@tab)
-            colnames(kX[[i]]) <- paste(names(x@loc.names)[i],names(x@all.names[[i]]),sep=".")
-        }else{
-            rownames(kX[[i]]) <- x@ind.names
-            colnames(kX[[i]]) <- paste(x@loc.names[i],x@all.names[[i]],sep=".")
-        }
-    }
-
-    if(truenames) {
-        names(kX) <- x@loc.names
-    } else{
-        names(kX) <- names(x@loc.names)
+    locfac.char <- as.character(x@loc.fac)
+    for(i in locNames(x)){
+        kX[[i]] <- x@tab[, i==locfac.char,drop=FALSE]
     }
 
     prevcall <- match.call()
@@ -113,7 +191,8 @@ setMethod("seploc", signature(x="genind"), function(x,truenames=TRUE,res.type=c(
 # Method seploc for genpop
 ###########################
 setMethod("seploc", signature(x="genpop"), function(x,truenames=TRUE,res.type=c("genpop","matrix")){
-     if(x@type=="PA"){
+    truenames <- TRUE # this argument will be deprecated
+    if(x@type=="PA"){
          msg <- paste("seploc is not implemented for presence/absence markers")
          cat("\n",msg,"\n")
          return(invisible())
@@ -128,25 +207,14 @@ setMethod("seploc", signature(x="genpop"), function(x,truenames=TRUE,res.type=c(
     nloc <- length(levels(temp))
     levels(temp) <- 1:nloc
 
+    ## make separate tables
     kX <- list()
-
-    for(i in 1:nloc){
-        kX[[i]] <- matrix(x@tab[,temp==i],ncol=x@loc.nall[i])
-
-        if(!truenames){
-            rownames(kX[[i]]) <- rownames(x@tab)
-            colnames(kX[[i]]) <- paste(names(x@loc.names)[i],names(x@all.names[[i]]),sep=".")
-        }else{
-            rownames(kX[[i]]) <- x@pop.names
-            colnames(kX[[i]]) <- paste(x@loc.names[i],x@all.names[[i]],sep=".")
-        }
+    locfac.char <- as.character(x@loc.fac)
+    for(i in locNames(x)){
+        kX[[i]] <- x@tab[,i==locfac.char,drop=FALSE]
     }
 
-    if(truenames) {
-        names(kX) <- x@loc.names
-    } else{
-        names(kX) <- names(x@loc.names)
-    }
+    names(kX) <- x@loc.names
 
     prevcall <- match.call()
     if(res.type=="genpop"){
@@ -188,22 +256,22 @@ setMethod("$<-","genind",function(x,name,value) {
 setGeneric("seppop", function(x, ...) standardGeneric("seppop"))
 
 ## genind
-setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,res.type=c("genind","matrix"), drop=FALSE, treatOther=TRUE, quiet=TRUE){
+setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,res.type=c("genind","matrix"),
+                              drop=FALSE, treatOther=TRUE, quiet=TRUE){
     ## checkType(x)
+    truenames <- TRUE # this argument will be deprecated
 
     ## misc checks
     if(!is.genind(x)) stop("x is not a valid genind object")
     if(is.null(pop)) { # pop taken from @pop
         if(is.null(x@pop)) stop("pop not provided and x@pop is empty")
-        pop <- x@pop
-        levels(pop) <- x@pop.names
-    } else{
+        pop <- pop(x)
+    } else {
         pop <- factor(pop)
     }
 
 
     res.type <- match.arg(res.type)
-    if(res.type=="genind") { truenames <- TRUE }
 
     ## pop <- x@pop # comment to take pop arg into account
 
@@ -215,11 +283,7 @@ setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,re
     if(res.type=="genind"){ return(kObj) }
 
     ## res is list of matrices
-    if(truenames) {
-        res <- lapply(kObj, function(obj) truenames(obj)$tab)
-    } else{
-        res <- lapply(kObj, function(obj) obj$tab)
-    }
+    res <- lapply(kObj, function(obj) tab(obj))
 
     return(res)
 }) # end seppop
@@ -230,94 +294,121 @@ setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,re
 
 
 
-#####################
-# Methods na.replace
-#####################
-setGeneric("na.replace", function(x, ...) standardGeneric("na.replace"))
+## #####################
+## # Methods na.replace
+## #####################
+## setGeneric("na.replace", function(x, ...) standardGeneric("na.replace"))
 
-## genind method
-setMethod("na.replace", signature(x="genind"), function(x,method, quiet=FALSE){
-    ## checkType(x)
+## ## genind method
+## setMethod("na.replace", signature(x="genind"), function(x, method, quiet=FALSE){
+##     ## checkType(x)
 
-    ## preliminary stuff
-    validObject(x)
-    if(!any(is.na(x@tab))) {
-        if(!quiet) cat("\n Replaced 0 missing values \n")
-        return(x)
-    }
-    method <- tolower(method)
-    method <- match.arg(method, c("0","mean"))
+##     ## preliminary stuff
+##     validObject(x)
+##     if(!any(is.na(x@tab))) {
+##         if(!quiet) cat("\n Replaced 0 missing values \n")
+##         return(x)
+##     }
+##     method <- tolower(method)
+##     method <- match.arg(method, c("0","mean"))
 
-    res <- x
+##     res <- x
 
-    if(method=="0"){
-        res@tab[is.na(x@tab)] <- 0
-    }
+##     if(method=="0"){
+##         res@tab[is.na(x@tab)] <- 0
+##     }
 
-    if(method=="mean"){
-        f1 <- function(vec){
-            m <- mean(vec,na.rm=TRUE)
-            vec[is.na(vec)] <- m
-            return(vec)
+##     if(method=="mean"){
+##         f1 <- function(vec){
+##             m <- mean(vec,na.rm=TRUE)
+##             vec[is.na(vec)] <- m
+##             return(vec)
+##         }
+
+##         res@tab <- apply(x@tab, 2, f1)
+##     }
+
+##     if(!quiet){
+##         Nna <- sum(is.na(x@tab))
+##         cat("\n Replaced",Nna,"missing values \n")
+##     }
+
+##     return(res)
+
+## })
+
+
+
+
+## ## genpop method
+## setMethod("na.replace", signature(x="genpop"), function(x,method, quiet=FALSE){
+##     ## checkType(x)
+
+##     ## preliminary stuff
+##     validObject(x)
+##     if(!any(is.na(x@tab))) {
+##         if(!quiet) cat("\n Replaced 0 missing values \n")
+##         return(x)
+##     }
+
+##     method <- tolower(method)
+##     method <- match.arg(method, c("0","chi2"))
+
+##     res <- x
+
+##     if(method=="0"){
+##         res@tab[is.na(x@tab)] <- 0
+##     }
+
+##     if(method=="chi2"){
+##         ## compute theoretical counts
+##         ## (same as in a Chi-squared)
+##         X <- x@tab
+##         sumPop <- apply(X,1,sum,na.rm=TRUE)
+##         sumLoc <- apply(X,2,sum,na.rm=TRUE)
+##         X.theo <- sumPop %o% sumLoc / sum(X,na.rm=TRUE)
+
+##         X[is.na(X)] <- X.theo[is.na(X)]
+##         res@tab <- X
+##     }
+
+##     if(!quiet){
+##         Nna <- sum(is.na(x@tab))
+##         cat("\n Replaced",Nna,"missing values \n")
+##     }
+
+##     return(res)
+## })
+
+# Function to bind strata from a list of genind objects and return a single
+# genind object.
+.rbind_strata <- function(myList, res){
+    strata_list <- lapply(myList, slot, "strata")
+    null_strata <- vapply(strata_list, is.null, TRUE)
+    if (!all(null_strata)){
+        # NULL strata must be converted to data frames.
+        # Solution: take the first non-empty strata, and create a new one 
+        # with one variable.
+        if (any(null_strata)){
+
+            # Extract the name of the first column of the first full strata
+            fullname <- names(strata_list[[which(!null_strata)[1]]])[1]
+            
+            # loop over all the empty strata and replace them with a data
+            # frame that has the same number of elements as the samples in that
+            # genlight object.
+            for (i in which(null_strata)){
+                replace_strata        <- data.frame(rep(NA, nInd(myList[[i]])))
+                names(replace_strata) <- fullname
+                strata_list[[i]]      <- replace_strata
+            }
         }
-
-        res@tab <- apply(x@tab, 2, f1)
+        strata(res) <- as.data.frame(suppressWarnings(dplyr::bind_rows(strata_list)))        
+    } else {
+        res@strata <- NULL
     }
-
-    if(!quiet){
-        Nna <- sum(is.na(x@tab))
-        cat("\n Replaced",Nna,"missing values \n")
-    }
-
     return(res)
-
-})
-
-
-
-
-## genpop method
-setMethod("na.replace", signature(x="genpop"), function(x,method, quiet=FALSE){
-    ## checkType(x)
-
-    ## preliminary stuff
-    validObject(x)
-    if(!any(is.na(x@tab))) {
-        if(!quiet) cat("\n Replaced 0 missing values \n")
-        return(x)
-    }
-
-    method <- tolower(method)
-    method <- match.arg(method, c("0","chi2"))
-
-    res <- x
-
-    if(method=="0"){
-        res@tab[is.na(x@tab)] <- 0
-    }
-
-    if(method=="chi2"){
-        ## compute theoretical counts
-        ## (same as in a Chi-squared)
-        X <- x@tab
-        sumPop <- apply(X,1,sum,na.rm=TRUE)
-        sumLoc <- apply(X,2,sum,na.rm=TRUE)
-        X.theo <- sumPop %o% sumLoc / sum(X,na.rm=TRUE)
-
-        X[is.na(X)] <- X.theo[is.na(X)]
-        res@tab <- X
-    }
-
-    if(!quiet){
-        Nna <- sum(is.na(x@tab))
-        cat("\n Replaced",Nna,"missing values \n")
-    }
-
-    return(res)
-})
-
-
-
+}
 
 
 ##################
@@ -332,13 +423,15 @@ repool <- function(...){
     if(!all(sapply(x,is.genind))) stop("x is does not contain only valid genind objects")
     temp <- sapply(x,function(e) e$loc.names)
     if(!all(table(temp)==length(x))) stop("markers are not the same for all objects")
-    temp <- sapply(x,function(e) e$ploidy)
-    if(length(unique(temp)) != as.integer(1)) stop("objects have different levels of ploidy")
+    ## temp <- sapply(x,function(e) e$ploidy)
+    ## if(length(unique(temp)) != as.integer(1)) stop("objects have different levels of ploidy")
 
 
 
     ## extract info
-    listTab <- lapply(x,genind2df,usepop=FALSE)
+    listTab <- lapply(x,genind2df,usepop=FALSE,sep="/")
+    newPloidy <- unlist(lapply(x,ploidy))
+
     getPop <- function(obj){
         if(is.null(obj$pop)) return(factor(rep(NA,nrow(obj$tab))))
         pop <- obj$pop
@@ -360,8 +453,10 @@ repool <- function(...){
     for(i in 2:length(x)){
         tab <- rbind(tab,listTab[[i]])
     }
-
-    res <- df2genind(tab, pop=pop, ploidy=x[[1]]@ploidy, type=x[[1]]@type)
+    
+    res <- df2genind(tab, pop=pop, ploidy=newPloidy, type=x[[1]]@type, sep="/")
+    res <- .rbind_strata(x, res)
+    res@hierarchy <- NULL
     res$call <- match.call()
 
     return(res)
@@ -384,8 +479,7 @@ setMethod("selPopSize", signature(x="genind"), function(x,pop=NULL,nMin=10){
     if(!is.genind(x)) stop("x is not a valid genind object")
     if(is.null(pop)) { # pop taken from @pop
         if(is.null(x@pop)) stop("pop not provided and x@pop is empty")
-        pop <- x@pop
-        levels(pop) <- x@pop.names
+        pop <- pop(x)
     } else{
         pop <- factor(pop)
     }
@@ -518,7 +612,24 @@ setMethod("nLoc","genpop", function(x,...){
 })
 
 
+#######
+# nPop
+#######
+setGeneric("nPop", function(x,...){
+    standardGeneric("nPop")
+})
 
+
+
+setMethod("nPop","genind", function(x,...){
+    return(length(x@pop.names))
+})
+
+
+
+setMethod("nPop","genpop", function(x,...){
+    return(length(x@pop.names))
+})
 
 
 #######
@@ -655,20 +766,55 @@ setGeneric("indNames<-", function(x, value){
 })
 
 setMethod("indNames","genind", function(x, ...){
-    return(x@ind.names)
+    return(rownames(x@tab))
 })
 
 
 setReplaceMethod("indNames","genind",function(x,value) {
     value <- as.character(value)
-    if(length(value) != nInd(x)) stop("Vector length does no match number of individuals")
-    names(value) <- names(indNames(x))
+    if(length(value) != nInd(x)) stop("Vector length does not match number of individuals")
     slot(x,"ind.names",check=TRUE) <- value
+    rownames(x@tab) <- value
     return(x)
 })
 
+setGeneric("popNames", function(x,...){
+  standardGeneric("popNames")
+})
+
+setGeneric("popNames<-", function(x, value){
+  standardGeneric("popNames<-")
+})
+
+setMethod("popNames","genind", function(x, ...){
+  return(levels(pop(x)))
+})
 
 
+setReplaceMethod("popNames","genind",function(x, value) {
+  value <- as.character(value)
+  if(length(value) != length(levels(pop(x)))){
+    stop("Vector length does not match number of populations")
+  }
+  slot(x, "pop.names", check=TRUE) <- value
+  levels(pop(x)) <- value
+  return(x)
+})
+
+setMethod("popNames","genpop", function(x, ...){
+  return(x@pop.names)
+})
+
+
+setReplaceMethod("popNames","genpop",function(x, value) {
+  value <- as.character(value)
+  if (length(value) != nrow(x@tab)){
+    stop("Vector length does not match number of populations")
+  }
+  slot(x, "pop.names", check=TRUE) <- value
+  rownames(x@tab) <- value
+  return(x)
+})
 
 
 ##########
@@ -729,8 +875,8 @@ setReplaceMethod("ploidy","genind",function(x,value) {
     value <- as.integer(value)
     if(any(value)<1) stop("Negative or null values provided")
     if(any(is.na(value))) stop("NA values provided")
-    if(length(value)>1) warning("Several ploidy numbers provided; using only the first integer")
-    slot(x,"ploidy",check=TRUE) <- value[1]
+    if(length(value)!=nInd(x)) value <- rep(value, length=nInd(x))
+    slot(x,"ploidy",check=TRUE) <- value
     return(x)
 })
 

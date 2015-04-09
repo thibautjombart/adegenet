@@ -41,6 +41,8 @@ setClassUnion("charOrNULL", c("character","NULL"))
 setClassUnion("callOrNULL", c("call","NULL"))
 setClassUnion("intOrNum", c("integer","numeric","NULL"))
 setClassUnion("intOrNULL", c("integer","NULL"))
+setClassUnion("dfOrNULL", c("data.frame", "NULL"))
+setClassUnion("formOrNULL", c("formula", "NULL"))
 
 
 ####################
@@ -97,7 +99,7 @@ setClass("gen", representation(tab = "matrix",
                                all.names = "listOrNULL",
                                call = "callOrNULL",
                                "VIRTUAL"),
-         prototype(tab=matrix(ncol=0,nrow=0), loc.nall=integer(0), call=NULL))
+         prototype(tab=matrix(0L, ncol=0,nrow=0), loc.nall=integer(0), call=NULL))
 
 setValidity("gen", .gen.valid)
 
@@ -124,11 +126,13 @@ setClass("indInfo", representation(ind.names = "character",
 # Class genind
 ###############
 .genind.valid <- function(object){
+
+    validation <- TRUE
     if(!.gen.valid(object)) return(FALSE)
 
     if(length(object@ind.names) != nrow(object@tab)) {
-        cat("\ninvalid length in ind.names\n")
-        return(FALSE)
+        message("\ninvalid length in ind.names\n")
+        validation <- FALSE
     }
 
     temp <- table(object@ind.names[object@ind.names!=""])
@@ -137,21 +141,28 @@ setClass("indInfo", representation(ind.names = "character",
         print(temp[temp>1])
     }
 
+    if(typeof(object@tab)!="integer"){
+        warning("@tab does not contain integers; as of adegenet_2.0-0, numeric values are no longer used")
+        ## message("\ntab does not contain integers; as of adegenet_1.5-0, numeric values are no longer used")
+        ## validation <- FALSE
+    }
+
+
     if(!is.null(object@pop)){ # check pop
 
         if(length(object@pop) != nrow(object@tab)) {
-            cat("\npop is given but has invalid length\n")
-            return(FALSE)
+            message("\npop is given but has invalid length\n")
+            validation <- FALSE
         }
 
         if(is.null(object@pop.names)) {
-            cat("\npop is provided without pop.names")
+            message("\npop is provided without pop.names")
         }
 
 
         if(length(object@pop.names) != length(levels(object@pop))) {
-            cat("\npop.names has invalid length\n")
-            return(FALSE)
+            message("\npop.names has invalid length\n")
+            validation <- FALSE
         }
 
         temp <- table(object@pop.names[object@pop.names!=""])
@@ -162,23 +173,45 @@ setClass("indInfo", representation(ind.names = "character",
 
     } # end check pop
 
+    # Check population strata
+    if (!is.null(object@strata)){
+      if (nrow(object@strata) != nrow(object@tab)){
+        message("\na strata is defined has invalid length\n")
+        validation <- FALSE
+      }
+
+      dups <- duplicated(colnames(object@strata))
+      if (any(dups)){
+        message("\nduplicated names found in @strata slot:\n")
+        dups <- colnames(object@strata)[dups]
+        message(paste0(dups, collapse = ", "))
+        validation <- FALSE
+      }
+    }
+
+    # TODO: CHECK HIERARCHY FORMULA
+
     ## check ploidy
-    if(object@ploidy < as.integer(1)){
-        cat("\nploidy inferior to 1\n")
-        return(FALSE)
+    if(any(object@ploidy < 1L)){
+        message("\nploidy inferior to 1\n")
+        validation <- FALSE
+    }
+    if(length(object@ploidy)!=nInd(object)){
+        warning("as of adegenet_2.0-0, @ploidy should contain one value per individual")
     }
 
     ## check type of marker
     if(!object@type %in% c("codom","PA") ){
-        cat("\nunknown type of marker\n")
-        return(FALSE)
+        message("\nunknown type of marker\n")
+        validation <- FALSE
     }
 
 
-    return(TRUE)
+    return(validation)
 } #end .genind.valid
 
-setClass("genind", contains=c("gen", "indInfo"))
+setClass("genind", contains=c("gen", "indInfo"), 
+          representation = representation(strata = "dfOrNULL", hierarchy = "formOrNULL"))
 setValidity("genind", .genind.valid)
 
 
@@ -196,10 +229,13 @@ setClass("popInfo", representation(pop.names = "character", ploidy = "integer",
 # Class genpop
 ###############
 .genpop.valid <- function(object){
+
+    validation <- TRUE
+
     if(!.gen.valid(object)) return(FALSE)
     if(length(object@pop.names) != nrow(object@tab)) {
-        cat("\ninvalid length in pop.names\n")
-        return(FALSE)
+        message("\ninvalid length in pop.names\n")
+        validation <- FALSE
     }
 
     temp <- table(object@pop.names[object@pop.names!=""])
@@ -209,18 +245,18 @@ setClass("popInfo", representation(pop.names = "character", ploidy = "integer",
     }
 
      ## check ploidy
-    if(object@ploidy < as.integer(1)){
-        cat("\nploidy inferior to 1\n")
-        return(FALSE)
+    if(length(object@ploidy) > 1 && object@ploidy < 1L){
+        message("\nploidy inferior to 1\n")
+        validation <- FALSE
     }
 
     ## check type of marker
     if(!object@type %in% c("codom","PA") ){
-        cat("\nunknown type of marker\n")
-        return(FALSE)
+        message("\nunknown type of marker\n")
+        validation <- FALSE
     }
 
-    return(TRUE)
+    return(validation)
 } #end .genpop.valid
 
 setClass("genpop", contains=c("gen", "popInfo"))
@@ -234,7 +270,7 @@ setValidity("genpop", .genpop.valid)
 
 ###############################################################
 ###############################################################
-# MAIN CLASS METHODS
+## MISCELLANEOUS METHODS
 ###############################################################
 ###############################################################
 
@@ -250,208 +286,4 @@ setMethod("names", signature(x = "genind"), function(x){
 setMethod("names", signature(x = "genpop"), function(x){
     return(slotNames(x))
 })
-
-
-
-
-
-##################
-# Function genind
-##################
-## constructor of a genind object
-genind <- function(tab,pop=NULL,prevcall=NULL,ploidy=2,type=c("codom","PA")){
-    ## handle arguments
-    X <- as.matrix(tab)
-    if(is.null(colnames(X))) stop("tab columns have no name.")
-    if(is.null(rownames(X))) {rownames(X) <- 1:nrow(X)}
-
-    type <- match.arg(type)
-    ploidy <- as.integer(ploidy)
-    nind <- nrow(X)
-
-
-    ## HANDLE LABELS ##
-
-    ## loc names is not type-dependent
-    temp <- colnames(X)
-    ## temp <- gsub("[.].*$","",temp)
-    temp <- gsub("[.][^.]*$", "", temp)
-    temp <- .rmspaces(temp)
-    loc.names <- unique(temp)
-    nloc <- length(loc.names)
-    loc.codes <- .genlab("L",nloc)
-    names(loc.names) <- loc.codes
-
-    ## ind names is not type-dependent either
-    ind.codes <- .genlab("", nind)
-    ind.names <- .rmspaces(rownames(X))
-    names(ind.names) <- ind.codes
-    rownames(X) <- ind.codes
-
-
-    if(type=="codom"){
-        ## loc.nall
-        loc.nall <-  table(temp)[match(loc.names,names(table(temp)))]
-        loc.nall <- as.integer(loc.nall)
-        names(loc.nall) <- loc.codes
-
-        ## loc.fac
-        loc.fac <- rep(loc.codes,loc.nall)
-
-        ## alleles name
-        temp <- colnames(X)
-        temp <- gsub("^.*[.]","",temp)
-        temp <- .rmspaces(temp)
-        all.names <- split(temp,loc.fac)
-        all.codes <- lapply(all.names,function(e) .genlab("",length(e)))
-        for(i in 1:length(all.names)){
-            names(all.names[[i]]) <- all.codes[[i]]
-        }
-
-        colnames(X) <- paste(loc.fac,unlist(all.codes),sep=".")
-        loc.fac <- as.factor(loc.fac)
-    } else { # end if type=="codom" <=> if type=="PA"
-        colnames(X) <- loc.codes
-        loc.fac <- NULL
-        all.names <- NULL
-        loc.nall <- NULL
-    }
-
-    ## Ideally I should use an 'initialize' method here
-    res <- new("genind")
-    res@tab <- X
-    res@ind.names <- ind.names
-    res@loc.names <- loc.names
-    res@loc.nall <- loc.nall
-    res@loc.fac <- loc.fac
-    res@all.names <- all.names
-
-    ## populations name (optional)
-    ## beware, keep levels of pop sorted in
-    ## there order of appearance
-    if(!is.null(pop)) {
-        # convert pop to a factor if it is not
-        if(!is.factor(pop)) {pop <- factor(pop)}
-        pop.lab <- .genlab("P",length(levels(pop)) )
-        # put pop levels in appearance order
-        pop <- as.character(pop)
-        pop <- factor(pop, levels=unique(pop))
-        temp <- pop
-        # now levels are correctly ordered
-        levels(pop) <- pop.lab
-        res@pop <- pop
-        pop.names <- as.character(levels(temp))
-        names(pop.names) <- as.character(levels(res@pop))
-        res@pop.names <- pop.names
-    }
-
-    ## ploidy
-    plo <- as.integer(ploidy)
-    if(plo < as.integer(1)) stop("ploidy inferior to 1")
-    res@ploidy <- plo
-
-    ## type of marker
-    res@type <- as.character(type)
-
-    if(is.null(prevcall)) {prevcall <- match.call()}
-    res@call <- prevcall
-
-    return(res)
-
-} # end genind
-
-######################
-# alias for as.genind
-######################
-as.genind <- genind
-
-
-
-##################
-# Function genpop
-##################
-genpop <- function(tab,prevcall=NULL,ploidy=as.integer(2),type=c("codom","PA")){
-
-    ## handle args
-    X <- as.matrix(tab)
-    if(is.null(colnames(X))) stop("tab columns have no name.")
-    if(is.null(rownames(X))) {rownames(X) <- 1:nrow(X)}
-
-    type <- match.arg(type)
-    ploidy <- as.integer(ploidy)
-    npop <- nrow(X)
-
-
-    ## HANDLE LABELS ##
-
-    ## loc names is not type-dependent
-    temp <- colnames(X)
-    ## temp <- gsub("[.].*$","",temp)
-    temp <- gsub("[.][^.]*$", "", temp)
-    temp <- .rmspaces(temp)
-    loc.names <- unique(temp)
-    nloc <- length(loc.names)
-    loc.codes <- .genlab("L",nloc)
-    names(loc.names) <- loc.codes
-
-    ## pop names is not type-dependent either
-    pop.codes <- .genlab("", npop)
-    pop.names <- .rmspaces(rownames(X))
-    names(pop.names) <- pop.codes
-    rownames(X) <- pop.codes
-
-    ## type-dependent stuff
-    if(type=="codom"){
-        ## loc.nall
-        loc.nall <-  table(temp)[match(loc.names,names(table(temp)))]
-        loc.nall <- as.integer(loc.nall)
-        names(loc.nall) <- loc.codes
-
-        ## loc.fac
-        loc.fac <- rep(loc.codes,loc.nall)
-
-        ## alleles name
-        temp <- colnames(X)
-        temp <- gsub("^.*[.]","",temp)
-        temp <- .rmspaces(temp)
-        all.names <- split(temp,loc.fac)
-        all.codes <- lapply(all.names,function(e) .genlab("",length(e)))
-        for(i in 1:length(all.names)){
-            names(all.names[[i]]) <- all.codes[[i]]
-        }
-
-        rownames(X) <- pop.codes
-        colnames(X) <- paste(loc.fac,unlist(all.codes),sep=".")
-        loc.fac <- as.factor(loc.fac)
-    } else { # end if type=="codom" <=> if type=="PA"
-        colnames(X) <- loc.codes
-        loc.fac <- NULL
-        all.names <- NULL
-        loc.nall <- NULL
-    }
-
-    res <- new("genpop")
-
-    res@tab <- X
-    res@pop.names <- pop.names
-    res@loc.names <- loc.names
-    res@loc.nall <- loc.nall
-    res@loc.fac <- loc.fac
-    res@all.names <- all.names
-    res@ploidy <- ploidy
-    res@type <- as.character(type)
-
-    if(is.null(prevcall)) {prevcall <- match.call()}
-    res@call <- prevcall
-
-    return(res)
-
-} # end genpop
-
-
-
-######################
-# alias for as.genpop
-######################
-as.genpop <- genpop
 

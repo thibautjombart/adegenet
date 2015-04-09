@@ -6,10 +6,15 @@
 \alias{$<-,genind-method}
 \alias{$<-,genpop-method}
 \alias{[,genind-method}
+\alias{[,genind,ANY,ANY,ANY-method}
 \alias{[,genpop-method}
+\alias{[,genpop,ANY,ANY,ANY-method}
 \alias{nLoc}
 \alias{nLoc,genind-method}
 \alias{nLoc,genpop-method}
+\alias{nPop}
+\alias{nPop,genind-method}
+\alias{nPop,genpop-method}
 \alias{nInd}
 \alias{nInd,genind-method}
 \alias{pop}
@@ -22,6 +27,12 @@
 \alias{locNames<-}
 \alias{locNames<-,genind-method}
 \alias{locNames<-,genpop-method}
+\alias{popNames}
+\alias{popNames,genind-method}
+\alias{popNames,genpop-method}
+\alias{popNames<-}
+\alias{popNames<-,genind-method}
+\alias{popNames<-,genpop-method}
 \alias{indNames}
 \alias{indNames,genind-method}
 \alias{indNames<-}
@@ -78,11 +89,15 @@
   \describe{
     \item{nInd}{returns the number of individuals in the \code{genind} object}
     \item{nLoc}{returns the number of loci of the object}
+    \item{nPop}{returns the number of populations of the object}
     \item{pop}{returns the population factor of the object, using true
       (as opposed to generic) levels.}
     \item{pop<-}{replacement method for the \code{@pop} slot of an
       object. The content of \code{@pop} and \code{@pop.names} is updated
       automatically.}
+    \item{popNames}{returns the true names of populations.}
+    \item{popNames<-}{sets the true names of populations using a vector of
+      length nPop(x).}
     \item{indNames}{returns the true names of individuals.}
     \item{indNames<-}{sets the true names of individuals using a vector of
       length nInd(x).}
@@ -105,12 +120,17 @@
 \usage{
 nInd(x, \dots)
 nLoc(x, \dots)
+nPop(x, \dots)
 pop(x)
 indNames(x, \dots)
 \S4method{indNames}{genind}(x, \dots)
 locNames(x, \dots)
 \S4method{locNames}{genind}(x, withAlleles=FALSE, \dots)
 \S4method{locNames}{genpop}(x, withAlleles=FALSE, \dots)
+popNames(x, \dots)
+\S4method{popNames}{genind}(x, \dots)
+popNames(x, \dots)
+\S4method{popNames}{genpop}(x, \dots)
 ploidy(x, \dots)
 \S4method{ploidy}{genind}(x, \dots)
 \S4method{ploidy}{genpop}(x, \dots)
@@ -153,8 +173,13 @@ indNames(nancycats) # get the labels of individuals
 locNames(nancycats) # get the labels of the loci
 alleles(nancycats) # get the alleles
 
+head(tab(nancycats)) # get allele counts
+
+# get allele frequencies, replace NAs
+head(tab(nancycats, freq=TRUE, NA.method="mean")) 
+
 # let's isolate populations 4 and 8
-temp <- nancycats@pop=="P04" | nancycats@pop=="P08"
+temp <- pop(nancycats) %in% c("1","8")
 obj <- nancycats[temp,]
 obj
 
@@ -165,7 +190,7 @@ locNames(nancycats)
 
 # they correspond to L2 and L7
 nancycats$loc.fac
-temp <- nancycats$loc.fac=="L2" | nancycats$loc.fac=="L7"
+temp <- nancycats$loc.fac %in% c("fca8","fca37")
 obj <- nancycats[,temp]
 obj
 
@@ -173,17 +198,13 @@ obj$loc.fac
 locNames(obj)
 
 # or more simply
-nancycats[loc=c("L2","L7")]
+nancycats[loc=c("fca8","fca37")]
 obj$loc.fac 
 locNames(obj)
 
-# using 'drop':
-truenames(nancycats[1:2])$tab
-truenames(nancycats[1:2, drop=TRUE])$tab
-
 # illustrate how 'other' slot is handled
 colonies <- genind2genpop(nancycats)
-colonies@other$aChar <- "This will not be proceeded"
+colonies@other$aChar <- "This will not be processed"
 colonies123 <- colonies[1:3]
 colonies
 colonies@other$xy
