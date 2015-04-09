@@ -40,7 +40,7 @@ test_that("strata methods work for genlight objects", {
   }
   set.seed(9999)
   glTest <- lapply(1:10, function(x, y, z) make_gl(y, z), 10, michier)
-  res <- do.call("rbind.genlight", glTest)
+  res <- do.call("rbind.genlight", c(glTest, parallel = FALSE))
   expect_that(res, is_a("genlight"))
   expect_that(nInd(res), equals(100))
   expect_that(nLoc(res), equals(10))
