@@ -25,7 +25,6 @@ adegenetServer <- function(what=c("DAPC")){
 
 
 
-
 #######################
 ## .render.server.info
 #######################

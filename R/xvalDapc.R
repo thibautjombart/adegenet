@@ -33,6 +33,7 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
   if(missing(result)){
     result <- "groupMean"
   }else{ 
+    if(length(result) > 1) result <- result[1]
     result <- result}
   
   
@@ -83,7 +84,8 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
   if(is.null(n.pca)){
     n.pca <- round(pretty(1:n.pca.max, runs))
   }
-  n.pca <- n.pca[n.pca>0 & n.pca<(N.training-1)]
+  n.pca <- n.pca[n.pca>0 & n.pca<(N.training-1) & n.pca<n.pca.max]
+  #
   
   ## FUNCTION GETTING THE % OF ACCURATE PREDICTION FOR ONE NUMBER OF PCA PCs ##
   ## n.pca is a number of retained PCA PCs
