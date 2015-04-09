@@ -145,7 +145,15 @@ c.SNPbin <- function(...){
 ##################
 ##setMethod("cbind", signature(x="genlight"), function(..., deparse.level = 1) {
 cbind.genlight <- function(...){
-    myList <- list(...)
+      ## store arguments
+    dots <- list(...)
+
+    ## extract arguments which are genlight objects
+    myList <- dots[sapply(dots, inherits, "genlight")]
+
+    ## keep the rest in 'dots'
+    dots <- dots[!sapply(dots, inherits, "genlight")]
+
     if(length(myList)==1 && is.list(myList[[1]])) myList <- myList[[1]]
     if(!all(sapply(myList, class)=="genlight")) stop("some objects are not genlight objects")
     ## remove empty objects
@@ -174,7 +182,9 @@ cbind.genlight <- function(...){
         res[[i]] <- Reduce(function(a,b) {cbind(a,b,checkPloidy=FALSE)}, lapply(myList, function(e) e@gen[[i]]) )
     }
 
-    res <- new("genlight",res,...)
+    dots$gen <- res
+    dots$Class <- "genlight"
+    res <- do.call(new, dots)
 
     ## handle loc.names, alleles, etc. ##
     indNames(res) <- indNames(myList[[1]])
@@ -200,8 +210,17 @@ cbind.genlight <- function(...){
 ##setMethod("cbind", signature(x="genlight"), function(..., deparse.level = 1) {
 #' @importFrom dplyr bind_rows
 rbind.genlight <- function(...){
-    myList <- list(...)
+    ## store arguments
+    dots <- list(...)
+
+    ## extract arguments which are genlight objects
+    myList <- dots[sapply(dots, inherits, "genlight")]
+
+    ## keep the rest in 'dots'
+    dots <- dots[!sapply(dots, inherits, "genlight")]
+
     if(!all(sapply(myList, class)=="genlight")) stop("some objects are not genlight objects")
+
     ## remove empty objects
     myList <- myList[sapply(myList,nLoc)>0 & sapply(myList,nInd)>0]
     if(length(myList)==0) {
@@ -211,16 +230,16 @@ rbind.genlight <- function(...){
 
     if(length(unique(sapply(myList, nLoc))) !=1 ) stop("objects have different numbers of SNPs")
 
-
     ## build output
-    res <- new("genlight", Reduce(c, lapply(myList, function(e) e@gen)), ...)
+    dots$Class <- "genlight"
+    dots$gen <- Reduce(c, lapply(myList, function(e) e@gen))
+    res <- do.call(new, dots)
     locNames(res) <- locNames(myList[[1]])
     alleles(res)  <- alleles(myList[[1]])
     indNames(res) <- unlist(lapply(myList, indNames))
     pop(res)      <- factor(unlist(lapply(myList, pop)))
 
-    # Hierarchies are tricky. Using dplyr's bind_rows. 
-
+    # Hierarchies are tricky. Using dplyr's bind_rows.
     res <- .rbind_strata(myList, res)
 
     ## return object ##
