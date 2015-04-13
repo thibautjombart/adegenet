@@ -6,11 +6,11 @@ test_that("Genlight objects can be created predictably", {
   expect_warning(b <- new("genlight", list(c(1,0,1,1,1,1), c(1,0)), parallel = FALSE ))
   locNames(a) <- letters[1:4]
   locNames(b) <- 1:6
-  c <- cbind(a, b)
+  c <- cbind(a, b, parallel = FALSE)
   cbound <- cbind(as.matrix(a), as.matrix(b))
   rbound <- rbind(as.matrix(a),as.matrix(a))
   expect_identical(as.matrix(c), cbound) 
-  expect_identical(as.matrix(rbind(a, a)), rbound)
+  expect_identical(as.matrix(rbind(a, a, parallel = FALSE)), rbound)
 })
 
 

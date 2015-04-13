@@ -135,7 +135,6 @@ shinyServer(function(input, output) {
             x <- getData()
             mat <- as.matrix(na.replace(x, method="mean"))
             grp <- pop(x)
-            n.pca.max <- input$n.pca.max
             result <- input$result
             n.rep <- input$nrep
             nda <- 1
