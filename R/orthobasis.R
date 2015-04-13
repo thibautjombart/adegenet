@@ -9,6 +9,40 @@
 
 #######################################################
 
+.orthobasis.listw <- function( listw) {
+    appel = match.call()
+    if(!inherits(listw,"listw")) stop ("object of class 'listw' expected")
+    if(listw$style!="W") stop ("object of class 'listw' with style 'W' expected")
+    n = length(listw$weights)
+    fun <- function (x) {
+        num = listw$neighbours[[x]]
+        wei = listw$weights[[x]]
+        res = rep(0,n)
+        res[num] = wei
+        return (res)
+    }
+    b0 <- matrix(unlist(lapply(1:n,fun)),n,n)
+    b0=(t(b0)+b0)/2
+    b0=bicenter.wt(b0)
+    a0 <- eigen(b0, symmetric = TRUE)
+    #barplot(a0$values)
+    a0 <- a0$vectors
+    a0 <- cbind(rep(1,n),a0)
+    a0 <- qr.Q(qr(a0))
+    a0 <- as.data.frame(a0[,-1])*sqrt(n)
+    row.names(a0) <- attr(listw,"region.id")
+    names(a0) <- paste("VP", 1:(n-1), sep = "")
+    z <- apply(a0,2,function(x) sum((t(b0*x)*x))/n)
+    attr(a0,"values") <- z
+    attr(a0,"weights") <- rep(1/n,n)
+    attr(a0,"call") <- appel
+    attr(a0,"class") <- c("orthobasis","data.frame")
+    return(a0)
+}
+
+
+
+
 ## print.orthobasis <- function(x,...) {
 ##     if (!inherits(x,"orthobasis")) stop ("for 'orthobasis' object")
 ##     cat("Orthonormal basis: ")
@@ -51,13 +85,13 @@
 ##     }
 ##     mat <- mat/sum(mat)
 ##     wt <- rep ((1/nlig),nlig)
-##     # calculs extensibles à une pondération quelconque
+##     # calculs extensibles a une ponderation quelconque
 ##     wt <- wt/sum(wt)
-##     # si mat wt est la pondération marginale associée à mat
+##     # si mat wt est la ponderation marginale associee a mat
 ##     # tot = sum(mat)
 ##     # mat = mat-matrix(wt,nlig,nlig,byrow=TRUE)*wt*tot
 ##     # encore plus particulier mat = mat-1/nlig/nlig
-##     # en général les précédents sont des cas particuliers
+##     # en general les precedents sont des cas particuliers
 ##     U <- matrix(1,nlig,nlig)
 ##     U  <- diag(1,nlig)-U*wt
 ##     mat <- U%*%mat%*%t(U)
@@ -71,16 +105,16 @@
 ##     if (length(w0)==0) stop ("abnormal output : no null eigenvalue")
 ##     else if (length(w0)==1) w0 <- (1:nlig)[-w0]
 ##     else if (length(w0)>1) {
-##         # on ajoute le vecteur dérivé de 1n
+##         # on ajoute le vecteur derive de 1n
 ##         w <- cbind(wt,eig$vectors[,w0])
 ##         # on orthonormalise l'ensemble
 ##         w <- qr.Q(qr(w))
-##         # on met les valeurs propres à 0
+##         # on met les valeurs propres a 0
 ##         eig$values[w0] <- 0
-##         # on remplace les vecteurs du noyau par une base orthonormée contenant
-##         # en première position le parasite
+##         # on remplace les vecteurs du noyau par une base orthonormee contenant
+##         # en premiere position le parasite
 ##         eig$vectors[,w0] <- w[,-ncol(w)]
-##         # on enlève la position du parasite
+##         # on enleve la position du parasite
 ##         w0 <- (1:nlig)[-w0[1]]
 ##     }
 ##     mat <- eig$vectors[,w0]/wt
@@ -95,13 +129,13 @@
 ## }
 
 ## "orthobasis.haar" <- function(n) {
-## # on définit deux fonctions :
+## # on definit deux fonctions :
 ##     appel = match.call()
 ##     a <- log(n)/log(2)
 ##     b <- floor(a)
 ##     if ((a-b)^2>1e-10) stop ("Haar is not a power of 2")
-## # la première est écrite par Daniel et elle donne la démonstration (par analogie avec la fonction qui construit la base Bscores)
-## # que la base Bscores est exactement la base de Haar quand on prend une phylogénie régulière résolue.
+## # la premiere est ecrite par Daniel et elle donne la demonstration (par analogie avec la fonction qui construit la base Bscores)
+## # que la base Bscores est exactement la base de Haar quand on prend une phylogenie reguliere resolue.
 ## "haar.basis.1" <- function (n) {
 ##     pari <- matrix(c(1,n),1)
 ##     "div2" <- function (mat) {
@@ -134,14 +168,14 @@
 ## return(res)
 ## }
 
-## # la seconde exploite les potentialités de la librairie waveslim, en remarquant qu'il existe un lien étroit entre la définition des filtres et la définition
-## # des bases. Cette stratégie permettra à l'avenir de définir les bases associées à d'autres famille de fonctions.
+## # la seconde exploite les potentialites de la librairie waveslim, en remarquant qu'il existe un lien etroit entre la definition des filtres et la definition
+## # des bases. Cette strategie permettra a l'avenir de definir les bases associees a d'autres famille de fonctions.
 ## "haar.basis.2" <-  function (n) {
 ##     if (!require(waveslim)) stop ("Please install waveslim")
 ##     J <- a    #nombre de niveau
 ##     res <- matrix(0, nrow = n,ncol = n-1)
 ##     filter.seq <- "H" #filtre correspondant au niveau 1
-##     h <- waveslim::wavelet.filter(wf.name = "haar", filter.seq = filter.seq)   #paramètre du filtre au niveau 1
+##     h <- waveslim::wavelet.filter(wf.name = "haar", filter.seq = filter.seq)   #parametre du filtre au niveau 1
 ##     k <- 0
 ##         for(i in 1:J){
 ##         z <- rep(h,2**(J-i))
@@ -159,7 +193,7 @@
 ## return(res)
 ## }
 
-## # suivant que n est grand (n > 257) ou non, on choisit l'une des deux stratégies :
+## # suivant que n est grand (n > 257) ou non, on choisit l'une des deux strategies :
 ##     if (n < 257)
 ##         res <- haar.basis.1(n)
 ##         else
@@ -197,10 +231,10 @@
 ##     attr(res,"call") <- appel
 ##     attr(res,"class") <- c("orthobasis","data.frame")
 
-##     # vérification locale. Ce paragraphe vérifie que les vecteurs et les valeurs
-##     # proposée par Cornillon p. 12 sont bien les vecteurs propres de l'opérateur de voisinage
-##     # rangée dans la solution analytique par variance locale croissante
-##     # l'article de Méot est erroné et a donné le graphe circulaire pour le graphe linéaire
+##     # verification locale. Ce paragraphe verifie que les vecteurs et les valeurs
+##     # proposee par Cornillon p. 12 sont bien les vecteurs propres de l'operateur de voisinage
+##     # rangee dans la solution analytique par variance locale croissante
+##     # l'article de Meot est errone et a donne le graphe circulaire pour le graphe lineaire
 ##     # d0=neig2mat(neig(n.lin=n))
 ##     # d0 = d0/n
 ##     # d1=apply(d0,1,sum)
@@ -217,7 +251,7 @@
 ##     # abline(lm(attr(res,"values")~lambda))
 ##     # print(coefficients(lm(attr(res,"values")~lambda)))
 
-##     # vérification que les valeurs dérivées des valeurs propres sont exactement des indices de Moran
+##     # verification que les valeurs derivees des valeurs propres sont exactement des indices de Moran
 ##     # d = neig2mat(neig(n.lin=n))
 ##     # d = d/sum(d) # Moran type W
 ##     # moran <- unlist(lapply(res,function(x) sum(t(d*x)*x)))
@@ -272,7 +306,7 @@
 ##     attr(res,"weights") <- rep(1/n,n)
 ##     attr(res,"call") <- appel
 ##     attr(res,"class") <- c("orthobasis","data.frame")
-##     # vérification qu'on a exactement des indices de Moran à partie des valeurs propres
+##     # verification qu'on a exactement des indices de Moran a partie des valeurs propres
 ##     # d = neig2mat(neig(n.cir=n))
 ##     # d = d/sum(d) # Moran type W
 ##     # moran <- unlist(lapply(res,function(x) sum(t(d*x)*x)))
@@ -282,38 +316,6 @@
 ##     # print(summary(lm(attr(res,"values")~moran)))
 ##     return(res)
 ## }
-
-".orthobasis.listw" <- function( listw) {
-    appel = match.call()
-    if(!inherits(listw,"listw")) stop ("object of class 'listw' expected")
-    if(listw$style!="W") stop ("object of class 'listw' with style 'W' expected")
-    n = length(listw$weights)
-    fun <- function (x) {
-        num = listw$neighbours[[x]]
-        wei = listw$weights[[x]]
-        res = rep(0,n)
-        res[num] = wei
-        return (res)
-    }
-    b0 <- matrix(unlist(lapply(1:n,fun)),n,n)
-    b0=(t(b0)+b0)/2
-    b0=bicenter.wt(b0)
-    a0 <- eigen(b0, sym = TRUE)
-    #barplot(a0$values)
-    a0 <- a0$vectors
-    a0 <- cbind(rep(1,n),a0)
-    a0 <- qr.Q(qr(a0))
-    a0 <- as.data.frame(a0[,-1])*sqrt(n)
-    row.names(a0) <- attr(listw,"region.id")
-    names(a0) <- paste("VP", 1:(n-1), sep = "")
-    z <- apply(a0,2,function(x) sum((t(b0*x)*x))/n)
-    attr(a0,"values") <- z
-    attr(a0,"weights") <- rep(1/n,n)
-    attr(a0,"call") <- appel
-    attr(a0,"class") <- c("orthobasis","data.frame")
-    return(a0)
-}
-
 
 ## "orthobasis.neig" <- function( neig) {
 ##     appel = match.call()
@@ -332,17 +334,17 @@
 ##     if (length(w0)==0) stop ("abnormal output : no null eigenvalue")
 ##     else if (length(w0)==1) w0 <- (1:n)[-w0]
 ##     else if (length(w0)>1) {
-##         # on ajoute le vecteur dérivé de 1n
+##         # on ajoute le vecteur derive de 1n
 ##         wt <- rep(1,n)
 ##         w <- cbind(wt,eig$vectors[,w0])
 ##         # on orthonormalise l'ensemble
 ##         w <- qr.Q(qr(w))
-##         # on met les valeurs propres à 0
+##         # on met les valeurs propres a 0
 ##         eig$values[w0] <- 0
-##         # on remplace les vecteurs du noyau par une base orthonormée contenant
-##         # en première position le parasite
+##         # on remplace les vecteurs du noyau par une base orthonormee contenant
+##         # en premiere position le parasite
 ##         eig$vectors[,w0] <- w[,-ncol(w)]
-##         # on enlève la position du parasite
+##         # on enleve la position du parasite
 ##         w0 <- (1:n)[-w0[1]]
 ##     }
 ##     w0 <- rev(w0)
