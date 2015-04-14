@@ -552,7 +552,7 @@ dat
 <<>>=
 obj <- genind(dat, ploidy=1, type="PA")
 obj
-truenames(obj)
+tab(obj)
 @
 
 One can see that for instance, the summary of this object is more simple (no numbers of alleles per locus, no heterozygosity):
@@ -566,7 +566,7 @@ our object into a genpop:
 <<>>=
 obj2 <- genind2genpop(obj)
 obj2
-truenames(obj2)
+tab(obj2)
 @
 
 \noindent To continue with the toy example, we can proceed to a simple PCA.
@@ -631,7 +631,7 @@ rownames(dat) <- paste("genot.", 1:3)
 colnames(dat) <- 1:5
 dat
 obj <- df2genind(dat, ploidy=1)
-truenames(obj)
+tab(obj)
 @
 
 \texttt{obj} is a \texttt{genind} containing the SNPs information, which can be used for further
@@ -748,7 +748,7 @@ Fancier protein distances are implemented in R; see for instance \texttt{dist.al
 \emph{seqinr} package, and \texttt{dist.ml} in the \emph{phangorn} package.
 
 <<>>=
-D <- dist(truenames(x))
+D <- dist(tab(x))
 D
 @
 This matrix of distances is small enough for one to interprete the raw numbers.
