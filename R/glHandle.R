@@ -6,7 +6,10 @@
 setMethod("[", signature(x="SNPbin", i="ANY"), function(x, i) {
     if (missing(i)) i <- TRUE
     temp <- .SNPbin2int(x) # data as integers with NAs
-    x <- new("SNPbin", snp=temp[i], label=x@label, ploidy=x@ploidy)
+    y <- new("SNPbin", snp=temp[i], label=x@label, ploidy=x@ploidy)
+    for (i in slotNames(y)){
+        slot(x, i) <- slot(y, i)
+    }
     return(x)
 }) # end [] for SNPbin
 
@@ -85,9 +88,12 @@ setMethod("[", signature(x="genlight", i="ANY", j="ANY", drop="ANY"), function(x
         new.alleles <- alleles(x)[j]
         new.gen <- lapply(x@gen, function(e) e[j])
         ##x <- as.matrix(x)[, j, drop=FALSE] # maybe need to process one row at a time
-        x <- new("genlight", gen=new.gen, pop=ori.pop, ploidy=ori.ploidy,
+        y <- new("genlight", gen=new.gen, pop=ori.pop, ploidy=ori.ploidy,
                  ind.names=old.ind.names, loc.names=new.loc.names, strata = ori.strata,
                  chromosome=new.chr, position=new.position, alleles=new.alleles, other=old.other, parallel=FALSE,...)
+        for (s in slotNames(y)){
+            slot(x, s) <- slot(y, s)
+        }
     }
 
     return(x)
