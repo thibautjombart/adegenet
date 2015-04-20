@@ -138,7 +138,7 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
     } # end loc argument
 
     prevcall <- match.call()
-    tab <- tab[i, j, ...,drop=FALSE]
+    # tab <- tab[i, j, ...,drop=FALSE]
 
     # if(drop){
     #     allNb <- apply(tab, 2, sum, na.rm=TRUE) # allele absolute frequencies
@@ -194,8 +194,6 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
 
     return(x)
 })
-
-
 
 
 ##########################
