@@ -1,13 +1,22 @@
 
+# Function to subset raw vectors
+.subsetbin <- function(x, i){
+    xint <- as.integer(rawToBits(x))[i]
+    zeroes <- 8 - (length(xint) %% 8)
+    return(packBits(c(xint, rep(0L, zeroes))))
+}
+
 ###############
 ## '[' operators
 ###############
 ## SNPbin
+
 setMethod("[", signature(x="SNPbin", i="ANY"), function(x, i) {
-    .newset(x, i)
+    .SNPbinset(x, i)
 }) # end [] for SNPbin
 
-.sbset <- function(x, i){
+# old method for [] for SNPbin
+.oldSNPbinset <- function(x, i){
     if (missing(i)) i <- TRUE
     temp <- .SNPbin2int(x) # data as integers with NAs
     x <- new("SNPbin", snp=temp[i], label=x@label, ploidy=x@ploidy)
@@ -17,7 +26,7 @@ setMethod("[", signature(x="SNPbin", i="ANY"), function(x, i) {
     return(x)
 }
 
-.newset <- function(x, i){
+.SNPbinset <- function(x, i){
     if (missing(i)) i <- TRUE
     n.loc <- x@n.loc
     if (length(i) == 1 && is.logical(i) && i){
@@ -34,7 +43,7 @@ setMethod("[", signature(x="SNPbin", i="ANY"), function(x, i) {
     if (length(x@NA.posi) > 0){
         namatches <- match(i, x@NA.posi, nomatch = 0)
         if (sum(namatches) > 0){
-            x@NA.posi <- x@NA.posi[]            
+            x@NA.posi <- x@NA.posi[namatches]            
         }
     }
     return(x)

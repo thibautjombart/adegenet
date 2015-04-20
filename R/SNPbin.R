@@ -932,13 +932,6 @@ setReplaceMethod("other","genlight",function(x,value) {
 } # end .raw2bin
 
 
-.subsetbin <- function(x, i){
-    xint <- as.integer(rawToBits(x))[i]
-    zeroes <- 8 - (length(xint) %% 8)
-    return(packBits(c(xint, rep(0L, zeroes))))
-}
-
-
 #############
 ## .SNPbin2int
 #############
