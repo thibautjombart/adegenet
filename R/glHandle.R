@@ -21,10 +21,14 @@
     if (missing(i)) i <- TRUE
     n.loc     <- x@n.loc
     if (length(x@NA.posi) > 0){
-        old.posi  <- 1:n.loc
         namatches <- match(i, x@NA.posi, nomatch = 0)
         nas.kept  <- x@NA.posi[namatches] 
-        x@NA.posi <- match(nas.kept, old.posi[i])   
+        if (length(nas.kept) > 0){
+            old.posi  <- 1:n.loc
+            x@NA.posi <- match(nas.kept, old.posi[i])
+        } else {
+            x@NA.posi <- nas.kept
+        }
     }
     if (length(i) == 1 && is.logical(i) && i){
         return(x)
