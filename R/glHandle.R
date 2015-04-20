@@ -116,22 +116,19 @@ setMethod("[", signature(x="genlight", i="ANY", j="ANY", drop="ANY"), function(x
     if(length(j)==1 && is.logical(j) && j){ # no need to subset SNPs
         return(x)
     } else { # need to subset SNPs
-        old.other <- other(x)
-        old.ind.names <- indNames(x)
+        # old.other <- other(x)
+        # old.ind.names <- indNames(x)
 
         ## handle ind.names, loc.names, chromosome, position, and alleles
-        new.loc.names <- locNames(x)[j]
-        new.chr <- chr(x)[j]
-        new.position <- position(x)[j]
-        new.alleles <- alleles(x)[j]
-        new.gen <- lapply(x@gen, function(e) e[j])
+        locNames(x) <- locNames(x)[j]
+        chr(x)      <- chr(x)[j]
+        position(x) <- position(x)[j]
+        alleles(x)  <- alleles(x)[j]
+        x@gen       <- lapply(x@gen, function(e) e[j])
         ##x <- as.matrix(x)[, j, drop=FALSE] # maybe need to process one row at a time
-        y <- new("genlight", gen=new.gen, pop=ori.pop, ploidy=ori.ploidy,
-                 ind.names=old.ind.names, loc.names=new.loc.names, strata = ori.strata,
-                 chromosome=new.chr, position=new.position, alleles=new.alleles, other=old.other, parallel=FALSE,...)
-        for (s in slotNames(y)){
-            slot(x, s) <- slot(y, s)
-        }
+        # x <- new("genlight", gen=new.gen, pop=ori.pop, ploidy=ori.ploidy,
+        #          ind.names=old.ind.names, loc.names=new.loc.names, strata = ori.strata,
+        #          chromosome=new.chr, position=new.position, alleles=new.alleles, other=old.other, parallel=FALSE,...)
     }
 
     return(x)
