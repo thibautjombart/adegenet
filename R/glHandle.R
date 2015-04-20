@@ -6,15 +6,6 @@
     return(packBits(c(xint, rep(0L, zeroes))))
 }
 
-###############
-## '[' operators
-###############
-## SNPbin
-
-setMethod("[", signature(x="SNPbin", i="ANY"), function(x, i) {
-    .SNPbinset(x, i)
-}) # end [] for SNPbin
-
 # old method for [] for SNPbin
 .oldSNPbinset <- function(x, i){
     if (missing(i)) i <- TRUE
@@ -42,12 +33,21 @@ setMethod("[", signature(x="SNPbin", i="ANY"), function(x, i) {
     x@n.loc   <- n.loc
     if (length(x@NA.posi) > 0){
         namatches <- match(i, x@NA.posi, nomatch = 0)
-        if (sum(namatches) > 0){
-            x@NA.posi <- x@NA.posi[namatches]            
-        }
+        x@NA.posi <- x@NA.posi[namatches]    
     }
     return(x)
 }
+
+###############
+## '[' operators
+###############
+## SNPbin
+
+setMethod("[", signature(x="SNPbin", i="ANY"), function(x, i) {
+    .SNPbinset(x, i)
+}) # end [] for SNPbin
+
+
 
 
 ## genlight
