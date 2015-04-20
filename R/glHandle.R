@@ -4,16 +4,41 @@
 ###############
 ## SNPbin
 setMethod("[", signature(x="SNPbin", i="ANY"), function(x, i) {
-    if (missing(i)) i <- TRUE
-    temp <- .SNPbin2int(x) # data as integers with NAs
-    y <- new("SNPbin", snp=temp[i], label=x@label, ploidy=x@ploidy)
-    for (i in slotNames(y)){
-        slot(x, i) <- slot(y, i)
-    }
-    return(x)
+    .newset(x, i)
 }) # end [] for SNPbin
 
+.sbset <- function(x, i){
+    if (missing(i)) i <- TRUE
+    temp <- .SNPbin2int(x) # data as integers with NAs
+    x <- new("SNPbin", snp=temp[i], label=x@label, ploidy=x@ploidy)
+    # for (i in slotNames(y)){
+    #     slot(x, i) <- slot(y, i)
+    # }
+    return(x)
+}
 
+.newset <- function(x, i){
+    if (missing(i)) i <- TRUE
+    n.loc <- x@n.loc
+    if (length(i) == 1 && is.logical(i) && i){
+        return(x)
+    } else if (all(is.logical(i))){
+        n.loc <- sum(i)
+    } else if (any(i < 0)){
+        n.loc <- n.loc - length(i)
+    } else {
+        n.loc <- length(i)
+    }
+    x@snp     <- lapply(x@snp, .subsetbin, i)
+    x@n.loc   <- n.loc
+    if (length(x@NA.posi) > 0){
+        namatches <- match(i, x@NA.posi, nomatch = 0)
+        if (sum(namatches) > 0){
+            x@NA.posi <- x@NA.posi[]            
+        }
+    }
+    return(x)
+}
 
 
 ## genlight
@@ -88,12 +113,12 @@ setMethod("[", signature(x="genlight", i="ANY", j="ANY", drop="ANY"), function(x
         new.alleles <- alleles(x)[j]
         new.gen <- lapply(x@gen, function(e) e[j])
         ##x <- as.matrix(x)[, j, drop=FALSE] # maybe need to process one row at a time
-        y <- new("genlight", gen=new.gen, pop=ori.pop, ploidy=ori.ploidy,
+        x <- new("genlight", gen=new.gen, pop=ori.pop, ploidy=ori.ploidy,
                  ind.names=old.ind.names, loc.names=new.loc.names, strata = ori.strata,
                  chromosome=new.chr, position=new.position, alleles=new.alleles, other=old.other, parallel=FALSE,...)
-        for (s in slotNames(y)){
-            slot(x, s) <- slot(y, s)
-        }
+        # for (s in slotNames(y)){
+        #     slot(x, s) <- slot(y, s)
+        # }
     }
 
     return(x)
