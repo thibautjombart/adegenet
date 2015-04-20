@@ -19,7 +19,13 @@
 
 .SNPbinset <- function(x, i){
     if (missing(i)) i <- TRUE
-    n.loc <- x@n.loc
+    n.loc     <- x@n.loc
+    if (length(x@NA.posi) > 0){
+        old.posi  <- 1:n.loc
+        namatches <- match(i, x@NA.posi, nomatch = 0)
+        nas.kept  <- x@NA.posi[namatches] 
+        x@NA.posi <- match(nas.kept, old.posi[i])   
+    }
     if (length(i) == 1 && is.logical(i) && i){
         return(x)
     } else if (all(is.logical(i))){
@@ -31,10 +37,7 @@
     }
     x@snp     <- lapply(x@snp, .subsetbin, i)
     x@n.loc   <- n.loc
-    if (length(x@NA.posi) > 0){
-        namatches <- match(i, x@NA.posi, nomatch = 0)
-        x@NA.posi <- x@NA.posi[namatches]    
-    }
+    
     return(x)
 }
 
@@ -44,7 +47,7 @@
 ## SNPbin
 
 setMethod("[", signature(x="SNPbin", i="ANY"), function(x, i) {
-    .SNPbinset(x, i)
+    .oldSNPbinset(x, i)
 }) # end [] for SNPbin
 
 
