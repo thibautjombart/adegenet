@@ -932,9 +932,6 @@ setReplaceMethod("other","genlight",function(x,value) {
 } # end .raw2bin
 
 
-
-
-
 #############
 ## .SNPbin2int
 #############

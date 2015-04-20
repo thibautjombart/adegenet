@@ -1,13 +1,54 @@
 
-###############
-## '[' operators
-###############
-## SNPbin
-setMethod("[", signature(x="SNPbin", i="ANY"), function(x, i) {
+# Function to subset raw vectors
+.subsetbin <- function(x, i){
+    xint <- as.integer(rawToBits(x))[i]
+    zeroes <- 8 - (length(xint) %% 8)
+    return(packBits(c(xint, rep(0L, zeroes))))
+}
+
+# old method for [] for SNPbin
+.oldSNPbinset <- function(x, i){
     if (missing(i)) i <- TRUE
     temp <- .SNPbin2int(x) # data as integers with NAs
     x <- new("SNPbin", snp=temp[i], label=x@label, ploidy=x@ploidy)
     return(x)
+}
+
+.SNPbinset <- function(x, i){
+    if (missing(i)) i <- TRUE
+    n.loc     <- x@n.loc
+    if (length(x@NA.posi) > 0){
+        namatches <- match(i, x@NA.posi, nomatch = 0)
+        nas.kept  <- x@NA.posi[namatches] 
+        if (length(nas.kept) > 0){
+            old.posi  <- 1:n.loc
+            x@NA.posi <- match(nas.kept, old.posi[i])
+        } else {
+            x@NA.posi <- nas.kept
+        }
+    }
+    if (length(i) == 1 && is.logical(i) && i){
+        return(x)
+    } else if (all(is.logical(i))){
+        n.loc <- sum(i)
+    } else if (any(i < 0)){
+        n.loc <- n.loc - length(i)
+    } else {
+        n.loc <- length(i)
+    }
+    x@snp     <- lapply(x@snp, .subsetbin, i)
+    x@n.loc   <- n.loc
+    
+    return(x)
+}
+
+###############
+## '[' operators
+###############
+## SNPbin
+
+setMethod("[", signature(x="SNPbin", i="ANY"), function(x, i) {
+    .SNPbinset(x, i)
 }) # end [] for SNPbin
 
 
@@ -75,19 +116,19 @@ setMethod("[", signature(x="genlight", i="ANY", j="ANY", drop="ANY"), function(x
     if(length(j)==1 && is.logical(j) && j){ # no need to subset SNPs
         return(x)
     } else { # need to subset SNPs
-        old.other <- other(x)
-        old.ind.names <- indNames(x)
+        # old.other <- other(x)
+        # old.ind.names <- indNames(x)
 
         ## handle ind.names, loc.names, chromosome, position, and alleles
-        new.loc.names <- locNames(x)[j]
-        new.chr <- chr(x)[j]
-        new.position <- position(x)[j]
-        new.alleles <- alleles(x)[j]
-        new.gen <- lapply(x@gen, function(e) e[j])
+        locNames(x) <- locNames(x)[j]
+        chr(x)      <- chr(x)[j]
+        position(x) <- position(x)[j]
+        alleles(x)  <- alleles(x)[j]
+        x@gen       <- lapply(x@gen, function(e) e[j])
         ##x <- as.matrix(x)[, j, drop=FALSE] # maybe need to process one row at a time
-        x <- new("genlight", gen=new.gen, pop=ori.pop, ploidy=ori.ploidy,
-                 ind.names=old.ind.names, loc.names=new.loc.names, strata = ori.strata,
-                 chromosome=new.chr, position=new.position, alleles=new.alleles, other=old.other, parallel=FALSE,...)
+        # x <- new("genlight", gen=new.gen, pop=ori.pop, ploidy=ori.ploidy,
+        #          ind.names=old.ind.names, loc.names=new.loc.names, strata = ori.strata,
+        #          chromosome=new.chr, position=new.position, alleles=new.alleles, other=old.other, parallel=FALSE,...)
     }
 
     return(x)
