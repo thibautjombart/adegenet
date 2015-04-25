@@ -599,6 +599,9 @@ setMethod("nPop","genlight", function(x,...){
     return(length(levels(pop(x))))
 })
 
+setMethod("dim", "genlight", function(x){
+    return(c(nInd(x), nLoc(x)))
+})
 
 ## $
 setMethod("$","SNPbin",function(x,name) {
