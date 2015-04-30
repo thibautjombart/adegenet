@@ -131,7 +131,7 @@ setMethod("[", signature(x="genlight", i="ANY", j="ANY", drop="ANY"), function(x
         x@chromosome <- chromosome
         x@position   <- loc.posi
         x@loc.all    <- allele
-        x@n.loc      <- length(loc.names)
+        x@n.loc      <- x@gen[[1]]@n.loc
         ##x <- as.matrix(x)[, j, drop=FALSE] # maybe need to process one row at a time
         # x <- new("genlight", gen=new.gen, pop=ori.pop, ploidy=ori.ploidy,
         #          ind.names=old.ind.names, loc.names=new.loc.names, strata = ori.strata,
