@@ -691,6 +691,8 @@ setMethod("locNames","genlight", function(x,...){
     if(!is.null(res <- position(x))){
         if(!is.null(alleles(x))){
             res <- paste(res, alleles(x), sep=".")
+        } else { # force position to be character
+            res <- as.character(res)
         }
         return(res)
     }
