@@ -124,17 +124,21 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     }
     if(any(ploidy < 1L)) stop("ploidy cannot be less than 1")
 
-    if (is.null(ind.names)){
+    if (is.null(ind.names) | length(ind.names) != nrow(X)){
       ind.names <- rownames(X)
       if (is.null(ind.names)){
         rownames(X) <- ind.names <- .genlab("", n)
       }
+    } else {
+      rownames(X) <- ind.names
     }
-    if (is.null(loc.names)){
+    if (is.null(loc.names) | length(row.names) != ncol(X)){
       loc.names <- colnames(X)
       if (is.null(loc.names)){
         colnames(X) <- loc.names <- .genlab("L", nloc)
       }
+    } else {
+      colnames(X) <- loc.names
     }
 
     ## pop argument
