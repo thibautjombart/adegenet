@@ -4,50 +4,78 @@
 setGeneric("old2new",  function(object) standardGeneric("old2new"))
 
 setMethod("old2new", "genind", function(object){
-  x <- object
-  res <- new("genind")
-  theoLength <- 7
-
-  res@tab <- as.matrix(x$tab)
-  res@ind.names <- as.character(x$ind.names)
-  res@loc.names <- as.character(x$loc.names)
-  res@loc.nall <- as.integer(x$loc.nall)
-  res@loc.fac <- as.factor(x$loc.fac)
-  res@all.names <- as.list(x$all.names)
-  if(!is.null(x$pop)) {
-      res@pop <- as.factor(x$pop)
-      theoLength <- theoLength + 1
+  object@hierarchy <- NULL
+  object@strata    <- NULL
+  if (object@type == "codom"){
+    
+    if (!is.integer(object@tab) && length(object@ploidy == 1)){
+      xtab   <- object@tab
+      newtab <- as.integer(object@tab * object@ploidy)
+      object@tab <- matrix(newtab, nrow = nrow(xtab), ncol = ncol(xtab),
+                           dimnames = dimnames(xtab))
+      object@ploidy <- rep(object@ploidy, nrow(object@tab))  
+    }
+    
+    names(object@loc.names) <- NULL
+    rownames(object@tab)    <- object@ind.names
+    names(object@all.names) <- object@loc.names
+    object@all.names     <- lapply(object@all.names, setNames, NULL)
+    colnames(object@tab) <- unlist(lapply(object@loc.names, 
+                                          function(i) paste(i, object@all.names[[i]], 
+                                                            sep = ".")), 
+                                   use.names = FALSE)
+    levels(object@loc.fac) <- object@loc.names
+    names(object@loc.nall) <- object@loc.names
   }
-  if(!is.null(x$pop.names)) {
-      res@pop.names <- as.character(x$pop.names)
-      theoLength <- theoLength + 1
+  
+  if (!is.null(object@pop)){
+    names(object@pop.names) <- NULL
+    levels(object@pop) <- object@pop.names
   }
-  res@call <- match.call()
-  res@ploidy <- as.integer(2)
-  res@type <- "codom"
+  object@call <- match.call()
+  return(object)
+  
+#   res@tab <- as.matrix(x$tab)
+#   res@ind.names <- as.character(x$ind.names)
+#   res@loc.names <- as.character(x$loc.names)
+#   res@loc.nall <- as.integer(x$loc.nall)
+#   res@loc.fac <- as.factor(x$loc.fac)
+#   res@all.names <- as.list(x$all.names)
+#   if(!is.null(x$pop)) {
+#       res@pop <- as.factor(x$pop)
+#       theoLength <- theoLength + 1
+#   }
+#   if(!is.null(x$pop.names)) {
+#       res@pop.names <- as.character(x$pop.names)
+#       theoLength <- theoLength + 1
+#   }
+#   res@call <- match.call()
+#   res@ploidy <- as.integer(2)
+#   res@type <- "codom"
+# 
+#   if(length(object) > theoLength) warning("optional content else than pop and pop.names was not converted")
 
-  if(length(object) > theoLength) warning("optional content else than pop and pop.names was not converted")
-
-  return(res)
+  # return(res)
 })
 
 
 setMethod("old2new", "genpop", function(object){
-  x <- object
-  res <- new("genpop")
-
-  res@tab <- as.matrix(x$tab)
-  res@pop.names <- as.character(x$pop.names)
-  res@loc.names <- as.character(x$loc.names)
-  res@loc.nall <- as.integer(x$loc.nall)
-  res@loc.fac <- as.factor(x$loc.fac)
-  res@all.names <- as.list(x$all.names)
-  res@ploidy <- as.integer(2)
-  res@type <- "codom"
-
-  res@call <- match.call()
-
-  if(length(object)>7) warning("optional content was not converted")
-
-  return(res)
+  return(object)
+  #   x <- object
+#   res <- new("genpop")
+# 
+#   res@tab <- as.matrix(x$tab)
+#   res@pop.names <- as.character(x$pop.names)
+#   res@loc.names <- as.character(x$loc.names)
+#   res@loc.nall <- as.integer(x$loc.nall)
+#   res@loc.fac <- as.factor(x$loc.fac)
+#   res@all.names <- as.list(x$all.names)
+#   res@ploidy <- as.integer(2)
+#   res@type <- "codom"
+# 
+#   res@call <- match.call()
+# 
+#   if(length(object)>7) warning("optional content was not converted")
+# 
+#   return(res)
 })
