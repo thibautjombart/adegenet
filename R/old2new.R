@@ -1,7 +1,29 @@
 ##################
 # Methods old2new
 ##################
-setGeneric("old2new",  function(object) standardGeneric("old2new"))
+#' Convert objects with obsolete classes into new objects 
+#'  
+#' The genind and genlight objects have changed in Adegenet version 2.0. They 
+#' have each gained strata and hierarchy slots. What's more is that the genind 
+#' objects have been optimized for storage and now store the tab slot as
+#' integers instead of numerics. This function will convert old genind or
+#' genlight objects to new ones seamlessly.
+#'  
+#' @name old2new 
+#' @rdname old2new
+#' @aliases old2new old2new,ANY-method old2new-methods old2new,genind-method 
+#' old2new,genpop-method old2new,genlight-method
+#' @docType methods 
+#' @param object a genind or genlight object from version 1.4 or earlier.
+#' 
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}\cr
+#' Zhian N. Kamvar \email{kamvarz@@science.oregonstate.edu}
+#' @keywords methods classes manip 
+#' @export
+old2new <- function(object) standardGeneric("old2new")
+
+#' @export
+setGeneric("old2new")
 
 setMethod("old2new", "genind", function(object){
   object@hierarchy <- NULL
