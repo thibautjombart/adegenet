@@ -58,6 +58,11 @@ setMethod("old2new", "genind", function(object){
   # return(res)
 })
 
+setMethod("old2new", "genlight", function(object){
+  object@strata    <- NULL
+  object@hierarchy <- NULL
+  return(object)
+})
 
 setMethod("old2new", "genpop", function(object){
   return(object)
