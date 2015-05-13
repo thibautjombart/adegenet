@@ -1,7 +1,7 @@
 Package: adegenet
 Version: 2.0.0
 Encoding: UTF-8
-Date: 2015-03-28
+Date: 2015-05-13
 Title: Exploratory Analysis of Genetic and Genomic Data
 Author:  Thibaut Jombart, Caitlin Collins, Zhian N. Kamvar, Roman Lustrik, Peter Solymos, Ismail Ahmed, Federico Calboli, Anne Cori, Klaus Schliep
 Maintainer: Thibaut Jombart <t.jombart@imperial.ac.uk>
