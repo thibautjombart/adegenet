@@ -87,6 +87,18 @@ setMethod("old2new", "genlight", function(object){
 })
 
 setMethod("old2new", "genpop", function(object){
+  
+  names(object@pop.names) <- NULL
+  names(object@loc.names) <- NULL
+  
+  rownames(object@tab) <- object@pop.names
+  colnames(object@tab) <- unlist(lapply(object@loc.names, 
+                                        function(i) paste(i, object@all.names[[i]], 
+                                                          sep = ".")), 
+                                 use.names = FALSE)
+  names(object@all.names) <- object@loc.names
+  object@all.names     <- lapply(object@all.names, setNames, NULL)
+  object@call <- match.call()
   return(object)
   #   x <- object
 #   res <- new("genpop")
