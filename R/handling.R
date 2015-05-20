@@ -67,7 +67,7 @@ setGeneric("tab", function(x, ...) standardGeneric("tab"))
 .tabGetter <- function(x, freq=FALSE, NA.method=c("asis","mean","zero"), ...){
     ## handle arguments
     NA.method <- match.arg(NA.method)
-
+    # outdim <- dim(x@tab)
     ## get matrix of data
     if(!freq){
         out <- x@tab
@@ -82,13 +82,14 @@ setGeneric("tab", function(x, ...) standardGeneric("tab"))
             vec[is.na(vec)] <- m
             return(vec)
         }
-
+        
         out <- apply(out, 2, f1)
+        
     }
     if(NA.method=="zero"){
         out[is.na(out)] <- ifelse(freq, 0, 0L)
     }
-
+    # dim(out) <- outdim
     ## return output
     return(out)
 }
@@ -110,7 +111,7 @@ setMethod("tab", signature(x = "genind"),
 setMethod("tab", signature(x="genpop"), function(x, freq=FALSE, NA.method=c("asis","mean","zero"), ...){
  ## handle arguments
     NA.method <- match.arg(NA.method)
-
+    # outdim <- dim(x@tab)
     ## get matrix of data
     if(!freq) {
         out <- x@tab
@@ -125,23 +126,23 @@ setMethod("tab", signature(x="genpop"), function(x, freq=FALSE, NA.method=c("asi
         out <- matrix(unlist(out), byrow=TRUE, nrow=nrow(x@tab),
                       dimnames=list(row.names, col.names))
         ## reorder columns
-        out <- out[,colnames(x@tab)]
+        out <- out[, colnames(x@tab), drop = FALSE]
     }
 
     ## replace NAs if needed
     if(NA.method=="mean"){
         f1 <- function(vec){
-            m <- mean(vec,na.rm=TRUE)
+            m <- mean(vec, na.rm=TRUE)
             vec[is.na(vec)] <- m
             return(vec)
         }
-
+        
         out <- apply(out, 2, f1)
     }
     if(NA.method=="zero"){
         out[is.na(out)] <- ifelse(freq, 0, 0L)
     }
-
+    # dim(out) <- outdim
     ## return output
     return(out)
 })
