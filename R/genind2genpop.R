@@ -98,7 +98,7 @@ genind2genpop <- function(x, pop = NULL, quiet = FALSE,
 
     if (is.null(pop(x))) {
         if(!quiet) warning("\npop is not provided either in x or in pop - assuming one single group")
-        pop <- factor(rep(1, nInd(x)))
+        pop(x) <- factor(rep(1, nInd(x)))
     }
 
     if(!quiet) cat("\n Converting data from a genind to a genpop object... \n")
