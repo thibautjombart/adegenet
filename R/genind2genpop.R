@@ -111,7 +111,7 @@ genind2genpop <- function(x, pop = NULL, quiet = FALSE,
         lab.col <- names(tabcount)
         tabcount <- matrix(tabcount,nrow=1)
         colnames(tabcount) <- lab.col
-        rownames(tabcount) <- levels(pop)[1]
+        rownames(tabcount) <- levels(pop(x))[1]
     }
 
     ## MAKE FINAL OBJECT ##
