@@ -30,8 +30,9 @@ inbreeding <- function(x, pop=NULL, truenames=TRUE, res.type=c("sample","functio
     ## !!! NOTE : reverse the values returned by f1 to obtain a strange thing !!!
     f1 <- function(gen){
         if(any(is.na(gen))) return(NA)
-        if(any(round(gen, 10)==1)) return(1)
-        return(0)
+        return(ifelse(sum(gen > 0) == 1, 1, 0))
+        # if(any(round(gen, 10)==1)) return(1)
+        # return(0)
     }
 
     ## get the table of binary hetero/homo data
