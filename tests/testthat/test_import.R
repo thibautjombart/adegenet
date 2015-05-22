@@ -26,3 +26,18 @@ test_that("df2genind makes sense for given example", {
   objdf <- genind2df(obj)
   expect_that(df, is_equivalent_to(df))
 })
+
+test_that("df2genind will handle duplicate samples and loci", {
+  skip_on_cran()
+  x <- 
+    "A B
+  1/2 3/4
+  5/6 4/5
+  2/6 3/9"
+  xdf <- read.table(text = x, header = TRUE, stringsAsFactors = FALSE)
+  inds <- c("one", "one", "two")
+  loci <- rep("double", 2)
+  expect_warning(xgid <- df2genind(xdf, sep = "/", ind.names = inds, loc.names = loci))
+  expect_that(unique(rowSums(tab(xgid))), is_equivalent_to(4))
+  expect_that(genind2df(xgid, sep = "/"), is_equivalent_to(xdf))
+})
