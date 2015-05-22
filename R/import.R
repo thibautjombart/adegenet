@@ -123,7 +123,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
 
     }
     if(any(ploidy < 1L)) stop("ploidy cannot be less than 1")
-
+    ind.test <- FALSE -> loc.test
     if (is.null(ind.names) || (ind.test <- length(unique(ind.names)) != nrow(X))){
       ind.names <- rownames(X)
       if (!is.null(ind.names) & ind.test){
