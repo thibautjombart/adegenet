@@ -124,17 +124,25 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     }
     if(any(ploidy < 1L)) stop("ploidy cannot be less than 1")
 
-    if (is.null(ind.names) | length(ind.names) != nrow(X)){
+    if (is.null(ind.names) || (ind.test <- length(unique(ind.names)) != nrow(X))){
       ind.names <- rownames(X)
-      if (is.null(ind.names)){
+      if (!is.null(ind.names) & ind.test){
+        warning("duplicate labels detected for some individuals; using row names")
+      } 
+      if (is.null(ind.names) || any(duplicated(ind.names))){
+        warning("duplicate labels detected for some individuals; using generic labels")
         rownames(X) <- ind.names <- .genlab("", n)
       }
     } else {
       rownames(X) <- ind.names
     }
-    if (is.null(loc.names) | length(row.names) != ncol(X)){
+    if (is.null(loc.names) || (loc.test <- length(unique(loc.names)) != ncol(X))){
       loc.names <- colnames(X)
-      if (is.null(loc.names)){
+      if (!is.null(loc.names) & loc.test){
+        warning("duplicate labels detected for some individuals; using column names")
+      } 
+      if (is.null(loc.names) || any(duplicated(loc.names))){
+        warning("duplicate labels detected for some loci; using generic labels")
         colnames(X) <- loc.names <- .genlab("L", nloc)
       }
     } else {
