@@ -69,7 +69,7 @@ setGeneric("tab", function(x, ...) standardGeneric("tab"))
     NA.method <- match.arg(NA.method)
     # outdim <- dim(x@tab)
     ## get matrix of data
-    if(!freq){
+    if (!freq){
         out <- x@tab
     } else {
         out <- x@tab/x@ploidy
@@ -120,13 +120,19 @@ setMethod("tab", signature(x="genpop"), function(x, freq=FALSE, NA.method=c("asi
         f1 <- function(vec) return(vec/sum(vec,na.rm=TRUE))
         ## compute frequencies
         out <- apply(x@tab, 1, tapply, x@loc.fac,f1)
-        ## reshape into matrix
-        col.names <- do.call(c,lapply(out[[1]],names))
-        row.names <- names(out)
-        out <- matrix(unlist(out), byrow=TRUE, nrow=nrow(x@tab),
-                      dimnames=list(row.names, col.names))
-        ## reorder columns
-        out <- out[, colnames(x@tab), drop = FALSE]
+        if (ncol(x@tab) > 1){
+          ## reshape into matrix
+          col.names <- do.call(c,lapply(out[[1]],names))
+          row.names <- names(out)
+          out <- matrix(unlist(out), byrow=TRUE, nrow=nrow(x@tab),
+                        dimnames=list(row.names, col.names))
+          ## reorder columns
+          out <- out[, colnames(x@tab), drop = FALSE]          
+        } else {
+          out <- matrix(out, nrow = length(out), ncol = 1,
+                        dimnames = list(rownames(x@tab), colnames(x@tab)))
+        }
+
     }
 
     ## replace NAs if needed
