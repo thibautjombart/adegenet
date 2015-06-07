@@ -1,0 +1,367 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{color}
+\definecolor{blue1}{RGB}{0,102,204}
+%% \usepackage[colorlinks=true,linkcolor=blue1,citecolor=blue1,urlcolor=blue1]{hyperref}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{array}
+\usepackage[english]{babel}
+\usepackage{amsfonts}
+\usepackage{url}
+\usepackage{bm}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[affil-it]{authblk}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\beq}{\begin{equation}}
+\newcommand{\eeq}{\end{equation}}
+\newcommand{\m}[1]{\mathbf{#1}}
+\newcommand{\rcmd}[1]{\textcolor{red}{\texttt{#1}}}
+\newcommand{\code}[1]{{{\tt #1}}}
+\newcommand{\Rlogo}{\includegraphics[width=0.05\textwidth]{figs/Rlogo.pdf}}
+\newcommand{\adegenet}{\textit{adegenet}}
+\newcommand{\Adegenet}{\textit{Adegenet}}
+\newcommand{\tab}{\hspace*{1em}}
+\newcolumntype{H}{>{\setbox0=\hbox\bgroup} c<{\egroup}@{}}
+\newcommand{\cmdlink}[2]{%
+  \texttt{\hyperref[#1]{#2}}%
+}
+\newcommand{\seclink}[2]{%
+  \textsc{\hyperref[#1]{#2}}%
+}
+
+\title{Using population strata and hierarchies in \adegenet{} \Sexpr{packageDescription("adegenet", fields = "Version")}}
+
+\author[1]{Zhian N. Kamvar \thanks{\texttt{kamvarz@science.oregonstate.edu}}} 
+\author[2]{Thibaut Jombart \thanks{\texttt{tjombart@imperial.ac.uk}}}
+\affil[1]{{\footnotesize Department of Botany and Plant Pathology, Oregon State University}}
+\affil[2]{{\footnotesize MRC Centre for Outbreak Analysis and Modelling. Imperial College London}}
+
+%% \date{\today}
+\date{\today}
+
+\sloppy
+\hyphenpenalty 10000
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\selectlanguage{english}
+
+<<include=FALSE>>=
+knitr::opts_chunk$set(fig.path='figs/base-', fig.keep='high', dev='pdf', 
+                      fig.width=7, fig.height=7, tidy=FALSE, warning=FALSE, 
+                      fig.show="asis", fig.align='center', 
+                      out.width=".8\\textwidth")
+@
+
+
+\color{black}
+
+\maketitle
+
+\begin{abstract}
+
+  This vignette provides a short tutorial on the use of the \textbf{strata} slot
+  within \textsc{genind} and \textsc{genlight} objects. The slot was added 
+  in \adegenet{} version 2.0-0 from the \textit{poppr} package
+
+
+
+\end{abstract}
+
+
+\newpage
+\tableofcontents
+
+
+
+
+%===============================================================================
+% TODO: TRANSFER THIS TO ADEGENET
+%===============================================================================
+
+%-----------------------------------------------------------------------------%
+%
+%-----------------------------------------------------------------------------%
+\subsection{Population hierarchy construction \{Can you take me hier(archy)?\}}
+\label{data.manip:hier}
+
+\tab\tab in \poppr{}, the \seclink{intro:genclone}{genclone} object contains a
+slot called \texttt{hierarchy}. This slot contains a data frame used to define
+hierarchical levels of population factors describing your data. The preferred
+way of defining these hierarchical levels is to concatenate them using `\_' and
+use them to define a single population in your data before you import it into
+\poppr{}. Examples of this format can be found in figures \ref{microbov
+unmodified}, \ref{microbov modified}, and at
+\url{http://dx.doi.org/10.6084/m9.figshare.877104}.
+
+In this section, we will show you how to \seclink{data.manip:hier:define}{define}
+hierarchical levels, \seclink{data.manip:hier:view}{view} those levels to ensure
+that they are correctly defined, \seclink{data.manip:hier:manip}{manipulate} your
+hierarchical levels by adding and renaming them, and use these levels
+to \seclink{data.manip:hier:setPop}{set the population} in
+your \seclink{intro:genclone}{genclone} object using the following methods:
+
+% latex table generated in R 3.0.3 by xtable 1.7-3 package
+% Sat Mar 22 20:24:23 2014
+\begin{table}[ht]
+\centering
+\begin{tabular}{llll}
+  \hline
+ Method & Function & Input & Result\\ 
+  \hline
+ split & \cmdlink{data.manip:hier:define:split}{splitStrata} & formula & defined hierarchical levels\\
+ set & \cmdlink{data.manip:hier:define:set}{strata} & data frame & new hierarchical levels\\ 
+ get & \cmdlink{data.manip:hier:view}{strata} & formula & data frame\\ 
+ name & \cmdlink{data.manip:hier:manip:name}{nameStrata} & formula & new hierarchical level names\\ 
+ add & \cmdlink{data.manip:hier:manip:add}{addStrata} & vector or data frame & new hierarchical level\\
+   \hline
+\end{tabular}
+\end{table}
+
+
+\begin{center}
+  \fcolorbox{light-gray}{light-gray}{
+    \begin{minipage}[t]{0.8\textwidth}
+      \jala{} {\large \textsc{A note about formulas}} \revjala{}\\
+      The formulas used by genclone objects always start with a $\sim$ and 
+      are hierarchical levels are always separated by a $/$. Some examples
+      are: 
+
+      $\sim$Country/City/District 
+
+      $\sim$Field/Year
+
+      Refer to \seclink{intro:genclone:access}{Accessing hierarchies} for more
+      details on how to access hierarchies.
+    \end{minipage}
+    }
+\end{center}
+\noindent
+In the next section, we'll explore two ways of defining hierarchical levels.
+
+\subsubsection{Defining hierarchies}
+\label{data.manip:hier:define}
+
+\tab\tab As explained above, the best way to define hierarchical levels is to
+concatenate them using `\_' and set that as your population factor. We will use
+the example data set from \url{http://dx.doi.org/10.6084/m9.figshare.877104}. It
+is an AFLP data set of the root rot pathogen \textit{Aphanomyces euteiches} from
+two fields and multiple soil cores per field. First, we will follow the link and
+copy the download link from figshare.
+<<aphan_dummy_figshare, eval = FALSE>>=
+aphan <- read.genalex("http://files.figshare.com/1314228/rootrot.csv")
+aphan
+@
+<<aphan_figshare, echo = FALSE>>=
+aphan <- nameStrata(strata(agc, value = strata(agc, ~Pop/Subpop, combine = TRUE)[2]), ~Pop)
+aphan
+@
+\noindent
+The supplemental information in the data defined two hierarchical leves, yet we
+only see one here labeled `Pop'. This is how populations are automatically
+defined when importing to a \seclink{intro:genclone}{genclone} object since it
+does not know how many hierarchical levels you have defined. To define these
+levels present in the data set, we will need to split them up using the function
+\texttt{splitStrata}:
+\label{data.manip:hier:define:split}
+<<aphan_split>>=
+splitStrata(aphan) <- ~field/sample
+aphan
+@
+\noindent
+Now we have sucessfully defined our hierarchies. If you have imported your data
+in this manner, you may skip to the \seclink{data.manip:hier:setPop}{setting
+population hierarchies}, \seclink{data.manip:hier:view}{viewing hierarchies}, or
+\seclink{data.manip:hier:manip}{manipulating hierarchical levels.}
+
+\bline{}
+
+If you have imported your data with a single population and want to add
+hierarchical levels separately, you can use the function \texttt{strata}
+with a data frame containing your hierarchical levels. For this example, we will
+use the data set \texttt{H3N2}, which contains SNP data from the H3N2 virus.
+This data set holds a data frame in the the \seclink{intro:genind:other}{other
+slot} that contains many variables including country, year, and month of
+collection. We will first load the data and write that data frame to a file on
+the desktop. 
+\label{data:virus}
+<<H3N2_data_show, eval = FALSE>>=
+data(H3N2)
+write.table(other(H3N2)$x, file = "~/Desktop/virus_info.csv", row.names = FALSE)
+@
+<<H3N2_data_noshow, echo = FALSE>>=
+data(H3N2)
+virus_info <- as.data.frame(other(H3N2)$x) # extracting the data frame
+@
+\noindent
+Now we have our data and we have a separate table in a file on our desktop
+defining our hierarchical levels. Let's import those levels into R with
+\texttt{read.table} and see what they are:
+
+<<H3N2_read_table, eval = FALSE>>=
+virus_info <- read.table("~/Desktop/virus_info.csv", header = TRUE)
+names(virus_info)
+@
+<<H3N2_read_table_eval, echo = FALSE>>=
+names(virus_info)
+@
+
+From here we will convert our genind object to a genclone object and use
+\texttt{strata} to define the hierarchical levels with the table we just
+imported.
+
+\label{data.manip:hier:define:set}
+<<H3N2_strata>>=
+virus <- as.genclone(H3N2) # Converting it to a genclone object.
+strata(virus) <- virus_info # Setting the hierarchy
+virus
+@
+\noindent
+In this data, levels such as host and segment are unimportant levels because
+they are all the same. Let's say that we are only interested in year and country.
+To make things easier to view, we will set the hierarchical levels to these two
+columns:
+<<H3N2_strata_again>>=
+strata(virus) <- virus_info[c("country", "year")]
+virus
+@
+
+Notice that there are no populations defined. Now that we have the hierarchical
+levels in place, we can use it to define the population hierarchy. We will use
+the function \texttt{setPop} to define the population as year with respect to
+country:
+<<H3N2_set_country>>=
+setPop(virus) <- ~year/country
+virus
+@
+
+\subsubsection{Viewing hierarchies}
+\label{data.manip:hier:view}
+
+If you wanted to view your hierarchies to make sure that you made no spelling
+errors in your population definitions, you can extract the data frame from your
+genclone object by using the function \texttt{strata}:
+
+\begin{quote}
+Default Command:
+<<strata_command, echo = FALSE, comment = NA, size = 'normalsize'>>=
+funk <- "strata"
+print_command(funk)
+@
+\end{quote}
+\noindent
+Where \textbf{x} is the genclone object, \textbf{formula} defines the hierarchical
+levels, and \textbf{combine} indicates whether or not you want the lower levels 
+of the hierarchy combined with the higher levels. For example, in the root rot
+data above, the hierarchical levels are explicitly hierarchical and should be
+combined. Note, if you don't supply a formula argument, the data frame as it
+exists will be returned.
+
+<<aphan_hier_get>>=
+head(strata(aphan))
+head(strata(aphan, ~field/sample))
+@
+
+If the hierarchical levels are not nested, or you simply want to use this
+hierarchy for another data set, you might want to set the \textbf{combine} flag
+to \texttt{FALSE}. Let's use the virus data as an example:
+
+<<virus_get>>=
+head(strata(virus, ~year/country))
+head(strata(virus, ~year/country, combine = FALSE))
+@
+
+It will return only the levels you ask it to return:
+
+<<virus_onepop>>=
+head(strata(virus, ~country))
+@
+
+\subsubsection{Manipulating hierarchical levels}
+\label{data.manip:hier:manip}
+
+Once we have our hierarchies set in place, we want to be able to rename and add
+to them. For this example, we will revisit the \seclink{data:virus}{virus
+example} from above. We have set the population hierarchy to be based on year and
+country, but we've noticed that we left out month. And let's say that we
+accidentally overwrote the data object like this:
+<<virus_stupid>>=
+virus_info <- virus_info[["month"]]
+names(virus_info)
+@
+\noindent
+If we were saving our script the whole time, we could just go back and retrieve
+the data frame, but that defeats the purpose of this section where we imagine
+that we've recieved new information and wanted to add it to our hierarchy. If we
+want to add this to our hierarchy, we just use the function
+\texttt{addStrata} defined as thus:
+\begin{quote}
+Default Command:
+<<addStrata_command, echo = FALSE, comment = NA, size = 'normalsize'>>=
+funk <- "addStrata"
+print_command(funk)
+@
+\end{quote}
+\noindent
+We can use this function to add on a new column to the data frame.  
+\label{data.manip:hier:manip:add}
+<<virus_add_arg>>=
+addStrata(virus) <- virus_info 
+virus
+@
+\noindent
+Notice that the new hierarchical level is simply labeled as \texttt{NEW}. We
+will customize the name of the hierarchical levels with the function
+\texttt{nameStrata}. 
+\label{data.manip:hier:manip:name}
+
+<<virus_name>>=
+nameStrata(virus) <- ~country/year/month
+virus
+@
+\noindent
+Of course, perhaps a better way still would be to use a data frame:
+<<virus_add_df, eval = FALSE>>=
+addStrata(virus) <- data.frame(month = virus_info)
+@
+
+\subsubsection{Defining populations with hierarchies}
+\label{data.manip:hier:setPop}
+
+Now that we have defined the hierarchical levels in the data set, setting the
+population hierarchy allows us to group our data according to the hierarchical
+level of your choice. This is a necessary step. For this example, we will use a
+data set of \textit{Phytophthora infestans} collected from North America and
+South America.
+
+<<Pinf_setPop>>=
+data(Pinf)
+Pinf
+@
+\noindent
+Above we have two hierarchies for Continent and Country, but the
+populations only show Continent level populations. If we wanted to investigate
+each country separately, we would need to reset the population to be represented
+by Country. This can be done with the function \texttt{setPop}. This function
+utilizes the defined population hierarchies to set the population. We'll use our
+data set above to illustrate this:
+
+<<Pinf_setPop2>>=
+setPop(Pinf) <- ~Country
+Pinf # Now set by country
+@
+\noindent
+The beauty about it is the fact that it will also combine all the hierarchical
+levels you want to use. Let's see when we ask it to set the population of
+Country with respect to Continent.
+
+<<Pinf_setPop_combine>>=
+setPop(Pinf) <- ~Continent/Country
+Pinf
+@
+\noindent
+Nice!
