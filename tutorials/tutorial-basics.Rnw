@@ -138,7 +138,6 @@ install.packages("adegenet", dep=TRUE)
 We can now load the package alongside other useful packages:
 <<results="hide">>=
 library("ape")
-library("genetics")
 library("pegas")
 library("seqinr")
 library("ggplot2")

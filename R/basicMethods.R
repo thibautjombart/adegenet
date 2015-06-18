@@ -201,12 +201,7 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
 ##########################
 setMethod ("show", "genind", function(object){
   x <- object
-  cat("\n")
-  cat("   #####################\n")
-  cat("   ### Genind object ### \n")
-  cat("   #####################")
-  cat("\n- genotypes of individuals - \n")
-  cat("\nS4 class: ", as.character(class(x)))
+  cat(" /// genind object \\\\\\")
 
   cat("\n@call: ")
   print(x@call)
@@ -276,12 +271,7 @@ setMethod ("show", "genind", function(object){
 ##########################
 setMethod ("show", "genpop", function(object){
   x <- object
-  cat("\n")
-  cat("       #####################\n")
-  cat("       ### Genpop object ### \n")
-  cat("       #####################")
-  cat("\n- Alleles counts for populations - \n")
-  cat("\nS4 class: ", as.character(class(x)))
+  cat(" /// genpop object \\\\\\")
 
   cat("\n@call: ")
   print(x@call)
