@@ -207,7 +207,7 @@ gengraph.genpop <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
     res <- gengraph(D, cutoff=cutoff, ngrp=ngrp, computeAll=computeAll, plot=plot, show.graph=show.graph, col.pal=col.pal,
                     truenames=truenames, nbreaks=nbreaks, ...)
     if(truenames){
-        V(res$graph)$label <- x@pop.names
+        V(res$graph)$label <- popNames(x)
     }
 
     return(res)

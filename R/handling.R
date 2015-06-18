@@ -428,7 +428,7 @@ repool <- function(...){
     if(is.list(x[[1]])) x <- x[[1]] ## if ... is a list, keep this list for x
     if(!inherits(x,"list")) stop("x must be a list")
     if(!all(sapply(x,is.genind))) stop("x is does not contain only valid genind objects")
-    temp <- sapply(x,function(e) e$loc.names)
+    temp <- sapply(x,function(e) locNames(e))
     if(!all(table(temp)==length(x))) stop("markers are not the same for all objects")
     ## temp <- sapply(x,function(e) e$ploidy)
     ## if(length(unique(temp)) != as.integer(1)) stop("objects have different levels of ploidy")
@@ -441,9 +441,7 @@ repool <- function(...){
 
     getPop <- function(obj){
         if(is.null(obj$pop)) return(factor(rep(NA,nrow(obj$tab))))
-        pop <- obj$pop
-        levels(pop) <- obj$pop.names
-        return(pop)
+        return(pop(obj))
     }
 
     ## handle pop

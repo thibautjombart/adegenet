@@ -106,7 +106,6 @@ genind2df <- function(x, pop=NULL, sep="", usepop=TRUE, oneColPerAll = FALSE){
 
   if(is.null(pop)) {
       pop <- x@pop
-      levels(pop) <- x@pop.names
   }
 
   ## PA case ##
