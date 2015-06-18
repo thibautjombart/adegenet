@@ -208,16 +208,6 @@ setClass("genpop", contains=c("gen"))
     validation <- TRUE
 
     if(!.gen.valid(object)) return(FALSE)
-    if(length(object@pop.names) != nrow(object@tab)) {
-        message("\ninvalid length in pop.names\n")
-        validation <- FALSE
-    }
-
-    temp <- table(object@pop.names[object@pop.names!=""])
-    if(any(temp>1)) {
-        warning("\nduplicate names in pop.names:\n")
-        print(temp[temp>1])
-    }
 
      ## check ploidy
     if(length(object@ploidy) > 1 && object@ploidy < 1L){

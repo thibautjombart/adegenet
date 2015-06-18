@@ -35,23 +35,23 @@
 #' used in reguar expressions like \code{gsub}, and thus require some
 #' characters to be preceeded by double backslashes. For instance, "/" works
 #' but "|" must be coded as "\\|".
-#' 
+#'
 #' @aliases df2genind
-#' @param X a matrix or a data.frame containing allelle data only (see 
+#' @param X a matrix or a data.frame containing allelle data only (see
 #'   decription)
 #' @param sep a character string separating alleles. See details.
-#' @param ncode an optional integer giving the number of characters used for 
-#'   coding one genotype at one locus. If not provided, this is determined from 
+#' @param ncode an optional integer giving the number of characters used for
+#'   coding one genotype at one locus. If not provided, this is determined from
 #'   data.
-#' @param ind.names an optional character vector giving the individuals names; 
+#' @param ind.names an optional character vector giving the individuals names;
 #'   if NULL, taken from rownames of X.
-#' @param loc.names an optional character vector giving the markers names; if 
+#' @param loc.names an optional character vector giving the markers names; if
 #'   NULL, taken from colnames of X.
 #' @param pop an optional factor giving the population of each individual.
 #' @param NA.char a vector of character strings which are to be treated as NA
 #' @param ploidy an integer indicating the degree of ploidy of the genotypes.
-#' @param type a character string indicating the type of marker: 'codom' stands 
-#'   for 'codominant' (e.g. microstallites, allozymes); 'PA' stands for 
+#' @param type a character string indicating the type of marker: 'codom' stands
+#'   for 'codominant' (e.g. microstallites, allozymes); 'PA' stands for
 #'   'presence/absence' markers (e.g. AFLP, RAPD).
 #' @param strata an optional data frame that defines population stratifications
 #'   for your samples. This is especially useful if you have a hierarchical or
@@ -64,11 +64,11 @@
 #'
 #' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}, Zhian N. Kamvar
 #'   \email{kamvarz@@science.oregonstate.edu}
-#'   
+#'
 #' @seealso \code{\link{genind2df}}, \code{\link{import2genind}},
 #'   \code{\link{read.genetix}}, \code{\link{read.fstat}},
 #'   \code{\link{read.structure}}
-#'   
+#'
 #' @keywords manip
 #' @examples
 #'
@@ -89,8 +89,8 @@
 #'
 #' @export
 #'
-df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, 
-                      pop=NULL, NA.char="", ploidy=2, type=c("codom","PA"), 
+df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
+                      pop=NULL, NA.char="", ploidy=2, type=c("codom","PA"),
                       strata = NULL, hierarchy = NULL){
 
     ## CHECKS ##
@@ -109,11 +109,11 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     nloc <- ncol(X)
     if (length(ploidy) < n){
       if (length(ploidy) == 1){
-        ploidy <- rep(as.integer(ploidy), length=n)        
+        ploidy <- rep(as.integer(ploidy), length=n)
       } else {
         undefined <- length(ploidy)/n
-        msg <- paste0("\nPloidy is undefined for ", 
-                      undefined*100, 
+        msg <- paste0("\nPloidy is undefined for ",
+                      undefined*100,
                       "% of data.\n",
                       "This must be a single integer indicating the ploidy of",
                       "the entire data set or vector of integers the same",
@@ -128,7 +128,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
       ind.names <- rownames(X)
       if (!is.null(ind.names) & ind.test){
         warning("duplicate labels detected for some individuals; using row names")
-      } 
+      }
       if (is.null(ind.names) || any(duplicated(ind.names))){
         warning("duplicate labels detected for some individuals; using generic labels")
         rownames(X) <- ind.names <- .genlab("", n)
@@ -140,7 +140,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
       loc.names <- colnames(X)
       if (!is.null(loc.names) & loc.test){
         warning("duplicate labels detected for some individuals; using column names")
-      } 
+      }
       if (is.null(loc.names) || any(duplicated(loc.names))){
         warning("duplicate labels detected for some loci; using generic labels")
         colnames(X) <- loc.names <- .genlab("L", nloc)
@@ -190,7 +190,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
 
         prevcall <- match.call()
 
-        res <- genind(tab=X, pop=pop, prevcall=prevcall, ploidy=ploidy, 
+        res <- genind(tab=X, pop=pop, prevcall=prevcall, ploidy=ploidy,
                       type = "PA", strata = strata, hierarchy = hierarchy)
 
         return(res)
@@ -257,7 +257,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
         n.items     <- rep(1, length(X))
         locus.data  <- rep(rep(loc.names, each=nind), n.items)
         ind.data    <- rep(rep(ind.names, ncol(X)), n.items)
-        allele.data <- unlist(X)  
+        allele.data <- unlist(X)
     }
 
 
@@ -477,8 +477,8 @@ read.fstat <- function(file,quiet=FALSE){
 
     res <- df2genind(X=X,pop=pop, ploidy=2, ncode=ncode, NA.char=NA.char)
     ## beware : fstat files do not yield ind names
-    res@ind.names <- rep("",length(res@ind.names))
-    names(res@ind.names) <- rownames(res@tab)
+    ## res@ind.names <- rep("",length(res@ind.names))
+    ## names(res@ind.names) <- rownames(res@tab)
     res@call <- call
 
     if(!quiet) cat("\n...done.\n\n")

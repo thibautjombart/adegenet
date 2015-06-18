@@ -221,7 +221,7 @@ setMethod("seploc", signature(x="genpop"), function(x,truenames=TRUE,res.type=c(
         kX[[i]] <- x@tab[,i==locfac.char,drop=FALSE]
     }
 
-    names(kX) <- x@loc.names
+    names(kX) <- locNames(x)
 
     prevcall <- match.call()
     if(res.type=="genpop"){

@@ -9,70 +9,6 @@
 ############################################
 
 
-
-## ###########################
-## # Function genind2genotype
-## ###########################
-## genind2genotype <- function(x,pop=NULL,res.type=c("matrix","list")){
-
-##   if(!is.genind(x)) stop("x is not a valid genind object")
-##   if(any(ploidy(x) != 2L)) stop("not implemented for non-diploid genotypes")
-##   checkType(x)
-
-##   ## if(!require(genetics)) stop("genetics package is not required but not installed.")
-##   if(is.null(pop)) pop <- x@pop
-##   if(is.null(pop)) pop <- as.factor(rep("P1",nrow(x@tab)))
-##   res.type <- tolower(res.type[1])
-
-##   # make one table by locus from x@tab
-##   kX <- seploc(x,res.type="matrix")
-##   # kX is a list of nloc tables
-
-##   # function to recode a genotype in form "A1/A2" from frequencies
-##   recod <- function(vec,lab){
-##     if(all(is.na(vec))) return(NA)
-##     if(round(sum(vec),10) != 1) return(NA)
-##     temp <- c(which(vec==0.5),which(vec==1))
-##     if(length(temp)==0) return(NA)
-##     lab <- lab[temp]
-##     res <- paste(lab[1],lab[length(lab)],sep="/")
-##     return(res)
-##   }
-
-##   # function which converts data of a locus into a list of genotypes per population ## no longer used
-##   # f1 <- function(X){
-##   #  tapply(X,pop,function(mat) apply(mat,1,recod))
-##   #}
-
-##   # kGen is a list of nloc vectors of genotypes
-##   kGen <- lapply(1:length(kX), function(i) apply(kX[[i]],1,recod,x@all.names[[i]]))
-##   names(kGen) <- x@loc.names
-
-##   if(res.type=="list"){ # list type
-##     # each genotype is splited per population
-
-##     # correction of an error due to a change in as.genotype
-##     # error occurs in list type when a population is entierly untyped for a locus,
-##     # that is, all values are NA.
-##     res <- lapply(kGen,split,pop)
-
-##     f2 <- function(x){# x is a vector of character to be converted into genotype
-##       if(all(is.na(x))) return(NA)
-##       return(as.genotype(x))
-##     }
-##     res <- lapply(res,function(e) lapply(e,f2))
-##   } else if(res.type=="matrix"){ # matrix type
-##     res <- cbind.data.frame(kGen)
-##     res <- makeGenotypes(res,convert=1:ncol(res))
-##   } else stop("Unknown res.type requested.")
-
-##   return(res)
-## }
-
-
-
-
-
 ############################
 # Function genind2hierfstat
 ############################
@@ -104,7 +40,7 @@ genind2hierfstat <- function(x,pop=NULL){
     gen <- as.matrix(data.frame(lapply(gen, as.numeric)))
     res <- cbind(as.numeric(pop),as.data.frame(gen))
     colnames(res) <- c("pop",x@loc.names)
-    if(!any(table(x@ind.names)>1)){
+    if(!any(table(indNames(x))>1)){
         rownames(res) <- x@ind.names
     } else {
         warning("non-unique labels for individuals; using generic labels")
@@ -197,7 +133,7 @@ genind2df <- function(x, pop=NULL, sep="", usepop=TRUE, oneColPerAll = FALSE){
 
   # kGen is a list of nloc vectors of genotypes
   kGen <- lapply(1:length(kX), function(i) apply(kX[[i]],1,recod,x@all.names[[i]]))
-  names(kGen) <- x@loc.names
+  names(kGen) <- locNames(x)
 
   ## if use one column per allele
   if(oneColPerAll){

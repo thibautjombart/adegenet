@@ -88,8 +88,8 @@ setMethod("old2new", "genlight", function(object){
 
 setMethod("old2new", "genpop", function(object){
   
-  names(object@pop.names) <- NULL
-  names(object@loc.names) <- NULL
+  ## names(object@pop.names) <- NULL
+  ## names(object@loc.names) <- NULL
   
   rownames(object@tab) <- object@pop.names
   colnames(object@tab) <- unlist(lapply(object@loc.names, 
