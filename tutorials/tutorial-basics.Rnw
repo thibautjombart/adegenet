@@ -241,9 +241,11 @@ information on this topic.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{genind objects}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-These objects can be obtained by reading data files from other software,
+These objects store \textbf{gen}etic data at an \textbf{ind}ividual level, plus various meta-data
+(e.g. group membership).
+\texttt{genind} objects can be obtained by reading data files from other software,
 from a \texttt{data.frame} of genotypes, by conversion from a table of
-allelic frequencies, or even from aligned DNA or proteic sequences (see 'importing data').
+allele counts, or even from aligned DNA or proteic sequences (see 'importing data').
 Here, we introduce this class using the dataset \texttt{nancycats}, which is already stored as a
 \texttt{genind} object:
 <<genind>>=
@@ -257,25 +259,27 @@ Note that the '\texttt{\$}' is also implemented for adegenet objects,
 so that slots can be accessed as if they were components of a list.
 \\
 
-The structure of \texttt{genind} objects is described by:
-<<>>=
-getClassDef("genind")
-@
+%% The structure of \texttt{genind} objects is described by:
+%% <<>>=
+%% getClassDef("genind")
+%% @
 
-The slightly cryptic output of this function means that \texttt{genind} objects possess the following slots:
+\texttt{genind} objects possess the following slots:
 \begin{itemize}
-  \item \texttt{tab}: a matrix of relative allele frequencies (individuals in rows, alleles in columns).
-  \item \texttt{loc.names}: a vector of labels for the loci.
+  \item \texttt{tab}: a matrix of alleles counts (individuals in rows, alleles in columns).
+  \item \texttt{loc.names}: a vector of alternative labels for the loci.
   \item \texttt{loc.fac}: a factor indicating which columns in \texttt{@tab} correspond to which marker.
   \item \texttt{loc.nall}: the number of alleles in each marker.
-  \item \texttt{all.names}: a vector of labels for the alleles.
-  \item \texttt{ind.names}:  a vector of labels for the individuals.
+  \item \texttt{all.names}: a vector of alternative labels for the alleles.
+  \item \texttt{ind.names}:  a vector of alternative labels for the individuals.
   \item \texttt{pop}: a factor storing group membership of the individuals.
-  \item \texttt{pop.names}: labels used for populations.
-  \item \texttt{ploidy}: a single integer indicating the ploidy of the individuals.
+  \item \texttt{pop.names}: a vector of alternative labels for populations.
+  \item \texttt{ploidy}: a vector of integer indicating the ploidy of each individual.
   \item \texttt{type}: a character string indicating whether the marker is codominant
     (\texttt{codom}) or presence/absence (\texttt{PA}).
   \item \texttt{other}: a list storing optional information.
+  \item \texttt{strata}: an optional data.frame storing hierarchical structure of individuals.
+  \item \texttt{hierarchy}: an optional formula defining the hierarchical structure of individuals.
   \item \texttt{call}: the matched call, i.e. command used to create the object.
 \end{itemize}
 Slots can be accessed using '\texttt{@}' or '\texttt{\$}', although in some cases it is more
@@ -283,30 +287,22 @@ convenient to use accessors (i.e. functions which return specific contents of th
 accessing the slot directly (see section 'Using accessors').
 \\
 
-The main slot in \texttt{genind} is the table of allelic frequencies of individuals (in rows) for
-every alleles in every loci stored in \texttt{@tab}.
-Being frequencies, data sum to one per locus, giving the score of 1 for an homozygote and 0.5 for a diploid heterozygote.
+The main slot of a \texttt{genind} is the table of allelic counts \texttt{@tab}, with individuals in rows and
+alleles in columns.
+Note that as of \textit{adegenet} 2.0.0, this table is no storing data as relative frequencies. These can
+still be obtained using the accessor '\texttt{tab}'.
+\\
+
 The particular case of presence/absence data is described in a
 dedicated section (see 'Handling presence/absence data').
 For instance:
 <<>>=
-nancycats$tab[10:18,1:10]
+nancycats[10:18, loc="fca8"]@tab
 @
-Individual '010' is an homozygote for the allele 09 at locus 1, while '018' is an heterozygote with alleles 06 and 09.
-As user-defined labels are not always valid (for instance, they can
-be duplicated), generic labels are used for individuals, markers, alleles and eventually population.
-The true names are stored in the object (components \texttt{\$[...].names} where \texttt{\$[...]} can be \texttt{ind}, \texttt{loc}, \texttt{all} or \texttt{pop}).
-For instance :
-<<>>=
-nancycats$loc.names
-@
-gives the true marker names, and
-<<>>=
-nancycats$all.names[[3]]
-@
-gives the allele names for marker 3.
-\\
-
+Individual 'N224' is an homozygote for the allele 135 at the locus 'fca8', while N141'' is an heterozygote with alleles 129/133.
+Individual, loci and alleles can have alternative labels (especially when storing long labels which
+would make the table @tab unreadable), in which case they are stored in the slots @ind.names,
+@loc.names, @all.names.
 The slot 'ploidy' is an integer giving the level of ploidy
 of the considered organisms (defaults to 2).
 This parameter is essential, in particular when switching from

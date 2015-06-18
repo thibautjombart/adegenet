@@ -46,12 +46,9 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
     if (missing(tab)){
         .Object@tab       <- matrix(0L, ncol = 0, nrow = 0)
         .Object@pop       <- NULL
-        .Object@pop.names <- NULL
         .Object@strata    <- NULL
         .Object@hierarchy <- NULL
         .Object@call      <- NULL
-        .Object@ind.names <- character(0)
-        .Object@loc.names <- character(0)
         .Object@loc.nall  <- integer(0)
         .Object@loc.fac   <- NULL
         .Object@ploidy    <- integer(0)
@@ -141,8 +138,6 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
 
     ## Ideally I should use an 'initialize' method here
     out@tab       <- tab
-    out@ind.names <- ind.names
-    out@loc.names <- loc.names
     out@loc.nall  <- loc.nall
     out@loc.fac   <- loc.fac
     out@all.names <- all.names
@@ -155,7 +150,6 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
         # convert pop to a factor if it is not
         if(!is.factor(pop)) {pop <- factor(pop)}
         out@pop <- pop
-        out@pop.names <- levels(pop)
     }
 
     ## ploidy
@@ -228,9 +222,7 @@ setMethod("initialize", "genpop", function(.Object, tab, prevcall=NULL, ploidy=2
     out <- .Object
     if (missing(tab)){
         .Object@tab       <- matrix(0L, ncol = 0, nrow = 0)
-        .Object@pop.names <- character(0)
         .Object@call      <- NULL
-        .Object@loc.names <- character(0)
         .Object@loc.nall  <- integer(0)
         .Object@loc.fac   <- NULL
         .Object@ploidy    <- integer(0)
@@ -300,8 +292,6 @@ setMethod("initialize", "genpop", function(.Object, tab, prevcall=NULL, ploidy=2
 
     ## build final output
     out@tab <- tab
-    out@pop.names <- pop.names
-    out@loc.names <- loc.names
     out@loc.nall <- loc.nall
     out@loc.fac <- loc.fac
     out@all.names <- all.names

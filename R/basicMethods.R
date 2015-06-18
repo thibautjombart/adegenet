@@ -96,20 +96,13 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
     
     # Treat sample and strata
     x@ploidy    <- x@ploidy[i]
-    x@ind.names <- x@ind.names[i]
     x@hierarchy <- x@hierarchy
-    x@pop.names <- levels(pop)
     x@strata    <- hier[i, , drop = FALSE]
 
     if (x@type == "codom"){
       # Treat locus items
       x <- .drop_allelels(x, j)
-      x@loc.names <- x@loc.names[x@loc.names %in% levels(x@loc.fac)]      
-    } else { # PA case
-      x@loc.names <- x@loc.names[j]
-    }
-
-
+    } 
     return(x)
 })
 
@@ -186,11 +179,9 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
     
     # Treat populations
     x@ploidy    <- x@ploidy
-    x@pop.names <- x@pop.names[i]
 
     # Treat locus items
     x <- .drop_allelels(x, j)
-    x@loc.names <- x@loc.names[x@loc.names %in% levels(x@loc.fac)]
 
     return(x)
 })
@@ -205,14 +196,10 @@ setMethod ("show", "genind", function(object){
 
   cat("\n@call: ")
   print(x@call)
-
   p <- ncol(x@tab)
   len <- 7
 
-  cat("\n@tab: ", nrow(x@tab), "x", ncol(x@tab), "matrix of genotypes\n" )
-
-  cat("\n@ind.names: vector of ", length(x@ind.names), "individual names")
-  cat("\n@loc.names: vector of ", length(x@loc.names), "locus names")
+  cat("@tab: ", nrow(x@tab), "x", ncol(x@tab), "matrix of allele counts" )
 
   if(!is.null(x@loc.nall)){
       cat("\n@loc.nall: number of alleles per locus")
@@ -250,7 +237,6 @@ setMethod ("show", "genind", function(object){
   }
   cat("\n@hierarchy: ", ifelse(is.null(x@hierarchy), "- empty -", paste(x@hierarchy, collapse = "")))
   cat("\n@pop: ", ifelse(is.null(x@pop), "- empty -", "factor giving the population of each individual"))
-  cat("\n@pop.names: ", ifelse(is.null(x@pop.names), "- empty -", "character giving the name of each population"))
   cat("\n\n@other: ")
   if(!is.null(x@other)){
     cat("a list containing: ")
@@ -277,11 +263,7 @@ setMethod ("show", "genpop", function(object){
   print(x@call)
 
   p <- ncol(x@tab)
-
-  cat("\n@tab: ", nrow(x@tab), "x", ncol(x@tab), "matrix of alleles counts\n" )
-
-  cat("\n@pop.names: vector of ", length(x@pop.names), "population names")
-  cat("\n@loc.names: vector of ", length(x@loc.names), "locus names")
+  cat("@tab: ", nrow(x@tab), "x", ncol(x@tab), "matrix of alleles counts" )
 
   if(!is.null(x@loc.nall)){
       cat("\n@loc.nall: number of alleles per locus")
@@ -334,8 +316,6 @@ setMethod ("summary", signature(object="genind"), function(object, ...){
 
   if(is.null(x@pop)){
     x@pop <- factor(rep(1,nrow(x@tab)))
-    x@pop.names <- ""
-    names(x@pop.names) <- "P1"
   }
 
   ## BUILD THE OUTPUT ##
@@ -345,7 +325,7 @@ setMethod ("summary", signature(object="genind"), function(object, ...){
   res$N <- nrow(x@tab)
 
   res$pop.eff <- as.numeric(table(x@pop))
-  names(res$pop.eff) <- x@pop.names
+  names(res$pop.eff) <- levels(x@pop)
 
   ## PA case ##
   if(x@type=="PA"){
