@@ -267,24 +267,20 @@ so that slots can be accessed as if they were components of a list.
 \texttt{genind} objects possess the following slots:
 \begin{itemize}
   \item \texttt{tab}: a matrix of alleles counts (individuals in rows, alleles in columns).
-  \item \texttt{loc.names}: a vector of alternative labels for the loci.
   \item \texttt{loc.fac}: a factor indicating which columns in \texttt{@tab} correspond to which marker.
   \item \texttt{loc.nall}: the number of alleles in each marker.
-  \item \texttt{all.names}: a vector of alternative labels for the alleles.
-  \item \texttt{ind.names}:  a vector of alternative labels for the individuals.
+  \item \texttt{all.names}: a list of allele names for each locus.
   \item \texttt{pop}: a factor storing group membership of the individuals.
-  \item \texttt{pop.names}: a vector of alternative labels for populations.
   \item \texttt{ploidy}: a vector of integer indicating the ploidy of each individual.
   \item \texttt{type}: a character string indicating whether the marker is codominant
     (\texttt{codom}) or presence/absence (\texttt{PA}).
+  \item \texttt{call}: the matched call, i.e. command used to create the object.
   \item \texttt{other}: a list storing optional information.
   \item \texttt{strata}: an optional data.frame storing hierarchical structure of individuals.
   \item \texttt{hierarchy}: an optional formula defining the hierarchical structure of individuals.
-  \item \texttt{call}: the matched call, i.e. command used to create the object.
 \end{itemize}
-Slots can be accessed using '\texttt{@}' or '\texttt{\$}', although in some cases it is more
-convenient to use accessors (i.e. functions which return specific contents of the object) than
-accessing the slot directly (see section 'Using accessors').
+Slots can be accessed using '\texttt{@}' or '\texttt{\$}', although it is recommended to use
+accessors to retrieve and change slot values (see section 'Using accessors').
 \\
 
 The main slot of a \texttt{genind} is the table of allelic counts \texttt{@tab}, with individuals in rows and
@@ -300,9 +296,6 @@ For instance:
 nancycats[10:18, loc="fca8"]@tab
 @
 Individual 'N224' is an homozygote for the allele 135 at the locus 'fca8', while N141'' is an heterozygote with alleles 129/133.
-Individual, loci and alleles can have alternative labels (especially when storing long labels which
-would make the table @tab unreadable), in which case they are stored in the slots @ind.names,
-@loc.names, @all.names.
 The slot 'ploidy' is an integer giving the level of ploidy
 of the considered organisms (defaults to 2).
 This parameter is essential, in particular when switching from
