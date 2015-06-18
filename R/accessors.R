@@ -9,13 +9,22 @@ setGeneric("nLoc", function(x,...){
 
 
 setMethod("nLoc","genind", function(x,...){
-    return(length(levels(x@loc.fac)))
+  if (x@type == "PA"){
+    return(ncol(x@tab))
+  } else {
+    return(length(levels(x@loc.fac)))      
+  }
 })
 
 
 
 setMethod("nLoc","genpop", function(x,...){
-    return(length(levels(x@loc.fac)))
+    if (x@type == "PA"){
+      return(ncol(x@tab))
+    } else {
+      return(length(levels(x@loc.fac)))      
+    }
+
 })
 
 
@@ -113,7 +122,7 @@ setGeneric("locNames<-", function(x, value) {
 
 
 setMethod("locNames","genind", function(x, withAlleles=FALSE, ...){
-    if(withAlleles){
+    if (withAlleles){
         res <- colnames(x@tab)
     } else {
         res <- unique(sub("[.][^.]*$","",colnames(x@tab)))
