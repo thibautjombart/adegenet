@@ -63,7 +63,7 @@
 }
 \definecolor{light-gray}{gray}{0.97}
 
-\title{Using population strata and hierarchies in \adegenet{} \Sexpr{packageDescription("adegenet", fields = "Version")}}
+\title{Using population strata in \adegenet{} \Sexpr{packageDescription("adegenet", fields = "Version")}}
 
 \author[1]{Zhian N. Kamvar \thanks{\texttt{kamvarz@science.oregonstate.edu}}} 
 \author[2]{Thibaut Jombart \thanks{\texttt{tjombart@imperial.ac.uk}}}
@@ -98,11 +98,11 @@ knitr::opts_chunk$set(fig.path='figs/base-', fig.keep='high', dev='pdf',
 
   This vignette provides a short tutorial on the use of the \textbf{strata} slot
   within \textsc{genind} and \textsc{genlight} objects. The slot was added in
-  \adegenet{} version 2.0-0 from the \textit{poppr} package. Sampling schemes
-  are often not constrained to simply one population factor. They can be
-  stratified over years, treatments, and geographic locations. The
-  \textbf{strata} slot provides a way to store and combine any population strata
-  related to your data.
+  \adegenet{} version 2.0-0 from the \textit{poppr} package
+  \cite{kamvar2015novel}. Sampling schemes are often not constrained to simply
+  one population factor. They can be stratified over years, treatments, and
+  geographic locations. The \textbf{strata} slot provides a way to store and
+  combine any population strata related to your data.
 
 \end{abstract}
 
@@ -113,7 +113,7 @@ knitr::opts_chunk$set(fig.path='figs/base-', fig.keep='high', dev='pdf',
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Introduction to strata \{Are you stratified?\}}
+\section{Introduction to strata}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -146,7 +146,7 @@ your \textsc{genind} and \textsc{genlight} objects using the following methods:
  Method & Function & Input & Result\\ 
   \hline
  split & \cmdlink{strata:define:split}{splitStrata} & formula & defined hierarchical levels\\
- set & \cmdlink{strata:define:set}{strata} & data frame & new hierarchical levels\\ 
+ set & \cmdlink{strata:define:df}{strata} & data frame & new hierarchical levels\\ 
  get & \cmdlink{strata:view}{strata} & formula & data frame\\ 
  name & \cmdlink{strata:manip:name}{nameStrata} & formula & new hierarchical level names\\ 
  add & \cmdlink{strata:manip:add}{addStrata} & vector or data frame & new hierarchical level\\
@@ -174,7 +174,7 @@ your \textsc{genind} and \textsc{genlight} objects using the following methods:
 In the next section, we'll explore two ways of defining population strata in your
 \textsc{genind} and \textsc{genlight} objects.
 
-\subsection{Defining strata}
+\section{Defining strata}
 \label{strata:define}
 
 In this section, we will give examples of two ways to define a population
@@ -190,7 +190,7 @@ microbov
 lapply(other(microbov), summary) # Showing counts of each factor
 @
 
-\subsubsection{Using a data frame}
+\subsection{Using a data frame}
 \label{strata:define:df}
 
 \tab\tab By default, the \textbf{strata} slot in a \textsc{genind} object is 
@@ -214,30 +214,52 @@ microbov
 We can now see that there are three strata defined in the \texttt{microbov}
 genind object.
 
-\subsubsection{Using your input file}
+\subsection{Using \texttt{df2genind}}
+\label{strata:define:df2genind}
+
+If you wanted to input strata from a file, you can use the field in the function
+\texttt{df2genind}. Let's use our microbov data set as an example. For this, we 
+need 2 data frames: one that contains the genetic information and one that 
+contains the strata.
+
+<<microbov_genind2df>>=
+micdf <- genind2df(microbov, sep = "/") # Convert to a data frame
+micdf[1:6, 1:6] # genetic data
+head(strata_df) # strata
+@
+
+Now that we have our data frames, we can import them using \texttt{df2genind}:
+
+<<microbof_df2genind_strata>>=
+newmic <- df2genind(micdf[-1], sep = "/", pop = micdf$pop, strata = strata_df)
+newmic
+@
+
+\subsection{Using an input file}
 \label{strata:define:combine}
 
-As explained in \ref{strata}, one useful way to define strata for your data is
-to concatenate them using `\_' and set that as your population factor in your
-original input file. This allows you to carry your strata with the genetic data
-even when it's not in R.
+As explained in \cmdlink{strata}{Introduction to strata}, one useful way to
+define strata for your data is to concatenate them using `\_' and set that as
+your population factor in your original input file. This allows you to carry
+your strata with the genetic data even when it's not in R.
 
 To demonstrate this, we will use the \texttt{microbov} data and import it using
 \texttt{df2genind}. Note that the code immediately following is simply to set up
 the data for the example. Normally your data would be in a text file. You do not
 need to understand the following code.
 
-<<microbov_genind2df>>=
-micdf <- genind2df(microbov, sep = "/") # Convert to a data frame
-micdf[1:6, 1:6]                       # Check that the data is correct
+<<microbov_genind2df_combine>>=
 strata_comb <- do.call("paste", c(setNames(strata_df, NULL), sep = "_"))
-head(strata_comb) # Combined strata
+head(strata_comb)        # Combined strata
 micdf$pop <- strata_comb # replace the population with the combined strata.
 micdf[1:6, 1:6]
 @
 
-When we import our data, we have the population factor in the first column and
-the genotypes in the other columns. We can import our data this way:
+We are using a data frame as an example, so our input file would look a bit
+different if we were using a different file format like \textsc{Fstat}, but the
+basic idea is the same. When we import our data, we have the population factor
+in the first column and the genotypes in the other columns. We can import our
+data this way:
 
 <<microdf_import>>=
 mbov_from_df <- df2genind(micdf[-1], sep = "/", pop = micdf$pop)
@@ -251,15 +273,16 @@ strata(mbov_from_df) <- data.frame(pop = pop(mbov_from_df))
 mbov_from_df
 @
 
-We know that we have all of our strata combined into one level. We can split them
-by using the command \texttt{splitStrata}.
+We know that we have all of our strata combined into one level. We can split
+them by using the command \texttt{splitStrata}. \label{strata:define:split}
 
 <<microdf_split_strata>>=
 splitStrata(mbov_from_df) <- ~Country/Breed/Species
 mbov_from_df
 @
 
-And now we have our stratifications.
+And now we have our stratifications. 
+
 
 % We will use
 % the example data set from \url{http://dx.doi.org/10.6084/m9.figshare.877104}. It
@@ -352,12 +375,33 @@ And now we have our stratifications.
 % virus
 % @
 
-\subsection{Viewing strata}
+\section{Viewing strata}
 \label{strata:view}
 
-% If you wanted to view your strata to make sure that you made no spelling
-% errors in your population definitions, you can extract the data frame from your
-% genind object by using the function \texttt{strata}:
+
+If you wanted to view your strata to make sure that you made no spelling errors
+in your population definitions, you can extract the data frame from your genind
+object by using the function \texttt{strata}: Note, I'm wrapping the command in
+\texttt{head} to prevent all 704 rows from printing:
+
+<<microdf_strata_show>>=
+# Show the whole strata
+head(strata(mbov_from_df)) 
+@
+
+You can also hierarchically combine specific levels of strata by using a formula
+inside the function:
+
+<<microdf_strata_show_select>>=
+# Show only country and breed, hierarchically
+head(strata(mbov_from_df, ~Country/Breed))
+@
+
+If you don't want to combine the strata hierarchically, you can set \texttt{combine = FALSE}.
+<<microdf_strata_nocombine>>=
+head(strata(mbov_from_df, ~Country/Breed, combine = FALSE)) 
+@
+
 
 % \begin{quote}
 % Default Command:
@@ -394,9 +438,91 @@ And now we have our stratifications.
 % head(strata(virus, ~country))
 % @
 
-\subsection{Manipulating hierarchical levels}
+\section{Defining populations with strata}
+\label{strata:setPop}
+
+The function \texttt{setPop} will eventually be your best friend. You can change
+the defined population simply by using a hierarchical formula. 
+
+<<microsetpop>>=
+popNames(microbov) # by breed
+setPop(microbov) <- ~coun/spe
+popNames(microbov) # by country and species
+setPop(microbov) <- ~breed
+popNames(microbov) # back to breed
+@
+
+% Now that we have defined the hierarchical levels in the data set, setting the
+% population hierarchy allows us to group our data according to the hierarchical
+% level of your choice. This is a necessary step. For this example, we will use a
+% data set of \textit{Phytophthora infestans} collected from North America and
+% South America.
+
+% <<Pinf_setPop>>=
+% data(Pinf)
+% Pinf
+% @
+% \noindent
+% Above we have two strata for Continent and Country, but the
+% populations only show Continent level populations. If we wanted to investigate
+% each country separately, we would need to reset the population to be represented
+% by Country. This can be done with the function \texttt{setPop}. This function
+% utilizes the defined population strata to set the population. We'll use our
+% data set above to illustrate this:
+
+% <<Pinf_setPop2>>=
+% setPop(Pinf) <- ~Country
+% Pinf # Now set by country
+% @
+% \noindent
+% The beauty about it is the fact that it will also combine all the hierarchical
+% levels you want to use. Let's see when we ask it to set the population of
+% Country with respect to Continent.
+
+% <<Pinf_setPop_combine>>=
+% setPop(Pinf) <- ~Continent/Country
+% Pinf
+% @
+% \noindent
+% Nice!
+
+
+
+\section{Manipulating strata}
 \label{strata:manip}
 
+You can also add and rename strata.
+
+\subsection{Adding levels}
+\label{strata:manip:add}
+
+If you obtain a new stratification in your data, or want to stratify it by some
+new genetic characteristic, you can add a new level to your existing strata with
+the function \texttt{addStrata}.
+
+<<add_strata>>=
+microbov # Has three strata
+
+# Creating dummy strata
+newstrat <- sample(paste("P", 1:2), 704, replace = TRUE)
+
+addStrata(microbov) <- data.frame(dummy = newstrat)
+microbov
+@
+
+Note that you can add any number of strata by using a data frame. 
+
+\subsection{Naming levels}
+\label{strata:manip:name}
+
+Sometimes, the names of your strata are not what you want. You can rename the
+strata using the function \texttt{nameStrata}:
+
+<<name_strata>>=
+microbov # names are coun breed spe dummy
+nameStrata(microbov) <- ~Country/Breed/Species/Dummy
+microbov
+@
 % Once we have our strata set in place, we want to be able to rename and add
 % to them. For this example, we will revisit the \seclink{data:virus}{virus
 % example} from above. We have set the population hierarchy to be based on year and
@@ -442,42 +568,6 @@ And now we have our stratifications.
 % addStrata(virus) <- data.frame(month = virus_info)
 % @
 
-\subsection{Defining populations with strata}
-\label{strata:setPop}
-
-% Now that we have defined the hierarchical levels in the data set, setting the
-% population hierarchy allows us to group our data according to the hierarchical
-% level of your choice. This is a necessary step. For this example, we will use a
-% data set of \textit{Phytophthora infestans} collected from North America and
-% South America.
-
-% <<Pinf_setPop>>=
-% data(Pinf)
-% Pinf
-% @
-% \noindent
-% Above we have two strata for Continent and Country, but the
-% populations only show Continent level populations. If we wanted to investigate
-% each country separately, we would need to reset the population to be represented
-% by Country. This can be done with the function \texttt{setPop}. This function
-% utilizes the defined population strata to set the population. We'll use our
-% data set above to illustrate this:
-
-% <<Pinf_setPop2>>=
-% setPop(Pinf) <- ~Country
-% Pinf # Now set by country
-% @
-% \noindent
-% The beauty about it is the fact that it will also combine all the hierarchical
-% levels you want to use. Let's see when we ask it to set the population of
-% Country with respect to Continent.
-
-% <<Pinf_setPop_combine>>=
-% setPop(Pinf) <- ~Continent/Country
-% Pinf
-% @
-% \noindent
-% Nice!
 
 \newpage
 
