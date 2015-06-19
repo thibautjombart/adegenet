@@ -88,7 +88,7 @@ pairwise.fst <- function(x, pop=NULL, res.type=c("dist","matrix"), truenames=TRU
 
     if(res.type=="matrix"){
         res <- as.matrix(res)
-        lab <- x@pop.names
+        lab <- popNames(x)
 
         colnames(res) <- rownames(res) <- lab
     }

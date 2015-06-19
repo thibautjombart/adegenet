@@ -1,16 +1,19 @@
 ########################################################################
-# adegenet classes definitions. All classes are S4.
-#
-# Thibaut Jombart, November 2007
-# t.jombart@imperial.ac.uk
+## adegenet classes definitions. All classes are S4.
+##
+## Initial development: Thibaut Jombart, November 2007
+##
+## Major reform for adegenet 2.0.0 (March-August 2015)
+##
+## t.jombart@imperial.ac.uk
 ########################################################################
 
 ###############################
 # Two classes of R object are
 # defined :
 # gen - common part to genind and genpop
-# genind - genotypes of individuals
-# genpop - allelic frequencies of populations
+# genind - allele counts for individuals
+# genpop - allele counts for populations
 ###############################
 
 
@@ -52,7 +55,7 @@ setClassUnion("formOrNULL", c("formula", "NULL"))
   # this function tests only the consistency
   # of the length of each component
   p <- ncol(object@tab)
-  k <- length(unique(object@loc.names))
+  k <- length(levels(object@loc.fac))
 
 
   if(!is.null(object@loc.fac)){
@@ -74,12 +77,6 @@ setClassUnion("formOrNULL", c("formula", "NULL"))
       }
   }
 
-  temp <- table(object@loc.names[object@loc.names!=""])
-  if(any(temp>1)) {
-      warning("\nduplicate names in loc.names:\n")
-      print(temp[temp>1])
-  }
-
   if(!is.null(object@all.names)){
       if(length(unlist(object@all.names)) != p) {
           cat("\ninvalid length in all.names\n")
@@ -93,16 +90,24 @@ setClassUnion("formOrNULL", c("formula", "NULL"))
 
 
 setClass("gen", representation(tab = "matrix",
-                               loc.names = "character",
                                loc.fac = "factorOrNULL",
                                loc.nall = "intOrNum",
                                all.names = "listOrNULL",
+                               ploidy = "integer",
+                               type = "character",
+                               other = "listOrNULL",
                                call = "callOrNULL",
                                "VIRTUAL"),
-         prototype(tab=matrix(0L, ncol=0,nrow=0), loc.nall=integer(0), call=NULL))
+         prototype(tab=matrix(0L, ncol=0,nrow=0),
+                   loc.fac=NULL,
+                   loc.nall=integer(0),
+                   all.names=NULL,
+                   ploidy=integer(0),
+                   type=character(0),
+                   other=NULL,
+                   call=NULL))
 
 setValidity("gen", .gen.valid)
-
 
 
 
@@ -110,13 +115,11 @@ setValidity("gen", .gen.valid)
 ########################
 # virtual class indInfo
 ########################
-setClass("indInfo", representation(ind.names = "character",
-                                   pop = "factorOrNULL",
-                                   pop.names = "charOrNULL",
-                                   ploidy = "integer",
-                                   type = "character",
-                                   other = "listOrNULL", "VIRTUAL"),
-         prototype(pop=NULL, pop.names = NULL, type = "codom", ploidy = as.integer(2), other = NULL))
+setClass("indInfo", representation(pop = "factorOrNULL",
+                                   strata = "dfOrNULL",
+                                   hierarchy = "formOrNULL",
+                                   "VIRTUAL"),
+         prototype(pop=NULL, stata=NULL, hierarchy=NULL))
 
 
 
@@ -125,21 +128,13 @@ setClass("indInfo", representation(ind.names = "character",
 ###############
 # Class genind
 ###############
+
+setClass("genind", contains=c("gen", "indInfo"))
+
 .genind.valid <- function(object){
 
     validation <- TRUE
     if(!.gen.valid(object)) return(FALSE)
-
-    if(length(object@ind.names) != nrow(object@tab)) {
-        message("\ninvalid length in ind.names\n")
-        validation <- FALSE
-    }
-
-    temp <- table(object@ind.names[object@ind.names!=""])
-    if(any(temp>1)) {
-        warning("\nduplicate names in ind.names:\n")
-        print(temp[temp>1])
-    }
 
     if(typeof(object@tab)!="integer"){
         warning("@tab does not contain integers; as of adegenet_2.0-0, numeric values are no longer used")
@@ -153,22 +148,6 @@ setClass("indInfo", representation(ind.names = "character",
         if(length(object@pop) != nrow(object@tab)) {
             message("\npop is given but has invalid length\n")
             validation <- FALSE
-        }
-
-        if(is.null(object@pop.names)) {
-            message("\npop is provided without pop.names")
-        }
-
-
-        if(length(object@pop.names) != length(levels(object@pop))) {
-            message("\npop.names has invalid length\n")
-            validation <- FALSE
-        }
-
-        temp <- table(object@pop.names[object@pop.names!=""])
-        if(any(temp>1)) {
-            warning("\nduplicate names in pop.names:\n")
-            print(temp[temp>1])
         }
 
     } # end check pop
@@ -196,7 +175,7 @@ setClass("indInfo", representation(ind.names = "character",
         message("\nploidy inferior to 1\n")
         validation <- FALSE
     }
-    if(length(object@ploidy)!=nInd(object)){
+    if(length(object@ploidy)!= nrow(object@tab)){
         warning("as of adegenet_2.0-0, @ploidy should contain one value per individual")
     }
 
@@ -210,8 +189,6 @@ setClass("indInfo", representation(ind.names = "character",
     return(validation)
 } #end .genind.valid
 
-setClass("genind", contains=c("gen", "indInfo"), 
-          representation = representation(strata = "dfOrNULL", hierarchy = "formOrNULL"))
 setValidity("genind", .genind.valid)
 
 
@@ -219,9 +196,7 @@ setValidity("genind", .genind.valid)
 ########################
 # virtual class popInfo
 ########################
-setClass("popInfo", representation(pop.names = "character", ploidy = "integer",
-                                   type = "character", other = "listOrNULL", "VIRTUAL"),
-         prototype(type = "codom", ploidy = as.integer(2), other = NULL))
+setClass("genpop", contains=c("gen"))
 
 
 
@@ -233,16 +208,6 @@ setClass("popInfo", representation(pop.names = "character", ploidy = "integer",
     validation <- TRUE
 
     if(!.gen.valid(object)) return(FALSE)
-    if(length(object@pop.names) != nrow(object@tab)) {
-        message("\ninvalid length in pop.names\n")
-        validation <- FALSE
-    }
-
-    temp <- table(object@pop.names[object@pop.names!=""])
-    if(any(temp>1)) {
-        warning("\nduplicate names in pop.names:\n")
-        print(temp[temp>1])
-    }
 
      ## check ploidy
     if(length(object@ploidy) > 1 && object@ploidy < 1L){
@@ -259,7 +224,6 @@ setClass("popInfo", representation(pop.names = "character", ploidy = "integer",
     return(validation)
 } #end .genpop.valid
 
-setClass("genpop", contains=c("gen", "popInfo"))
 setValidity("genpop", .genpop.valid)
 
 

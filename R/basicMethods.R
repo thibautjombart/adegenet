@@ -60,7 +60,7 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
         tab    <- tab[, j, ..., drop=FALSE]
       } else {
         tab <- tab[i, j, ..., drop=FALSE]
-      }      
+      }
     } else { # PA case
       tab <- tab[i, j, ..., drop = FALSE]
     }
@@ -93,23 +93,16 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
     x@pop    <- pop
     x@call   <- prevcall
     x@type   <- x@type
-    
+
     # Treat sample and strata
     x@ploidy    <- x@ploidy[i]
-    x@ind.names <- x@ind.names[i]
     x@hierarchy <- x@hierarchy
-    x@pop.names <- levels(pop)
     x@strata    <- hier[i, , drop = FALSE]
 
     if (x@type == "codom"){
       # Treat locus items
       x <- .drop_allelels(x, j)
-      x@loc.names <- x@loc.names[x@loc.names %in% levels(x@loc.fac)]      
-    } else { # PA case
-      x@loc.names <- x@loc.names[j]
     }
-
-
     return(x)
 })
 
@@ -183,14 +176,12 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
     x@tab    <- tab
     x@call   <- prevcall
     x@type   <- x@type
-    
+
     # Treat populations
     x@ploidy    <- x@ploidy
-    x@pop.names <- x@pop.names[i]
 
     # Treat locus items
     x <- .drop_allelels(x, j)
-    x@loc.names <- x@loc.names[x@loc.names %in% levels(x@loc.fac)]
 
     return(x)
 })
@@ -201,47 +192,43 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
 ##########################
 setMethod ("show", "genind", function(object){
   x <- object
-  cat("\n")
-  cat("   #####################\n")
-  cat("   ### Genind object ### \n")
-  cat("   #####################")
-  cat("\n- genotypes of individuals - \n")
-  cat("\nS4 class: ", as.character(class(x)))
+  cat("/// genind object \\\\\\")
 
-  cat("\n@call: ")
-  print(x@call)
-
+  cat("\n\n // Basic content")
   p <- ncol(x@tab)
   len <- 7
 
-  cat("\n@tab: ", nrow(x@tab), "x", ncol(x@tab), "matrix of genotypes\n" )
-
-  cat("\n@ind.names: vector of ", length(x@ind.names), "individual names")
-  cat("\n@loc.names: vector of ", length(x@loc.names), "locus names")
+  cat("\n   @tab: ", nrow(x@tab), "x", ncol(x@tab), "matrix of allele counts" )
 
   if(!is.null(x@loc.nall)){
-      cat("\n@loc.nall: number of alleles per locus")
+      alleletxt <- paste("(range: ", paste(range(x@loc.nall), collapse="-"), ")", sep="")
+      cat("\n   @loc.nall: number of alleles per locus", alleletxt)
   } else {
-      cat("\n@loc.nall: NULL")
+      cat("\n   @loc.nall: NULL")
   }
 
   if(!is.null(x@loc.fac)){
-      cat("\n@loc.fac: locus factor for the ", ncol(x@tab), "columns of @tab")
+      cat("\n   @loc.fac: locus factor for the", ncol(x@tab), "columns of @tab")
   } else {
-      cat("\n@loc.fac: NULL")
+      cat("\n   @loc.fac: NULL")
   }
 
   if(!is.null(x@all.names)){
-      cat("\n@all.names: list of ", length(x@all.names), "components yielding allele names for each locus")
+      cat("\n   @all.names: list of allele names for each locus")
   } else {
-      cat("\n@all.names: NULL")
+      cat("\n   @all.names: NULL")
   }
 
-  cat("\n@ploidy: ", head(x@ploidy))
-  cat("\n@type: ",x@type)
+  ploidytxt <- paste("(range: ", paste(range(x@ploidy), collapse="-"), ")", sep="")
+  cat("\n   @ploidy: ploidy of each individual ", ploidytxt)
+  cat("\n   @type: ",x@type)
+  cat("\n   @call: ")
+  print(x@call)
 
-  cat("\n\nOptional contents: ")
-  cat("\n@strata: ")
+  cat("\n // Optional content")
+  poptxt <- paste("(group size range: ", paste(range(table(x@pop)), collapse="-"), ")", sep="")
+  cat("\n   @pop: ", ifelse(is.null(x@pop), "- empty -", paste("population of each individual", poptxt)))
+  cat("\n   @strata: ")
   if (is.null(x@strata)){
     cat("- empty -")
   } else {
@@ -253,10 +240,8 @@ setMethod ("show", "genind", function(object){
     }
     cat("a data frame with", length(x@strata), "columns (", levs, ")")
   }
-  cat("\n@hierarchy: ", ifelse(is.null(x@hierarchy), "- empty -", paste(x@hierarchy, collapse = "")))
-  cat("\n@pop: ", ifelse(is.null(x@pop), "- empty -", "factor giving the population of each individual"))
-  cat("\n@pop.names: ", ifelse(is.null(x@pop.names), "- empty -", "character giving the name of each population"))
-  cat("\n\n@other: ")
+  cat("\n   @hierarchy: ", ifelse(is.null(x@hierarchy), "- empty -", paste(x@hierarchy, collapse = "")))
+  cat("\n   @other: ")
   if(!is.null(x@other)){
     cat("a list containing: ")
     cat(ifelse(is.null(names(x@other)), "elements without names", paste(names(x@other), collapse= "  ")), "\n")
@@ -276,45 +261,39 @@ setMethod ("show", "genind", function(object){
 ##########################
 setMethod ("show", "genpop", function(object){
   x <- object
-  cat("\n")
-  cat("       #####################\n")
-  cat("       ### Genpop object ### \n")
-  cat("       #####################")
-  cat("\n- Alleles counts for populations - \n")
-  cat("\nS4 class: ", as.character(class(x)))
+  cat("/// genpop object \\\\\\")
 
-  cat("\n@call: ")
-  print(x@call)
-
+  cat("\n\n // Basic content")
   p <- ncol(x@tab)
-
-  cat("\n@tab: ", nrow(x@tab), "x", ncol(x@tab), "matrix of alleles counts\n" )
-
-  cat("\n@pop.names: vector of ", length(x@pop.names), "population names")
-  cat("\n@loc.names: vector of ", length(x@loc.names), "locus names")
+  cat("\n   @tab: ", nrow(x@tab), "x", ncol(x@tab), "matrix of alleles counts" )
 
   if(!is.null(x@loc.nall)){
-      cat("\n@loc.nall: number of alleles per locus")
+      alleletxt <- paste("(range: ", paste(range(x@loc.nall), collapse="-"), ")", sep="")
+      cat("\n   @loc.nall: number of alleles per locus", alleletxt)
   } else {
-      cat("\n@loc.nall: NULL")
+      cat("\n   @loc.nall: NULL")
   }
 
   if(!is.null(x@loc.fac)){
-      cat("\n@loc.fac: locus factor for the ", ncol(x@tab), "columns of @tab")
+      cat("\n   @loc.fac: locus factor for the", ncol(x@tab), "columns of @tab")
   } else {
-      cat("\n@loc.fac: NULL")
+      cat("\n   @loc.fac: NULL")
   }
 
   if(!is.null(x@all.names)){
-      cat("\n@all.names: list of ", length(x@all.names), "components yielding allele names for each locus")
+      cat("\n   @all.names: list of allele names for each locus")
   } else {
-      cat("\n@all.names: NULL")
+      cat("\n   @all.names: NULL")
   }
 
-  cat("\n@ploidy: ",x@ploidy)
-  cat("\n@type: ",x@type)
+  ploidytxt <- paste("(range: ", paste(range(x@ploidy), collapse="-"), ")", sep="")
+  cat("\n   @ploidy: ploidy of each individual ", ploidytxt)
+  cat("\n   @type: ",x@type)
+  cat("\n   @call: ")
+  print(x@call)
 
-  cat("\n\n@other: ")
+  cat("\n // Optional content")
+  cat("\n   @other: ")
   if(!is.null(x@other)){
     cat("a list containing: ")
     cat(ifelse(is.null(names(x@other)), "elements without names", paste(names(x@other), collapse= "  ")), "\n")
@@ -344,8 +323,6 @@ setMethod ("summary", signature(object="genind"), function(object, ...){
 
   if(is.null(x@pop)){
     x@pop <- factor(rep(1,nrow(x@tab)))
-    x@pop.names <- ""
-    names(x@pop.names) <- "P1"
   }
 
   ## BUILD THE OUTPUT ##
@@ -355,7 +332,7 @@ setMethod ("summary", signature(object="genind"), function(object, ...){
   res$N <- nrow(x@tab)
 
   res$pop.eff <- as.numeric(table(x@pop))
-  names(res$pop.eff) <- x@pop.names
+  names(res$pop.eff) <- levels(x@pop)
 
   ## PA case ##
   if(x@type=="PA"){

@@ -40,8 +40,8 @@ setAs("genind", "genpop", function(from, to) {
 setOldClass("ktab")
 setAs("genind", "ktab", function(from, to) {
     checkType(from)
-    res <- ktab.data.frame(df=as.data.frame(from), blocks=from@loc.nall, rownames=from@ind.names,
-                           colnames=unlist(from@all.names), tabnames=from@loc.names)
+    res <- ktab.data.frame(df=as.data.frame(from), blocks=from@loc.nall, rownames=indNames(from),
+                           colnames=unlist(alleles(from)), tabnames=locNames(from))
     return(res)
 })
 
@@ -50,8 +50,8 @@ setAs("genind", "ktab", function(from, to) {
 
 setAs("genpop", "ktab", function(from, to) {
     checkType(from)
-    res <- ktab.data.frame(df=as.data.frame(from), blocks=from@loc.nall, rownames=from@pop.names,
-                           colnames=unlist(from@all.names), tabnames=from@loc.names)
+    res <- ktab.data.frame(df=as.data.frame(from), blocks=from@loc.nall, rownames=popNames(from),
+                           colnames=unlist(alleles(from)), tabnames=locNames(from))
     return(res)
 })
 

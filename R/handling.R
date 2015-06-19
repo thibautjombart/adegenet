@@ -82,9 +82,9 @@ setGeneric("tab", function(x, ...) standardGeneric("tab"))
             vec[is.na(vec)] <- m
             return(vec)
         }
-        
+
         out <- apply(out, 2, f1)
-        
+
     }
     if(NA.method=="zero"){
         out[is.na(out)] <- ifelse(freq, 0, 0L)
@@ -97,7 +97,7 @@ setGeneric("tab", function(x, ...) standardGeneric("tab"))
 #' @rdname tab
 #' @aliases tab,genind-methods
 #' @aliases tab.genind
-setMethod("tab", signature(x = "genind"), 
+setMethod("tab", signature(x = "genind"),
           function (x, freq = FALSE, NA.method = c("asis","mean","zero"), ...){
             .tabGetter(x, freq = freq, NA.method = NA.method, ...)
           })
@@ -127,7 +127,7 @@ setMethod("tab", signature(x="genpop"), function(x, freq=FALSE, NA.method=c("asi
           out <- matrix(unlist(out), byrow=TRUE, nrow=nrow(x@tab),
                         dimnames=list(row.names, col.names))
           ## reorder columns
-          out <- out[, colnames(x@tab), drop = FALSE]          
+          out <- out[, colnames(x@tab), drop = FALSE]
         } else {
           out <- matrix(out, nrow = length(out), ncol = 1,
                         dimnames = list(rownames(x@tab), colnames(x@tab)))
@@ -142,7 +142,7 @@ setMethod("tab", signature(x="genpop"), function(x, freq=FALSE, NA.method=c("asi
             vec[is.na(vec)] <- m
             return(vec)
         }
-        
+
         out <- apply(out, 2, f1)
     }
     if(NA.method=="zero"){
@@ -221,7 +221,7 @@ setMethod("seploc", signature(x="genpop"), function(x,truenames=TRUE,res.type=c(
         kX[[i]] <- x@tab[,i==locfac.char,drop=FALSE]
     }
 
-    names(kX) <- x@loc.names
+    names(kX) <- locNames(x)
 
     prevcall <- match.call()
     if(res.type=="genpop"){
@@ -394,13 +394,13 @@ setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,re
     null_strata <- vapply(strata_list, is.null, TRUE)
     if (!all(null_strata)){
         # NULL strata must be converted to data frames.
-        # Solution: take the first non-empty strata, and create a new one 
+        # Solution: take the first non-empty strata, and create a new one
         # with one variable.
         if (any(null_strata)){
 
             # Extract the name of the first column of the first full strata
             fullname <- names(strata_list[[which(!null_strata)[1]]])[1]
-            
+
             # loop over all the empty strata and replace them with a data
             # frame that has the same number of elements as the samples in that
             # genlight object.
@@ -410,7 +410,7 @@ setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,re
                 strata_list[[i]]      <- replace_strata
             }
         }
-        strata(res) <- as.data.frame(suppressWarnings(dplyr::bind_rows(strata_list)))        
+        strata(res) <- as.data.frame(suppressWarnings(dplyr::bind_rows(strata_list)))
     } else {
         res@strata <- NULL
     }
@@ -428,7 +428,7 @@ repool <- function(...){
     if(is.list(x[[1]])) x <- x[[1]] ## if ... is a list, keep this list for x
     if(!inherits(x,"list")) stop("x must be a list")
     if(!all(sapply(x,is.genind))) stop("x is does not contain only valid genind objects")
-    temp <- sapply(x,function(e) e$loc.names)
+    temp <- sapply(x,function(e) locNames(e))
     if(!all(table(temp)==length(x))) stop("markers are not the same for all objects")
     ## temp <- sapply(x,function(e) e$ploidy)
     ## if(length(unique(temp)) != as.integer(1)) stop("objects have different levels of ploidy")
@@ -441,9 +441,7 @@ repool <- function(...){
 
     getPop <- function(obj){
         if(is.null(obj$pop)) return(factor(rep(NA,nrow(obj$tab))))
-        pop <- obj$pop
-        levels(pop) <- obj$pop.names
-        return(pop)
+        return(pop(obj))
     }
 
     ## handle pop
@@ -460,7 +458,7 @@ repool <- function(...){
     for(i in 2:length(x)){
         tab <- rbind(tab,listTab[[i]])
     }
-    
+
     res <- df2genind(tab, pop=pop, ploidy=newPloidy, type=x[[1]]@type, sep="/")
     res <- .rbind_strata(x, res)
     res@hierarchy <- NULL
@@ -590,361 +588,5 @@ setMethod("isPoly", signature(x="genind"), function(x, by=c("locus","allele"), t
 
 ##     return(toKeep)
 ## }) # end isPoly
-
-
-
-
-
-######################
-## miscellanous utils
-######################
-
-#######
-# nLoc
-#######
-setGeneric("nLoc", function(x,...){
-    standardGeneric("nLoc")
-})
-
-
-
-setMethod("nLoc","genind", function(x,...){
-    return(length(x@loc.names))
-})
-
-
-
-setMethod("nLoc","genpop", function(x,...){
-    return(length(x@loc.names))
-})
-
-
-#######
-# nPop
-#######
-setGeneric("nPop", function(x,...){
-    standardGeneric("nPop")
-})
-
-
-
-setMethod("nPop","genind", function(x,...){
-    return(length(x@pop.names))
-})
-
-
-
-setMethod("nPop","genpop", function(x,...){
-    return(length(x@pop.names))
-})
-
-
-#######
-# nInd
-#######
-setGeneric("nInd", function(x,...){
-    standardGeneric("nInd")
-})
-
-
-
-setMethod("nInd","genind", function(x,...){
-    return(nrow(x@tab))
-})
-
-
-
-
-
-######
-# pop
-######
-setGeneric("pop", function(x) {
-  standardGeneric("pop")
-})
-
-
-
-setGeneric("pop<-",
-           function(x, value) {
-               standardGeneric("pop<-")
-           })
-
-
-
-setMethod("pop","genind", function(x){
-    if(is.null(x@pop)) return(NULL)
-    res <- x@pop
-    levels(res) <- x@pop.names
-    return(res)
-})
-
-
-
-setReplaceMethod("pop", "genind", function(x, value) {
-    if(is.null(value)){
-        x@pop <- NULL
-        x@pop.names <- NULL
-        return(x)
-    }
-
-    if(length(value) != nrow(x$tab)) stop("wrong length for population factor")
-
-    ## coerce to factor (put levels in their order of appearance)
-    newPop <- as.character(value)
-    newPop <- factor(newPop, levels=unique(newPop))
-
-    ## generic labels
-    newPop.lab <- .genlab("P",length(levels(newPop)) )
-
-    ## construct output
-    x$pop.names <- levels(newPop)
-    levels(newPop) <- newPop.lab
-    x$pop <- newPop
-
-    return(x)
-})
-
-
-
-
-
-###########
-# locNames
-###########
-setGeneric("locNames", function(x,...){
-    standardGeneric("locNames")
-})
-
-setGeneric("locNames<-", function(x, value) {
-    standardGeneric("locNames<-")
-})
-
-
-setMethod("locNames","genind", function(x, withAlleles=FALSE, ...){
-    ## return simply locus names
-    if(x@type=="PA" | !withAlleles) return(x@loc.names)
-
-    ## return locus.allele
-    res <- rep(x@loc.names, x@loc.nall)
-    res <- paste(res,unlist(x@all.names),sep=".")
-    return(res)
-})
-
-
-setReplaceMethod("locNames","genind",function(x,value) {
-    value <- as.character(value)
-    if(length(value) != nLoc(x)) stop("Vector length does no match number of loci")
-    names(value) <- names(locNames(x))
-    slot(x,"loc.names",check=TRUE) <- value
-    return(x)
-})
-
-
-setMethod("locNames","genpop", function(x, withAlleles=FALSE, ...){
-    ## return simply locus names
-    if(x@type=="PA" | !withAlleles) return(x@loc.names)
-
-    ## return locus.allele
-    res <- rep(x@loc.names, x@loc.nall)
-    res <- paste(res,unlist(x@all.names),sep=".")
-    return(res)
-})
-
-
-setReplaceMethod("locNames","genpop",function(x,value) {
-    value <- as.character(value)
-    if(length(value) != nLoc(x)) stop("Vector length does no match number of loci")
-    names(value) <- names(locNames(x))
-    slot(x,"loc.names",check=TRUE) <- value
-    return(x)
-})
-
-
-###########
-# indNames
-###########
-setGeneric("indNames", function(x,...){
-    standardGeneric("indNames")
-})
-
-setGeneric("indNames<-", function(x, value){
-    standardGeneric("indNames<-")
-})
-
-setMethod("indNames","genind", function(x, ...){
-    return(rownames(x@tab))
-})
-
-
-setReplaceMethod("indNames","genind",function(x,value) {
-    value <- as.character(value)
-    if(length(value) != nInd(x)) stop("Vector length does not match number of individuals")
-    slot(x,"ind.names",check=TRUE) <- value
-    rownames(x@tab) <- value
-    return(x)
-})
-
-setGeneric("popNames", function(x,...){
-  standardGeneric("popNames")
-})
-
-setGeneric("popNames<-", function(x, value){
-  standardGeneric("popNames<-")
-})
-
-setMethod("popNames","genind", function(x, ...){
-  return(levels(pop(x)))
-})
-
-
-setReplaceMethod("popNames","genind",function(x, value) {
-  value <- as.character(value)
-  if(length(value) != length(levels(pop(x)))){
-    stop("Vector length does not match number of populations")
-  }
-  slot(x, "pop.names", check=TRUE) <- value
-  levels(pop(x)) <- value
-  return(x)
-})
-
-setMethod("popNames","genpop", function(x, ...){
-  return(x@pop.names)
-})
-
-
-setReplaceMethod("popNames","genpop",function(x, value) {
-  value <- as.character(value)
-  if (length(value) != nrow(x@tab)){
-    stop("Vector length does not match number of populations")
-  }
-  slot(x, "pop.names", check=TRUE) <- value
-  rownames(x@tab) <- value
-  return(x)
-})
-
-
-##########
-# alleles
-##########
-setGeneric("alleles", function(x,...){
-    standardGeneric("alleles")
-})
-
-setGeneric("alleles<-", function(x, value){
-    standardGeneric("alleles<-")
-})
-
-setMethod("alleles","genind", function(x, ...){
-    return(x@all.names)
-})
-
-setReplaceMethod("alleles","genind", function(x, value){
-    if(!is.list(value)) stop("replacement value must be a list")
-    if(length(value)!=nLoc(x)) stop("replacement list must be of length nLoc(x)")
-    if(any(sapply(value, length) != x$loc.nall)) stop("number of replacement alleles do not match that of the object")
-    x@all.names <- value
-    return(x)
-})
-
-
-setMethod("alleles","genpop", function(x, ...){
-    return(x@all.names)
-})
-
-setReplaceMethod("alleles","genpop", function(x, value){
-    if(!is.list(value)) stop("replacement value must be a list")
-    if(length(value)!=nLoc(x)) stop("replacement list must be of length nLoc(x)")
-    if(any(sapply(value, length) != x$loc.nall)) stop("number of replacement alleles do not match that of the object")
-    x@all.names <- value
-    return(x)
-})
-
-
-
-##########
-## ploidy
-##########
-setGeneric("ploidy", function(x,...){
-    standardGeneric("ploidy")
-})
-
-setGeneric("ploidy<-", function(x, value){
-    standardGeneric("ploidy<-")
-})
-
-setMethod("ploidy","genind", function(x,...){
-    return(x@ploidy)
-})
-
-
-setReplaceMethod("ploidy","genind",function(x,value) {
-    value <- as.integer(value)
-    if(any(value)<1) stop("Negative or null values provided")
-    if(any(is.na(value))) stop("NA values provided")
-    if(length(value)!=nInd(x)) value <- rep(value, length=nInd(x))
-    slot(x,"ploidy",check=TRUE) <- value
-    return(x)
-})
-
-
-setMethod("ploidy","genpop", function(x,...){
-    return(x@ploidy)
-})
-
-
-setReplaceMethod("ploidy","genpop",function(x,value) {
-    value <- as.integer(value)
-    if(any(value)<1) stop("Negative or null values provided")
-    if(any(is.na(value))) stop("NA values provided")
-    if(length(value)>1) warning("Several ploidy numbers provided; using only the first integer")
-    slot(x,"ploidy",check=TRUE) <- value[1]
-    return(x)
-})
-
-
-
-
-
-
-##########
-## other
-#########
-setGeneric("other", function(x,...){
-    standardGeneric("other")
-})
-
-setGeneric("other<-", function(x, value){
-    standardGeneric("other<-")
-})
-
-setMethod("other","genind", function(x,...){
-    if(length(x@other)==0) return(NULL)
-    return(x@other)
-})
-
-
-setReplaceMethod("other","genind",function(x,value) {
-    if( !is.null(value) && (!is.list(value) | is.data.frame(value)) ) {
-        value <- list(value)
-    }
-    slot(x,"other",check=TRUE) <- value
-    return(x)
-})
-
-
-setMethod("other","genpop", function(x,...){
-    if(length(x@other)==0) return(NULL)
-    return(x@other)
-})
-
-
-setReplaceMethod("other","genpop",function(x,value) {
-    if( !is.null(value) && (!is.list(value) | is.data.frame(value)) ) {
-        value <- list(value)
-    }
-    slot(x,"other",check=TRUE) <- value
-    return(x)
-})
 
 

@@ -511,7 +511,7 @@ setMethod ("show", "SNPbin", function(object){
 ## show genlight
 ###############
 setMethod ("show", "genlight", function(object){
-    cat(" === S4 class genlight ===")
+    cat(" /// genlight object \\\\\\")
     cat("\n", nInd(object), "genotypes, ", nLoc(object),  "binary SNPs")
     temp <- unique(ploidy(object))
     if(!is.null(temp)){

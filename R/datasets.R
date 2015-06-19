@@ -375,7 +375,7 @@ NULL
 #' # display %PCA
 #' par(mfrow=c(2,2))
 #' for(i in sel) {
-#' s.multinom(kpca[[i]]$c1,kX[[i]],n.sample=nsamp[,i],coulrow=col,sub=Y@@loc.names[i])
+#' s.multinom(kpca[[i]]$c1,kX[[i]],n.sample=nsamp[,i],coulrow=col,sub=locNames(Y)[i])
 #' add.scatter.eig(kpca[[i]]$eig,3,xax=1,yax=2,posi="top")
 #' }
 #'
@@ -391,20 +391,20 @@ NULL
 #'
 #' par(mfrow=c(2,2))
 #' for(i in sel) {
-#' s.multinom(mcoa.axes[[i]][,1:2],kX[[i]],n.sample=nsamp[,i],coulrow=col,sub=Y@@loc.names[i])
+#' s.multinom(mcoa.axes[[i]][,1:2],kX[[i]],n.sample=nsamp[,i],coulrow=col,sub=locNames(Y)[i])
 #' add.scatter.eig(var.coord[[i]],2,xax=1,yax=2,posi="top")
 #' }
 #'
 #' # reference typology
 #' par(mfrow=c(1,1))
-#' s.label(mcoa1$SynVar,lab=microbov@@pop.names,sub="Reference typology",csub=1.5)
+#' s.label(mcoa1$SynVar,lab=popNames(microbov),sub="Reference typology",csub=1.5)
 #' add.scatter.eig(mcoa1$pseudoeig,nf=3,xax=1,yax=2,posi="top")
 #'
 #' # typologial values
 #' tv <- mcoa1$cov2
 #' tv <- apply(tv,2,function(c) c/sum(c))*100
-#' rownames(tv) <- Y@@loc.names
-#' tv <- tv[order(Y@@loc.names),]
+#' rownames(tv) <- locNames(Y)
+#' tv <- tv[order(locNames(Y)),]
 #'
 #' par(mfrow=c(3,1),mar=c(5,3,3,4),las=3)
 #' for(i in 1:3){
@@ -431,9 +431,7 @@ NULL
 #' @name nancycats
 #' @docType data
 #' @format \code{nancycats} is a genind object with spatial coordinates of the
-#' colonies as a supplementary components (@@xy). Beware: these coordinates are
-#' given for the true names (stored in @@pop.names) and not for the generic
-#' names (used in @@pop).
+#' colonies as a supplementary components (@@xy).
 #' @references Devillard, S.; Jombart, T. & Pontier, D. Disentangling spatial
 #' and genetic structure of stray cat (\emph{Felis catus} L.) colonies in urban
 #' habitat using: not all colonies are equal. submitted to \emph{Molecular
@@ -521,7 +519,7 @@ NULL
 #'
 #' \dontrun{
 #' if(require(adehabitat)){
-#' 
+#'
 #' ## see the sampling area
 #' showBauges <- rupica$other$showBauges
 #' showBauges()

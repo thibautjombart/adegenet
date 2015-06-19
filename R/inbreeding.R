@@ -83,7 +83,7 @@ inbreeding <- function(x, pop=NULL, truenames=TRUE, res.type=c("sample","functio
 
     ## name output
     if(truenames) {
-        names(res) <- x$ind.names
+        names(res) <- indNames(x)
     } else {
         names(res) <- names(x$tab)
     }
