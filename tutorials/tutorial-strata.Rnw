@@ -220,7 +220,7 @@ genind object.
 As explained in \ref{strata}, one useful way to define strata for your data is
 to concatenate them using `\_' and set that as your population factor in your
 original input file. This allows you to carry your strata with the genetic data
-even when it's not in $\R$.
+even when it's not in R.
 
 To demonstrate this, we will use the \texttt{microbov} data and import it using
 \texttt{df2genind}. Note that the code immediately following is simply to set up
@@ -480,11 +480,8 @@ And now we have our stratifications.
 % Nice!
 
 \newpage
-\begin{thebibliography}{1}
-\bibitem{kepler2015community}
 
-Kepler, R. M., Ugine, T. A., Maul, J. E., Cavigelli, M. A., \& Rehner, S. A. (2015). Community composition and population genetics of insect pathogenic fungi in the genus \emph{Metarhizium} from soils of a long-term agricultural research system. \emph{Environmental microbiology}.
-
-\end{thebibliography}
+\bibliographystyle{plain}
+\bibliography{bibliography}
 
 \end{document}
