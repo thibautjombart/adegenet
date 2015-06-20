@@ -504,7 +504,7 @@ the function \texttt{addStrata}.
 microbov # Has three strata
 
 # Creating dummy strata
-newstrat <- sample(paste("P", 1:2), 704, replace = TRUE)
+newstrat <- sample(paste0("P", 1:2), 704, replace = TRUE)
 
 addStrata(microbov) <- data.frame(dummy = newstrat)
 microbov
@@ -568,6 +568,101 @@ microbov
 % addStrata(virus) <- data.frame(month = virus_info)
 % @
 
+\section{Interpreting error messages}
+
+There are times when you might mis-type something or use capitalization when
+your data has none. In these instances functions will throw errors. Often, they
+can be difficult to interpret. This section will show some example warnings and
+how to interpret them. 
+
+\newpage
+
+\subsection{setPop warnings/errors}
+<<setpop_warning, message = TRUE, warning = TRUE>>=
+setPop(microbov) <- ~country/breed
+@
+
+This error message explains that we have supplied a stratification that does not
+exist in our data. Even though we got the words correct, R is case-sensitive,
+so we need to make sure our capitalization is correct:
+
+<<setpop_correct, warning = TRUE, message = TRUE>>=
+setPop(microbov) <- ~Country/Breed
+@
+
+Here's another one that might come up:
+
+<<setpop_noformula, warning = TRUE, message = TRUE>>=
+setPop(microbov) <- Country/Breed
+@
+
+This one is tricky because there is only one single character missing. This
+formula doesn't have the ``$\sim$''. When this happens, R doesn't recognize it
+as a formula and thinks that you want to divide the variable \texttt{Country} by
+the variable \texttt{Breed}. Let's supposed that you actually had two variables
+defined as \texttt{Country} and \texttt{Breed}. Would you still be able to get
+away without including the $\sim$.
+
+<<setpop_novar, warning = TRUE, message = TRUE>>=
+Country <- runif(10)
+Breed <- runif(10)
+setPop(microbov) <- Country/Breed
+@
+
+Again, this is telling you that what you've presented is not a formula. This is 
+fixed by placing the $\sim$ after the arrow. One last error that can come up with
+\texttt{setPop} is when you don't have any strata:
+
+<<nancystrat, warning = TRUE, message = TRUE>>=
+data("nancycats")
+nancycats
+setPop(nancycats) <- ~group
+@
+
+Here, you get a warning instead of an error. This is telling you that your 
+\texttt{@strata} slot is empty. 
+
+\subsection{splitStrata warnings/errors}
+
+The \texttt{splitStrata} function allows you to import your strata via a
+standard format. If we revisit the microbov data from above, we can combine the
+strata to create an example:
+
+<<strata_microbov, warning = TRUE, message = TRUE>>=
+setPop(microbov) <- ~Country/Breed/Species/Dummy
+strata(microbov) <- data.frame(pop = pop(microbov))
+microbov
+@
+
+Now we see that microbov only has 1 stratification called ``pop'', but we know 
+that it actually has 4. What happens if we only name 3 levels in 
+\texttt{splitStrata}?
+
+<<splitStrata_warning, warning = TRUE, message = TRUE>>=
+splitStrata(microbov) <- ~Country/Breed/Species
+@
+
+This error is showing us on the first line that we have specified too few strata
+to split (we supplied 3, but it needs 4). The second line shows us what the 
+first row of the combined strata looks like so we can figure out what the 
+possible names should be.
+
+<<splitStrata_fix, warning = TRUE, message = TRUE>>=
+splitStrata(microbov) <- ~Country/Breed/Species/Dummy
+@
+
+Now we have everything split. What happens if we run the function a second time?
+
+<<splitStrata_again, warning = TRUE, message = TRUE>>=
+splitStrata(microbov) <- ~Country/Breed/Species/Dummy
+@
+
+This is a complicated one. Since this function is meant to be used only once, it
+can have side-effects when used multiple times. Here, we are given the error as
+we saw before, but we are also given a warning that ``Strata must be length 1''.
+This means that, when we use \texttt{splitStrata}, our strata slot must have a
+1 column data frame in it. Since there are more than 1 columns, it is ignoring
+the others.
 
 \newpage
 
