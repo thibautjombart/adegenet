@@ -100,7 +100,7 @@ knitr::opts_chunk$set(fig.path='figs/base-', fig.keep='high', dev='pdf',
   within \textsc{genind} and \textsc{genlight} objects. The slot was added in
   \adegenet{} version 2.0-0 from the \textit{poppr} package
   \cite{kamvar2015novel}. Sampling schemes are often not constrained to simply
-  one population factor. They can be stratified over years, treatments, and
+  one population factor; they can be stratified over years, treatments, and
   geographic locations. The \textbf{strata} slot provides a way to store and
   combine any population strata related to your data.
 
@@ -128,7 +128,7 @@ data before you import it into \adegenet{}. Examples of this format can be found
 in the supplementary data for \cite{kepler2015community} (file: 
 \textit{fsp\_rob\_pop.csv}) and at 
 \url{http://dx.doi.org/10.6084/m9.figshare.877104}. Another way to define strata
-is to import them in a data frame as we will demonstrate below.
+is to import them in a separate data frame as we will demonstrate below.
 
 In this vignette, we will show you how to \seclink{strata:define}{define}
 populations strata, \seclink{strata:view}{view} those strata to ensure
@@ -211,8 +211,8 @@ strata(microbov) <- strata_df
 microbov
 @
 
-We can now see that there are three strata defined in the \texttt{microbov}
-genind object.
+When we look at the output of the \textsc{genind} object, we can now see that 
+there are three strata defined.
 
 \subsection{Using \texttt{df2genind}}
 \label{strata:define:df2genind}
@@ -228,17 +228,33 @@ micdf[1:6, 1:6] # genetic data
 head(strata_df) # strata
 @
 
-Now that we have our data frames, we can import them using \texttt{df2genind}:
+Now that we have our data frames, we can import them using \texttt{df2genind}.
+Take note that our original genetic data frame has the first column set to 
+``pop'', which is not genetic data, so we use the ``\texttt{[, -1]}''. to 
+remove that column. 
 
 <<microbof_df2genind_strata>>=
-newmic <- df2genind(micdf[-1], sep = "/", pop = micdf$pop, strata = strata_df)
+newmic <- df2genind(micdf[, -1], sep = "/", pop = micdf$pop, strata = strata_df)
 newmic
 @
+
+The population factor here is independent of the strata. We could have easily
+imported just the strata and set the population factor using the function 
+\cmdlink{strata:setPop}{setPop} to set the population:
+
+<<microbov_df2genind_strata_setpop>>=
+newmic <- df2genind(micdf[, -1], sep = "/", strata = strata_df)
+newmic
+popNames(newmic) # NULL
+setPop(newmic) <- ~breed
+popNames(newmic) # Names for each breed
+@
+
 
 \subsection{Using an input file}
 \label{strata:define:combine}
 
-As explained in \cmdlink{strata}{Introduction to strata}, one useful way to
+As explained in \seclink{strata}{Introduction to strata}, one useful way to
 define strata for your data is to concatenate them using `\_' and set that as
 your population factor in your original input file. This allows you to carry
 your strata with the genetic data even when it's not in R.
