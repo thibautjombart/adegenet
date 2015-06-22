@@ -1786,61 +1786,62 @@ implemented... suggestion or (better) contributions are welcome!
 
 
 \newpage
-\begin{thebibliography}{9}
+\bibliography{biblioTJ}
+\bibliographystyle{plain}
+%% \begin{thebibliography}{13}
 
-\bibitem{tjart05}
-  Jombart, T. (2008) adegenet: a R package for the multivariate
-  analysis of genetic markers. \textit{Bioinformatics} 24: 1403-1405.
+%% \bibitem{tjart05}
+%%   Jombart, T. (2008) adegenet: a R package for the multivariate
+%%   analysis of genetic markers. \textit{Bioinformatics} 24: 1403-1405.
 
-\bibitem{np145}
-  R Development Core Team (2014). R: A language and environment for
-  statistical computing. R Foundation for Statistical Computing,
-  Vienna, Austria. ISBN 3-900051-07-0.
+%% \bibitem{np145}
+%%   R Development Core Team (2014). R: A language and environment for
+%%   statistical computing. R Foundation for Statistical Computing,
+%%   Vienna, Austria. ISBN 3-900051-07-0.
 
-\bibitem{tj548}
-  Dray S and Dufour A-B (2007) The ade4 package: implementing the duality diagram for ecologists. \textit{Journal of Statistical Software} 22: 1-20.
+%% \bibitem{tj548}
+%%   Dray S and Dufour A-B (2007) The ade4 package: implementing the duality diagram for ecologists. \textit{Journal of Statistical Software} 22: 1-20.
 
-\bibitem{tjart19}
-  Jombart T, Devillard S and Balloux, F (2010).
-  Discriminant analysis of principal components: a new method for the analysis of genetically structured populations.
-  \textit{BMC Genetics} 11: 94.
+%% \bibitem{tjart19}
+%%   Jombart T, Devillard S and Balloux, F (2010).
+%%   Discriminant analysis of principal components: a new method for the analysis of genetically structured populations.
+%%   \textit{BMC Genetics} 11: 94.
 
-\bibitem{tjart04}
-  Jombart T, Devillard S, Dufour A-B and Pontier D (2008) Revealing cryptic spatial
-  patterns in genetic variability by a new multivariate method.  \textit{Heredity} 101: 92-103.
+%% \bibitem{tjart04}
+%%   Jombart T, Devillard S, Dufour A-B and Pontier D (2008) Revealing cryptic spatial
+%%   patterns in genetic variability by a new multivariate method.  \textit{Heredity} 101: 92-103.
 
-\bibitem{tjart20}
-  Jombart T, Eggo RM, Dodd PJ and Balloux F (2010) Reconstructing disease outbreaks from genetic
-  data: a graph approach. \textit{Heredity} 106: 383-390.
+%% \bibitem{tjart20}
+%%   Jombart T, Eggo RM, Dodd PJ and Balloux F (2010) Reconstructing disease outbreaks from genetic
+%%   data: a graph approach. \textit{Heredity} 106: 383-390.
 
-\bibitem{tjart10}
-  Jombart T, Pontier D and Dufour A-B (2009) Genetic markers in the playground of multivariate analysis.
-  \textit{Heredity} 102: 330-341.
+%% \bibitem{tjart10}
+%%   Jombart T, Pontier D and Dufour A-B (2009) Genetic markers in the playground of multivariate analysis.
+%%   \textit{Heredity} 102: 330-341.
 
-\bibitem{tj527}
-  Paradis E, Claude J, and Strimmer K (2004) APE: analyses of phylogenetics and evolution in R language.
-  \textit{Bioinformatics}: 20, 289-290.
+%% \bibitem{tj527}
+%%   Paradis E, Claude J, and Strimmer K (2004) APE: analyses of phylogenetics and evolution in R language.
+%%   \textit{Bioinformatics}: 20, 289-290.
 
-\bibitem{np160}
-  Charif D, and Lobry J (2007) SeqinR 1.0-2: a contributed package to the R project for statistical
-  computing devoted to biological sequences retrieval and analysis. \textit{in} Structural approaches to sequence evolution: Molecules, networks, populations, \textit{Springer Verlag}, 207-232.
+%% \bibitem{np160}
+%%   Charif D, and Lobry J (2007) SeqinR 1.0-2: a contributed package to the R project for statistical
+%%   computing devoted to biological sequences retrieval and analysis. \textit{in} Structural approaches to sequence evolution: Molecules, networks, populations, \textit{Springer Verlag}, 207-232.
 
-\bibitem{tj551}
-  Goudet J., Raymond, M., DeMeeus, T. and Rousset F. (1996) Testing differentiation in diploid populations. \textit{Genetics} 144: 1933-1940.
+%% \bibitem{tj551}
+%%   Goudet J, Raymond M, DeMeeus T and Rousset F (1996) Testing differentiation in diploid populations. \textit{Genetics} 144: 1933-1940.
 
-\bibitem{tj814}
-  Nei M (1973) Analysis of gene diversity in subdivided populations. \textit{Proc Natl Acad Sci USA} 70: 3321-3323.
+%% \bibitem{tj814}
+%%   Nei M (1973) Analysis of gene diversity in subdivided populations. \textit{Proc Natl Acad Sci USA} 70: 3321-3323.
+
+%% \bibitem{tj433}
+%%   Monmonier M (1973) Maximum-difference barriers: an alternative numerical regionalization method. \textit{Geographical Analysis} 3: 245-261.
+
+%% \bibitem{np120}
+%%   Manni F, Guerard E and Heyer E (2004) Geographic patterns of (genetic, morphologic, linguistic)
+%%   variation: how barriers can be detected by "Monmonier's algorithm". \textit{Human Biology} 76: 173-190.
 
 
-\bibitem{tj433}
-  Monmonier M (1973) Maximum-difference barriers: an alternative numerical regionalization method. \textit{Geographical Analysis} 3: 245-261.
-
-\bibitem{np120}
-  Manni F, Guerard E and Heyer E (2004) Geographic patterns of (genetic, morphologic, linguistic)
-  variation: how barriers can be detected by "Monmonier's algorithm". \textit{Human Biology} 76: 173-190.
-
-
-\end{thebibliography}
+%% \end{thebibliography}
 
 \end{document}
 
