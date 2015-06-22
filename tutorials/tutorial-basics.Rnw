@@ -1018,12 +1018,10 @@ processed. The way they are processed is defined by a function passed as the arg
 Let us illustrate this using \texttt{sim2pop}:
 <<>>=
 data(sim2pop)
-simpop
+sim2pop
 nInd(sim2pop)
 head(other(sim2pop)$xy)
 dim(other(sim2pop)$xy)
-nPop(sim2pop)
-popNames(sim2pop)
 @
 The component \texttt{sim2pop@other\$xy} contains spatial coordinates of individuals from 2 populations.
 <<>>=
@@ -1053,7 +1051,7 @@ plot(toto$pop.eff, toto$pop.nall, xlab="Colonies sample size",
      type="n")
 text(toto$pop.eff,toto$pop.nall,lab=names(toto$pop.eff))
 
-barplot(nAll(toto), ylab="Number of alleles",
+barplot(toto$loc.n.all, ylab="Number of alleles",
         main="Number of alleles per locus")
 
 barplot(toto$Hexp-toto$Hobs, main="Heterozygosity: expected-observed",
@@ -1078,84 +1076,58 @@ Yes, it is.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Testing for Hardy-Weinberg equilibrium}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The Hardy-Weinberg equilibrium test is implemented for \texttt{genind} objects.
-The function to use is \texttt{HWE.test.genind}, and requires the package \emph{genetics}.
-Here we first produce a matrix of p-values (\texttt{res="matrix"}) using parametric test.
-Monte Carlo procedure are more reliable but also more computer-intensive (use \texttt{permut=TRUE}).
+As of version 2.0.0, \textit{adegenet} is designed to work alongside a number of other packages,
+especially \textit{pegas} and \textit{hierfstat} for a number of classical population genetics methods.
+The former function \texttt{HWE.test.genind} has consequently been removed, and replaced by
+\emph{pegas}'s \texttt{hw.test}, which performs one test per locus:
 <<HWE>>=
-toto <- HWE.test.genind(nancycats,res="matrix")
-dim(toto)
-@
-One test is performed per locus and population, \textit{i.e.} 153 tests in this case.
-Thus, the first question is: which tests are highly significant?
-<<>>=
-colnames(toto)
-idx <- which(toto<0.0001,TRUE)
-idx
-@
-Here, only 4 tests indicate departure from HW.
-Rows give populations, columns give markers.
-Now complete tests are returned, but the significant ones are already known.
-<<>>=
-toto <- HWE.test.genind(nancycats,res="full")
-mapply(function(i,j) toto[[i]][[j]], idx[,2], idx[,1], SIMPLIFY=FALSE)
+library(pegas)
+data(nancycats)
+cats.hwt <- hw.test(nancycats, B=0)
+cats.hwt
 @
 
-
+Note that \texttt{B=0} is used for the parametric version; larger numbers will indicate the number
+of permutations to use for a Monte-Carlo version.
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Measuring and testing population structure (a.k.a F statistics)}
+\subsection{Measuring and testing population structure (a.k.a $F$ statistics)}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Population structure is traditionally measured and tested using F statistics, in particular Fst.
-Since version 2.13.0 of R, the package \emph{hierfstat}, which implemented most F statistics and
-related tests, has been removed from CRAN for maintenance issues.
-As a consequence, \emph{adegenet} has lost a few functionalities, namely general F statistics
-(function \texttt{fstat}) and a test of overall population structure (\texttt{gstat.randtest}).
+Population structure is traditionally measured and tested using $F$ statistics, in particular $F_{st}$.
+As of version 2.0.0, \textit{adegenet} relies on \emph{hierfstat} and \emph{pegas} for most $F$ statistics.
+Note that some of these features might be part of the current devel version of \emph{hierfstat},
+which can be installed by:
+<<eval=FALSE>>=
+library(devtools)
+install_github("jgx65/hierfstat")
+library("hierfstat")
+@
+
+Can we find any population structure in the cat colonies from Nancy?
+The basic $F$ statistics are provided by:
+<<>>=
+fstat(nancycats)
+@
+This table provides the three F statistics $Fst$ (pop/total), $Fit$ (Ind/total), and $Fis$ (ind/pop).
+These are overall measures which take into account all genotypes and all loci.
 \\
 
+For more detail, \emph{pegas} provides estimates by locus:
+<<>>=
+library(pegas)
+Fst(as.loci(nancycats))
+@
 
-%% The first two are wrappers for functions implemented in the \emph{hierfstat} package; pairwise Fst
-%% is implemented in \emph{adegenet}.
+Are these values significant? This question can be addressed using the G-statistic test \cite{tj511}; it is implemented for \texttt{genind} objects and produces a \texttt{randtest} object (package ade4).
+<<>>=
+Gtest <- gstat.randtest(nancycats,nsim=99)
+Gtest
+plot(Gtest)
+@
 
-%% We illustrate their use using the dataset of microsatellite of cats from Nancy:
-%% <<>>=
-%% library(hierfstat)
-%% data(nancycats)
-%% fstat(nancycats)
-%% @
-%% This table provides the three F statistics $Fst$ (pop/total), $Fit$ (Ind/total), and $Fis$ (ind/pop).
-%% These are overall measures which take into account all genotypes and all loci.
-
-%% Is the structure between populations significant?
-%% This question can be addressed using the G-statistic test \cite{tj511}; it is implemented for \texttt{genind} objects and produces a \texttt{randtest} object (package ade4).
-%% <<fig=TRUE>>=
-%% toto <- gstat.randtest(nancycats,nsim=99)
-%% toto
-%% plot(toto)
-%% @
-
-%% \noindent Yes, it is (the observed value is indicated on the right, while histograms correspond to
-%% the permuted values).
-%% Note that \emph{hierfstat} allows for more ellaborated tests, in particular when different levels of
-%% hierarchical clustering are available.
-%% Such tests are better done directly in \emph{hierfstat}; for this, \texttt{genind} objects can be
-%% converted to the adequat format using \texttt{genind2hierfstat}.
-%% For instance:
-%% <<>>=
-%% toto <- genind2hierfstat(nancycats)
-%% head(toto)
-%% varcomp.glob(toto$pop,toto[,-1])
-%% @
-%% F statistics are provided in \$F; for instance, here, $F_{st}$ is $0.083$.
-
-
-%% ~\\
-
-
-However, it is still possible to compute pairwise $Fst$ using \textit{adegenet}.
-Pairwise $Fst$ is frequently used as a measure of distance between populations.
+Finally, pairwise $Fst$ is frequently used as a measure of distance between populations.
 The function \texttt{pairwise.fst} computes Nei's estimator \cite{tj814} of pairwise $Fst$, defined as:
 $$
 Fst(A,B) = \frac{H_t - (n_AH_s(A) + n_BH_s(B))/(n_A + n_B)}{Ht}
@@ -1169,8 +1141,7 @@ These computations are achieved for all pairs of populations by the function \te
 illustrate this on a subset of individuals of \texttt{nancycats} (computations for the whole dataset
 would take a few tens of seconds):
 <<>>=
-data(nancycats)
-matFst <- pairwise.fst(nancycats[1:50, treatOther=FALSE])
+matFst <- pairwise.fst(nancycats[1:50,])
 matFst
 @
 
@@ -1379,7 +1350,7 @@ sum(is.na(microbov$tab))
 @
 There are 6325 missing data. They will all be replaced by \texttt{scaleGen}:
 <<>>=
-X <- scaleGen(microbov, missing="mean")
+X <- scaleGen(microbov, NA.method="mean")
 class(X)
 dim(X)
 X[1:5,1:5]
@@ -1478,34 +1449,44 @@ abline(v=0,h=0,col="grey", lty=2)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Being contingency tables, the \texttt{@tab} slot in \texttt{genpop} objects can be submitted to a Correspondance Analysis (CA) to seek a typology of populations.
 The approach is very similar to the previous one for PCA.
-Missing data are first replaced during convertion from \texttt{genind},
-but one could create a \texttt{genpop} with NAs and then use
-\texttt{na.replace} to get rid of missing observations.
 <<caexpl>>=
 data(microbov)
-obj <- genind2genpop(microbov,missing="chi2")
-ca1 <- dudi.coa(as.data.frame(obj$tab),scannf=FALSE,nf=3)
+obj <- genind2genpop(microbov)
+ca1 <- dudi.coa(tab(obj),scannf=FALSE,nf=3)
 barplot(ca1$eig,main="Correspondance Analysis eigenvalues",
         col=heat.colors(length(ca1$eig)))
 @
 
 Now we display the resulting typology using a basic scatterplot:
 <<>>=
-s.label(ca1$li,lab=popNames(obj),sub="CA 1-2",csub=2)
+s.label(ca1$li, sub="CA 1-2",csub=2)
 add.scatter.eig(ca1$eig,nf=3,xax=1,yax=2,posi="bottomright")
 @
 
+The same graph is derived for the axes 2-3:
 <<>>=
-s.label(ca1$li,xax=1,yax=3,lab=popNames(obj),sub="CA 1-3",csub=2)
+s.label(ca1$li,xax=2,yax=3,lab=popNames(obj),sub="CA 1-3",csub=2)
 add.scatter.eig(ca1$eig,nf=3,xax=2,yax=3,posi="topleft")
 @
-
 \noindent As in the PCA above, axes are to be interpreted separately in terms of continental differentiation, and between-breeds diversity.
 Importantly, as in any analysis carried out at a population level, all information about the
 diversity within populations is lost in this analysis.
 See the tutorial on DAPC for an individual-based approach which is nontheless optimal in terms of
 group separation (\textit{dapc}).
+\\
 
+
+Note that as an alternative, \emph{wordcloud} can be used to avoid overlaps in labels:
+<<>>=
+library(wordcloud)
+set.seed(1)
+s.label(ca1$li*1.2, sub="CA 1-2",csub=2, clab=0, cpoint="")
+textplot(ca1$li[,1], ca1$li[,2], words=popNames(obj),
+         cex=1.4, new=FALSE, xpd=TRUE)
+add.scatter.eig(ca1$eig,nf=3,xax=1,yax=2,posi="bottomright")
+@
+However, only general trends can be interpreted: labels positions are randomised to avoid overlap,
+so they no longer accurately position populations on the factorial axes.
 
 
 
@@ -1535,7 +1516,7 @@ This example uses cat colonies from the city of Nancy.
 We test the correlation between Edwards' distances and Euclidean geographic distances between colonies.
 <<ibd>>=
 data(nancycats)
-toto <- genind2genpop(nancycats,miss="0")
+toto <- genind2genpop(nancycats)
 Dgen <- dist.genpop(toto,method=2)
 Dgeo <- dist(nancycats$other$xy)
 ibd <- mantel.randtest(Dgen,Dgeo)
@@ -1590,7 +1571,8 @@ Local density is measured using a 2-dimensional kernel density estimation (\text
 results are displayed using \texttt{image}; \texttt{colorRampPalette} is used to generate a
 customized color palette:
 <<eval=TRUE>>=
-dens <- kde2d(Dgeo,Dgen, n=300, lims=c(-.1, 1.5,-.5,4))
+library(MASS)
+dens <- kde2d(Dgeo,Dgen, n=300)
 myPal <- colorRampPalette(c("white","blue","gold", "orange", "red"))
 plot(Dgeo, Dgen, pch=20,cex=.5)
 image(dens, col=transp(myPal(300),.7), add=TRUE)
@@ -1794,7 +1776,7 @@ F3 <- hybridize(salers, F2, n=40)
 F4 <- hybridize(salers, F3, n=40)
 @
 Finally, note that despite this example shows hybridization between
-diploid organisms, \texttt{hybridize} is not retrained to this case.
+diploid organisms, \texttt{hybridize} is not restrained to this case.
 In fact, organisms with any even level of ploidy can be used, in which
 case half of the genes is taken from each reference population.
 Ultimately, more complex mating schemes could be
@@ -1842,6 +1824,9 @@ implemented... suggestion or (better) contributions are welcome!
 \bibitem{np160}
   Charif D, and Lobry J (2007) SeqinR 1.0-2: a contributed package to the R project for statistical
   computing devoted to biological sequences retrieval and analysis. \textit{in} Structural approaches to sequence evolution: Molecules, networks, populations, \textit{Springer Verlag}, 207-232.
+
+\bibitem{tj551}
+  Goudet J., Raymond, M., DeMeeus, T. and Rousset F. (1996) Testing differentiation in diploid populations. \textit{Genetics} 144: 1933-1940.
 
 \bibitem{tj814}
   Nei M (1973) Analysis of gene diversity in subdivided populations. \textit{Proc Natl Acad Sci USA} 70: 3321-3323.
