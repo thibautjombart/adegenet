@@ -39,7 +39,7 @@ setMethod("locFac","genind", function(x,...){
     return(x@loc.fac)
 })
 
-setMethod("nLoc","genpop", function(x,...){
+setMethod("locFac","genpop", function(x,...){
     return(x@loc.fac)
 })
 
