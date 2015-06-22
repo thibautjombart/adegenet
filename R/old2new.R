@@ -78,6 +78,14 @@ setMethod("old2new", "genind", function(object){
 #   if(length(object) > theoLength) warning("optional content else than pop and pop.names was not converted")
 
   # return(res)
+
+  ## USEFUL CODE FOR RENAMING/CLEANING SLOTS:
+  ## cleanGenind <- function(x){
+  ##     names(attributes(x))[4] <- "loc.n.all"
+  ##     attributes(x) <- attributes(x)[slotNames(new("genind"))]
+  ##     class(x) <- "genind"
+  ##     return(x)
+  ## }
 })
 
 setMethod("old2new", "genlight", function(object){

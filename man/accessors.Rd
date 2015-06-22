@@ -99,8 +99,7 @@
     \item{pop}{returns the population factor of the object, using true
       (as opposed to generic) levels.}
     \item{pop<-}{replacement method for the \code{@pop} slot of an
-      object. The content of \code{@pop} and \code{@pop.names} is updated
-      automatically.}
+      object.}
     \item{popNames}{returns the true names of populations.}
     \item{popNames<-}{sets the true names of populations using a vector of
       length nPop(x).}
@@ -217,12 +216,8 @@ colonies@other$xy
 
 # illustrate pop
 obj <- nancycats[sample(1:100,10)]
-obj$pop
-obj$pop.names
 pop(obj)
 pop(obj) <- rep(c('b','a'), each=5)
-obj$pop
-obj$pop.names
 pop(obj)
 
 # illustrate locNames

@@ -41,7 +41,7 @@ matSimil <- propShared(microbov)
 matDist <- exp(-matSimil)
 D <- cailliez(as.dist(matDist))
 pcoa1 <- dudi.pco(D,scannf=FALSE,nf=3)
-s.class(pcoa1$li,microbov$pop,lab=microbov$pop.names)
+s.class(pcoa1$li,microbov$pop,lab=popNames(microbov))
 
 }
 }

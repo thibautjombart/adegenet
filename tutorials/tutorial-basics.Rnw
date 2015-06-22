@@ -464,7 +464,7 @@ Accessors make things easier. For instance, when setting new names for loci, the
 \texttt{@tab} are renamed automatically:
 <<>>=
 locNames(obj)[1] <- "newLocusName"
-obj@loc.n.all
+nAll(obj)
 @
 
 An additional advantage of using accessors is they are most of the time safer to use. For instance,
@@ -931,9 +931,9 @@ The \texttt{$[$} operator does this, forming a new object with the retained geno
 data(microbov)
 toto <- genind2genpop(microbov)
 toto
-toto@pop.names
+popNames(toto)
 titi <- toto[1:3,]
-titi@pop.names
+popNames(titi)
 @
 
 \noindent The object \texttt{toto} has been subsetted, keeping only the
@@ -1012,7 +1012,7 @@ obj <- seppop(microbov)
 names(obj)
 newObj <- repool(obj$Borgou, obj$Charolais)
 newObj
-newObj$pop.names
+popNames(newObj)
 @
 Done !
 \\
@@ -1061,7 +1061,7 @@ plot(toto$pop.eff, toto$pop.nall, xlab="Colonies sample size",
      type="n")
 text(toto$pop.eff,toto$pop.nall,lab=names(toto$pop.eff))
 
-barplot(toto$loc.nall, ylab="Number of alleles",
+barplot(nAll(toto), ylab="Number of alleles",
         main="Number of alleles per locus")
 
 barplot(toto$Hexp-toto$Hobs, main="Heterozygosity: expected-observed",
@@ -1499,12 +1499,12 @@ barplot(ca1$eig,main="Correspondance Analysis eigenvalues",
 
 Now we display the resulting typology using a basic scatterplot:
 <<>>=
-s.label(ca1$li,lab=obj$pop.names,sub="CA 1-2",csub=2)
+s.label(ca1$li,lab=popNames(obj),sub="CA 1-2",csub=2)
 add.scatter.eig(ca1$eig,nf=3,xax=1,yax=2,posi="bottomright")
 @
 
 <<>>=
-s.label(ca1$li,xax=1,yax=3,lab=obj$pop.names,sub="CA 1-3",csub=2)
+s.label(ca1$li,xax=1,yax=3,lab=popNames(obj),sub="CA 1-3",csub=2)
 add.scatter.eig(ca1$eig,nf=3,xax=2,yax=3,posi="topleft")
 @
 

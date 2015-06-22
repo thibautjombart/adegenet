@@ -19,31 +19,27 @@
 }
 \section{Slots}{
   \describe{
-    \item{\code{tab}:}{matrix of genotypes (in rows) for all alleles (in
-      columns). The table differs depending on the \code{@type} slot:\cr
-      - 'codom': values are frequencies ; '0' if the genotype does not have
-      the corresponding allele, '1' for an homozygote and 0.5 for an
-      heterozygte.\cr
+    \item{\code{tab}:}{
+      matrix integers containing genotypes data for
+      individuals (in rows) for all alleles (in columns). The table
+      differs depending on the \code{@type} slot:\cr
+      - 'codom': values
+      are numbers of alleles, summing up to the
+      individuals' ploidies.\cr
       - 'PA': values are presence/absence of alleles.\cr
       In all cases, rows and columns are given generic names.}
-    \item{\code{loc.names}:}{character vector containing the real names of the loci}
     \item{\code{loc.fac}:}{locus factor for the columns of \code{tab}}
-    \item{\code{loc.nall}:}{integer vector giving the number of alleles per locus}
+    \item{\code{loc.n.all}:}{integer vector giving the number of alleles per locus}
     \item{\code{all.names}:}{list having one component per locus, each containing a character vector of alleles names}
-    \item{\code{call}:}{the matched call}
-    \item{\code{ind.names}:}{character vector containing the real names of the
-      individuals. Note that as Fstat does not store these names, objects
-      converted from .dat files will contain empty \code{ind.names}.}
     \item{\code{ploidy}:}{ an integer indicating the degree of ploidy of
       the genotypes. Beware: 2 is not an integer, but as.integer(2) is.}
     \item{\code{type}:}{ a character string indicating the type of
       marker: 'codom' stands for 'codominant' (e.g. microstallites,
       allozymes); 'PA' stands for 'presence/absence' (e.g. AFLP).}
+    \item{\code{call}:}{the matched call}
     \item{\code{strata}:}{(optional) data frame giving levels of population stratification for each individual}
-    \item{\code{hierarchy}:}{a hierarchical \code{\link{formula}} defining the hierarchical levels in the \code{@@strata} slot.}
+    \item{\code{hierarchy}:}{(optional) a hierarchical \code{\link{formula}} defining the hierarchical levels in the \code{@@strata} slot.}
     \item{\code{pop}:}{(optional) factor giving the population of each individual}
-    \item{\code{pop.names}:}{(optional) vector giving the real names of the
-      populations}
     \item{\code{other}:}{(optional) a list containing other information}
   }
 }
