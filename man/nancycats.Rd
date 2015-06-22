@@ -23,7 +23,7 @@ nancycats
 x <- summary(nancycats)
 
 # some useful graphics
-barplot(x$loc.nall,ylab="Alleles numbers",main="Alleles numbers
+barplot(x$loc.n.all,ylab="Alleles numbers",main="Alleles numbers
 per locus")
 
 plot(x$pop.eff,x$pop.nall,type="n",xlab="Sample size",ylab="Number of alleles")

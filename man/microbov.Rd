@@ -36,7 +36,7 @@ nsamp <- temp$nobs
 
 # perform 1 PCA per marker
 
-kX <- ktab.data.frame(data.frame(X),Y@loc.nall)
+kX <- ktab.data.frame(data.frame(X),Y@loc.n.all)
 
 kpca <- list()
 for(i in 1:30) {kpca[[i]] <- dudi.pca(kX[[i]],scannf=FALSE,nf=2,center=TRUE,scale=FALSE)}
