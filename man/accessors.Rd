@@ -10,12 +10,15 @@
 \alias{[,genpop-method}
 \alias{[,genpop,ANY,ANY,ANY-method}
 \alias{nLoc}
+\alias{nLoc,gen-method}
 \alias{nLoc,genind-method}
 \alias{nLoc,genpop-method}
 \alias{locFac}
+\alias{locFac,gen-method}
 \alias{locFac,genind-method}
 \alias{locFac,genpop-method}
 \alias{nAll}
+\alias{nAll,gen-method}
 \alias{nAll,genind-method}
 \alias{nAll,genpop-method}
 \alias{nPop}
@@ -26,11 +29,14 @@
 \alias{pop}
 \alias{pop<-}
 \alias{pop,genind-method}
+\alias{pop<-,gen-method}
 \alias{pop<-,genind-method}
 \alias{locNames}
+\alias{locNames,gen-method}
 \alias{locNames,genind-method}
 \alias{locNames,genpop-method}
 \alias{locNames<-}
+\alias{locNames<-,gen-method}
 \alias{locNames<-,genind-method}
 \alias{locNames<-,genpop-method}
 \alias{popNames}
@@ -50,15 +56,19 @@
 \alias{ploidy<-,genind-method}
 \alias{ploidy<-,genpop-method}
 \alias{alleles}
+\alias{alleles,gen-method}
 \alias{alleles,genind-method}
 \alias{alleles,genpop-method}
 \alias{alleles<-}
+\alias{alleles<-,gen-method}
 \alias{alleles<-,genind-method}
 \alias{alleles<-,genpop-method}
 \alias{other}
+\alias{other,gen-method}
 \alias{other,genind-method}
 \alias{other,genpop-method}
 \alias{other<-}
+\alias{other<-,gen-method}
 \alias{other<-,genind-method}
 \alias{other<-,genpop-method}
 
@@ -72,17 +82,17 @@
   The operator "[" can be used to access components of the matrix slot
   "@tab", returning a \linkS4class{genind} or \linkS4class{genpop}
   object. This syntax is the same as for a matrix; for instance:\cr
-  - "obj[,]" returns "obj" \cr
-  - "obj[1:10,]" returns an object with only the first 10 genotypes (if
+  - "obj[, ]" returns "obj" \cr
+  - "obj[1:10, ]" returns an object with only the first 10 genotypes (if
   "obj" is a \linkS4class{genind}) or the first 10 populations (if
   "obj" is a \linkS4class{genpop}) of "obj" \cr
   - "obj[1:10, 5:10]" returns an object keeping the first 10 entities and
   the alleles 5 to 10.\cr
-  - "obj[loc=c("L1","L3")]" returns an object keeping only the loci
+  - "obj[loc = c("L1", "L3")]" returns an object keeping only the loci
   specified in the \code{loc} argument (using generic names, not true
   names; in this example, only the first and the third locus would be
   retained)\cr
-  - "obj[1:3, drop=TRUE]" returns the first 3 genotypes/populations of
+  - "obj[1:3, drop = TRUE]" returns the first 3 genotypes/populations of
   "obj", but retaining only alleles that are present in this subset (as
   opposed to keeping all alleles of "obj", which is the default
   behavior).\cr
@@ -156,7 +166,7 @@ ploidy(x, \dots)
 \details{
   The "[" operator can treat elements in the \code{@other} slot as
   well. For instance, if \code{obj@other$xy} contains spatial
-  coordinates, the \code{obj[1:3,]@other$xy} will contain the spatial
+  coordinates, the \code{obj[1:3, ]@other$xy} will contain the spatial
   coordinates of the genotypes (or population) 1,2 and 3. This is
   handled through the argument \code{treatOther}, a logical defaulting
   to TRUE. If set to FALSE, the \code{@other} returned unmodified.\cr
@@ -181,11 +191,11 @@ alleles(nancycats) # get the alleles
 head(tab(nancycats)) # get allele counts
 
 # get allele frequencies, replace NAs
-head(tab(nancycats, freq=TRUE, NA.method="mean")) 
+head(tab(nancycats, freq = TRUE, NA.method = "mean")) 
 
 # let's isolate populations 4 and 8
-temp <- pop(nancycats) %in% c("1","8")
-obj <- nancycats[temp,]
+temp <- pop(nancycats) %in% c("1", "8")
+obj <- nancycats[temp, ]
 obj
 
 pop(obj)
@@ -195,15 +205,15 @@ locNames(nancycats)
 
 # they correspond to L2 and L7
 nancycats$loc.fac
-temp <- nancycats$loc.fac %in% c("fca8","fca37")
-obj <- nancycats[,temp]
+temp <- nancycats$loc.fac %in% c("fca8", "fca37")
+obj <- nancycats[, temp]
 obj
 
 obj$loc.fac
 locNames(obj)
 
 # or more simply
-nancycats[loc=c("fca8","fca37")]
+nancycats[loc = c("fca8","fca37")]
 obj$loc.fac 
 locNames(obj)
 
@@ -215,14 +225,14 @@ colonies
 colonies@other$xy
 
 # illustrate pop
-obj <- nancycats[sample(1:100,10)]
+obj <- nancycats[sample(1:100, 10)]
 pop(obj)
-pop(obj) <- rep(c('b','a'), each=5)
+pop(obj) <- rep(c('b', 'a'), each = 5)
 pop(obj)
 
 # illustrate locNames
 locNames(obj)
-locNames(obj, withAlleles=TRUE)
+locNames(obj, withAlleles = TRUE)
 
 }
 \keyword{manip}
