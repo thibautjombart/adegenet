@@ -16,7 +16,7 @@ setMethod("$<-","genpop",function(x,name,value) {
   loc.fac <- factor(x@loc.fac[toKeep])
 
   x@all.names <- split(all.vec, loc.fac)
-  x@loc.nall  <- setNames(tabulate(loc.fac), levels(loc.fac))
+  x@loc.n.all  <- setNames(tabulate(loc.fac), levels(loc.fac))
   x@loc.fac   <- loc.fac
   return(x)
 }
@@ -192,7 +192,7 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
 ##########################
 setMethod ("show", "genind", function(object){
   x <- object
-  cat("/// genind object \\\\\\")
+  cat("/// GENIND OBJECT \\\\\\")
 
   cat("\n\n // Basic content")
   p <- ncol(x@tab)
@@ -200,11 +200,11 @@ setMethod ("show", "genind", function(object){
 
   cat("\n   @tab: ", nrow(x@tab), "x", ncol(x@tab), "matrix of allele counts" )
 
-  if(!is.null(x@loc.nall)){
-      alleletxt <- paste("(range: ", paste(range(x@loc.nall), collapse="-"), ")", sep="")
-      cat("\n   @loc.nall: number of alleles per locus", alleletxt)
+  if(!is.null(x@loc.n.all)){
+      alleletxt <- paste("(range: ", paste(range(x@loc.n.all), collapse="-"), ")", sep="")
+      cat("\n   @loc.n.all: number of alleles per locus", alleletxt)
   } else {
-      cat("\n   @loc.nall: NULL")
+      cat("\n   @loc.n.all: NULL")
   }
 
   if(!is.null(x@loc.fac)){
@@ -261,17 +261,17 @@ setMethod ("show", "genind", function(object){
 ##########################
 setMethod ("show", "genpop", function(object){
   x <- object
-  cat("/// genpop object \\\\\\")
+  cat("/// GENPOP OBJECT \\\\\\")
 
   cat("\n\n // Basic content")
   p <- ncol(x@tab)
   cat("\n   @tab: ", nrow(x@tab), "x", ncol(x@tab), "matrix of alleles counts" )
 
-  if(!is.null(x@loc.nall)){
-      alleletxt <- paste("(range: ", paste(range(x@loc.nall), collapse="-"), ")", sep="")
-      cat("\n   @loc.nall: number of alleles per locus", alleletxt)
+  if(!is.null(x@loc.n.all)){
+      alleletxt <- paste("(range: ", paste(range(x@loc.n.all), collapse="-"), ")", sep="")
+      cat("\n   @loc.n.all: number of alleles per locus", alleletxt)
   } else {
-      cat("\n   @loc.nall: NULL")
+      cat("\n   @loc.n.all: NULL")
   }
 
   if(!is.null(x@loc.fac)){
@@ -354,7 +354,7 @@ setMethod ("summary", signature(object="genind"), function(object, ...){
 
 
   ## codom case ##
-  res$loc.nall <- x@loc.nall
+  res$loc.n.all <- x@loc.n.all
 
   temp <- genind2genpop(x,quiet=TRUE)@tab
 
@@ -443,7 +443,7 @@ setMethod ("summary", signature(object="genpop"), function(object, ...){
 
 
   ## codom case ##
-  res$loc.nall <- x@loc.nall
+  res$loc.n.all <- x@loc.n.all
 
   res$pop.nall <- apply(x@tab,1,function(r) sum(r>0,na.rm=TRUE))
 

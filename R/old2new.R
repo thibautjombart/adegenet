@@ -47,7 +47,7 @@ setMethod("old2new", "genind", function(object){
                                                             sep = ".")), 
                                    use.names = FALSE)
     levels(object@loc.fac) <- object@loc.names
-    names(object@loc.nall) <- object@loc.names
+    names(object@loc.n.all) <- object@loc.names
   }
   
   if (!is.null(object@pop)){
@@ -60,7 +60,7 @@ setMethod("old2new", "genind", function(object){
 #   res@tab <- as.matrix(x$tab)
 #   res@ind.names <- as.character(x$ind.names)
 #   res@loc.names <- as.character(x$loc.names)
-#   res@loc.nall <- as.integer(x$loc.nall)
+#   res@loc.n.all <- as.integer(x$loc.n.all)
 #   res@loc.fac <- as.factor(x$loc.fac)
 #   res@all.names <- as.list(x$all.names)
 #   if(!is.null(x$pop)) {
@@ -106,7 +106,7 @@ setMethod("old2new", "genpop", function(object){
 #   res@tab <- as.matrix(x$tab)
 #   res@pop.names <- as.character(x$pop.names)
 #   res@loc.names <- as.character(x$loc.names)
-#   res@loc.nall <- as.integer(x$loc.nall)
+#   res@loc.n.all <- as.integer(x$loc.n.all)
 #   res@loc.fac <- as.factor(x$loc.fac)
 #   res@all.names <- as.list(x$all.names)
 #   res@ploidy <- as.integer(2)

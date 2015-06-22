@@ -31,7 +31,7 @@ genind2hierfstat <- function(x,pop=NULL){
     ## - for instance, 121 is 1/21, 101 is 1/1, 11 is 1/1
 
     ## find max number of alleles ##
-    max.nall <- max(x@loc.nall)
+    max.nall <- max(x@loc.n.all)
     x@all.names <- lapply(x$all.names, function(e) .genlab("",max.nall)[1:length(e)])
 
 

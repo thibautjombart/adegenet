@@ -27,7 +27,7 @@ test_that("slots are equivalent", {
   expect_equivalent(slot(microbov, 'strata'), slot(retemp, 'strata'))
   expect_equivalent(slot(microbov, 'hierarchy'), slot(retemp, 'hierarchy'))
   expect_equivalent(slot(microbov, 'loc.fac'), slot(retemp, 'loc.fac'))
-  expect_equivalent(slot(microbov, 'loc.nall'), slot(retemp, 'loc.nall'))
+  expect_equivalent(slot(microbov, 'loc.n.all'), slot(retemp, 'loc.n.all'))
   expect_equivalent(slot(microbov, 'pop'), slot(retemp, 'pop'))
   expect_equivalent(slot(microbov, 'ploidy'), slot(retemp, 'ploidy'))
   expect_equivalent(slot(microbov, 'type'), slot(retemp, 'type'))

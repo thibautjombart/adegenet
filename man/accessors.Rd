@@ -12,6 +12,12 @@
 \alias{nLoc}
 \alias{nLoc,genind-method}
 \alias{nLoc,genpop-method}
+\alias{locFac}
+\alias{locFac,genind-method}
+\alias{locFac,genpop-method}
+\alias{nAll}
+\alias{nAll,genind-method}
+\alias{nAll,genpop-method}
 \alias{nPop}
 \alias{nPop,genind-method}
 \alias{nPop,genpop-method}

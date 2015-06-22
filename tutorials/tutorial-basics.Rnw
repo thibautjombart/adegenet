@@ -57,7 +57,9 @@ opts_chunk$set(fig.path='figs/base-', fig.keep='high', dev='pdf', fig.width=7, f
   \textit{adegenet} now also handles dominant markers, allows for any ploidy in the data, handles
   SNPs and sequence data, and implements a memory-efficient storage for genome-wide SNP data.
   This tutorial provides an overview of \textit{adegenet}'s basic functionalities. Since
-  \textit{adegenet} 1.4-0, this tutorial is no longer distributed as a package vignette.
+  \textit{adegenet} 1.4-0, this tutorial is no longer distributed as a package vignette. Also note
+  that \textit{adegenet} has undergone substantial changes with version 2.0.0, including a reform of
+  the data structure and new accessors, all documented in this tutorial.
 \end{abstract}
 
 
@@ -120,7 +122,7 @@ Other tutorials are available via the command \texttt{adegenetTutorial}:
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Installing the package}
+\subsection{Installing the package - stable version}
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 Before going further, we shall make sure that \textit{adegenet} is well installed
 on the computer.
@@ -136,7 +138,7 @@ install.packages("adegenet", dep=TRUE)
 @
 
 We can now load the package alongside other useful packages:
-<<results="hide">>=
+<<results="hide", message=FALSE>>=
 library("ape")
 library("pegas")
 library("seqinr")
@@ -150,10 +152,27 @@ packageDescription("adegenet", fields = "Version")
 \textit{adegenet} version should read \Sexpr{packageDescription("adegenet", fields = "Version")}.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Installing the package - devel version}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+The development of \textit{adegenet} is hosted on github:\\
+\url{https://github.com/thibautjombart/adegenet}.
+
+You can install this version using the package \textit{devtools} and the following commands:
+<<eval=FALSE>>=
+library("devtools")
+install_github("thibautjombart/adegenet")
+library("adegenet")
+@
+
+The development version may implement new features and fix known issues. However, it may also
+occasionally be broken, as this is our working copy of the project.
+Usual disclaimers apply here: this package is provided with no warranty, etc.
+If unsure, use the stable version.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Getting help}
+\subsection{Getting help in R}
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 There are several ways of getting information about R in general, and about
 \textit{adegenet} in particular.
@@ -205,20 +224,77 @@ To go to the \textit{adegenet} page, click `packages', `adegenet', and
 \\
 
 
-Lastly, several mailing lists are available to find different kinds of
-information on R; to name a few:
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Asking help on a forum}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+Several mailing lists are available to find different kinds of
+information on R.
+\textit{adegenet} has its own dedicated forum/mailing list:
+\url{adegenet-forum@lists.r-forge.r-project.org}
+To avoid spam, this list is filtered; subscription is recommended, and can be done at:
+\url{https://lists.r-forge.r-project.org/cgi-bin/mailman/listinfo/adegenet-forum}
+\\
+
+Posting questions on R forums can sometimes be a traumatic experience, and we are trying to avoid
+this as much as possible on the adegenet forum.
+To this end, the following points are worth keeping in mind:
 \begin{itemize}
-\item \textit{adegenet forum}: adegenet and multivariate analysis of genetic markers.\\
-  \url{https://lists.r-forge.r-project.org/cgi-bin/mailman/listinfo/adegenet-forum}
-\item \textit{R-help}: general questions about R.\\
-  \url{https://stat.ethz.ch/mailman/listinfo/r-help}
+\item \textbf{read the doc first:} manpages and tutorials take an awful long time to write and
+  maintain; make sure your answer is not in an obvious place before asking a question; pretending to
+  have read all the available doc while you have not even looked at the basics tutorial is a clever,
+  yet often unsuccessful strategy.
+\item \textbf{search the archives:} adegenet forum has searchable archives (see the adegenet
+  website); your answer may be there already, so it is worth checking.
+\item \textbf{give us info:} you tried something, it is not working.. give us some information: what
+  version of adegenet are you using, what commands did you enter and what was the output, etc.
+\item \textbf{avoid personal messages:} the adegenet forum has plenty of advantages: several people
+  are likely to reply and participate in the conversation, answers are generally faster, and all of
+  this is archived and searchable. Please do not email the developers directly, unless you need to
+  discuss confidential matters.
+\item \textbf{short answers are okay:} some answers will be short. Do not take them as rude, or
+  think people are upset: answering questions on a forum is a time-consuming activity and the reward
+  for it is low. Sometimes the best answer will be pointing to relevant documentation,
+  e.g. ``Please check ?xvalDapc''. If you get this, we (most likely) still like you.
+\end{itemize}
+
+
+The adegenet forum is not the only forum that might be relevant.
+Others include:
+\begin{itemize}
 \item \textit{R-sig-genetics}: genetics in R.\\
   \url{https://stat.ethz.ch/mailman/listinfo/r-sig-genetics}
 \item \textit{R-sig-phylo}: phylogenetics in R.\\
   \url{https://stat.ethz.ch/mailman/listinfo/r-sig-phylo}
+\item \textit{R-help}: general questions about R.\\
+  \url{https://stat.ethz.ch/mailman/listinfo/r-help}
 \end{itemize}
 
+Please avoid double-posting (it is often considered to be rude).
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Bug report, feature requests, contributions: we are all one!}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+Free software evolves through interactions between communities of developers and users.
+This is especially true in R, where these two communities are very much intermingled.
+In short: \textbf{we are all contributors!}
+These contributions include:
+\begin{itemize}
+  \item \textbf{asking a question:} see section above
+  \item \textbf{asking for a new feature:} something useful is missing, and you think it will be
+    useful to others? Say it! Post a feature request using github's \emph{issues}:\\
+    \url{https://github.com/thibautjombart/adegenet/issues}
+  \item \textbf{reporting a possible bug:} bugs are rare, but if you think you found one, post it as
+    an issue on githubL: \\
+    \url{https://github.com/thibautjombart/adegenet/issues}
+  \item \textbf{contributions:} github makes contributions very easy; fork the project, make the
+    changes you want, and when you are happy and the package passes the checks, send a pull request;
+    for more on this go to the github page:\\
+    \url{https://github.com/thibautjombart/adegenet}
+    And please, remember to add yourself as a contributor in the DESCRIPTION and relevant manpages!
+\end{itemize}
 
 
 
@@ -259,25 +335,25 @@ Note that the '\texttt{\$}' is also implemented for adegenet objects,
 so that slots can be accessed as if they were components of a list.
 \\
 
-%% The structure of \texttt{genind} objects is described by:
-%% <<>>=
-%% getClassDef("genind")
-%% @
-
 \texttt{genind} objects possess the following slots:
 \begin{itemize}
   \item \texttt{tab}: a matrix of alleles counts (individuals in rows, alleles in columns).
+  \item \texttt{loc.n.all}: the number of alleles in each marker.
   \item \texttt{loc.fac}: a factor indicating which columns in \texttt{@tab} correspond to which marker.
-  \item \texttt{loc.nall}: the number of alleles in each marker.
   \item \texttt{all.names}: a list of allele names for each locus.
-  \item \texttt{pop}: a factor storing group membership of the individuals.
-  \item \texttt{ploidy}: a vector of integer indicating the ploidy of each individual.
+  \item \texttt{ploidy}: a vector of integer indicating the ploidy of each individual; constant
+    ploidy is assumed across different loci of a single individual, but different individuals can
+    have different ploidy.
   \item \texttt{type}: a character string indicating whether the marker is codominant
     (\texttt{codom}) or presence/absence (\texttt{PA}).
   \item \texttt{call}: the matched call, i.e. command used to create the object.
-  \item \texttt{other}: a list storing optional information.
-  \item \texttt{strata}: an optional data.frame storing hierarchical structure of individuals.
-  \item \texttt{hierarchy}: an optional formula defining the hierarchical structure of individuals.
+  \item \texttt{pop}: (optional) a factor storing group membership of the individuals; when present,
+    method needing a population information will automatically use this if nothing else is provided.
+  \item \texttt{strata}: (optional) a data.frame storing hierarchical structure of individuals (see
+    dedicated tutorial).
+  \item \texttt{hierarchy}: (optional) a formula defining the hierarchical structure of individuals (see
+    dedicated tutorial).
+  \item \texttt{other}: (optional) a list storing optional information.
 \end{itemize}
 Slots can be accessed using '\texttt{@}' or '\texttt{\$}', although it is recommended to use
 accessors to retrieve and change slot values (see section 'Using accessors').
@@ -285,53 +361,22 @@ accessors to retrieve and change slot values (see section 'Using accessors').
 
 The main slot of a \texttt{genind} is the table of allelic counts \texttt{@tab}, with individuals in rows and
 alleles in columns.
-Note that as of \textit{adegenet} 2.0.0, this table is no storing data as relative frequencies. These can
-still be obtained using the accessor '\texttt{tab}'.
-\\
-
-The particular case of presence/absence data is described in a
-dedicated section (see 'Handling presence/absence data').
 For instance:
 <<>>=
 nancycats[10:18, loc="fca8"]@tab
 @
 Individual 'N224' is an homozygote for the allele 135 at the locus 'fca8', while N141'' is an heterozygote with alleles 129/133.
-The slot 'ploidy' is an integer giving the level of ploidy
-of the considered organisms (defaults to 2).
-This parameter is essential, in particular when switching from
-individual frequencies (\texttt{genind} object) to allele counts per
-populations (\texttt{genpop}).
-
-\noindent
-The slot 'type' describes the type of marker used: codominant (\texttt{codom}, e.g. microsatellites) or presence/absence (\texttt{PA}, e.g. AFLP).
-By default, adegenet considers that markers are codominant.
-Note that actual handling of presence/absence markers has been made available since version 1.2-3.
-See the dedicated section for more information about presence/absence markers.
+Note that as of \textit{adegenet} 2.0.0, this table is no storing data as relative frequencies. These can
+still be obtained using the accessor '\texttt{tab}'.
+The particular case of presence/absence data is described in a
+dedicated section (see 'Handling presence/absence data').
+As of version 2.0.0 of adegenet, the slots \texttt{@strata} and \texttt{@hierarchy} implement
+hierarchical population structures. See dedicated tutorial for more on this topic.
 \\
 
 
-Optional content can are also be stored within the object.
-The slot \texttt{@other} is a list that can include any additional information.
-The optional slot \texttt{@pop} (a factor giving a grouping of individuals) is particular in that
-the behaviour of many functions will check automatically its content and behave accordingly.
-In fact, each time an argument 'pop' is required by a function, it is first seeked in \texttt{@pop}.
-For instance, using the function \texttt{genind2genpop} to convert \texttt{nancycats} to a \texttt{genpop} object, there is no need to give a 'pop' argument as it exists in the \texttt{genind} object:
-<<>>=
-head(pop(nancycats))
-catpop <- genind2genpop(nancycats)
-catpop
-@
-Other additional components can be stored (like here, spatial coordinates of populations in \$xy)
-and processed during the conversion if the argument \texttt{process.other} is set to \texttt{TRUE}.
-In this case, numeric vectors with a length corresponding to the number of individuals will we
-averaged per groups; note that any other function than \texttt{mean} can be used by providing any
-function to the argument \texttt{other.action}.
-Matrices with a number of rows corresponding to the number of individuals are processed similarly.
-\\
-
-Finally, a \texttt{genind} object generally contains its matched call, \textit{i.e.} the instruction that created it.
-%%This is not the case, however, for objects loaded using \texttt{data}.
-When call is available, it can be used to regenerate an object.
+Note that objects can be regenerated using the matched call stored in \textit{genind} objects, \textit{i.e.} the instruction that created it.
+For instance:
 <<>>=
 obj <- read.genetix(system.file("files/nancycats.gtx",package="adegenet"))
 obj$call
@@ -343,18 +388,20 @@ identical(obj,toto)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{genpop objects}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We use the previously built \texttt{genpop} object:
+These objects store \textbf{gen}etic data at a \textbf{pop}ulation level, plus various meta-data.
+Their struture is nearly identical to \texttt{genind} objects, only simpler as they no longer store
+group membership for individuals.
+\texttt{genpop} objects are created from \texttt{genind} objects using \texttt{genind2genpop}:
 <<>>=
+data(nancycats)
+catpop <- genind2genpop(nancycats)
 catpop
-is.genpop(catpop)
-catpop$tab[1:5,1:10]
 @
-The matrix \$tab contains alleles counts per population (here, cat colonies).
-These objects are otherwise very similar to \texttt{genind} in their
-structure, and possess generic names, true names, the matched call and
-an \texttt{@other} slot:
+
+As in \texttt{genind} objects, data are stored as numbers of alleles, but this time for populations
+(here, cat colonies):
 <<>>=
-getClassDef("genpop")
+catpop$tab[1:5,1:10]
 @
 
 
@@ -369,18 +416,22 @@ Another advantage of this approach is that as long as accessors remain identical
 side, the internal structure of an object may change from one release to another without generating
 errors in old scripts.
 Although \texttt{genind} and \texttt{genpop} objects are fairly simple, we recommend using accessors whenever possible
-to access their content.
+to access or modify their content.
 \\
 
 Available accessors are:
 \begin{itemize}
   \item \texttt{nInd}: returns the number of individuals in the object; only for \texttt{genind}.
   \item \texttt{nLoc}: returns the number of loci (SNPs).
+  \item \texttt{nPop}: returns the number of loci (SNPs).
   \item \texttt{indNames}$^{\dagger}$: returns/sets labels for individuals; only for \texttt{genind}.
   \item \texttt{locNames}$^{\dagger}$: returns/sets labels for loci (SNPs).
   \item \texttt{alleles}$^{\dagger}$: returns/sets alleles.
-  \item \texttt{ploidy}$^{\dagger}$: returns/sets ploidy of the individuals.
+  \item \texttt{ploidy}$^{\dagger}$: returns/sets ploidy of the individuals; when setting values, a
+    single value can be provided, in which case constant ploidy is assumed.
   \item \texttt{pop}$^{\dagger}$: returns/sets a factor grouping individuals; only for \texttt{genind}.
+  \item \texttt{strata}$^{\dagger}$: returns/sets data defining strata of individuals; only for \texttt{genind}.
+  \item \texttt{hier}$^{\dagger}$: returns/sets hierarchical groups of individuals; only for \texttt{genind}.
   \item \texttt{other}$^{\dagger}$: returns/sets misc information stored as a list.
 \end{itemize}
 where $^{\dagger}$ indicates that a replacement method is available using \texttt{<-}; for instance:
@@ -409,6 +460,13 @@ pop(obj)
 pop(obj) <- rep("newPop",10)
 pop(obj)
 @
+Accessors make things easier. For instance, when setting new names for loci, the columns of
+\texttt{@tab} are renamed automatically:
+<<>>=
+locNames(obj)[1] <- "newLocusName"
+obj@loc.n.all
+@
+
 An additional advantage of using accessors is they are most of the time safer to use. For instance,
 \texttt{pop<-} will check the length of the new group membership vector against the data, and
 complain if there is a mismatch. It also converts the provided replacement to a factor, while the command:
@@ -416,6 +474,7 @@ complain if there is a mismatch. It also converts the provided replacement to a 
 obj@pop <- rep("newPop",10)
 @
 generates an error (since replacement is not a factor).
+
 
 
 
@@ -956,8 +1015,33 @@ newObj
 newObj$pop.names
 @
 Done !
+\\
 
 
+Note that the content of \texttt{@other} can be processed during the conversion from \texttt{genind} to
+\texttt{genpop} if the argument \texttt{process.other} is set to \texttt{TRUE}.
+Only vectors of a length, or matrices with a number of rows matching the number individuals will be
+processed. The way they are processed is defined by a function passed as the argument
+\texttt{other.action} (defaulting to 'mean').
+Let us illustrate this using \texttt{sim2pop}:
+<<>>=
+data(sim2pop)
+simpop
+nInd(sim2pop)
+head(other(sim2pop)$xy)
+dim(other(sim2pop)$xy)
+nPop(sim2pop)
+popNames(sim2pop)
+@
+The component \texttt{sim2pop@other\$xy} contains spatial coordinates of individuals from 2 populations.
+<<>>=
+other(genind2genpop(sim2pop, process.other=TRUE))
+@
+In this case, numeric vectors with a length corresponding to the number of individuals will we
+averaged per groups; note that any other function than \texttt{mean} can be used by providing any
+function to the argument \texttt{other.action}.
+Matrices with a number of rows corresponding to the number of individuals are processed similarly.
+\\
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -12,7 +12,7 @@ setMethod("nLoc","genind", function(x,...){
   if (x@type == "PA"){
     return(ncol(x@tab))
   } else {
-    return(length(levels(x@loc.fac)))      
+    return(length(levels(x@loc.fac)))
   }
 })
 
@@ -22,7 +22,50 @@ setMethod("nLoc","genpop", function(x,...){
     if (x@type == "PA"){
       return(ncol(x@tab))
     } else {
-      return(length(levels(x@loc.fac)))      
+      return(length(levels(x@loc.fac)))
+    }
+
+})
+
+
+#########
+# locFac
+#########
+setGeneric("locFac", function(x,...){
+    standardGeneric("locFac")
+})
+
+setMethod("locFac","genind", function(x,...){
+    return(x@loc.fac)
+})
+
+setMethod("nLoc","genpop", function(x,...){
+    return(x@loc.fac)
+})
+
+
+#######
+# nAll
+#######
+setGeneric("nAll", function(x,...){
+    standardGeneric("nAll")
+})
+
+
+setMethod("nAll","genind", function(x,...){
+  if (x@type == "PA"){
+    return(ncol(x@tab))
+  } else {
+    return(length(levels(x@loc.n.all)))
+  }
+})
+
+
+setMethod("nAll","genpop", function(x,...){
+    if (x@type == "PA"){
+      return(ncol(x@tab))
+    } else {
+      return(length(levels(x@loc.n.all)))
     }
 
 })
@@ -139,8 +182,8 @@ setReplaceMethod("locNames","genind",function(x,value) {
     ## make changes in the object
     names(x@all.names) <- value
     levels(x@loc.fac) <- value
-    names(x@loc.nall) <- value
-    newColNames <- paste(rep(value, x@loc.nall), unlist(x@all.names), sep=".")
+    names(x@loc.n.all) <- value
+    newColNames <- paste(rep(value, x@loc.n.all), unlist(x@all.names), sep=".")
     colnames(x@tab) <- newColNames
 
     ## return
@@ -166,8 +209,8 @@ setReplaceMethod("locNames","genpop",function(x,value) {
     ## make changes in the object
     names(x@all.names) <- value
     levels(x@loc.fac) <- value
-    names(x@loc.nall) <- value
-    newColNames <- paste(rep(value, x@loc.nall), unlist(x@all.names), sep=".")
+    names(x@loc.n.all) <- value
+    newColNames <- paste(rep(value, x@loc.n.all), unlist(x@all.names), sep=".")
     colnames(x@tab) <- newColNames
 
     ## return
@@ -252,7 +295,7 @@ setMethod("alleles","genind", function(x, ...){
 setReplaceMethod("alleles","genind", function(x, value){
     if(!is.list(value)) stop("replacement value must be a list")
     if(length(value)!=nLoc(x)) stop("replacement list must be of length nLoc(x)")
-    if(any(sapply(value, length) != x$loc.nall)) stop("number of replacement alleles do not match that of the object")
+    if(any(sapply(value, length) != x$loc.n.all)) stop("number of replacement alleles do not match that of the object")
     x@all.names <- value
     names(x@all.names) <- locNames(x)
     return(x)
@@ -266,7 +309,7 @@ setMethod("alleles","genpop", function(x, ...){
 setReplaceMethod("alleles","genpop", function(x, value){
     if(!is.list(value)) stop("replacement value must be a list")
     if(length(value)!=nLoc(x)) stop("replacement list must be of length nLoc(x)")
-    if(any(sapply(value, length) != x$loc.nall)) stop("number of replacement alleles do not match that of the object")
+    if(any(sapply(value, length) != x$loc.n.all)) stop("number of replacement alleles do not match that of the object")
     x@all.names <- value
     names(x@all.names) <- locNames(x)
     return(x)

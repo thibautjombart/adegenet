@@ -70,9 +70,9 @@ setClassUnion("formOrNULL", c("formula", "NULL"))
       }
   }
 
-  if(!is.null(object@loc.nall)){
-      if(length(object@loc.nall) != k) {
-          cat("\ninvalid length in loc.nall\n")
+  if(!is.null(object@loc.n.all)){
+      if(length(object@loc.n.all) != k) {
+          cat("\ninvalid length in loc.n.all\n")
           return(FALSE)
       }
   }
@@ -91,7 +91,7 @@ setClassUnion("formOrNULL", c("formula", "NULL"))
 
 setClass("gen", representation(tab = "matrix",
                                loc.fac = "factorOrNULL",
-                               loc.nall = "intOrNum",
+                               loc.n.all = "intOrNum",
                                all.names = "listOrNULL",
                                ploidy = "integer",
                                type = "character",
@@ -100,7 +100,7 @@ setClass("gen", representation(tab = "matrix",
                                "VIRTUAL"),
          prototype(tab=matrix(0L, ncol=0,nrow=0),
                    loc.fac=NULL,
-                   loc.nall=integer(0),
+                   loc.n.all=integer(0),
                    all.names=NULL,
                    ploidy=integer(0),
                    type=character(0),

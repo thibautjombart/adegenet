@@ -360,7 +360,7 @@ NULL
 #'
 #' # perform 1 PCA per marker
 #'
-#' kX <- ktab.data.frame(data.frame(X),Y@@loc.nall)
+#' kX <- ktab.data.frame(data.frame(X),Y@@loc.n.all)
 #'
 #' kpca <- list()
 #' for(i in 1:30) {kpca[[i]] <- dudi.pca(kX[[i]],scannf=FALSE,nf=2,center=TRUE,scale=FALSE)}
@@ -448,7 +448,7 @@ NULL
 #' x <- summary(nancycats)
 #'
 #' # some useful graphics
-#' barplot(x$loc.nall,ylab="Alleles numbers",main="Alleles numbers
+#' barplot(x$loc.n.all,ylab="Alleles numbers",main="Alleles numbers
 #' per locus")
 #'
 #' plot(x$pop.eff,x$pop.nall,type="n",xlab="Sample size",ylab="Number of alleles")
