@@ -56,7 +56,7 @@ setMethod("nAll","genind", function(x,...){
   if (x@type == "PA"){
     return(ncol(x@tab))
   } else {
-    return(length(levels(x@loc.n.all)))
+    return(x@loc.n.all)
   }
 })
 
@@ -65,7 +65,7 @@ setMethod("nAll","genpop", function(x,...){
     if (x@type == "PA"){
       return(ncol(x@tab))
     } else {
-      return(length(levels(x@loc.n.all)))
+      return(x@loc.n.all)
     }
 
 })
