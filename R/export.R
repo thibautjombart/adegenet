@@ -9,46 +9,46 @@
 ############################################
 
 
-############################
-# Function genind2hierfstat
-############################
-genind2hierfstat <- function(x,pop=NULL){
-    ##  if(!inherits(x,"genind")) stop("x must be a genind object (see ?genind)")
-    ##   invisible(validObject(x))
-    if(!is.genind(x)) stop("x is not a valid genind object")
-    if(any(ploidy(x) != 2L)) stop("not implemented for non-diploid genotypes")
-    checkType(x)
+## ############################
+## # Function genind2hierfstat
+## ############################
+## genind2hierfstat <- function(x,pop=NULL){
+##     ##  if(!inherits(x,"genind")) stop("x must be a genind object (see ?genind)")
+##     ##   invisible(validObject(x))
+##     if(!is.genind(x)) stop("x is not a valid genind object")
+##     if(any(ploidy(x) != 2L)) stop("not implemented for non-diploid genotypes")
+##     checkType(x)
 
-    if(is.null(pop)) pop <- pop(x)
-    if(is.null(pop)) pop <- as.factor(rep("P1",nrow(x@tab)))
+##     if(is.null(pop)) pop <- pop(x)
+##     if(is.null(pop)) pop <- as.factor(rep("P1",nrow(x@tab)))
 
-    ## ## NOTES ON THE CODING IN HIERFSTAT ##
-    ## - interpreting function is genot2al
-    ## - same coding has to be used for all loci
-    ## (i.e., all based on the maximum number of digits to be used)
-    ## - alleles have to be coded as integers
-    ## - alleles have to be sorted by increasing order when coding a genotype
-    ## - for instance, 121 is 1/21, 101 is 1/1, 11 is 1/1
+##     ## ## NOTES ON THE CODING IN HIERFSTAT ##
+##     ## - interpreting function is genot2al
+##     ## - same coding has to be used for all loci
+##     ## (i.e., all based on the maximum number of digits to be used)
+##     ## - alleles have to be coded as integers
+##     ## - alleles have to be sorted by increasing order when coding a genotype
+##     ## - for instance, 121 is 1/21, 101 is 1/1, 11 is 1/1
 
-    ## find max number of alleles ##
-    max.nall <- max(x@loc.n.all)
-    x@all.names <- lapply(x$all.names, function(e) .genlab("",max.nall)[1:length(e)])
+##     ## find max number of alleles ##
+##     max.nall <- max(nAll(x))
+##     x@all.names <- lapply(alleles(x), function(e) .genlab("",max.nall)[1:length(e)])
 
 
-    ## VERSION USING GENIND2DF ##
-    gen <- genind2df(x, sep="", usepop=FALSE)
-    gen <- as.matrix(data.frame(lapply(gen, as.numeric)))
-    res <- cbind(as.numeric(pop),as.data.frame(gen))
-    colnames(res) <- c("pop",x@loc.names)
-    if(!any(table(indNames(x))>1)){
-        rownames(res) <- x@ind.names
-    } else {
-        warning("non-unique labels for individuals; using generic labels")
-        rownames(res) <- 1:nrow(res)
-    }
+##     ## VERSION USING GENIND2DF ##
+##     gen <- genind2df(x, sep="", usepop=FALSE)
+##     gen <- as.matrix(data.frame(lapply(gen, as.numeric)))
+##     res <- cbind(as.numeric(pop),as.data.frame(gen))
+##     colnames(res) <- c("pop", locNames(x))
+##     if(!any(table(indNames(x))>1)){
+##         rownames(res) <- indNames(x)
+##     } else {
+##         warning("non-unique labels for individuals; using generic labels")
+##         rownames(res) <- 1:nrow(res)
+##     }
 
-    return(res)
-} # end genind2hierfstat
+##     return(res)
+## } # end genind2hierfstat
 
 
 
