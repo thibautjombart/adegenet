@@ -922,17 +922,25 @@ popNames(titi)
 \noindent The object \texttt{toto} has been subsetted, keeping only the
 first three populations.
 Of course, any subsetting available for a matrix can be used with \texttt{genind} and \texttt{genpop} objects.
-In addition, we can subset loci directly using the generic marker names:
+In addition, we can subset loci directly using indices or logicals, in which case they refer to the
+output of \texttt{locNames}:
 <<>>=
-tata <- titi[,loc=1]
+nAll(titi)
+tata <- titi[,loc=c(1,3)]
 tata
+nAll(tata)
 @
 
-\noindent Now, \texttt{tata} only contains the 12 alleles of the third
-marker of \texttt{titi}.
-\\
+Alternatively, one can subset loci using their explicit name:
+<<>>=
+locNames(titi)
+hel5 <- titi[,loc="HEL5"]
+hel5
+locNames(hel5)
+@
 
-To simplify the task of separating data by marker, the function
+
+To simplify the task of separating data by marker systematically, the function
 \texttt{seploc} can be used.
 It returns a list of objects (optionnaly, of data matrices), each
 corresponding to a marker:
@@ -942,6 +950,7 @@ sepCats <- seploc(nancycats)
 class(sepCats)
 names(sepCats)
 sepCats$fca45
+identical(tab(sepCats$fca45), tab(nancycats[,loc="fca45"]))
 @
 
 \noindent The object \texttt{sepCats\$fca45} only contains data of the

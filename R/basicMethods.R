@@ -26,11 +26,23 @@ setMethod("$<-","genpop",function(x,name,value) {
 # '[' operator
 ###############
 ## genind
-setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, i, j, ..., loc=NULL, treatOther=TRUE, quiet=TRUE, drop=FALSE) {
+setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, i, j, ..., pop=NULL, loc=NULL, treatOther=TRUE, quiet=TRUE, drop=FALSE) {
 
     if (missing(i)) i <- TRUE
     if (missing(j)) j <- TRUE
 
+    ## HANDLE 'POP'
+    if(!is.null(pop) && !is.null(pop(x))){
+        if(is.factor(pop)) pop <- as.character(pop)
+        if(!is.character(pop)) pop <- popNames(x)[pop]
+        temp <- !pop %in% pop(x)
+        if (any(temp)) { # if wrong population specified
+            warning(paste("the following specified populations do not exist:", pop[temp]))
+        }
+        i <- pop(x) %in% pop
+    }
+
+    ## handle population factor
     if(!is.null(x@pop)) {
         pop <- factor(pop(x)[i])
     } else {
@@ -48,7 +60,7 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
         if(is.factor(loc)) loc <- as.character(loc)
         if(!is.character(loc)) loc <- locNames(x)[loc]
         temp <- !loc %in% x@loc.fac
-        if (any(temp)) { # si mauvais loci
+        if (any(temp)) { # if wrong loci specified
             warning(paste("the following specified loci do not exist:", loc[temp]))
         }
         j <- x$loc.fac %in% loc
