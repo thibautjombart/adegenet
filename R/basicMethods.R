@@ -11,7 +11,7 @@ setMethod("$<-","genpop",function(x,name,value) {
 })
 
 
-.drop_allelels <- function(x, toKeep){
+.drop_alleles <- function(x, toKeep){
   all.vec <- unlist(x@all.names, use.names = FALSE)[toKeep]
   loc.fac <- factor(x@loc.fac[toKeep])
 
@@ -102,7 +102,7 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
 
     if (x@type == "codom"){
       # Treat locus items
-      x <- .drop_allelels(x, j)
+      x <- .drop_alleles(x, j)
     }
     return(x)
 })
@@ -183,7 +183,7 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
     x@ploidy    <- x@ploidy
 
     # Treat locus items
-    x <- .drop_allelels(x, j)
+    x <- .drop_alleles(x, j)
 
     return(x)
 })

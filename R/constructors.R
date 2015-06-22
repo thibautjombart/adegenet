@@ -276,7 +276,7 @@ setMethod("initialize", "genpop", function(.Object, tab, prevcall=NULL, ploidy=2
         names(loc.n.all) <- loc.names
 
         ## loc.fac
-        loc.fac <- rep(loc.names,loc.n.all)
+        loc.fac <- factor(rep(loc.names,loc.n.all),levels=loc.names)
 
         ## alleles name
         temp <- colnames(tab)
