@@ -225,7 +225,7 @@ locNames(obj, withAlleles=TRUE)
 
 # illustrate how 'other' slot is handled
 data(sim2pop)
-nInd(simpop)
+nInd(sim2pop)
 other(sim2pop[1:6]) # xy is subsetted automatically
 other(sim2pop[1:6, treatOther=FALSE]) # xy is left as is
 
