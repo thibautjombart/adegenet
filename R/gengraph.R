@@ -197,12 +197,8 @@ gengraph.genpop <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
 
     ## COMPUTE DISTANCES ##
     x$tab[is.na(x$tab)] <- 0
-    if(method==6){
-        D <- as.matrix(pairwise.fst(x))
-    } else {
-        D <- as.matrix(dist.genpop(x, method=method))
-    }
-
+    D <- as.matrix(dist.genpop(x, method=method))
+    
     ## USE MATRIX METHOD ##
     res <- gengraph(D, cutoff=cutoff, ngrp=ngrp, computeAll=computeAll, plot=plot, show.graph=show.graph, col.pal=col.pal,
                     truenames=truenames, nbreaks=nbreaks, ...)

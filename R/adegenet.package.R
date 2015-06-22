@@ -63,8 +63,6 @@
 #' using \code{\link{fasta2genlight}}\cr
 #'
 #' === EXPORTING DATA ===\cr \code{adegenet} exports data from
-#' \linkS4class{genind} object to formats recognized by other R packages:\cr - the hierfstat
-#' package: see \code{\link{genind2hierfstat}}\cr
 #'
 #' Genotypes can also be recoded from a \linkS4class{genind} object into a
 #' data.frame of character strings, using any separator between alleles. This
@@ -94,9 +92,7 @@
 #'
 #' === ANALYZING DATA ===\cr Several functions allow to use usual, and less
 #' usual analyses:\cr - \code{\link{HWE.test.genind}}: performs HWE test for
-#' all populations and loci combinations \cr - \code{\link{pairwise.fst}}:
-#' computes simple pairwise Fst between populations\cr -
-#' \code{\link{dist.genpop}}: computes 5 genetic distances among populations.
+#' all populations and loci combinations \cr - \code{\link{dist.genpop}}: computes 5 genetic distances among populations.
 #' \cr - \code{\link{monmonier}}: implementation of the Monmonier algorithm,
 #' used to seek genetic boundaries among individuals or populations. Optimized
 #' boundaries can be obtained using \code{\link{optimize.monmonier}}. Object of

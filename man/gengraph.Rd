@@ -78,8 +78,7 @@ gengraph(x, \dots)
   \item{method}{an \code{integer} ranging from 1 to 6 indicating the
     type of method to be used to derive a matrix of pairwise distances
     between populations; values from 1 to 5 are passed to the function
-    \code{dist.genpop}; 6 corresponds to pairwise Fst; other values are
-    not supported.}
+    \code{dist.genpop}; other values are not supported.}
 
   \item{truenames}{a logical indicating whether original labels should
     be used for plotting (TRUE), as opposed to indices of sequences
