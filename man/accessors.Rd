@@ -10,12 +10,15 @@
 \alias{[,genpop-method}
 \alias{[,genpop,ANY,ANY,ANY-method}
 \alias{nLoc}
+\alias{nLoc,gen-method}
 \alias{nLoc,genind-method}
 \alias{nLoc,genpop-method}
 \alias{locFac}
+\alias{locFac,gen-method}
 \alias{locFac,genind-method}
 \alias{locFac,genpop-method}
 \alias{nAll}
+\alias{nAll,gen-method}
 \alias{nAll,genind-method}
 \alias{nAll,genpop-method}
 \alias{nPop}
@@ -26,11 +29,14 @@
 \alias{pop}
 \alias{pop<-}
 \alias{pop,genind-method}
+\alias{pop<-,gen-method}
 \alias{pop<-,genind-method}
 \alias{locNames}
+\alias{locNames,gen-method}
 \alias{locNames,genind-method}
 \alias{locNames,genpop-method}
 \alias{locNames<-}
+\alias{locNames<-,gen-method}
 \alias{locNames<-,genind-method}
 \alias{locNames<-,genpop-method}
 \alias{popNames}
@@ -50,15 +56,19 @@
 \alias{ploidy<-,genind-method}
 \alias{ploidy<-,genpop-method}
 \alias{alleles}
+\alias{alleles,gen-method}
 \alias{alleles,genind-method}
 \alias{alleles,genpop-method}
 \alias{alleles<-}
+\alias{alleles<-,gen-method}
 \alias{alleles<-,genind-method}
 \alias{alleles<-,genpop-method}
 \alias{other}
+\alias{other,gen-method}
 \alias{other,genind-method}
 \alias{other,genpop-method}
 \alias{other<-}
+\alias{other<-,gen-method}
 \alias{other<-,genind-method}
 \alias{other<-,genpop-method}
 
@@ -82,24 +92,19 @@
   
   \item "obj[1:10,]" returns an object with only the first 10 genotypes (if
   "obj" is a \linkS4class{genind}) or the first 10 populations (if
-  "obj" is a \linkS4class{genpop}) of "obj" \cr
+  "obj" is a \linkS4class{genpop}) \cr
   
   \item "obj[1:10, 5:10]" returns an object keeping the first 10 entities and
   the alleles 5 to 10.\cr
   
   \item "obj[loc=c(1,3)]" returns an object keeping only the 1st and 3rd
-  loci, as specified by \code{locNames(obj)}; logicals, or named loci
+  loci, using \code{locNames(obj)} as reference; logicals, or named loci
   also work; this overrides other subsetting of alleles.\cr
   
  \item "obj[pop=2:4]" returns an object keeping only individuals from the
-  populations 2, 3 and 4, as specified by \code{popNames(obj)};
+  populations 2, 3 and 4, using \code{popNames(obj)} as reference;
   logicals, or named populations also work; this overrides other
   subsetting of individuals.\cr
-   
-  \item "obj[1:3, drop=TRUE]" returns the first 3 genotypes/populations of
-  "obj", but retaining only alleles that are present in this subset (as
-  opposed to keeping all alleles of "obj", which is the default
-  behavior).\cr
 }
   The argument \code{treatOther} handles the treatment of objects in the
   \code{@other} slot (see details). The argument \code{drop} can be set
@@ -170,7 +175,7 @@ ploidy(x, \dots)
 \details{
   The "[" operator can treat elements in the \code{@other} slot as
   well. For instance, if \code{obj@other$xy} contains spatial
-  coordinates, the \code{obj[1:3,]@other$xy} will contain the spatial
+  coordinates, the \code{obj[1:3, ]@other$xy} will contain the spatial
   coordinates of the genotypes (or population) 1,2 and 3. This is
   handled through the argument \code{treatOther}, a logical defaulting
   to TRUE. If set to FALSE, the \code{@other} returned unmodified.\cr
@@ -195,7 +200,7 @@ alleles(nancycats) # get the alleles
 head(tab(nancycats)) # get allele counts
 
 # get allele frequencies, replace NAs
-head(tab(nancycats, freq=TRUE, NA.method="mean")) 
+head(tab(nancycats, freq = TRUE, NA.method = "mean")) 
 
 # let's isolate populations 4 and 8
 popNames(nancycats)
@@ -211,14 +216,14 @@ obj
 locNames(obj)
 
 # illustrate pop
-obj <- nancycats[sample(1:100,10)]
+obj <- nancycats[sample(1:100, 10)]
 pop(obj)
-pop(obj) <- rep(c('b','a'), each=5)
+pop(obj) <- rep(c('b', 'a'), each = 5)
 pop(obj)
 
 # illustrate locNames
 locNames(obj)
-locNames(obj, withAlleles=TRUE)
+locNames(obj, withAlleles = TRUE)
 locNames(obj)[1] <- "newLocus"
 locNames(obj)
 locNames(obj, withAlleles=TRUE)
