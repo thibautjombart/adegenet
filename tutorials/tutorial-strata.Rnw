@@ -1,0 +1,688 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage{graphicx}
+\usepackage{color}
+\definecolor{blue1}{RGB}{0,102,204}
+%% \usepackage[colorlinks=true,linkcolor=blue1,citecolor=blue1,urlcolor=blue1]{hyperref}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{array}
+\usepackage[english]{babel}
+\usepackage{amsfonts}
+\usepackage{url}
+\usepackage{bm}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[affil-it]{authblk}
+
+
+
+
+% \usepackage{stringenc}
+% \usepackage{pdfescape}
+
+% \makeatletter
+% \renewcommand*{\UTFviii@defined}[1]{%
+%   \ifx#1\relax
+%     \begingroup
+%       % Remove prefix "\u8:"
+%       \def\x##1:{}%
+%       % Extract Unicode char from command name
+%       % (utf8.def does not support surrogates)
+%       \edef\x{\expandafter\x\string#1}%
+%       \StringEncodingConvert\x\x{utf8}{utf16be}% convert to UTF-16BE
+%       % Hexadecimal representation
+%       \EdefEscapeHex\x\x
+%       % Enhanced error message
+%       \PackageError{inputenc}{Unicode\space char\space \string#1\space
+%                               (U+\x)\MessageBreak
+%                               not\space set\space up\space
+%                               for\space use\space with\space LaTeX}\@eha
+%     \endgroup
+%   \else\expandafter
+%     #1%
+%   \fi
+% }
+% \makeatother
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\beq}{\begin{equation}}
+\newcommand{\eeq}{\end{equation}}
+\newcommand{\m}[1]{\mathbf{#1}}
+\newcommand{\rcmd}[1]{\textcolor{red}{\texttt{#1}}}
+\newcommand{\code}[1]{{{\tt #1}}}
+\newcommand{\Rlogo}{\includegraphics[width=0.05\textwidth]{figs/Rlogo.pdf}}
+\newcommand{\adegenet}{\textit{adegenet}}
+\newcommand{\Adegenet}{\textit{Adegenet}}
+\newcommand{\tab}{\hspace*{1em}}
+\newcolumntype{H}{>{\setbox0=\hbox\bgroup} c<{\egroup}@{}}
+\newcommand{\cmdlink}[2]{%
+  \texttt{\hyperref[#1]{#2}}%
+}
+\newcommand{\seclink}[2]{%
+  \textsc{\hyperref[#1]{#2}}%
+}
+\definecolor{light-gray}{gray}{0.97}
+
+\title{Using population strata in \adegenet{} \Sexpr{packageDescription("adegenet", fields = "Version")}}
+
+\author[1]{Zhian N. Kamvar \thanks{\texttt{kamvarz@science.oregonstate.edu}}} 
+\author[2]{Thibaut Jombart \thanks{\texttt{tjombart@imperial.ac.uk}}}
+\affil[1]{{\footnotesize Department of Botany and Plant Pathology, Oregon State University}}
+\affil[2]{{\footnotesize MRC Centre for Outbreak Analysis and Modelling. Imperial College London}}
+
+%% \date{\today}
+\date{\today}
+
+\sloppy
+\hyphenpenalty 10000
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\selectlanguage{english}
+
+<<include=FALSE>>=
+knitr::opts_chunk$set(fig.path='figs/base-', fig.keep='high', dev='pdf', 
+                      fig.width=7, fig.height=7, tidy=FALSE, warning=FALSE, 
+                      fig.show="asis", fig.align='center', 
+                      out.width=".8\\textwidth")
+@
+
+
+\color{black}
+
+\maketitle
+
+\begin{abstract}
+
+  This vignette provides a short tutorial on the use of the \textbf{strata} slot
+  within \textsc{genind} and \textsc{genlight} objects. The slot was added in
+  \adegenet{} version 2.0-0 from the \textit{poppr} package
+  \cite{kamvar2015novel}. Sampling schemes are often not constrained to simply
+  one population factor; they can be stratified over years, treatments, and
+  geographic locations. The \textbf{strata} slot provides a way to store and
+  combine any population strata related to your data.
+
+\end{abstract}
+
+
+\newpage
+\tableofcontents
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction to strata}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{strata}
+
+\tab\tab in \adegenet{}, the \textsc{genind} and \textsc{genlight} objects
+contain a slot called \texttt{strata} which can contain a data frame with the
+same number of rows as samples in your data set. This slot is used to define the
+population factor of the data. One convenient way of defining strata is to
+concatenate them using `\_' and use them to define a single population in your
+data before you import it into \adegenet{}. Examples of this format can be found
+in the supplementary data for \cite{kepler2015community} (file: 
+\textit{fsp\_rob\_pop.csv}) and at 
+\url{http://dx.doi.org/10.6084/m9.figshare.877104}. Another way to define strata
+is to import them in a separate data frame as we will demonstrate below.
+
+In this vignette, we will show you how to \seclink{strata:define}{define}
+populations strata, \seclink{strata:view}{view} those strata to ensure
+that they are correctly defined, \seclink{strata:manip}{manipulate} your
+strata by adding and renaming them, and use these levels
+to \seclink{strata:setPop}{set the population} in
+your \textsc{genind} and \textsc{genlight} objects using the following methods:
+
+% latex table generated in R 3.0.3 by xtable 1.7-3 package
+% Sat Mar 22 20:24:23 2014
+\begin{table}[ht]
+\centering
+\begin{tabular}{llll}
+  \hline
+ Method & Function & Input & Result\\ 
+  \hline
+ split & \cmdlink{strata:define:split}{splitStrata} & formula & defined hierarchical levels\\
+ set & \cmdlink{strata:define:df}{strata} & data frame & new hierarchical levels\\ 
+ get & \cmdlink{strata:view}{strata} & formula & data frame\\ 
+ name & \cmdlink{strata:manip:name}{nameStrata} & formula & new hierarchical level names\\ 
+ add & \cmdlink{strata:manip:add}{addStrata} & vector or data frame & new hierarchical level\\
+   \hline
+\end{tabular}
+\end{table}
+
+
+\begin{center}
+  \fcolorbox{light-gray}{light-gray}{
+    \begin{minipage}[t]{0.8\textwidth}
+      {\large \textsc{A note about formulas}} \\
+      The formulas used by genind objects always start with a $\sim$ and 
+      levels are always separated by a $/$. Some examples are: 
+
+      $\sim$Country/City/District 
+
+      $\sim$Field/Year
+
+    \end{minipage}
+    }
+\end{center}
+\noindent
+
+In the next section, we'll explore two ways of defining population strata in your
+\textsc{genind} and \textsc{genlight} objects.
+
+\section{Defining strata}
+\label{strata:define}
+
+In this section, we will give examples of two ways to define a population
+strata. We will use the \texttt{microbov} data set which contains 704 samples of
+cattle from two countries, split into two species, and 15 breeds. The
+information on the population stratification is located in the \textbf{other}
+slot. Notice that the \textbf{strata} slot is currently empty.
+
+<<microbov_show>>=
+library("adegenet")
+data(microbov)
+microbov
+lapply(other(microbov), summary) # Showing counts of each factor
+@
+
+\subsection{Using a data frame}
+\label{strata:define:df}
+
+\tab\tab By default, the \textbf{strata} slot in a \textsc{genind} object is 
+empty, but it can be filled with a data frame as long as the number of rows
+match the number of samples in the data. We will use the information in the
+\textbf{other} slot to create the data frame. 
+
+<<microbov_df_create>>=
+strata_df <- data.frame(other(microbov)) # Create a data frame from the list.
+head(strata_df)
+@
+
+Now that we have our strata defined in a data frame, we can set it as the
+population stratification by using the \texttt{strata} command:
+
+<<microbov_set_df>>=
+strata(microbov) <- strata_df
+microbov
+@
+
+When we look at the output of the \textsc{genind} object, we can now see that 
+there are three strata defined.
+
+\subsection{Using \texttt{df2genind}}
+\label{strata:define:df2genind}
+
+If you wanted to input strata from a file, you can use the field in the function
+\texttt{df2genind}. Let's use our microbov data set as an example. For this, we 
+need 2 data frames: one that contains the genetic information and one that 
+contains the strata.
+
+<<microbov_genind2df>>=
+micdf <- genind2df(microbov, sep = "/") # Convert to a data frame
+micdf[1:6, 1:6] # genetic data
+head(strata_df) # strata
+@
+
+Now that we have our data frames, we can import them using \texttt{df2genind}.
+Take note that our original genetic data frame has the first column set to 
+``pop'', which is not genetic data, so we use the ``\texttt{[, -1]}''. to 
+remove that column. 
+
+<<microbof_df2genind_strata>>=
+newmic <- df2genind(micdf[, -1], sep = "/", pop = micdf$pop, strata = strata_df)
+newmic
+@
+
+The population factor here is independent of the strata. We could have easily
+imported just the strata and set the population factor using the function 
+\cmdlink{strata:setPop}{setPop} to set the population:
+
+<<microbov_df2genind_strata_setpop>>=
+newmic <- df2genind(micdf[, -1], sep = "/", strata = strata_df)
+newmic
+popNames(newmic) # NULL
+setPop(newmic) <- ~breed
+popNames(newmic) # Names for each breed
+@
+
+
+\subsection{Using an input file}
+\label{strata:define:combine}
+
+As explained in \seclink{strata}{Introduction to strata}, one useful way to
+define strata for your data is to concatenate them using `\_' and set that as
+your population factor in your original input file. This allows you to carry
+your strata with the genetic data even when it's not in R.
+
+To demonstrate this, we will use the \texttt{microbov} data and import it using
+\texttt{df2genind}. Note that the code immediately following is simply to set up
+the data for the example. Normally your data would be in a text file. You do not
+need to understand the following code.
+
+<<microbov_genind2df_combine>>=
+strata_comb <- do.call("paste", c(setNames(strata_df, NULL), sep = "_"))
+head(strata_comb)        # Combined strata
+micdf$pop <- strata_comb # replace the population with the combined strata.
+micdf[1:6, 1:6]
+@
+
+We are using a data frame as an example, so our input file would look a bit
+different if we were using a different file format like \textsc{Fstat}, but the
+basic idea is the same. When we import our data, we have the population factor
+in the first column and the genotypes in the other columns. We can import our
+data this way:
+
+<<microdf_import>>=
+mbov_from_df <- df2genind(micdf[-1], sep = "/", pop = micdf$pop)
+mbov_from_df
+@
+
+It says we don't have any strata set. We can use the population factor.
+
+<<microdf_strata>>=
+strata(mbov_from_df) <- data.frame(pop = pop(mbov_from_df))
+mbov_from_df
+@
+
+We know that we have all of our strata combined into one level. We can split
+them by using the command \texttt{splitStrata}. \label{strata:define:split}
+
+<<microdf_split_strata>>=
+splitStrata(mbov_from_df) <- ~Country/Breed/Species
+mbov_from_df
+@
+
+And now we have our stratifications. 
+
+
+% We will use
+% the example data set from \url{http://dx.doi.org/10.6084/m9.figshare.877104}. It
+% is an AFLP data set of the root rot pathogen \textit{Aphanomyces euteiches} from
+% two fields and multiple soil cores per field. First, we will follow the link and
+% copy the download link from figshare.
+% <<aphan_dummy_figshare, eval = FALSE>>=
+% aphan <- read.genalex("http://files.figshare.com/1314228/rootrot.csv")
+% aphan
+% @
+% <<aphan_figshare, echo = FALSE>>=
+% aphan <- nameStrata(strata(agc, value = strata(agc, ~Pop/Subpop, combine = TRUE)[2]), ~Pop)
+% aphan
+% @
+% \noindent
+% The supplemental information in the data defined two hierarchical levels, yet we
+% only see one here labeled `Pop'. This is how populations are automatically
+% defined when importing to a genind object since it
+% does not know how many hierarchical levels you have defined. To define these
+% levels present in the data set, we will need to split them up using the function
+% \texttt{splitStrata}:
+% \label{strata:define:split}
+% <<aphan_split>>=
+% splitStrata(aphan) <- ~field/sample
+% aphan
+% @
+% \noindent
+% Now we have successfully defined our strata. If you have imported your data
+% in this manner, you may skip to the \seclink{strata:setPop}{setting
+% population strata}, \seclink{strata:view}{viewing strata}, or
+% \seclink{strata:manip}{manipulating hierarchical levels.}
+
+% \bline{}
+
+% If you have imported your data with a single population and want to add
+% hierarchical levels separately, you can use the function \texttt{strata}
+% with a data frame containing your hierarchical levels. For this example, we will
+% use the data set \texttt{H3N2}, which contains SNP data from the H3N2 virus.
+% This data set holds a data frame in the the \textbf{other} slot that contains many variables including country, year, and month of
+% collection. We will first load the data and write that data frame to a file on
+% the desktop. 
+% \label{data:virus}
+% <<H3N2_data_show, eval = FALSE>>=
+% data(H3N2)
+% write.table(other(H3N2)$x, file = "~/Desktop/virus_info.csv", row.names = FALSE)
+% @
+% <<H3N2_data_noshow, echo = FALSE>>=
+% data(H3N2)
+% virus_info <- as.data.frame(other(H3N2)$x) # extracting the data frame
+% @
+% \noindent
+% Now we have our data and we have a separate table in a file on our desktop
+% defining our hierarchical levels. Let's import those levels into R with
+% \texttt{read.table} and see what they are:
+
+% <<H3N2_read_table, eval = FALSE>>=
+% virus_info <- read.table("~/Desktop/virus_info.csv", header = TRUE)
+% names(virus_info)
+% @
+% <<H3N2_read_table_eval, echo = FALSE>>=
+% names(virus_info)
+% @
+
+% From here we will convert our genind object to a genind object and use
+% \texttt{strata} to define the hierarchical levels with the table we just
+% imported.
+
+% \label{strata:define:set}
+% <<H3N2_strata>>=
+% virus <- as.genind(H3N2) # Converting it to a genind object.
+% strata(virus) <- virus_info # Setting the hierarchy
+% virus
+% @
+% \noindent
+% In this data, levels such as host and segment are unimportant levels because
+% they are all the same. Let's say that we are only interested in year and country.
+% To make things easier to view, we will set the hierarchical levels to these two
+% columns:
+% <<H3N2_strata_again>>=
+% strata(virus) <- virus_info[c("country", "year")]
+% virus
+% @
+
+% Notice that there are no populations defined. Now that we have the hierarchical
+% levels in place, we can use it to define the population hierarchy. We will use
+% the function \texttt{setPop} to define the population as year with respect to
+% country:
+% <<H3N2_set_country>>=
+% setPop(virus) <- ~year/country
+% virus
+% @
+
+\section{Viewing strata}
+\label{strata:view}
+
+
+If you wanted to view your strata to make sure that you made no spelling errors
+in your population definitions, you can extract the data frame from your genind
+object by using the function \texttt{strata}: Note, I'm wrapping the command in
+\texttt{head} to prevent all 704 rows from printing:
+
+<<microdf_strata_show>>=
+# Show the whole strata
+head(strata(mbov_from_df)) 
+@
+
+You can also hierarchically combine specific levels of strata by using a formula
+inside the function:
+
+<<microdf_strata_show_select>>=
+# Show only country and breed, hierarchically
+head(strata(mbov_from_df, ~Country/Breed))
+@
+
+If you don't want to combine the strata hierarchically, you can set \texttt{combine = FALSE}.
+<<microdf_strata_nocombine>>=
+head(strata(mbov_from_df, ~Country/Breed, combine = FALSE)) 
+@
+
+
+% \begin{quote}
+% Default Command:
+% <<strata_command, echo = FALSE, comment = NA, size = 'normalsize'>>=
+% funk <- "strata"
+% print_command(funk)
+% @
+% \end{quote}
+% \noindent
+% Where \textbf{x} is the genind object, \textbf{formula} defines the hierarchical
+% levels, and \textbf{combine} indicates whether or not you want the lower levels 
+% of the hierarchy combined with the higher levels. For example, in the root rot
+% data above, the hierarchical levels are explicitly hierarchical and should be
+% combined. Note, if you don't supply a formula argument, the data frame as it
+% exists will be returned.
+
+% <<aphan_hier_get>>=
+% head(strata(aphan))
+% head(strata(aphan, ~field/sample))
+% @
+
+% If the hierarchical levels are not nested, or you simply want to use this
+% hierarchy for another data set, you might want to set the \textbf{combine} flag
+% to \texttt{FALSE}. Let's use the virus data as an example:
+
+% <<virus_get>>=
+% head(strata(virus, ~year/country))
+% head(strata(virus, ~year/country, combine = FALSE))
+% @
+
+% It will return only the levels you ask it to return:
+
+% <<virus_onepop>>=
+% head(strata(virus, ~country))
+% @
+
+\section{Defining populations with strata}
+\label{strata:setPop}
+
+The function \texttt{setPop} will eventually be your best friend. You can change
+the defined population simply by using a hierarchical formula. 
+
+<<microsetpop>>=
+popNames(microbov) # by breed
+setPop(microbov) <- ~coun/spe
+popNames(microbov) # by country and species
+setPop(microbov) <- ~breed
+popNames(microbov) # back to breed
+@
+
+% Now that we have defined the hierarchical levels in the data set, setting the
+% population hierarchy allows us to group our data according to the hierarchical
+% level of your choice. This is a necessary step. For this example, we will use a
+% data set of \textit{Phytophthora infestans} collected from North America and
+% South America.
+
+% <<Pinf_setPop>>=
+% data(Pinf)
+% Pinf
+% @
+% \noindent
+% Above we have two strata for Continent and Country, but the
+% populations only show Continent level populations. If we wanted to investigate
+% each country separately, we would need to reset the population to be represented
+% by Country. This can be done with the function \texttt{setPop}. This function
+% utilizes the defined population strata to set the population. We'll use our
+% data set above to illustrate this:
+
+% <<Pinf_setPop2>>=
+% setPop(Pinf) <- ~Country
+% Pinf # Now set by country
+% @
+% \noindent
+% The beauty about it is the fact that it will also combine all the hierarchical
+% levels you want to use. Let's see when we ask it to set the population of
+% Country with respect to Continent.
+
+% <<Pinf_setPop_combine>>=
+% setPop(Pinf) <- ~Continent/Country
+% Pinf
+% @
+% \noindent
+% Nice!
+
+
+
+\section{Manipulating strata}
+\label{strata:manip}
+
+You can also add and rename strata.
+
+\subsection{Adding levels}
+\label{strata:manip:add}
+
+If you obtain a new stratification in your data, or want to stratify it by some
+new genetic characteristic, you can add a new level to your existing strata with
+the function \texttt{addStrata}.
+
+<<add_strata>>=
+microbov # Has three strata
+
+# Creating dummy strata
+newstrat <- sample(paste0("P", 1:2), 704, replace = TRUE)
+
+addStrata(microbov) <- data.frame(dummy = newstrat)
+microbov
+@
+
+Note that you can add any number of strata by using a data frame. 
+
+\subsection{Naming levels}
+\label{strata:manip:name}
+
+Sometimes, the names of your strata are not what you want. You can rename the
+strata using the function \texttt{nameStrata}:
+
+<<name_strata>>=
+microbov # names are coun breed spe dummy
+nameStrata(microbov) <- ~Country/Breed/Species/Dummy
+microbov
+@
+% Once we have our strata set in place, we want to be able to rename and add
+% to them. For this example, we will revisit the \seclink{data:virus}{virus
+% example} from above. We have set the population hierarchy to be based on year and
+% country, but we've noticed that we left out month. And let's say that we
+% accidentally overwrote the data object like this:
+% <<virus_stupid>>=
+% virus_info <- virus_info[["month"]]
+% names(virus_info)
+% @
+% \noindent
+% If we were saving our script the whole time, we could just go back and retrieve
+% the data frame, but that defeats the purpose of this section where we imagine
+% that we've recieved new information and wanted to add it to our hierarchy. If we
+% want to add this to our hierarchy, we just use the function
+% \texttt{addStrata} defined as thus:
+% \begin{quote}
+% Default Command:
+% <<addStrata_command, echo = FALSE, comment = NA, size = 'normalsize'>>=
+% funk <- "addStrata"
+% print_command(funk)
+% @
+% \end{quote}
+% \noindent
+% We can use this function to add on a new column to the data frame.  
+% \label{strata:manip:add}
+% <<virus_add_arg>>=
+% addStrata(virus) <- virus_info 
+% virus
+% @
+% \noindent
+% Notice that the new hierarchical level is simply labeled as \texttt{NEW}. We
+% will customize the name of the hierarchical levels with the function
+% \texttt{nameStrata}. 
+% \label{strata:manip:name}
+
+% <<virus_name>>=
+% nameStrata(virus) <- ~country/year/month
+% virus
+% @
+% \noindent
+% Of course, perhaps a better way still would be to use a data frame:
+% <<virus_add_df, eval = FALSE>>=
+% addStrata(virus) <- data.frame(month = virus_info)
+% @
+
+\section{Interpreting error messages}
+
+There are times when you might mis-type something or use capitalization when
+your data has none. In these instances functions will throw errors. Often, they
+can be difficult to interpret. This section will show some example warnings and
+how to interpret them. 
+
+\newpage
+
+\subsection{setPop warnings/errors}
+<<setpop_warning, message = TRUE, warning = TRUE>>=
+setPop(microbov) <- ~country/breed
+@
+
+This error message explains that we have supplied a stratification that does not
+exist in our data. Even though we got the words correct, R is case-sensitive,
+so we need to make sure our capitalization is correct:
+
+<<setpop_correct, warning = TRUE, message = TRUE>>=
+setPop(microbov) <- ~Country/Breed
+@
+
+Here's another one that might come up:
+
+<<setpop_noformula, warning = TRUE, message = TRUE>>=
+setPop(microbov) <- Country/Breed
+@
+
+This one is tricky because there is only one single character missing. This
+formula doesn't have the ``$\sim$''. When this happens, R doesn't recognize it
+as a formula and thinks that you want to divide the variable \texttt{Country} by
+the variable \texttt{Breed}. Let's supposed that you actually had two variables
+defined as \texttt{Country} and \texttt{Breed}. Would you still be able to get
+away without including the $\sim$.
+
+<<setpop_novar, warning = TRUE, message = TRUE>>=
+Country <- runif(10)
+Breed <- runif(10)
+setPop(microbov) <- Country/Breed
+@
+
+Again, this is telling you that what you've presented is not a formula. This is 
+fixed by placing the $\sim$ after the arrow. One last error that can come up with
+\texttt{setPop} is when you don't have any strata:
+
+<<nancystrat, warning = TRUE, message = TRUE>>=
+data("nancycats")
+nancycats
+setPop(nancycats) <- ~group
+@
+
+Here, you get a warning instead of an error. This is telling you that your 
+\texttt{@strata} slot is empty. 
+
+\subsection{splitStrata warnings/errors}
+
+The \texttt{splitStrata} function allows you to import your strata via a
+standard format. If we revisit the microbov data from above, we can combine the
+strata to create an example:
+
+<<strata_microbov, warning = TRUE, message = TRUE>>=
+setPop(microbov) <- ~Country/Breed/Species/Dummy
+strata(microbov) <- data.frame(pop = pop(microbov))
+microbov
+@
+
+Now we see that microbov only has 1 stratification called ``pop'', but we know 
+that it actually has 4. What happens if we only name 3 levels in 
+\texttt{splitStrata}?
+
+<<splitStrata_warning, warning = TRUE, message = TRUE>>=
+splitStrata(microbov) <- ~Country/Breed/Species
+@
+
+This error is showing us on the first line that we have specified too few strata
+to split (we supplied 3, but it needs 4). The second line shows us what the 
+first row of the combined strata looks like so we can figure out what the 
+possible names should be.
+
+<<splitStrata_fix, warning = TRUE, message = TRUE>>=
+splitStrata(microbov) <- ~Country/Breed/Species/Dummy
+@
+
+Now we have everything split. What happens if we run the function a second time?
+
+<<splitStrata_again, warning = TRUE, message = TRUE>>=
+splitStrata(microbov) <- ~Country/Breed/Species/Dummy
+@
+
+This is a complicated one. Since this function is meant to be used only once, it
+can have side-effects when used multiple times. Here, we are given the error as
+we saw before, but we are also given a warning that ``Strata must be length 1''.
+This means that, when we use \texttt{splitStrata}, our strata slot must have a
+1 column data frame in it. Since there are more than 1 columns, it is ignoring
+the others.
+
+\newpage
+
+\bibliographystyle{plain}
+\bibliography{bibliography}
+
+\end{document}
