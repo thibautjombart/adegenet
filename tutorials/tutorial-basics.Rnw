@@ -143,9 +143,12 @@ library("ape")
 library("pegas")
 library("seqinr")
 library("ggplot2")
+@
+<<>>=
 library("adegenet")
 @
-\noindent You can make sure that the right version of the package is installed using:
+
+If at some point you are unsure about the version of the package, you can check it using:
 <<>>=
 packageDescription("adegenet", fields = "Version")
 @
@@ -829,7 +832,7 @@ Coordinate Analyses (PCoA), which in this case will give identical results to PC
 <<>>=
 pco1 <- dudi.pco(D, scannf=FALSE,nf=2)
 s.label(pco1$li*1.1, clab=0, pch="")
-textplot(pco1$li[,1], pco1$li[,2], words=rownames(pco1$li), 
+textplot(pco1$li[,1], pco1$li[,2], words=rownames(pco1$li),
          cex=1.4, new=FALSE, xpd=TRUE)
 title("Principal Coordinate Analysis\n-based on proteic distances-")
 @
@@ -840,18 +843,10 @@ title("Principal Coordinate Analysis\n-based on proteic distances-")
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Using \texttt{genind}/\texttt{genpop} constructors}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\texttt{genind} or \texttt{genpop} objects can be constructed from data matrices similar to the \texttt{\$tab} component (respectively, alleles frequencies and alleles counts).
-This is achieved by the constructors \texttt{genind} (or \texttt{as.genind})  and \texttt{genpop}
-(or \texttt{as.genpop}).
-However, these low-level functions are first meant for internal use, and are called for instance by
-functions such as \texttt{read.genetix}.
-Consequently, there is much less control on the arguments and improper specification can lead to
-creating improper \texttt{genind}/\texttt{genpop} objects without issuing a warning or an error.
-One should therefore use these functions with additional care as to how information is coded.
-The table passed as argument to these constructors must have correct
-names: unique rownames identifying genotypes/populations, and unique colnames
-having the form '[marker].[allele]'.
-
+\texttt{genind} or \texttt{genpop} objects are best obtained using the procedures described above.
+However, one can also build new \texttt{genind} or \texttt{genpop} objects using the constructor \texttt{new()}.
+In this case, the function must be given as main input an object corresponding to the \texttt{@tab}
+slot: a matrix of integers with individuals in row and alleles in columns, with columns being named as '[marker].[allele]'.
 Here is an example for \texttt{genpop} using a dataset from \textit{ade4}:
 <<>>=
 data(microsatt)
@@ -861,7 +856,7 @@ microsatt$tab[10:15,12:15]
 Moreover, column names are set as required, and row names are unique.
 It is therefore safe to convert these data into a \texttt{genpop} using the constructor:
 <<>>=
-toto <- genpop(microsatt$tab)
+toto <- new("genpop", tab=microsatt$tab)
 toto
 summary(toto)
 @
@@ -872,40 +867,15 @@ summary(toto)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Exporting data}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Genotypes in \texttt{genind} format can be exported to the R packages
-\emph{genetics} (using \texttt{genind2genotype}) and \emph{hierfstat} (using \texttt{genind2hierfstat}).
-The package \emph{genetics} is now deprecated, but the implemented
-class \texttt{genotype} is still used in various packages.
-The package \emph{hierfstat} does not define a class, but requires
-data to be formated in a particular way.
-It has been removed from CRAN as of R version 2.13.0 for maintainance issues, but is supposed to be
-back eventually.
-
-Here are examples of how to use these functions:
-<<genind2genotype>>=
-obj <- genind2genotype(nancycats)
-class(obj)
-obj[1:4,1:5]
-class(obj$fca8)
-@
-
-<<genind2hierfstat>>=
-obj <- genind2hierfstat(nancycats)
-class(obj)
-obj[1:4,1:5]
-@
-
-%% \noindent Now we can use the function \texttt{varcomp.glob} from
-%% \emph{hierfstat} to compute 'variance' components:
-%% <<echo=FALSE,eval=FALSE>>=
-%% detach("package:ape")
-%% @
-%% <<>>=
-%% varcomp.glob(obj$pop,obj[,-1])
-%% @
+The \texttt{genind} class tends to become a standard in population genetics packages.
+As of \emph{adegenet} 2.0.0, export functions towards \emph{hierfstat} have been removed, as the
+package now uses \texttt{genind} objects as a native class.
+Similarly, export towards the package \emph{genetics} have been removed, as \emph{adegenet} now
+relies on \emph{pegas} for basic population genetics.
+\\
 
 
-A more generic way to export data is to produce a \texttt{data.frame} of genotypes
+A generic way to export data is to produce a \texttt{data.frame} of genotypes
 coded by character strings.
 This is done by \texttt{genind2df}:
 <<genind2df>>=
@@ -913,10 +883,7 @@ obj <- genind2df(nancycats)
 obj[1:5,1:5]
 @
 
-\noindent However, some software will require alleles to be
-separated.
-The argument \texttt{sep} allows one to specify any separator.
-For instance:
+This function is flexible; for instance, one can separate alleles by any character string:
 <<>>=
 genind2df(nancycats,sep="|")[1:5,1:5]
 @
@@ -957,7 +924,7 @@ first three populations.
 Of course, any subsetting available for a matrix can be used with \texttt{genind} and \texttt{genpop} objects.
 In addition, we can subset loci directly using the generic marker names:
 <<>>=
-tata <- titi[,loc="L03"]
+tata <- titi[,loc=1]
 tata
 @
 

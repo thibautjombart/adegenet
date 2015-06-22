@@ -45,7 +45,8 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
     if (x@type == "codom"){
       ## handle loc argument
       if(!is.null(loc)){
-        loc <- as.character(loc)
+        if(is.factor(loc)) loc <- as.character(loc)
+        if(!is.character(loc)) loc <- locNames(x)[loc]
         temp <- !loc %in% x@loc.fac
         if (any(temp)) { # si mauvais loci
             warning(paste("the following specified loci do not exist:", loc[temp]))
@@ -122,7 +123,8 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
 
     ## handle loc argument
     if(!is.null(loc)){
-        loc <- as.character(loc)
+        if(is.factor(loc)) loc <- as.character(loc)
+        if(!is.character(loc)) loc <- locNames(x)[loc]
         temp <- !loc %in% x@loc.fac
         if(any(temp)) { # si mauvais loci
             warning(paste("the following specified loci do not exist:", loc[temp]))
@@ -188,70 +190,83 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
 
 
 ##########################
-# Method show for genind
+## Method show for genind
 ##########################
 setMethod ("show", "genind", function(object){
-  x <- object
-  cat("/// GENIND OBJECT ////////")
+    ## GET USEFUL VARIABLES
+    x <- object
+    indTxt <- ifelse(nInd(x)>1, "individuals;", "individual;")
+    locTxt <- ifelse(nLoc(x)>1, "loci;", "locus;")
+    allTxt <- ifelse(ncol(tab((x)))>1, "alleles;", "allele;")
 
-  cat("\n\n // Basic content")
-  p <- ncol(x@tab)
-  len <- 7
+    ## HEADER
+    cat("/// GENIND OBJECT /////////")
 
-  cat("\n   @tab: ", nrow(x@tab), "x", ncol(x@tab), "matrix of allele counts" )
+    cat("\n\n //", format(nInd(x), big.mark=","), indTxt,
+        format(nLoc(x), big.mark=","), locTxt,
+        format(ncol(tab(x)), big.mark=","), allTxt,
+        "size:", format(object.size(x), units="auto"))
 
-  if(!is.null(x@loc.n.all)){
-      alleletxt <- paste("(range: ", paste(range(x@loc.n.all), collapse="-"), ")", sep="")
-      cat("\n   @loc.n.all: number of alleles per locus", alleletxt)
-  } else {
-      cat("\n   @loc.n.all: NULL")
-  }
+    ## BASIC CONTENT
+    cat("\n\n // Basic content")
+    p <- ncol(x@tab)
+    len <- 7
 
-  if(!is.null(x@loc.fac)){
-      cat("\n   @loc.fac: locus factor for the", ncol(x@tab), "columns of @tab")
-  } else {
-      cat("\n   @loc.fac: NULL")
-  }
+    cat("\n   @tab: ", nrow(x@tab), "x", ncol(x@tab), "matrix of allele counts" )
 
-  if(!is.null(x@all.names)){
-      cat("\n   @all.names: list of allele names for each locus")
-  } else {
-      cat("\n   @all.names: NULL")
-  }
-
-  ploidytxt <- paste("(range: ", paste(range(x@ploidy), collapse="-"), ")", sep="")
-  cat("\n   @ploidy: ploidy of each individual ", ploidytxt)
-  cat("\n   @type: ",x@type)
-  cat("\n   @call: ")
-  print(x@call)
-
-  cat("\n // Optional content")
-  if(!is.null(x@pop)){
-      poptxt <- paste("(group size range: ", paste(range(table(x@pop)), collapse="-"), ")", sep="")
-  }
-  cat("\n   @pop: ", ifelse(is.null(x@pop), "- empty -", paste("population of each individual", poptxt)))
-  cat("\n   @strata: ")
-  if (is.null(x@strata)){
-    cat("- empty -")
-  } else {
-    levs <- names(x@strata)
-    if (length(levs) > 6){
-      levs <- paste(paste(head(levs), collapse = ", "), "...", sep = ", ")
+    if(!is.null(x@loc.n.all)){
+        alleletxt <- paste("(range: ", paste(range(x@loc.n.all), collapse="-"), ")", sep="")
+        cat("\n   @loc.n.all: number of alleles per locus", alleletxt)
     } else {
-      levs <- paste(levs, collapse = ", ")
+        cat("\n   @loc.n.all: NULL")
     }
-    cat("a data frame with", length(x@strata), "columns (", levs, ")")
-  }
-  cat("\n   @hierarchy: ", ifelse(is.null(x@hierarchy), "- empty -", paste(x@hierarchy, collapse = "")))
-  cat("\n   @other: ")
-  if(!is.null(x@other)){
-    cat("a list containing: ")
-    cat(ifelse(is.null(names(x@other)), "elements without names", paste(names(x@other), collapse= "  ")), "\n")
-  } else {
-    cat("- empty -\n")
-  }
 
-  cat("\n")
+    if(!is.null(x@loc.fac)){
+        cat("\n   @loc.fac: locus factor for the", ncol(x@tab), "columns of @tab")
+    } else {
+        cat("\n   @loc.fac: NULL")
+    }
+
+    if(!is.null(x@all.names)){
+        cat("\n   @all.names: list of allele names for each locus")
+    } else {
+        cat("\n   @all.names: NULL")
+    }
+
+    ploidytxt <- paste("(range: ", paste(range(x@ploidy), collapse="-"), ")", sep="")
+    cat("\n   @ploidy: ploidy of each individual ", ploidytxt)
+    cat("\n   @type: ",x@type)
+    cat("\n   @call: ")
+    print(x@call)
+
+    ## OPTIONAL CONTENT
+    cat("\n // Optional content")
+    if(!is.null(x@pop)){
+        poptxt <- paste("(group size range: ", paste(range(table(x@pop)), collapse="-"), ")", sep="")
+    }
+    cat("\n   @pop: ", ifelse(is.null(x@pop), "- empty -", paste("population of each individual", poptxt)))
+    cat("\n   @strata: ")
+    if (is.null(x@strata)){
+        cat("- empty -")
+    } else {
+        levs <- names(x@strata)
+        if (length(levs) > 6){
+            levs <- paste(paste(head(levs), collapse = ", "), "...", sep = ", ")
+        } else {
+            levs <- paste(levs, collapse = ", ")
+        }
+        cat("a data frame with", length(x@strata), "columns (", levs, ")")
+    }
+    cat("\n   @hierarchy: ", ifelse(is.null(x@hierarchy), "- empty -", paste(x@hierarchy, collapse = "")))
+    cat("\n   @other: ")
+    if(!is.null(x@other)){
+        cat("a list containing: ")
+        cat(ifelse(is.null(names(x@other)), "elements without names", paste(names(x@other), collapse= "  ")), "\n")
+    } else {
+        cat("- empty -\n")
+    }
+
+    cat("\n")
 }
 ) # end show method for genind
 
@@ -262,48 +277,60 @@ setMethod ("show", "genind", function(object){
 # Method show for genpop
 ##########################
 setMethod ("show", "genpop", function(object){
-  x <- object
-  cat("/// GENPOP OBJECT ////////")
+    ## GET USEFUL VARIABLES
+    x <- object
+    popTxt <- ifelse(nPop(x)>1, "populations;", "population;")
+    locTxt <- ifelse(nLoc(x)>1, "loci;", "locus;")
+    allTxt <- ifelse(ncol(tab((x)))>1, "alleles;", "allele;")
 
-  cat("\n\n // Basic content")
-  p <- ncol(x@tab)
-  cat("\n   @tab: ", nrow(x@tab), "x", ncol(x@tab), "matrix of alleles counts" )
+    ## HEADER
+    cat("/// GENPOP OBJECT /////////")
 
-  if(!is.null(x@loc.n.all)){
-      alleletxt <- paste("(range: ", paste(range(x@loc.n.all), collapse="-"), ")", sep="")
-      cat("\n   @loc.n.all: number of alleles per locus", alleletxt)
-  } else {
-      cat("\n   @loc.n.all: NULL")
-  }
+    cat("\n\n //", format(nPop(x), big.mark=","), popTxt,
+        format(nLoc(x), big.mark=","), locTxt,
+        format(ncol(tab(x)), big.mark=","), allTxt,
+        "size:", format(object.size(x), units="auto"))
 
-  if(!is.null(x@loc.fac)){
-      cat("\n   @loc.fac: locus factor for the", ncol(x@tab), "columns of @tab")
-  } else {
-      cat("\n   @loc.fac: NULL")
-  }
+    ## BASIC CONTENT
+    cat("\n\n // Basic content")
+    p <- ncol(x@tab)
+    cat("\n   @tab: ", nrow(x@tab), "x", ncol(x@tab), "matrix of alleles counts" )
 
-  if(!is.null(x@all.names)){
-      cat("\n   @all.names: list of allele names for each locus")
-  } else {
-      cat("\n   @all.names: NULL")
-  }
+    if(!is.null(x@loc.n.all)){
+        alleletxt <- paste("(range: ", paste(range(x@loc.n.all), collapse="-"), ")", sep="")
+        cat("\n   @loc.n.all: number of alleles per locus", alleletxt)
+    } else {
+        cat("\n   @loc.n.all: NULL")
+    }
 
-  ploidytxt <- paste("(range: ", paste(range(x@ploidy), collapse="-"), ")", sep="")
-  cat("\n   @ploidy: ploidy of each individual ", ploidytxt)
-  cat("\n   @type: ",x@type)
-  cat("\n   @call: ")
-  print(x@call)
+    if(!is.null(x@loc.fac)){
+        cat("\n   @loc.fac: locus factor for the", ncol(x@tab), "columns of @tab")
+    } else {
+        cat("\n   @loc.fac: NULL")
+    }
 
-  cat("\n // Optional content")
-  cat("\n   @other: ")
-  if(!is.null(x@other)){
-    cat("a list containing: ")
-    cat(ifelse(is.null(names(x@other)), "elements without names", paste(names(x@other), collapse= "  ")), "\n")
-  } else {
-    cat("- empty -\n")
-  }
+    if(!is.null(x@all.names)){
+        cat("\n   @all.names: list of allele names for each locus")
+    } else {
+        cat("\n   @all.names: NULL")
+    }
 
-  cat("\n")
+    ploidytxt <- paste("(range: ", paste(range(x@ploidy), collapse="-"), ")", sep="")
+    cat("\n   @ploidy: ploidy of each individual ", ploidytxt)
+    cat("\n   @type: ",x@type)
+    cat("\n   @call: ")
+    print(x@call)
+
+    cat("\n // Optional content")
+    cat("\n   @other: ")
+    if(!is.null(x@other)){
+        cat("a list containing: ")
+        cat(ifelse(is.null(names(x@other)), "elements without names", paste(names(x@other), collapse= "  ")), "\n")
+    } else {
+        cat("- empty -\n")
+    }
+
+    cat("\n")
 
 }
 ) # end show method for genpop
