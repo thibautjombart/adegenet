@@ -69,24 +69,38 @@
   \linkS4class{genpop} objects. The operator "\$" and "\$<-" are used to
   access the slots, being equivalent to "@" and "@<-".\cr
 
-  The operator "[" can be used to access components of the matrix slot
-  "@tab", returning a \linkS4class{genind} or \linkS4class{genpop}
-  object. This syntax is the same as for a matrix; for instance:\cr
-  - "obj[,]" returns "obj" \cr
-  - "obj[1:10,]" returns an object with only the first 10 genotypes (if
+  The operator "[" is a flexible way to subset data by individuals,
+  populations, alleles, and loci. When using a matrix-like syntax,
+  subsetting will apply to the dimensios of the @tab slot. In addition,
+  specific arguments \code{loc} and \code{pop} can be used to indicate
+  subsets of loci and populations. The argument \code{drop} is a logical
+  indicating if alleles becoming non-polymorphic in a new dataset should
+  be removed (default: FALSE). Examples:\cr
+  \itemize{
+  \item "obj[i,j]" returns "obj" with a subset 'i' of individuals and 'j' of
+  alleles.\cr
+  
+  \item "obj[1:10,]" returns an object with only the first 10 genotypes (if
   "obj" is a \linkS4class{genind}) or the first 10 populations (if
   "obj" is a \linkS4class{genpop}) of "obj" \cr
-  - "obj[1:10, 5:10]" returns an object keeping the first 10 entities and
+  
+  \item "obj[1:10, 5:10]" returns an object keeping the first 10 entities and
   the alleles 5 to 10.\cr
-  - "obj[loc=c("L1","L3")]" returns an object keeping only the loci
-  specified in the \code{loc} argument (using generic names, not true
-  names; in this example, only the first and the third locus would be
-  retained)\cr
-  - "obj[1:3, drop=TRUE]" returns the first 3 genotypes/populations of
+  
+  \item "obj[loc=c(1,3)]" returns an object keeping only the 1st and 3rd
+  loci, as specified by \code{locNames(obj)}; logicals, or named loci
+  also work; this overrides other subsetting of alleles.\cr
+  
+ \item "obj[pop=2:4]" returns an object keeping only individuals from the
+  populations 2, 3 and 4, as specified by \code{popNames(obj)};
+  logicals, or named populations also work; this overrides other
+  subsetting of individuals.\cr
+   
+  \item "obj[1:3, drop=TRUE]" returns the first 3 genotypes/populations of
   "obj", but retaining only alleles that are present in this subset (as
   opposed to keeping all alleles of "obj", which is the default
   behavior).\cr
-
+}
   The argument \code{treatOther} handles the treatment of objects in the
   \code{@other} slot (see details). The argument \code{drop} can be set
   to TRUE to drop alleles that are no longer represented in the subset.
@@ -94,21 +108,21 @@
 \section{Methods}{
   \describe{
     \item{nInd}{returns the number of individuals in the \code{genind} object}
-    \item{nLoc}{returns the number of loci of the object}
-    \item{nPop}{returns the number of populations of the object}
-    \item{pop}{returns the population factor of the object, using true
-      (as opposed to generic) levels.}
+    \item{nLoc}{returns the number of loci}
+    \item{nAll}{returns the number of alleles in each locus}
+    \item{nPop}{returns the number of populations}
+    \item{pop}{returns a factor assigning individuals to populations.}
     \item{pop<-}{replacement method for the \code{@pop} slot of an
       object.}
-    \item{popNames}{returns the true names of populations.}
-    \item{popNames<-}{sets the true names of populations using a vector of
-      length nPop(x).}
-    \item{indNames}{returns the true names of individuals.}
-    \item{indNames<-}{sets the true names of individuals using a vector of
-      length nInd(x).}
-    \item{locNames}{returns the true names of markers and/or alleles.}
-    \item{locNames<-}{sets the true names of markers using a vector of
-      length nLoc(x).}
+    \item{popNames}{returns the names of populations.}
+    \item{popNames<-}{sets the names of populations using a vector of
+      length \code{nPop(x)}.}
+    \item{indNames}{returns the names of individuals.}
+    \item{indNames<-}{sets the names of individuals using a vector of
+      length \code{nInd(x)}.}
+    \item{locNames}{returns the names of markers and/or alleles.}
+    \item{locNames<-}{sets the names of markers using a vector of
+      length \code{nLoc(x)}.}
     \item{ploidy}{returns the ploidy of the data.}
     \item{ploidy<-}{sets the ploidy of the data using an integer.}
     \item{alleles}{returns the alleles of each locus.}
@@ -184,35 +198,17 @@ head(tab(nancycats)) # get allele counts
 head(tab(nancycats, freq=TRUE, NA.method="mean")) 
 
 # let's isolate populations 4 and 8
-temp <- pop(nancycats) %in% c("1","8")
-obj <- nancycats[temp,]
+popNames(nancycats)
+obj <- nancycats[pop=c(4,8)]
 obj
-
+popNames(obj)
 pop(obj)
 
 # let's isolate two markers, fca23 and fca90
 locNames(nancycats)
-
-# they correspond to L2 and L7
-nancycats$loc.fac
-temp <- nancycats$loc.fac %in% c("fca8","fca37")
-obj <- nancycats[,temp]
+obj <- nancycats[loc=c("fca23","fca90")]
 obj
-
-obj$loc.fac
 locNames(obj)
-
-# or more simply
-nancycats[loc=c("fca8","fca37")]
-obj$loc.fac 
-locNames(obj)
-
-# illustrate how 'other' slot is handled
-colonies <- genind2genpop(nancycats)
-colonies@other$aChar <- "This will not be processed"
-colonies123 <- colonies[1:3]
-colonies
-colonies@other$xy
 
 # illustrate pop
 obj <- nancycats[sample(1:100,10)]
@@ -223,6 +219,15 @@ pop(obj)
 # illustrate locNames
 locNames(obj)
 locNames(obj, withAlleles=TRUE)
+locNames(obj)[1] <- "newLocus"
+locNames(obj)
+locNames(obj, withAlleles=TRUE)
+
+# illustrate how 'other' slot is handled
+data(sim2pop)
+nInd(simpop)
+other(sim2pop[1:6]) # xy is subsetted automatically
+other(sim2pop[1:6, treatOther=FALSE]) # xy is left as is
 
 }
 \keyword{manip}
