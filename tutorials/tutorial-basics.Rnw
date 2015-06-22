@@ -586,7 +586,7 @@ frequencies, but only presence/absence of alleles in a genotype.
 Similarly, the \texttt{tab} slot of a genpop object not longer contains
 counts of alleles in the populations; instead, it contains the number
 of genotypes in each population possessing at least one copy of the concerned alleles.
-Moreover, in the case of presence/absence, the slots 'loc.nall', 'loc.fac', and 'all.names'
+Moreover, in the case of presence/absence, the slots 'loc.n.all', 'loc.fac', and 'all.names'
 become useless, and are thus all set to NULL.
 \\
 
@@ -603,7 +603,7 @@ dat
 @
 \noindent The function \texttt{df2genind} is used to obtain a genind object:
 <<>>=
-obj <- genind(dat, ploidy=1, type="PA")
+obj <- df2genind(dat, ploidy=1, type="PA")
 obj
 tab(obj)
 @
@@ -622,22 +622,30 @@ obj2
 tab(obj2)
 @
 
-\noindent To continue with the toy example, we can proceed to a simple PCA.
-NAs are first replaced:
+\noindent To continue with the toy example, we can perform a simple PCA.
+Allele presence absence data are extracted and NAs replaced using \texttt{tab}:
 <<>>=
-objNoNa <- na.replace(obj,met=0)
-objNoNa@tab
+X <- tab(obj, NA.method="mean")
 @
 
 \noindent Now the PCA is performed and plotted:
 <<pcaaflp>>=
-pca1 <- dudi.pca(objNoNa,scannf=FALSE,scale=FALSE)
-temp <- as.integer(pop(objNoNa))
+## make PCA
+pca1 <- dudi.pca(X,scannf=FALSE,scale=FALSE)
+temp <- as.integer(pop(obj))
 myCol <- transp(c("blue","red"),.7)[temp]
 myPch <- c(15,17)[temp]
+
+## basic plot
 plot(pca1$li, col=myCol, cex=3, pch=myPch)
+
+## use wordcloud for non-overlapping labels
+library(wordcloud)
+textplot(pca1$li[,1], pca1$li[,2], words=rownames(X), cex=1.4, new=FALSE)
+
+## legend the axes by adding loadings
 abline(h=0,v=0,col="grey",lty=2)
-s.arrow(pca1$c1, add.plot=TRUE)
+s.arrow(pca1$c1*.5, add.plot=TRUE)
 legend("topright", pch=c(15,17), col=transp(c("blue","red"),.7),
        leg=c("Group A","Group B"), pt.cex=2)
 @
@@ -820,7 +828,9 @@ Coordinate Analyses (PCoA), which in this case will give identical results to PC
 (centred, non-scaled) data:
 <<>>=
 pco1 <- dudi.pco(D, scannf=FALSE,nf=2)
-scatter(pco1, posi="bottomright")
+s.label(pco1$li*1.1, clab=0, pch="")
+textplot(pco1$li[,1], pco1$li[,2], words=rownames(pco1$li), 
+         cex=1.4, new=FALSE, xpd=TRUE)
 title("Principal Coordinate Analysis\n-based on proteic distances-")
 @
 
