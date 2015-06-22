@@ -4,20 +4,25 @@
 \alias{adegenetWeb}
 \alias{adegenetTutorial}
 \alias{adegenetTutorials}
-\title{ Website and tutorials for adegenet}
+\alias{adegenetIssue}
+\alias{adegenetIssues}
+\title{ Web resources for adegenet}
 \description{
-  These functions allow to access documentation for adegenet available online.\cr
+  These functions can be use to access online resources for adegenet.\cr
 
-  These functions include:
+  They include:
   \itemize{
     \item \code{adegenetWeb}: opens the adegenet website in a web navigator.
     \item \code{adegenetTutorial}: opens a specified tutorial.
+    \item \code{adegenetIssues}: opens issues system on github.
   }
 }
 \usage{
 adegenetWeb()
 
 adegenetTutorial(which=c("basics","spca","dapc","genomics"))
+
+adegenetIssues()
 }
 \arguments{
   \item{which}{a character string indicating the type of tutorial to open}
@@ -28,5 +33,6 @@ adegenetTutorial(which=c("basics","spca","dapc","genomics"))
 ## this opens the adegenet website
 adegenetWeb()
 adegenetTutorial("dapc")
+adegenetIssues()
 }
 }

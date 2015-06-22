@@ -113,6 +113,18 @@ adegenetTutorial <- function(which=c("basics","spca","dapc","genomics")){
 
 
 
+##########################
+# Function adegenetIssues
+##########################
+adegenetIssues <- function(){
+    cat("Opening url \"https://github.com/thibautjombart/adegenet/issues\" ...\n")
+    browseURL("https://github.com/thibautjombart/adegenet/issues")
+}
+
+
+
+
+
 ############
 # checkType
 ############
