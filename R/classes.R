@@ -136,7 +136,7 @@ setClass("genind", contains=c("gen", "indInfo"))
     validation <- TRUE
     if(!.gen.valid(object)) return(FALSE)
 
-    if(typeof(object@tab)!="integer"){
+    if(typeof(object@tab) != "integer"){
         warning("@tab does not contain integers; as of adegenet_2.0-0, numeric values are no longer used")
         ## message("\ntab does not contain integers; as of adegenet_1.5-0, numeric values are no longer used")
         ## validation <- FALSE
