@@ -17,10 +17,15 @@ hybridize <- function(x1, x2, n, pop=NULL,
     checkType(x1)
     checkType(x2)
 
+    ## store a few variables
     n <- as.integer(n)
     ploidy <- ploidy(x1)[1]
     res.type <- match.arg(res.type)
-    if(!all(locNames(x1)==locNames(x2))) stop("names of markers in x1 and x2 do not correspond")
+
+    ## repool data
+    x1x2 <- repool(x1, x2)
+    x1 <- x1x2[pop=1]
+    x2 <- x1x2[pop=2]
 
     ## used variables
     n1 <- nInd(x1)
