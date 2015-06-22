@@ -111,7 +111,7 @@ genind2df <- function(x, pop=NULL, sep="", usepop=TRUE, oneColPerAll = FALSE){
   ## PA case ##
   if(x@type=="PA"){
       res <- tab(x)
-      if(usepop) res <- cbind.data.frame(pop=pop(x),res)
+      if(usepop && !is.null(pop)) res <- cbind.data.frame(pop=pop(x),res)
       return(res) # exit here
   }
 

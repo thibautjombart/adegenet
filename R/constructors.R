@@ -9,13 +9,13 @@
 #'
 #' @export
 #' @docType methods
-#'   
+#'
 #' @aliases initialize,genind-methods
 #' @aliases genind
 #' @aliases as.genind
-#'   
+#'
 #' @rdname new.genind
-#'   
+#'
 #' @param .Object prototyped object (generated automatically when calling 'new')
 #' @param tab A matrix of integers corresponding to the @@tab slot of a genind
 #'   object, with individuals in rows and alleles in columns, and containing
@@ -60,6 +60,7 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
     if(is.null(rownames(tab))) {rownames(tab) <- seq(nrow(tab))}
 
     ## force matrix & integer
+    if(!is.matrix(tab)) tab <- as.matrix(tab)
     old.rownames <- rownames(tab)
     old.colnames <- colnames(tab)
     old.dim <- dim(tab)
@@ -95,9 +96,9 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
     if (!is.null(strata)){
       # Make sure that the hierarchies are factors.
       strata <- data.frame(lapply(strata, function(f) factor(f, unique(f))))
-      rownames(strata) <- rownames(tab)  
-    } 
-    
+      rownames(strata) <- rownames(tab)
+    }
+
     if (!is.null(strata) && !is.null(hierarchy)){
       if (is.language(hierarchy)){
         the_names <- all.vars(hierarchy)
@@ -234,6 +235,7 @@ setMethod("initialize", "genpop", function(.Object, tab, prevcall=NULL, ploidy=2
     if(is.null(rownames(tab))) {rownames(tab) <- 1:nrow(tab)}
 
     ## force matrix & integer
+    if(!is.matrix(tab)) tab <- as.matrix(tab)
     old.rownames <- rownames(tab)
     old.colnames <- colnames(tab)
     old.dim <- dim(tab)
@@ -274,7 +276,7 @@ setMethod("initialize", "genpop", function(.Object, tab, prevcall=NULL, ploidy=2
         names(loc.n.all) <- loc.names
 
         ## loc.fac
-        loc.fac <- rep(loc.names,loc.n.all)
+        loc.fac <- factor(rep(loc.names,loc.n.all),levels=loc.names)
 
         ## alleles name
         temp <- colnames(tab)
