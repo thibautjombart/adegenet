@@ -192,7 +192,7 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
 ##########################
 setMethod ("show", "genind", function(object){
   x <- object
-  cat("/// GENIND OBJECT \\\\\\")
+  cat("/// GENIND OBJECT ////////")
 
   cat("\n\n // Basic content")
   p <- ncol(x@tab)
@@ -263,7 +263,7 @@ setMethod ("show", "genind", function(object){
 ##########################
 setMethod ("show", "genpop", function(object){
   x <- object
-  cat("/// GENPOP OBJECT \\\\\\")
+  cat("/// GENPOP OBJECT ////////")
 
   cat("\n\n // Basic content")
   p <- ncol(x@tab)
