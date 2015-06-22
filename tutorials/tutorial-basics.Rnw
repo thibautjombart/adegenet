@@ -422,10 +422,13 @@ to access or modify their content.
 Available accessors are:
 \begin{itemize}
   \item \texttt{nInd}: returns the number of individuals in the object; only for \texttt{genind}.
-  \item \texttt{nLoc}: returns the number of loci (SNPs).
+  \item \texttt{nLoc}: returns the number of loci.
+  \item \texttt{nAll}: returns the number of alleles for each locus.
   \item \texttt{nPop}: returns the number of loci (SNPs).
+  \item \texttt{tab}: returns a table of allele numbers, or frequencies (if requested), with
+    optional replacement of missing values; replaces the former accessor '\texttt{truenames}'.
   \item \texttt{indNames}$^{\dagger}$: returns/sets labels for individuals; only for \texttt{genind}.
-  \item \texttt{locNames}$^{\dagger}$: returns/sets labels for loci (SNPs).
+  \item \texttt{locNames}$^{\dagger}$: returns/sets labels for loci.
   \item \texttt{alleles}$^{\dagger}$: returns/sets alleles.
   \item \texttt{ploidy}$^{\dagger}$: returns/sets ploidy of the individuals; when setting values, a
     single value can be provided, in which case constant ploidy is assumed.
@@ -463,8 +466,11 @@ pop(obj)
 Accessors make things easier. For instance, when setting new names for loci, the columns of
 \texttt{@tab} are renamed automatically:
 <<>>=
+head(colnames(tab(obj)),20)
+locNames(obj)
 locNames(obj)[1] <- "newLocusName"
-nAll(obj)
+locNames(obj)
+head(colnames(tab(obj)),20)
 @
 
 An additional advantage of using accessors is they are most of the time safer to use. For instance,
@@ -550,7 +556,7 @@ obj
 @
 
 \noindent \texttt{obj} is a \texttt{genind} containing the same information, but recoded as a matrix of allele
-frequencies (\texttt{\$tab} slot).
+numbers (\texttt{\$tab} slot).
 We can check that the conversion was exact by converting back the object into a table of character
 strings (function \texttt{genind2df}):
 <<>>=

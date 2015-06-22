@@ -226,7 +226,9 @@ setMethod ("show", "genind", function(object){
   print(x@call)
 
   cat("\n // Optional content")
-  poptxt <- paste("(group size range: ", paste(range(table(x@pop)), collapse="-"), ")", sep="")
+  if(!is.null(x@pop)){
+      poptxt <- paste("(group size range: ", paste(range(table(x@pop)), collapse="-"), ")", sep="")
+  }
   cat("\n   @pop: ", ifelse(is.null(x@pop), "- empty -", paste("population of each individual", poptxt)))
   cat("\n   @strata: ")
   if (is.null(x@strata)){
