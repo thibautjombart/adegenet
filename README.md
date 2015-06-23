@@ -27,3 +27,9 @@ These are the lastest tutorials (devel version):
 - [**spca**](https://github.com/thibautjombart/adegenet/blob/master/tutorials/tutorial-spca.pdf): introduction to the spatial Principal Component Analysis
 - [**genomics**](https://github.com/thibautjombart/adegenet/blob/master/tutorials/tutorial-genomics.pdf): introduction to the genlight class for large SNP dataset, DAPC, large SNP data simulations
 - [**strata**](https://github.com/thibautjombart/adegenet/blob/master/tutorials/tutorial-strata.pdf): introduction to the use of hierarchical clusters with *genind* and *genlight* objects.
+
+
+### Questions
+- send your questions to the *adegenet forum*: adegenet-forum@lists.r-forge.r-project.org
+- this is a moderate forum; go [here](http://lists.r-forge.r-project.org/cgi-bin/mailman/listinfo/adegenet-forum) to subscribe
+- for bug reports, feature requests, contributions, use github's [issue system](https://github.com/thibautjombart/adegenet/issues)
