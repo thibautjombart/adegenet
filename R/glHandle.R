@@ -19,7 +19,7 @@
     n.loc     <- x@n.loc
     if (length(x@NA.posi) > 0){
         namatches <- match(i, x@NA.posi, nomatch = 0)
-        nas.kept  <- x@NA.posi[namatches] 
+        nas.kept  <- x@NA.posi[namatches]
         if (length(nas.kept) > 0){
             old.posi  <- 1:n.loc
             x@NA.posi <- match(nas.kept, old.posi[i])
@@ -38,7 +38,7 @@
     }
     x@snp     <- lapply(x@snp, .subsetbin, i)
     x@n.loc   <- n.loc
-    
+
     return(x)
 }
 
@@ -60,6 +60,11 @@ setMethod("[", signature(x="genlight", i="ANY", j="ANY", drop="ANY"), function(x
     if (missing(j)) j <- TRUE
 
     ori.n <- nInd(x)
+    ori.p <- nLoc(x)
+
+    ## recycle logicals if needed
+    if(!is.null(i) && is.logical(i)) i <- rep(i, length=ori.n)
+    if(!is.null(j) && is.logical(j)) j <- rep(j, length=ori.p)
 
 
     ## SUBSET INDIVIDUALS ##
@@ -113,30 +118,14 @@ setMethod("[", signature(x="genlight", i="ANY", j="ANY", drop="ANY"), function(x
 
 
     ## SUBSET LOCI ##
-    if(length(j)==1 && is.logical(j) && j){ # no need to subset SNPs
-        return(x)
-    } else { # need to subset SNPs
-        # old.other <- other(x)
-        # old.ind.names <- indNames(x)
 
-        ## handle ind.names, loc.names, chromosome, position, and alleles
-        
-        loc.names   <- x@loc.names[j]
-        chromosome  <- chr(x)[j]
-        loc.posi    <- position(x)[j]
-        allele      <- alleles(x)[j]
-        x@gen       <- lapply(x@gen, function(e) e[j])
-        
-        x@loc.names  <- loc.names
-        x@chromosome <- chromosome
-        x@position   <- loc.posi
-        x@loc.all    <- allele
-        x@n.loc      <- x@gen[[1]]@n.loc
-        ##x <- as.matrix(x)[, j, drop=FALSE] # maybe need to process one row at a time
-        # x <- new("genlight", gen=new.gen, pop=ori.pop, ploidy=ori.ploidy,
-        #          ind.names=old.ind.names, loc.names=new.loc.names, strata = ori.strata,
-        #          chromosome=new.chr, position=new.position, alleles=new.alleles, other=old.other, parallel=FALSE,...)
-    }
+    ## handle ind.names, loc.names, chromosome, position, and alleles
+    x@loc.names   <- x@loc.names[j]
+    x@chromosome  <- chr(x)[j]
+    x@position    <- position(x)[j]
+    x@loc.all     <- alleles(x)[j]
+    x@gen       <- lapply(x@gen, function(e) e[j])
+    x@n.loc      <- x@gen[[1]]@n.loc
 
     return(x)
 }) # end [] for genlight
