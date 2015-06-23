@@ -202,6 +202,70 @@
 #'
 #' @export .rmspaces .readExt .genlab .render.server.info
 #'
+#' @S3method as.POSIXct haploGen
+#' @S3method as.data.frame genind
+#' @S3method as.data.frame genlight
+#' @S3method as.data.frame genpop
+#' @S3method as.integer SNPbin
+#' @S3method as.lda dapc
+#' @S3method as.list genlight
+#' @S3method as.matrix genind
+#' @S3method as.matrix genlight
+#' @S3method as.matrix genpop
+#' @S3method c SNPbin
+#' @S3method colorplot default
+#' @S3method colorplot spca
+#' @S3method dapc data.frame
+#' @S3method dapc dudi
+#' @S3method dapc genind
+#' @S3method dapc genlight
+#' @S3method dapc matrix
+#' @S3method find.clusters data.frame
+#' @S3method find.clusters genind
+#' @S3method find.clusters genlight
+#' @S3method find.clusters matrix
+#' @S3method findMutations DNAbin
+#' @S3method gengraph DNAbin
+#' @S3method gengraph default
+#' @S3method gengraph dist
+#' @S3method gengraph genind
+#' @S3method gengraph genpop
+#' @S3method gengraph matrix
+#' @S3method get.likelihood seqTrack
+#' @S3method graphMutations DNAbin
+#' @S3method labels haploGen
+#' @S3method loadingplot default
+#' @S3method loadingplot glPca
+#' @S3method pairDistPlot DNAbin
+#' @S3method pairDistPlot default
+#' @S3method pairDistPlot dist
+#' @S3method pairDistPlot genind
+#' @S3method pairDistPlot matrix
+#' @S3method plot haploGen
+#' @S3method plot monmonier
+#' @S3method plot seqTrack
+#' @S3method plot spca
+#' @S3method predict dapc
+#' @S3method print dapc
+#' @S3method print glPca
+#' @S3method print haploGen
+#' @S3method print monmonier
+#' @S3method print spca
+#' @S3method scatter dapc
+#' @S3method scatter glPca
+#' @S3method screeplot spca
+#' @S3method seqTrack default
+#' @S3method seqTrack haploGen
+#' @S3method seqTrack matrix
+#' @S3method snpposi.plot DNAbin
+#' @S3method snpposi.plot integer
+#' @S3method snpposi.plot numeric
+#' @S3method snpposi.test DNAbin
+#' @S3method snpposi.test integer
+#' @S3method snpposi.test numeric
+#' @S3method summary dapc
+#' @S3method summary spca
+#'
 #' @import methods
 #'
 #' @import parallel
@@ -212,7 +276,7 @@
 #'
 #' @importFrom seqinr s2c
 #'
-#' @importFrom stats "kmeans" "optimize"
+#' @importFrom stats "kmeans" "optimize" "screeplot"
 #'
 #' @importFrom MASS "lda"
 #'

@@ -497,7 +497,7 @@ setMethod ("show", "SNPbin", function(object){
     if(!is.null(object@label)) {
         cat("\n", object@label)
     }
-    cat("\n", format(nLoc(object), big.mark=","), "SNPs coded as bits, size:", format(object.size(x), units="auto"))
+    cat("\n", format(nLoc(object), big.mark=","), "SNPs coded as bits, size:", format(object.size(object), units="auto"))
     cat("\n Ploidy:", object@ploidy)
     temp <- round(length(object@NA.posi)/nLoc(object) *100,2)
     cat("\n ", length(object@NA.posi), " (", temp," %) missing data\n", sep="")
