@@ -7,8 +7,8 @@ dapc <- function (x, ...) UseMethod("dapc")
 ## dapc.data.frame
 ###################
 dapc.data.frame <- function(x, grp, n.pca=NULL, n.da=NULL,
-                            center=TRUE, scale=FALSE, var.contrib=TRUE, pca.info=TRUE,
-                            pca.select=c("nbEig","percVar"), perc.pca=NULL, ..., dudi=NULL){
+                            center=TRUE, scale=FALSE, var.contrib=TRUE, var.loadings=FALSE,
+                            pca.info=TRUE, pca.select=c("nbEig","percVar"), perc.pca=NULL, ..., dudi=NULL){
 
     ## FIRST CHECKS
     grp <- as.factor(grp)
@@ -118,14 +118,18 @@ dapc.data.frame <- function(x, grp, n.pca=NULL, n.da=NULL,
     }
 
     ## optional: get loadings of variables
-    if(var.contrib){
-        res$var.contr <- as.matrix(U) %*% as.matrix(ldaX$scaling[,1:n.da,drop=FALSE])
+    if(var.contrib || var.loadings){
+        var.load <- as.matrix(U) %*% as.matrix(ldaX$scaling[,1:n.da,drop=FALSE])
+
+        if(var.contrib){
         f1 <- function(x){
             temp <- sum(x*x)
             if(temp < 1e-12) return(rep(0, length(x)))
             return(x*x / temp)
         }
-        res$var.contr <- apply(res$var.contr, 2, f1)
+        res$var.contr <- apply(var.load, 2, f1)
+    }
+        if(var.loadings) res$var.load <- var.load
     }
 
     class(res) <- "dapc"
@@ -150,8 +154,8 @@ dapc.matrix <- function(x, ...){
 ## dapc.genind
 #############
 dapc.genind <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
-                        scale=FALSE, truenames=TRUE, var.contrib=TRUE, pca.info=TRUE,
-                        pca.select=c("nbEig","percVar"), perc.pca=NULL, ...){
+                        scale=FALSE, truenames=TRUE, var.contrib=TRUE, var.loadings=FALSE,
+                        pca.info=TRUE, pca.select=c("nbEig","percVar"), perc.pca=NULL, ...){
 
     ## FIRST CHECKS
     if(!is.genind(x)) stop("x must be a genind object.")
@@ -177,7 +181,7 @@ dapc.genind <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
     ## CALL DATA.FRAME METHOD ##
     res <- dapc(X, grp=pop.fac, n.pca=n.pca, n.da=n.da,
                 center=FALSE, scale=FALSE, var.contrib=var.contrib,
-                pca.select=pca.select, perc.pca=perc.pca)
+                var.loadings=var.loadings, pca.select=pca.select, perc.pca=perc.pca)
 
     res$call <- match.call()
 
@@ -211,7 +215,7 @@ dapc.dudi <- function(x, grp, ...){
 ## dapc.genlight
 #################
 dapc.genlight <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
-                          scale=FALSE,  var.contrib=TRUE, pca.info=TRUE,
+                          scale=FALSE,  var.contrib=TRUE, var.loadings=FALSE, pca.info=TRUE,
                           pca.select=c("nbEig","percVar"), perc.pca=NULL, glPca=NULL, ...){
     ## FIRST CHECKS ##
     if(!inherits(x, "genlight")) stop("x must be a genlight object.")
@@ -350,14 +354,18 @@ dapc.genlight <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
     }
 
     ## optional: get loadings of variables
-    if(var.contrib){
-        res$var.contr <- as.matrix(U) %*% as.matrix(ldaX$scaling[,1:n.da,drop=FALSE])
+    if(var.contrib || var.loadings){
+        var.load <- as.matrix(U) %*% as.matrix(ldaX$scaling[,1:n.da,drop=FALSE])
+
+        if(var.contrib){
         f1 <- function(x){
             temp <- sum(x*x)
             if(temp < 1e-12) return(rep(0, length(x)))
             return(x*x / temp)
         }
-        res$var.contr <- apply(res$var.contr, 2, f1)
+        res$var.contr <- apply(var.load, 2, f1)
+    }
+        if(var.loadings) res$var.load <- var.load
     }
 
     class(res) <- "dapc"
@@ -416,6 +424,9 @@ print.dapc <- function(x, ...){
     if(!is.null(x$var.contr)){
         TABDIM <- TABDIM + 1
     }
+    if(!is.null(x$var.load)){
+        TABDIM <- TABDIM + 1
+    }
 
     sumry <- array("", c(TABDIM, 4), list(1:TABDIM, c("data.frame", "nrow", "ncol", "content")))
 
@@ -425,11 +436,18 @@ print.dapc <- function(x, ...){
     sumry[4, ] <- c("$ind.coord", nrow(x$ind.coord), ncol(x$ind.coord), "coordinates of individuals (principal components)")
     sumry[5, ] <- c("$grp.coord", nrow(x$grp.coord), ncol(x$grp.coord), "coordinates of groups")
     sumry[6, ] <- c("$posterior", nrow(x$posterior), ncol(x$posterior), "posterior membership probabilities")
+    count <- 6
     if(!is.null(x$pca.loadings)){
-        sumry[7, ] <- c("$pca.loadings", nrow(x$pca.loadings), ncol(x$pca.loadings), "PCA loadings of original variables")
+        count <- count+1
+        sumry[count, ] <- c("$pca.loadings", nrow(x$pca.loadings), ncol(x$pca.loadings), "PCA loadings of original variables")
     }
     if(!is.null(x$var.contr)){
-        sumry[TABDIM, ] <- c("$var.contr", nrow(x$var.contr), ncol(x$var.contr), "contribution of original variables")
+        count <- count+1
+        sumry[count, ] <- c("$var.contr", nrow(x$var.contr), ncol(x$var.contr), "contribution of original variables")
+    }
+    if(!is.null(x$var.load)){
+        count <- count+1
+        sumry[count, ] <- c("$var.load", nrow(x$var.load), ncol(x$var.load), "loadings of original variables")
     }
     class(sumry) <- "table"
     print(sumry)
