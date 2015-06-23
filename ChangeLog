@@ -17,6 +17,8 @@ CHANGES IN GENIND/GENPOP/GENLIGHT OBJECTS
 	o hierarchical structure is implemented in genind and genlight
 	objects, by the addition of two new slots @strata and @hierarchy.
 
+	o subsetting genlight objects is now up to 10x faster.
+
 
 NEW FEATURES
 	o ploidy can now vary across individuals
@@ -41,6 +43,9 @@ NEW FEATURES
 
 	o new accessors 'strata' and 'hier' can be used to get/set
 	hierarchical clustering information!
+	
+	o genind2genpop can now take a formula argument for pop to
+	specify strata.
 
 	o subsetting of genind/genpop is more powerful, allowing:
 	x[loc=a , pop=b] where a and b are any subset of loci and
@@ -51,6 +56,8 @@ NEW FEATURES
 
 	o hybridize is now more tolerant towards heterogeneous parent
 	populations and repools data systematically
+
+	o xvalDapc can now run in parallel!
 
 	o roxygen2 is now used for part of the documentation, and
 	mandatory for new contributions
