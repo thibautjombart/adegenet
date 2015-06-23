@@ -56,18 +56,18 @@
 }
 \usage{
 \method{dapc}{data.frame}(x, grp, n.pca=NULL, n.da=NULL, center=TRUE,
-     scale=FALSE,var.contrib=TRUE, pca.info=TRUE, pca.select=c("nbEig","percVar"),
-     perc.pca=NULL, \ldots, dudi=NULL)
+     scale=FALSE, var.contrib=TRUE, var.loadings=FALSE, pca.info=TRUE,
+     pca.select=c("nbEig","percVar"), perc.pca=NULL, \ldots, dudi=NULL)
 
 \method{dapc}{matrix}(x, \ldots)
 
 \method{dapc}{genind}(x, pop=NULL, n.pca=NULL, n.da=NULL, scale=FALSE,
-     truenames=TRUE, var.contrib=TRUE, pca.info=TRUE,
+     truenames=TRUE, var.contrib=TRUE, var.loadings=FALSE, pca.info=TRUE,
      pca.select=c("nbEig","percVar"), perc.pca=NULL, \ldots)
 
-\method{dapc}{genlight}(x, pop = NULL, n.pca = NULL, n.da = NULL, scale
-    = FALSE, var.contrib = TRUE, pca.info=TRUE, pca.select = c("nbEig", "percVar"),
-    perc.pca = NULL, glPca = NULL, \ldots)
+\method{dapc}{genlight}(x, pop=NULL, n.pca=NULL, n.da=NULL,
+   scale=FALSE, var.contrib=TRUE, var.loadings=FALSE, pca.info=TRUE,
+   pca.select=c("nbEig", "percVar"), perc.pca=NULL, glPca=NULL, \ldots)
 
 \method{dapc}{dudi}(x, grp, \ldots)
 
@@ -97,6 +97,10 @@
   \item{var.contrib}{a \code{logical} indicating whether the
     contribution of original variables (alleles, for \linkS4class{genind} objects)
     should be provided (TRUE, default) or not (FALSE). Such output can be useful,
+    but can also create huge matrices when there is a lot of variables.}
+  \item{var.loadings}{a \code{logical} indicating whether the
+    loadings of original variables (alleles, for \linkS4class{genind} objects)
+    should be provided (TRUE) or not (FALSE, default). Such output can be useful,
     but can also create huge matrices when there is a lot of variables.}
   \item{pca.info}{a \code{logical} indicating whether information about
     the prior PCA should be stored (TRUE, default) or not (FALSE). This
@@ -170,6 +174,9 @@
   \item{posterior}{a data.frame giving posterior membership probabilities for
     all individuals and all clusters.}
   \item{var.contr}{(optional) a data.frame giving the contributions of original
+    variables (alleles in the case of genetic data) to the principal components
+    of DAPC.}
+  \item{var.load}{(optional) a data.frame giving the loadings of original
     variables (alleles in the case of genetic data) to the principal components
     of DAPC.}
   \item{match.prp}{a list, where each item is the proportion of individuals 
