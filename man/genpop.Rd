@@ -45,7 +45,7 @@ Class \code{"\linkS4class{popInfo}"}, directly.
     \item{show}{\code{signature(object = "genpop")}: shows a genpop
       object (same as print)}
     \item{summary}{\code{signature(object = "genpop")}: summarizes a
-      genpop object, invisibly returning its content}
+      genpop object, invisibly returning its content or suppress printing of auxiliary information by specifying \code{verbose = FALSE}}
   }
 }
 \seealso{\code{\link{as.genpop}}, \code{\link{is.genpop}},\code{\link{makefreq}}, \code{\link{genind}}, \code{\link{import2genind}}, \code{\link{read.genetix}}, \code{\link{read.genepop}}, \code{\link{read.fstat}}

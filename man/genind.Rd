@@ -56,7 +56,7 @@ Class \code{"\linkS4class{indInfo}"}, directly.
     \item{show}{\code{signature(object = "genind")}: shows a genind
       object (same as print)}
     \item{summary}{\code{signature(object = "genind")}: summarizes a
-      genind object, invisibly returning its content}
+      genind object, invisibly returning its content or suppress printing of auxiliary information by specifying \code{verbose = FALSE}}
   }
 }
 \seealso{\code{\link{as.genind}}, \code{\link{genind2genpop}},
