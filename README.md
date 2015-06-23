@@ -15,13 +15,15 @@ install.packages("devtools")
 
 To install *adegenet* devel:
 ```r
+library(devtools)
 install_github("thibautjombart/adegenet")
 library("adegenet")
 ```
 
-Check the lastest tutorials (devel version):
-- [basics](https://github.com/thibautjombart/adegenet/blob/master/tutorials/tutorial-basics.pdf): data handling, basic population genetics, multivariate analysis, IBD, Monmonier
-- [dapc](https://github.com/thibautjombart/adegenet/blob/master/tutorials/tutorial-dapc.pdf): introduction to the Discriminant Analysis of Principal Components
-- [spca](https://github.com/thibautjombart/adegenet/blob/master/tutorials/tutorial-spca.pdf): introduction to the spatial Principal Component Analysis
-- [genomics](https://github.com/thibautjombart/adegenet/blob/master/tutorials/tutorial-genomics.pdf): introduction to the genlight class for large SNP dataset, DAPC, large SNP data simulations
-- [strata](https://github.com/thibautjombart/adegenet/blob/master/tutorials/tutorial-strata.pdf): introduction to the use of hierarchical clusters with *genind* and *genlight* objects.
+### Tutorials
+These are the lastest tutorials (devel version):
+- [**basics**](https://github.com/thibautjombart/adegenet/blob/master/tutorials/tutorial-basics.pdf): data handling, basic population genetics, multivariate analysis, IBD, Monmonier
+- [**dapc**](https://github.com/thibautjombart/adegenet/blob/master/tutorials/tutorial-dapc.pdf): introduction to the Discriminant Analysis of Principal Components
+- [**spca**](https://github.com/thibautjombart/adegenet/blob/master/tutorials/tutorial-spca.pdf): introduction to the spatial Principal Component Analysis
+- [**genomics**](https://github.com/thibautjombart/adegenet/blob/master/tutorials/tutorial-genomics.pdf): introduction to the genlight class for large SNP dataset, DAPC, large SNP data simulations
+- [**strata**](https://github.com/thibautjombart/adegenet/blob/master/tutorials/tutorial-strata.pdf): introduction to the use of hierarchical clusters with *genind* and *genlight* objects.
