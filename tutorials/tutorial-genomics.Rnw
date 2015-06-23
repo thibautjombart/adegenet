@@ -1073,22 +1073,22 @@ compoplot(dapc1, col=c("red","blue"),lab="", txt.leg=paste("group", 1:2), ncol=2
 @
 
 \noindent ... the loading plot identifies pretty well the most discriminating alleles:
-<<eval=FALSE>>=
+<<>>=
 loadingplot(dapc1$var.contr, thres=1e-3)
 @
 
-\begin{center}
-  \includegraphics{figs/loadingplotGL}
-\end{center}
+%% \begin{center}
+%%   \includegraphics{figs/loadingplotGL}
+%% \end{center}
 
 \noindent And we can zoom in to the contributions of the last 100 SNPs to make sure that the tail indeed
 corresponds to the 50 last structured loci:
-<<eval=FALSE>>=
+<<>>=
 loadingplot(tail(dapc1$var.contr[,1],100), thres=1e-3)
 @
-\begin{center}
-  \includegraphics{figs/loadingplotGLzoom}
-\end{center}
+%% \begin{center}
+%%   \includegraphics{figs/loadingplotGLzoom}
+%% \end{center}
 
 \noindent Here, we indeed identified the structured region of the genome fairly well.
 
