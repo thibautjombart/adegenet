@@ -229,20 +229,13 @@ setMethod ("show", "genind", function(object){
     if(!is.null(x@loc.n.all)){
         alleletxt <- paste("(range: ", paste(range(x@loc.n.all), collapse="-"), ")", sep="")
         cat("\n   @loc.n.all: number of alleles per locus", alleletxt)
-    } else {
-        cat("\n   @loc.n.all: NULL")
     }
 
     if(!is.null(x@loc.fac)){
         cat("\n   @loc.fac: locus factor for the", ncol(x@tab), "columns of @tab")
-    } else {
-        cat("\n   @loc.fac: NULL")
     }
-
     if(!is.null(x@all.names)){
         cat("\n   @all.names: list of allele names for each locus")
-    } else {
-        cat("\n   @all.names: NULL")
     }
 
     ploidytxt <- paste("(range: ", paste(range(x@ploidy), collapse="-"), ")", sep="")
@@ -253,14 +246,16 @@ setMethod ("show", "genind", function(object){
 
     ## OPTIONAL CONTENT
     cat("\n // Optional content")
+    optional <- FALSE
     if(!is.null(x@pop)){
+        optional <- TRUE
         poptxt <- paste("(group size range: ", paste(range(table(x@pop)), collapse="-"), ")", sep="")
+        cat("\n   @pop:", paste("population of each individual", poptxt))
     }
-    cat("\n   @pop: ", ifelse(is.null(x@pop), "- empty -", paste("population of each individual", poptxt)))
-    cat("\n   @strata: ")
-    if (is.null(x@strata)){
-        cat("- empty -")
-    } else {
+
+    if (!is.null(x@strata)){
+        optional <- TRUE
+        cat("\n   @strata: ")
         levs <- names(x@strata)
         if (length(levs) > 6){
             levs <- paste(paste(head(levs), collapse = ", "), "...", sep = ", ")
@@ -269,14 +264,20 @@ setMethod ("show", "genind", function(object){
         }
         cat("a data frame with", length(x@strata), "columns (", levs, ")")
     }
-    cat("\n   @hierarchy: ", ifelse(is.null(x@hierarchy), "- empty -", paste(x@hierarchy, collapse = "")))
-    cat("\n   @other: ")
+
+    if (!is.null(x@hierarchy)){
+        optional <- TRUE
+        cat("\n   @hierarchy:", paste(x@hierarchy, collapse = ""))
+    }
+
     if(!is.null(x@other)){
+        optional <- TRUE
+        cat("\n   @other: ")
         cat("a list containing: ")
         cat(ifelse(is.null(names(x@other)), "elements without names", paste(names(x@other), collapse= "  ")), "\n")
-    } else {
-        cat("- empty -\n")
     }
+
+    if(!optional) cat("\n   - empty -")
 
     cat("\n")
 }
@@ -286,7 +287,7 @@ setMethod ("show", "genind", function(object){
 
 
 ##########################
-# Method show for genpop
+## Method show for genpop
 ##########################
 setMethod ("show", "genpop", function(object){
     ## GET USEFUL VARIABLES
@@ -306,25 +307,20 @@ setMethod ("show", "genpop", function(object){
     ## BASIC CONTENT
     cat("\n\n // Basic content")
     p <- ncol(x@tab)
-    cat("\n   @tab: ", nrow(x@tab), "x", ncol(x@tab), "matrix of alleles counts" )
+    len <- 7
+
+    cat("\n   @tab: ", nrow(x@tab), "x", ncol(x@tab), "matrix of allele counts" )
 
     if(!is.null(x@loc.n.all)){
         alleletxt <- paste("(range: ", paste(range(x@loc.n.all), collapse="-"), ")", sep="")
         cat("\n   @loc.n.all: number of alleles per locus", alleletxt)
-    } else {
-        cat("\n   @loc.n.all: NULL")
     }
 
     if(!is.null(x@loc.fac)){
         cat("\n   @loc.fac: locus factor for the", ncol(x@tab), "columns of @tab")
-    } else {
-        cat("\n   @loc.fac: NULL")
     }
-
     if(!is.null(x@all.names)){
         cat("\n   @all.names: list of allele names for each locus")
-    } else {
-        cat("\n   @all.names: NULL")
     }
 
     ploidytxt <- paste("(range: ", paste(range(x@ploidy), collapse="-"), ")", sep="")
@@ -333,14 +329,17 @@ setMethod ("show", "genpop", function(object){
     cat("\n   @call: ")
     print(x@call)
 
+    ## OPTIONAL CONTENT
     cat("\n // Optional content")
-    cat("\n   @other: ")
+    optional <- FALSE
     if(!is.null(x@other)){
+        optional <- TRUE
+        cat("\n   @other: ")
         cat("a list containing: ")
         cat(ifelse(is.null(names(x@other)), "elements without names", paste(names(x@other), collapse= "  ")), "\n")
-    } else {
-        cat("- empty -\n")
     }
+
+    if(!optional) cat("\n   - empty -")
 
     cat("\n")
 

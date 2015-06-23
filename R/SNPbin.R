@@ -497,7 +497,7 @@ setMethod ("show", "SNPbin", function(object){
     if(!is.null(object@label)) {
         cat("\n", object@label)
     }
-    cat("\n", nLoc(object), "SNPs coded as bits, size:", format(object.size(x), units="auto"))
+    cat("\n", format(nLoc(object), big.mark=","), "SNPs coded as bits, size:", format(object.size(x), units="auto"))
     cat("\n Ploidy:", object@ploidy)
     temp <- round(length(object@NA.posi)/nLoc(object) *100,2)
     cat("\n ", length(object@NA.posi), " (", temp," %) missing data\n", sep="")
@@ -507,14 +507,14 @@ setMethod ("show", "SNPbin", function(object){
 
 
 
-###############
+#################
 ## show genlight
-###############
+#################
 setMethod ("show", "genlight", function(object){
     ## HEADER
     cat(" /// GENLIGHT OBJECT /////////")
-    cat("\n\n //", nInd(object), "genotypes, ",
-        nLoc(object), "binary SNPs, size:", format(object.size(x), units="auto"))
+    cat("\n\n //", format(nInd(object), big.mark=","), "genotypes, ",
+        format(nLoc(object), big.mark=","), "binary SNPs, size:", format(object.size(object), units="auto"))
 
     temp <- sapply(object@gen, function(e) length(e@NA.posi))
     if(length(temp>1)){
@@ -523,58 +523,73 @@ setMethod ("show", "genlight", function(object){
 
     ## BASIC CONTENT
     cat("\n\n // Basic content")
-    cat("\n   @gen: list of", length(x@gen), "SNPbin")
+    cat("\n   @gen: list of", length(object@gen), "SNPbin")
 
-    ploidytxt <- paste("(range: ", paste(range(x@ploidy), collapse="-"), ")", sep="")
-    cat("\n   @ploidy: ploidy of each individual ", ploidytxt)
+    if(!is.null(object@ploidy)){
+        ploidytxt <- paste("(range: ", paste(range(object@ploidy), collapse="-"), ")", sep="")
+        cat("\n   @ploidy: ploidy of each individual ", ploidytxt)
+    }
 
     ## OPTIONAL CONTENT
     cat("\n\n // Optional content")
+    optional <- FALSE
 
-    if(!is.null(x@ind.names)){
-        cat("\n   @ind.names: ", length(x@ind.names), "individual labels")
+    if(!is.null(object@ind.names)){
+        optional <- TRUE
+        cat("\n   @ind.names: ", length(object@ind.names), "individual labels")
     }
 
-    if(!is.null(x@loc.names)){
-        cat("\n   @loc.names: ", length(x@loc.names), "locus labels")
+    if(!is.null(object@loc.names)){
+        optional <- TRUE
+        cat("\n   @loc.names: ", length(object@loc.names), "locus labels")
     }
 
-    if(!is.null(x@loc.all)){
-        cat("\n   @loc.all: ", length(x@loc.all), "alleles")
+    if(!is.null(object@loc.all)){
+        optional <- TRUE
+        cat("\n   @loc.all: ", length(object@loc.all), "alleles")
     }
 
-    if(!is.null(x@chromosome)){
+    if(!is.null(object@chromosome)){
+        optional <- TRUE
         cat("\n   @chromosome: factor storing chromosomes of the SNPs")
     }
 
-    if(!is.null(x@position)){
+    if(!is.null(object@position)){
+        optional <- TRUE
         cat("\n   @position: integer storing positions of the SNPs")
     }
 
-    if(!is.null(x@pop)){
-        poptxt <- paste("(group size range: ", paste(range(table(x@pop)), collapse="-"), ")", sep="")
+    if(!is.null(object@pop)){
+        optional <- TRUE
+        poptxt <- paste("(group size range: ", paste(range(table(object@pop)), collapse="-"), ")", sep="")
+        cat("\n   @pop:", paste("population of each individual", poptxt))
     }
-    cat("\n   @pop: ", ifelse(is.null(x@pop), "- empty -", paste("population of each individual", poptxt)))
-    cat("\n   @strata: ")
-    if (is.null(x@strata)){
-        cat("- empty -")
-    } else {
-        levs <- names(x@strata)
+
+    if (!is.null(object@strata)){
+        optional <- TRUE
+        cat("\n   @strata: ")
+        levs <- names(object@strata)
         if (length(levs) > 6){
             levs <- paste(paste(head(levs), collapse = ", "), "...", sep = ", ")
         } else {
             levs <- paste(levs, collapse = ", ")
         }
-        cat("a data frame with", length(x@strata), "columns (", levs, ")")
+        cat("a data frame with", length(object@strata), "columns (", levs, ")")
     }
-    cat("\n   @hierarchy: ", ifelse(is.null(x@hierarchy), "- empty -", paste(x@hierarchy, collapse = "")))
-    cat("\n   @other: ")
-    if(!is.null(x@other)){
+
+    if (!is.null(object@hierarchy)){
+        optional <- TRUE
+        cat("\n   @hierarchy:", paste(object@hierarchy, collapse = ""))
+    }
+
+    if(!is.null(object@other)){
+        optional <- TRUE
+        cat("\n   @other: ")
         cat("a list containing: ")
-        cat(ifelse(is.null(names(x@other)), "elements without names", paste(names(x@other), collapse= "  ")), "\n")
-    } else {
-        cat("- empty -\n")
+        cat(ifelse(is.null(names(object@other)), "elements without names", paste(names(object@other), collapse= "  ")), "\n")
     }
+
+    if(!optional) cat("\n   - empty -")
 
     cat("\n")
 }) # end show method

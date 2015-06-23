@@ -181,6 +181,7 @@ print(object.size(dat),unit="auto")
 @
 <<eval=FALSE>>=
 x <- new("SNPbin", dat, parallel=FALSE)
+x
 @
 <<echo=FALSE>>=
 load("Robjects/x.snpbin.RData")
@@ -287,14 +288,9 @@ dat <- lapply(1:50, function(i) sample(c(0,1,NA), 1e5, prob=c(.5, .499, .001),
 names(dat) <- paste("indiv", 1:length(dat))
 print(object.size(dat),unit="auto")
 @
-<<eval=FALSE>>=
-x <- new("genlight", dat)
-@
-<<echo=FALSE>>=
-load("Robjects/x.genlight.RData")
-@
 <<>>=
-print(object.size(x),unit="auto")
+x <- new("genlight", dat)
+x
 object.size(dat)/object.size(x)
 @
 here again, the storage if the data is much more efficient in \texttt{genlight} than using integers: converted data occupy
