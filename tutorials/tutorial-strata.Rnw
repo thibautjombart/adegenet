@@ -66,9 +66,9 @@
 \title{Using population strata in \adegenet{} \Sexpr{packageDescription("adegenet", fields = "Version")}}
 
 \author[1]{Zhian N. Kamvar \thanks{\texttt{kamvarz@science.oregonstate.edu}}} 
-\author[2]{Thibaut Jombart \thanks{\texttt{tjombart@imperial.ac.uk}}}
+% \author[2]{Thibaut Jombart \thanks{\texttt{tjombart@imperial.ac.uk}}}
 \affil[1]{{\footnotesize Department of Botany and Plant Pathology, Oregon State University}}
-\affil[2]{{\footnotesize MRC Centre for Outbreak Analysis and Modelling. Imperial College London}}
+% \affil[2]{{\footnotesize MRC Centre for Outbreak Analysis and Modelling. Imperial College London}}
 
 %% \date{\today}
 \date{\today}
@@ -683,6 +683,6 @@ the others.
 \newpage
 
 \bibliographystyle{plain}
-\bibliography{bibliography}
+\bibliography{biblioZK}
 
 \end{document}
