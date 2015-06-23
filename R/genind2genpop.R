@@ -101,7 +101,7 @@ genind2genpop <- function(x, pop = NULL, quiet = FALSE,
         pop(x) <- factor(rep(1, nInd(x)))
     }
 
-    if(!quiet) cat("\n Converting data from a genind to a genpop object... \n")
+    if (!quiet) cat("\n Converting data from a genind to a genpop object... \n")
 
     ## tabcount is a matrix pop x alleles, counting alleles per pop
     tabcount <- apply(tab(x), 2, tapply, pop(x), sum, na.rm=TRUE)

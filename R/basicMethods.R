@@ -362,9 +362,10 @@ setMethod ("summary", signature(object="genind"), function(object, verbose = TRU
   
   
   if(is.null(x@pop)){
-    x@pop <- factor(rep(1,nrow(x@tab)))
-    x@pop.names <- ""
-    names(x@pop.names) <- "P1"
+    pop(x) <- rep("P1", nInd(x))
+#     x@pop <- factor(rep(1,nrow(x@tab)))
+#     x@pop.names <- ""
+#     names(x@pop.names) <- "P1"
   }
   
   ## BUILD THE OUTPUT ##
@@ -374,7 +375,7 @@ setMethod ("summary", signature(object="genind"), function(object, verbose = TRU
   res$N <- nrow(x@tab)
   
   res$pop.eff <- as.numeric(table(x@pop))
-  names(res$pop.eff) <- x@pop.names
+  names(res$pop.eff) <- popNames(x)
   
   ## PA case ##
   if(x@type=="PA"){
@@ -387,9 +388,9 @@ setMethod ("summary", signature(object="genind"), function(object, verbose = TRU
                  "# Percentage of missing data: ")
     
     if (verbose) {
-      cat("\n",listlab[1],res[[1]],"\n")
+      cat("\n",listlab[1], res[[1]], "\n")
       for(i in 2:3){
-        cat("\n",listlab[i],"\n")
+        cat("\n",listlab[i], "\n")
         print(res[[i]])
       }
     }
@@ -399,7 +400,7 @@ setMethod ("summary", signature(object="genind"), function(object, verbose = TRU
   
   
   ## codom case ##
-  res$loc.nall <- x@loc.nall
+  res$loc.n.all <- nAll(x)
   
   temp <- genind2genpop(x,quiet=TRUE)@tab
   
@@ -429,7 +430,7 @@ setMethod ("summary", signature(object="genind"), function(object, verbose = TRU
     
     temp <- genind2genpop(x,pop=rep(1,nInd(x)),quiet=TRUE)
     temp <- tab(temp, freq=TRUE, quiet=TRUE)
-    res$Hexp <-tapply(temp^2, x@loc.fac, function(e) 1-sum(e, na.rm=TRUE))
+    res$Hexp <-tapply(temp^2, locFac(x), function(e) 1-sum(e, na.rm=TRUE))
   } else { # no possible heterozygosity for haploid genotypes
     res$Hobs <- 0
     res$Xexp <- 0
@@ -445,9 +446,9 @@ setMethod ("summary", signature(object="genind"), function(object, verbose = TRU
                "# Expected heterozygosity: ")
   
   if (verbose) {
-    cat("\n",listlab[1],res[[1]],"\n")
+    cat("\n",listlab[1],res[[1]], "\n")
     for(i in 2:7){
-      cat("\n",listlab[i],"\n")
+      cat("\n",listlab[i], "\n")
       print(res[[i]])
     }
   }

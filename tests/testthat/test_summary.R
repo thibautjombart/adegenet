@@ -3,7 +3,7 @@ context("Summary methods")
 test_that("Diploid summaries work", {
   skip_on_cran()
   data("nancycats", package = "adegenet")
-  nansum <- summary(nancycats)
+  nansum <- summary(nancycats, verbose = FALSE)
   expect_that(nansum, is_a("list"))
   expect_that(nansum$N, equals(nInd(nancycats)))
   expect_that(length(nansum$pop.eff), equals(length(popNames(nancycats))))

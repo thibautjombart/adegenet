@@ -132,7 +132,7 @@ test_that("'[' method works for genind objects with drop = TRUE", {
 
 test_that("tab will retain dimensions", {
   skip_on_cran()
-  micpop <- genind2genpop(microbov[pop(microbov) %in% popNames(microbov)[1]])
+  micpop <- genind2genpop(microbov[pop(microbov) %in% popNames(microbov)[1]], quiet = TRUE)
   tabdim <- dim(micpop@tab)
   expect_that(tabdim, equals(dim(tab(micpop))))
   expect_that(tabdim, equals(dim(tab(micpop, freq = TRUE))))

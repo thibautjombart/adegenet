@@ -25,6 +25,8 @@ NEW FEATURES
 
 	o printing is now consistent across objects classes
 
+	o summary methods now get a verbose argument
+
 	o df2genind is more flexible and faster
 
 	o genind objects size is roughly divided by 2
