@@ -14,3 +14,4 @@ The following sections are available:
 - [Tutorials](https://github.com/thibautjombart/adegenet/wiki/Tutorials)
 - [Ask a question](https://github.com/thibautjombart/adegenet/wiki/Questions)
 - [Branches](https://github.com/thibautjombart/adegenet/wiki/Branches)
+- [Contributors](https://github.com/thibautjombart/adegenet/wiki/Contributors)
