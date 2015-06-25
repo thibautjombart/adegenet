@@ -13,5 +13,6 @@ The following sections are available:
 - [Installing adegenet devel](https://github.com/thibautjombart/adegenet/wiki/Installing-adegenet-devel)
 - [Tutorials](https://github.com/thibautjombart/adegenet/wiki/Tutorials)
 - [Ask a question](https://github.com/thibautjombart/adegenet/wiki/Questions)
+- [Features request / bug report](https://github.com/thibautjombart/adegenet/issues)
 - [Branches](https://github.com/thibautjombart/adegenet/wiki/Branches)
 - [Contributors](https://github.com/thibautjombart/adegenet/wiki/Contributors)
