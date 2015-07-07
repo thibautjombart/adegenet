@@ -1,14 +1,14 @@
 Package: adegenet
 Version: 2.0.0
 Encoding: UTF-8
-Date: 2015-05-13
+Date: 2015-07-07
 Title: Exploratory Analysis of Genetic and Genomic Data
 Author:  Thibaut Jombart, Caitlin Collins, Zhian N. Kamvar, Roman Lustrik, Peter Solymos, Ismail Ahmed, Federico Calboli, Anne Cori, Klaus Schliep
 Maintainer: Thibaut Jombart <t.jombart@imperial.ac.uk>
 Suggests: pegas, hierfstat, akima, maps, splancs, adehabitat, tripack,
     testthat
 Depends: R (>= 2.14), methods, ade4
-Imports: utils, stats, MASS, igraph, ape, shiny, ggplot2, seqinr, parallel, spdep, boot, reshape2, dplyr (>= 0.4.1)
+Imports: utils, stats, grDevices, MASS, igraph, ape, shiny, ggplot2, seqinr, parallel, spdep, boot, reshape2, dplyr (>= 0.4.1)
 URL: http://adegenet.r-forge.r-project.org/
 Description: Toolset for the exploration of genetic and genomic data. Adegenet provides formal (S4) classes for storing and handling various genetic data, including genetic markers with varying ploidy and hierarchical population structure ('genind' class), alleles counts by populations ('genpop'), and genome-wide SNP data ('genlight'). It also implements original multivariate methods (DAPC, sPCA), graphics, statistical tests, simulation tools, distance and similarity measures, and several spatial methods. A range of both empirical and simulated datasets is also provided to illustrate various methods.
 Collate: adegenet.package.R 

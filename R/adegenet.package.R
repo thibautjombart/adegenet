@@ -152,19 +152,18 @@
 #' Tutorials are available via the command \code{\link{adegenetTutorials}}.\cr
 #'
 #' To cite adegenet, please use the reference given by
-#' \code{citation("adegenet")} (or see reference below).
-#'
-#' \tabular{ll}{ Package: \tab adegenet\cr Type: \tab Package\cr Version: \tab
-#' 1.4-2\cr Date: \tab 2014-05-13 \cr License: \tab GPL (>=2) }
+#' \code{citation("adegenet")} (or see references below).
 #'
 #' @name adegenet.package
 #' @encoding utf-8
 #' @aliases adegenet.package adegenet
 #' @docType package
-#' @author Thibaut Jombart <t.jombart@@imperial.ac.uk>\cr Developers: Caitlin
-#' Collins <caitiecollins17@@gmail.com> Ismail Ahmed <ismail.ahmed@@inserm.fr>,
-#' Federico Calboli <f.calboli@@imperial.ac.uk>, Tobias Erik Reiners, Peter
-#' Solymos, Anne Cori, Zhian N. Kamvar\cr Contributed datasets from: Katayoun
+#' @author Thibaut Jombart <t.jombart@@imperial.ac.uk>\cr
+#' Developers: Zhian N. Kamvar <zkamvar@@gmail.com>,
+#' Caitlin Collins <caitiecollins17@@gmail.com>,
+#' Ismail Ahmed <ismail.ahmed@@inserm.fr>,
+#' Federico Calboli, Tobias Erik Reiners, Peter
+#' Solymos, Anne Cori, \cr Contributed datasets from: Katayoun
 #' Moazami-Goudarzi, Denis Laloë, Dominique Pontier, Daniel Maillard, Francois
 #' Balloux.
 #' @seealso adegenet is related to several packages, in particular:\cr -
@@ -270,13 +269,17 @@
 #'
 #' @import parallel
 #'
+#' @import utils
+#'
+#' @import stats
+#'
+#' @import graphics
+#'
+#' @import grDevices
+#'
 #' @import ade4
 #'
-#' @importFrom utils "packageDescription"
-#'
 #' @importFrom seqinr s2c
-#'
-#' @importFrom stats "kmeans" "optimize" "screeplot"
 #'
 #' @importFrom MASS "lda"
 #'
