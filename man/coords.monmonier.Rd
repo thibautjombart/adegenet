@@ -24,7 +24,7 @@ coords.monmonier(x)
   are integers referring to the row numbers in the \code{x$xy} matrix of
   the original \code{\link{monmonier}} object.
 }
-\author{Peter Solymos, \email{Solymos.Peter@aotk.szie.hu}, \url{http://www.univet.hu/users/psolymos/personal/}}
+\author{Peter Solymos, \email{Solymos.Peter@aotk.szie.hu}}
 \seealso{
   \code{\link{monmonier}}
 }
