@@ -160,16 +160,15 @@ For more information, visit the adegenet website using the function
 Tutorials are available via the command \code{\link{adegenetTutorials}}.\cr
 
 To cite adegenet, please use the reference given by
-\code{citation("adegenet")} (or see reference below).
-
-\tabular{ll}{ Package: \tab adegenet\cr Type: \tab Package\cr Version: \tab
-1.4-2\cr Date: \tab 2014-05-13 \cr License: \tab GPL (>=2) }
+\code{citation("adegenet")} (or see references below).
 }
 \author{
-Thibaut Jombart <t.jombart@imperial.ac.uk>\cr Developers: Caitlin
-Collins <caitiecollins17@gmail.com> Ismail Ahmed <ismail.ahmed@inserm.fr>,
-Federico Calboli <f.calboli@imperial.ac.uk>, Tobias Erik Reiners, Peter
-Solymos, Anne Cori, Zhian N. Kamvar\cr Contributed datasets from: Katayoun
+Thibaut Jombart <t.jombart@imperial.ac.uk>\cr
+Developers: Zhian N. Kamvar <zkamvar@gmail.com>,
+Caitlin Collins <caitiecollins17@gmail.com>,
+Ismail Ahmed <ismail.ahmed@inserm.fr>,
+Federico Calboli, Tobias Erik Reiners, Peter
+Solymos, Anne Cori, \cr Contributed datasets from: Katayoun
 Moazami-Goudarzi, Denis Laloë, Dominique Pontier, Daniel Maillard, Francois
 Balloux.
 }
