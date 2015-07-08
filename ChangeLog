@@ -1,3 +1,10 @@
+			CHANGES IN ADEGENET VERSION 2.0.1
+NEW FEATURES
+	o
+BUG FIXES
+	o
+	
+
 			CHANGES IN ADEGENET VERSION 2.0.0
 CHANGES IN GENIND/GENPOP/GENLIGHT OBJECTS
 	o generic labels are no longer used; therefore, 'truenames' is now
