@@ -8,3 +8,4 @@ adegenet.Rcheck
 .Rproj.user
 tutorials/*bbl
 tutorials/*gz
+*.blg
