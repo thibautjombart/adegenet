@@ -4,3 +4,4 @@ tutorials
 ^\.travis\.yml$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+.*.tar.gz$
