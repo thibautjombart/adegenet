@@ -1,8 +1,14 @@
 			CHANGES IN ADEGENET VERSION 2.0.1
 NEW FEATURES
-	o
+	o Hs is now much faster and will scale better for large number of
+	loci
+
+	o Hs.test allows for testing differences in expected
+	heterozygosity between two groups of individuals
+	
 BUG FIXES
-	o
+	o Hs no longer returns NaN if one locus has not been typed;
+	instead, computations are done using all available loci
 	
 
 			CHANGES IN ADEGENET VERSION 2.0.0
