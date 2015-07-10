@@ -3,7 +3,7 @@
 #'
 #' This function computes the expected heterozygosity (Hs) within
 #' populations of a \linkS4class{genpop} object. This function is
-#' available for codominant markers (\code{@type="codom"}) only. Hs is
+#' available for codominant markers (\code{@@type="codom"}) only. Hs is
 #' commonly used for measuring within population genetic diversity (and
 #' as such, it still has sense when computed from haploid data).
 #'
