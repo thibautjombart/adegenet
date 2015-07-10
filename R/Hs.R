@@ -8,11 +8,11 @@
 #' as such, it still has sense when computed from haploid data).
 #'
 #' @aliases Hs
-#' @aliases Hs.test
+#'
+#' @rdname Hs
 #'
 #' @export
 #'
-#' @seealso \code{\link{spca}}
 #' @details
 #' Let \emph{m(k)} be the number of alleles of locus \emph{k}, with a
 #' total of \emph{K} loci. We note \eqn{f_i} the allele frequency of
@@ -26,6 +26,7 @@
 #' @param x a \linkS4class{genind} or \linkS4class{genpop} object.
 #' @param pop only used if x is a \linkS4class{genind}; an optional factor to be used as population; if not provided, pop(x) is used.
 #'
+#' @seealso \code{\link{Hs.test}} to test differences in Hs between two groups
 #' @return a vector of Hs values (one value per population)
 #' @examples
 #' \dontrun{
@@ -60,3 +61,72 @@ Hs <- function(x, pop=NULL) {
 } # end Hs
 
 
+#'
+#' Test differences in expected heterozygosity (Hs)
+#'
+#' This procedure permits to test if two groups have
+#' significant differences in expected heterozygosity (Hs).
+#' The test statistic used is simply the difference in Hs
+#' between the two groups 'x' and 'y':
+#'
+#' \eqn{Hs(x) - Hs(y)}
+#'
+#' Individuals are randomly permuted between groups to obtain
+#' a reference distribution of the test statistics.
+#'
+#' @rdname Hs.test
+#' @aliases Hs.test
+#'
+#' @export
+#'
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#'
+#' @param x a \linkS4class{genind} object.
+#' @param y a \linkS4class{genind} object.
+#' @param n.sim the number of permutations to be used to generate the reference distribution.
+#' @param alter a character string indicating the alternative hypothesis
+#'
+#' @seealso \code{\link{Hs}} to compute Hs for different populations;
+#' \code{\link[ade4]{as.randtest}} for the class of Monte Carlo tests.
+#'
+#' @return an object of the class randtest
+#'
+#' @examples
+#' \dontrun{
+#' data(microbov)
+#' Hs(microbov)
+#' test <- Hs.test(microbov[pop="Borgou"],
+#'                 microbov[pop="Lagunaire"],
+#'                 n.sim=499)
+#' test
+#' plot(test)
+#' }
+#'
+Hs.test <- function(x, y, n.sim=999, alter=c("two-sided", "greater", "less")){
+    ## CHECKS ##
+    if(!is.genind(x)) stop("x is not a valid genind object")
+    if(!is.genind(y)) stop("y is not a valid genind object")
+    if(x@type=="PA" || y@type=="PA") stop("not implemented for presence/absence markers")
+    alter <- match.arg(alter)
+
+    ## POOL DATA ##
+    xy <- repool(x,y)
+    pop(xy) <- rep(c("x","y"), c(nInd(x), nInd(y)))
+
+    ## AUXIL FUNCTION ##
+    f1 <- function(x, pop) -diff(Hs(x, pop))
+
+    ## COMPUTE STATS
+    ## observed value
+    obs <- f1(xy, pop(xy))
+
+    ## permuted
+    sim <- replicate(n.sim, f1(xy, sample(pop(xy))))
+
+    ## randtest
+    res <- as.randtest(sim=sim, obs=obs, alter=alter)
+    res$call <- match.call()
+
+    return(res)
+
+} # end Hs.test
