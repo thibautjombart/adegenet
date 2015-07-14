@@ -5,11 +5,16 @@ NEW FEATURES
 
 	o Hs.test allows for testing differences in expected
 	heterozygosity between two groups of individuals
-	
+
+	o strata tutorial is now available via adegenetTutorial(which="strata")
+
 BUG FIXES
 	o Hs no longer returns NaN if one locus has not been typed;
 	instead, computations are done using all available loci
-	
+
+	o adegenetTutorial now opens up-to-date tutorials
+
+
 
 			CHANGES IN ADEGENET VERSION 2.0.0
 CHANGES IN GENIND/GENPOP/GENLIGHT OBJECTS
@@ -58,7 +63,7 @@ NEW FEATURES
 
 	o new accessors 'strata' and 'hier' can be used to get/set
 	hierarchical clustering information!
-	
+
 	o genind2genpop can now take a formula argument for pop to
 	specify strata.
 

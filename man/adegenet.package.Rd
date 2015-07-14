@@ -157,7 +157,7 @@ illustrating the sPCA. \cr
 For more information, visit the adegenet website using the function
 \code{\link{adegenetWeb}}.\cr
 
-Tutorials are available via the command \code{\link{adegenetTutorials}}.\cr
+Tutorials are available via the command \code{adegenetTutorial}.\cr
 
 To cite adegenet, please use the reference given by
 \code{citation("adegenet")} (or see references below).

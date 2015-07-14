@@ -58,9 +58,36 @@
 
 
 
-#######################
-# Function adegenetWeb
-#######################
+#'
+#' Functions to access online resources for adegenet
+#'
+#' These functions simply open websites or documents
+#' available online providing resources for adegenet.
+#'
+#' \itemize{
+#' \item adegenetWeb opens adegenet's website
+#' \item adegenetTutorial opens adegenet tutorials
+#' \item adegenetIssues opens the issue page on github;
+#' this is used to report a bug or post a feature request.
+#' }
+#'
+#' @param which a character string indicating which tutorial to open (see details)
+#'
+#' @details
+#'
+#' Available tutorials are:
+#' \itemize{
+#' \item 'basics': general introduction to adegenet; covers basic data structures, import/export, handling, and a number of population genetics methods
+#' \item 'spca': spatial genetic structures using the spatial Principal Component Analysis
+#' \item 'dapc': population structure using the Discriminant Analysis of Principal Components
+#' \item 'genomics': handling large genome-wide SNP data using adegenet
+#' \item 'strata': introduction to hierarchical population structure in adegenet
+#' }
+#'
+#' @export
+#'
+#' @rdname web
+#'
 adegenetWeb <- function(){
     cat("Opening url \"http://adegenet.r-forge.r-project.org/\" ...\n")
     browseURL("http://adegenet.r-forge.r-project.org/")
@@ -69,37 +96,42 @@ adegenetWeb <- function(){
 
 
 
-
-############################
-# Function adegenetTutorial
-############################
-adegenetTutorial <- function(which=c("basics","spca","dapc","genomics")){
+#' @rdname web
+#' @export
+adegenetTutorial <- function(which=c("basics","spca","dapc","genomics","strata")){
     which <- match.arg(which)
     if(which=="basics"){
-        url <- "http://adegenet.r-forge.r-project.org/files/tutorial-basics.pdf"
+        url <- "https://github.com/thibautjombart/adegenet/raw/master/tutorials/tutorial-basics.pdf"
         cat("\n")
         cat("  >> Opening the general introduction to adegenet.\n")
         cat("  >> Seeking url: ",url,"\n ", sep="")
         cat("\n")
     }
     if(which=="spca"){
-        url <- "http://adegenet.r-forge.r-project.org/files/tutorial-spca.pdf"
+        url <- "https://github.com/thibautjombart/adegenet/raw/master/tutorials/tutorial-spca.pdf"
         cat("\n")
         cat("  >> Opening the sPCA tutorial.\n")
         cat("  >> Seeking url: ",url,"\n ", sep="")
         cat("\n")
     }
     if(which=="dapc"){
-        url <- "http://adegenet.r-forge.r-project.org/files/tutorial-dapc.pdf"
+        url <- "https://github.com/thibautjombart/adegenet/raw/master/tutorials/tutorial-dapc.pdf"
         cat("\n")
         cat("  >> Opening the DAPC tutorial.\n")
         cat("  >> Seeking url: ",url,"\n ", sep="")
         cat("\n")
     }
     if(which=="genomics"){
-        url <- "http://adegenet.r-forge.r-project.org/files/tutorial-genomics.pdf"
+        url <- "https://github.com/thibautjombart/adegenet/raw/master/tutorials/tutorial-genomics.pdf"
         cat("\n")
         cat("  >> Opening the genomics tutorial.\n")
+        cat("  >> Seeking url: ",url,"\n ", sep="")
+        cat("\n")
+    }
+   if(which=="strata"){
+        url <- "https://github.com/thibautjombart/adegenet/raw/master/tutorials/tutorial-strata.pdf"
+        cat("\n")
+        cat("  >> Opening the strata tutorial.\n")
         cat("  >> Seeking url: ",url,"\n ", sep="")
         cat("\n")
     }
@@ -112,10 +144,8 @@ adegenetTutorial <- function(which=c("basics","spca","dapc","genomics")){
 
 
 
-
-##########################
-# Function adegenetIssues
-##########################
+#' @rdname web
+#' @export
 adegenetIssues <- function(){
     cat("Opening url \"https://github.com/thibautjombart/adegenet/issues\" ...\n")
     browseURL("https://github.com/thibautjombart/adegenet/issues")
