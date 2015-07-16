@@ -48,7 +48,7 @@
 #' @param loc.names an optional character vector giving the markers names; if
 #'   NULL, taken from colnames of X.
 #' @param pop an optional factor giving the population of each individual.
-#' @param NA.char a vector of character strings which are to be treated as NA
+#' @param NA.char a character string corresponding to missing allele (to be treated as NA)
 #' @param ploidy an integer indicating the degree of ploidy of the genotypes.
 #' @param type a character string indicating the type of marker: 'codom' stands
 #'   for 'codominant' (e.g. microstallites, allozymes); 'PA' stands for
@@ -100,6 +100,10 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     type <- match.arg(type)
     if (is.null(sep) && is.null(ncode) && any(ploidy > 1)){
         stop("Not enough information to convert data: please indicate the separator (sep=...) or the number of characters coding an allele (ncode=...)")
+    }
+    if(length(NA.char)>1) {
+        warning("NA.char has several values; only the first one will be considered")
+        NA.char <- NA.char[1]
     }
 
 
@@ -454,7 +458,7 @@ read.fstat <- function(file,quiet=FALSE){
 
     ## read length of allele
     ncode <- as.integer(unlist(strsplit(txt[1], " "))[4])
-    NA.char <- sapply(1:ncode, function(i) paste(rep("0",i),collapse=""))
+    NA.char <- paste(rep("0",ncode),collapse="")
 
     ## read first infos
     info <- unlist(strsplit(txt[1],"([[:space:]]+)"))
@@ -476,9 +480,6 @@ read.fstat <- function(file,quiet=FALSE){
     rownames(X) <- 1:nrow(X)
 
     res <- df2genind(X=X,pop=pop, ploidy=2, ncode=ncode, NA.char=NA.char)
-    ## beware : fstat files do not yield ind names
-    ## res@ind.names <- rep("",length(res@ind.names))
-    ## names(res@ind.names) <- rownames(res@tab)
     res@call <- call
 
     if(!quiet) cat("\n...done.\n\n")
@@ -536,17 +537,18 @@ read.genepop <- function(file, ncode=2L, quiet=FALSE){
     if(!quiet) cat("\nFile description: ",txt[1], "\n")
     txt <- txt[-1]
     txt <- gsub("\t", " ", txt)
+    NA.char <- paste(rep("0",ncode), collapse="")
 
-  # two cases for locus names:
-  # 1) all on the same row, separated by ","
-  # 2) one per row
-  # ! spaces and tab allowed
-  # a bug was reported by S. Devillard, occuring
-  # when the two cases occur together,
-  # that is:
-  # loc1,
-  # loc2,
-  # ...
+    ## two cases for locus names:
+    ## 1) all on the same row, separated by ","
+    ## 2) one per row
+    ## ! spaces and tab allowed
+    ## a bug was reported by S. Devillard, occuring
+    ## when the two cases occur together,
+    ## that is:
+    ## loc1,
+    ## loc2,
+    ## ...
 
 
     ## new strategy (shorter): isolate the 'locus names' part and then parse it.
@@ -607,7 +609,7 @@ read.genepop <- function(file, ncode=2L, quiet=FALSE){
     pop.names <- ind.names[pop.names.idx]
     levels(pop) <- pop.names
 
-    res <- df2genind(X=X,pop=pop, ploidy=2, ncode=ncode)
+    res <- df2genind(X=X,pop=pop, ploidy=2, ncode=ncode, NA.char=NA.char)
     res@call <- prevcall
 
     if(!quiet) cat("\n...done.\n\n")

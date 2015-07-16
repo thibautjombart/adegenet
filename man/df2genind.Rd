@@ -26,7 +26,7 @@ NULL, taken from colnames of X.}
 
 \item{pop}{an optional factor giving the population of each individual.}
 
-\item{NA.char}{a vector of character strings which are to be treated as NA}
+\item{NA.char}{a character string corresponding to missing allele (to be treated as NA)}
 
 \item{ploidy}{an integer indicating the degree of ploidy of the genotypes.}
 
