@@ -24,8 +24,10 @@
 }
 \arguments{
   \item{x}{a \linkS4class{genind} object}
-  \item{pop}{a factor giving the population of each genotype in 'x'. If
-    not provided, seeked in x\$pop.}
+  \item{pop}{a factor giving the population of each genotype in 'x' OR a
+    formula specifying which strata are to be used when converting to a genpop
+    object. If none provided, population factors are sought in x@pop, but if
+    given, the argument prevails on x@pop.}
   \item{truenames}{a logical indicating whether true names should be
     used (TRUE, default) instead of generic labels (FALSE); used if
     res.type is "matrix".}
@@ -53,12 +55,18 @@
 \examples{
 \dontrun{
 data(microbov)
+strata(microbov) <- data.frame(other(microbov))
 
 obj <- seppop(microbov)
 names(obj)
 
 obj$Salers
 
+### example using strata
+obj2 <- seppop(microbov, ~coun/spe)
+names(obj2)
+
+obj2$AF_BI
 
 #### example for genlight objects ####
 x <- new("genlight", list(a=rep(1,1e3),b=rep(0,1e3),c=rep(1, 1e3)))
