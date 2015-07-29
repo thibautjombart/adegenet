@@ -245,7 +245,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     }
 
 
-    ## TRANSLATE DATA INTO ALLELE FREQUENCIES ##
+    ## TRANSLATE DATA INTO ALLELE COUNTS ##
     ## get dimensions of X
     nloc <- ncol(X)
     nind <- nrow(X)
