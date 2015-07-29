@@ -127,7 +127,7 @@ Other tutorials are available via the command \texttt{adegenetTutorial}:
 Before going further, we shall make sure that \textit{adegenet} is well installed
 on the computer.
 The current version of the package is \Sexpr{packageDescription("adegenet", fields = "Version")}.
-Make sure you have a recent version of R ($\geq 3.0.3$) by typing:
+Make sure you have a recent version of R ($\geq 3.2.1$) by typing:
 <<>>=
 R.version.string
 @
@@ -290,7 +290,7 @@ These contributions include:
     useful to others? Say it! Post a feature request using github's \emph{issues}:\\
     \url{https://github.com/thibautjombart/adegenet/issues}
   \item \textbf{reporting a possible bug:} bugs are rare, but if you think you found one, post it as
-    an issue on githubL: \\
+    an issue on github: \\
     \url{https://github.com/thibautjombart/adegenet/issues}
   \item \textbf{contributions:} github makes contributions very easy; fork the project, make the
     changes you want, and when you are happy and the package passes the checks, send a pull request;
@@ -427,7 +427,7 @@ Available accessors are:
   \item \texttt{nInd}: returns the number of individuals in the object; only for \texttt{genind}.
   \item \texttt{nLoc}: returns the number of loci.
   \item \texttt{nAll}: returns the number of alleles for each locus.
-  \item \texttt{nPop}: returns the number of loci (SNPs).
+  \item \texttt{nPop}: returns the number of populations.
   \item \texttt{tab}: returns a table of allele numbers, or frequencies (if requested), with
     optional replacement of missing values; replaces the former accessor '\texttt{truenames}'.
   \item \texttt{indNames}$^{\dagger}$: returns/sets labels for individuals; only for \texttt{genind}.
