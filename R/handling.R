@@ -273,6 +273,9 @@ setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,re
     if(is.null(pop)) { # pop taken from @pop
         if(is.null(x@pop)) stop("pop not provided and x@pop is empty")
         pop <- pop(x)
+    } else if (is.language(pop)){
+      setPop(x) <- pop
+      pop <- pop(x)
     } else {
         pop <- factor(pop)
     }

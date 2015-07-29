@@ -295,7 +295,11 @@ rbind.genlight <- function(...){
 setMethod("seppop", signature(x="genlight"), function(x, pop=NULL, treatOther=TRUE, quiet=TRUE, ...){
     ## HANDLE POP ARGUMENT ##
     if(!is.null(pop)) {
+      if (is.language(pop)){
+        setPop(x) <- pop
+      } else {
         pop(x) <- pop
+      }
     }
 
     if(is.null(pop(x))) stop("pop not provided and pop(x) is NULL")
