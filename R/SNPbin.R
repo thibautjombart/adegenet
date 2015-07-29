@@ -518,7 +518,7 @@ setMethod ("show", "genlight", function(object){
 
     temp <- sapply(object@gen, function(e) length(e@NA.posi))
     if(length(temp>1)){
-        cat("\n ", sum(temp), " (", round(sum(temp)/(nInd(object)*nLoc(object)),2)," %) missing data", sep="")
+        cat("\n ", sum(temp), " (", round((sum(temp)/(nInd(object)*nLoc(object))) *100,2)," %) missing data", sep="")
     }
 
     ## BASIC CONTENT
