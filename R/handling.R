@@ -421,13 +421,53 @@ setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,re
 }
 
 
-##################
-# Function repool
-##################
-repool <- function(...){
+
+
+#'
+#' Pool several genotypes into a single dataset
+#'
+#'  The function \code{repool} allows to merge genotypes from different
+#'  \linkS4class{genind} objects into a single 'pool' (i.e. a new \linkS4class{genind}).
+#'  The markers have to be the same for all objects to be merged, but
+#'  there is no constraint on alleles.\cr
+#'
+#'  This function can be useful, for instance, when hybrids are created
+#'  using \code{\link{hybridize}}, to merge hybrids with their parent
+#'  population for further analyses. Note that \code{repool} can also
+#'  reverse the action of \code{\link{seppop}}.
+#'
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#'
+#' @seealso \code{\link{seploc}}, \code{\link{seppop}}
+#'
+#' @examples
+#' \dontrun{
+#' ## use the cattle breeds dataset
+#' data(microbov)
+#' temp <- seppop(microbov)
+#' names(temp)
+
+#' ## hybridize salers and zebu -- nasty cattle
+#' zebler <- hybridize(temp$Salers, temp$Zebu, n=40)
+#' zebler
+
+#' ## now merge zebler with other cattle breeds
+#' nastyCattle <- repool(microbov, zebler)
+#' nastyCattle
+#' }
+#'
+#' @export
+#'
+#' @param ... a list of \linkS4class{genind} objects, or a series of \linkS4class{genind} objects separated by commas
+#' @param list a logical indicating whether a list of objects with matched alleles shall be returned (TRUE), or a single \linkS4class{genind} object (FALSE, default).
+#'
+#'
+#'
+repool <- function(..., list=FALSE){
 
     ## PRELIMINARY STUFF
     x <- list(...)
+    old.names <- names(x)
     if(is.list(x[[1]])) x <- x[[1]] ## if ... is a list, keep this list for x
     if(!inherits(x,"list")) stop("x must be a list")
     if(!all(sapply(x,is.genind))) stop("x is does not contain only valid genind objects")
@@ -442,14 +482,8 @@ repool <- function(...){
     newPloidy <- unlist(lapply(x,ploidy))
 
     ## STORE OLD POP
-    old.pop <- unlist(lapply(x, pop))
+    old.pop <- lapply(x, pop)
 
-    ## ## STORE OLD OTHER
-    ## old.other <- lapply(x, other)
-
-    ## ## SET 1 POP PER DATASET
-    ## old.n <- sapply(x, nInd)
-    ## new.pop <- rep(1:length(x), old.n)
 
     ## MERGE RAW DATASETS
     ## reorder columns like in first dataset
@@ -462,12 +496,33 @@ repool <- function(...){
         tab <- rbind(tab,listTab[[i]])
     }
 
+    ## GET SINGLE GENIND
     res <- df2genind(tab, ploidy=newPloidy, type=x[[1]]@type, sep="/")
-    pop(res) <- old.pop
+    pop(res) <- unlist(old.pop)
     res <- .rbind_strata(x, res)
     res@hierarchy <- NULL
     res$call <- match.call()
 
+    ## IF A LIST OF GENIND IS TO BE RETURNED
+    if(list){
+        ## SEPARATE DATASETS
+        old.n <- sapply(x, nInd)
+        new.pop <- rep(1:length(x), old.n)
+        pop(res) <- new.pop
+        res <- seppop(res)
+
+        ## RESTORE OLD OTHER AND POP
+        old.other <- lapply(x, other)
+        for(i in 1:length(res)){
+            other(res[[i]]) <- old.other[[i]]
+            pop(res[[i]]) <- old.pop[[i]]
+        }
+
+        ## SET OBJECT NAMES
+        names(res) <- old.names
+    }
+
+    ## RETURN
     return(res)
 } # end repool
 
