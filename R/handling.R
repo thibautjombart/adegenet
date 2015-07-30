@@ -426,7 +426,7 @@ setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,re
 ##################
 repool <- function(...){
 
-    ## preliminary stuff
+    ## PRELIMINARY STUFF
     x <- list(...)
     if(is.list(x[[1]])) x <- x[[1]] ## if ... is a list, keep this list for x
     if(!inherits(x,"list")) stop("x must be a list")
@@ -437,22 +437,22 @@ repool <- function(...){
     ## if(length(unique(temp)) != as.integer(1)) stop("objects have different levels of ploidy")
 
 
-
-    ## extract info
+    ## MAKE A LIST OF OBJECTS
     listTab <- lapply(x,genind2df,usepop=FALSE,sep="/")
     newPloidy <- unlist(lapply(x,ploidy))
 
-    getPop <- function(obj){
-        if(is.null(obj$pop)) return(factor(rep(NA,nrow(obj$tab))))
-        return(pop(obj))
-    }
+    ## STORE OLD POP
+    old.pop <- unlist(lapply(x, pop))
 
-    ## handle pop
-    listPop <- lapply(x, getPop)
-    pop <- unlist(listPop, use.names=FALSE)
-    pop <- factor(pop)
+    ## ## STORE OLD OTHER
+    ## old.other <- lapply(x, other)
 
-    ## handle genotypes
+    ## ## SET 1 POP PER DATASET
+    ## old.n <- sapply(x, nInd)
+    ## new.pop <- rep(1:length(x), old.n)
+
+    ## MERGE RAW DATASETS
+    ## reorder columns like in first dataset
     markNames <- colnames(listTab[[1]])
     listTab <- lapply(listTab, function(tab) tab[,markNames,drop=FALSE]) # resorting of the tabs
 
@@ -462,7 +462,8 @@ repool <- function(...){
         tab <- rbind(tab,listTab[[i]])
     }
 
-    res <- df2genind(tab, pop=pop, ploidy=newPloidy, type=x[[1]]@type, sep="/")
+    res <- df2genind(tab, ploidy=newPloidy, type=x[[1]]@type, sep="/")
+    pop(res) <- old.pop
     res <- .rbind_strata(x, res)
     res@hierarchy <- NULL
     res$call <- match.call()
