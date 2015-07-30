@@ -14,7 +14,7 @@ setMethod("$<-","genpop",function(x,name,value) {
 .drop_alleles <- function(x, toKeep){
   all.vec <- unlist(alleles(x), use.names = FALSE)[toKeep]
   loc.fac <- factor(locFac(x)[toKeep])
-  
+
   x@all.names <- split(all.vec, loc.fac)
   x@loc.n.all  <- setNames(tabulate(loc.fac), levels(loc.fac))
   x@loc.fac   <- loc.fac
@@ -27,10 +27,25 @@ setMethod("$<-","genpop",function(x,name,value) {
 ###############
 ## genind
 setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, i, j, ..., pop=NULL, loc=NULL, treatOther=TRUE, quiet=TRUE, drop=FALSE) {
-  
+
   if (missing(i)) i <- TRUE
   if (missing(j)) j <- TRUE
-  
+
+  ## HANDLE 'i' as character
+  if(is.factor(i)) i <- as.character(i)
+  if(is.character(i)){
+      old.i <- i
+      i <- match(i, indNames(x))
+      if(any(is.na(i))){
+          warning(paste("the following specified individuals do not exist:", old.i[is.na(i)]))
+          i <- i[!is.na(i)]
+          if(length(i)==0) {
+              warning("no individual selected - ignoring")
+              i <- TRUE
+          }
+      }
+  }
+
   ## HANDLE 'POP'
   if(!is.null(pop) && !is.null(pop(x))){
     if(is.factor(pop)) pop <- as.character(pop)
@@ -41,19 +56,19 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
     }
     i <- pop(x) %in% pop
   }
-  
+
   ## handle population factor
   if(!is.null(pop(x))) {
     pop <- factor(pop(x)[i])
   } else {
     pop <- NULL
   }
-  
+
   tab       <- tab(x)
   old.other <- other(x)
   hier      <- x@strata
   prevcall  <- match.call()
-  
+
   if (x@type == "codom"){
     ## handle loc argument
     if(!is.null(loc)){
@@ -77,8 +92,8 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
   } else { # PA case
     tab <- tab[i, j, ..., drop = FALSE]
   }
-  
-  
+
+
   ## handle 'other' slot
   nOther <- length(other(x))
   namesOther <- names(other(x))
@@ -92,26 +107,26 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
         obj <- obj[i]
         if(is.factor(obj)) {obj <- factor(obj)}
       } else {if(!quiet) warning(paste("cannot treat the object",namesOther[counter]))}
-      
+
       return(obj)
     } # end f1
-    
+
     x@other <- lapply(other(x), f1) # treat all elements
-    
+
   } else {
     other(x) <- old.other
   } # end treatOther
-  
+
   x@tab    <- tab
   x@pop    <- pop
   x@call   <- prevcall
   x@type   <- x@type
-  
+
   # Treat sample and strata
   x@ploidy    <- ploidy(x)[i]
   x@hierarchy <- x@hierarchy
   x@strata    <- hier[i, , drop = FALSE]
-  
+
   if (x@type == "codom"){
     # Treat locus items
     x <- .drop_alleles(x, j)
@@ -125,14 +140,29 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
 
 ## genpop
 setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=FALSE) {
-  
+
   if (missing(i)) i <- TRUE
   if (missing(j)) j <- TRUE
-  
+
   tab <- tab(x)
   old.other <- other(x)
-  
-  
+
+
+  ## HANDLE 'i' as character
+  if(is.factor(i)) i <- as.character(i)
+  if(is.character(i)){
+      old.i <- i
+      i <- match(i, popNames(x))
+      if(any(is.na(i))){
+          warning(paste("the following specified populations do not exist:", old.i[is.na(i)]))
+          i <- i[!is.na(i)]
+          if(length(i)==0) {
+              warning("no population selected - ignoring")
+              i <- TRUE
+          }
+      }
+  }
+
   ## handle loc argument
   if(!is.null(loc)){
     if(is.factor(loc)) loc <- as.character(loc)
@@ -143,10 +173,10 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
     }
     j <- x$loc.fac %in% loc
   } # end loc argument
-  
+
   prevcall <- match.call()
   # tab <- tab[i, j, ...,drop=FALSE]
-  
+
   # if(drop){
   #     allNb <- apply(tab, 2, sum, na.rm=TRUE) # allele absolute frequencies
   #     toKeep <- (allNb > 1e-10)
@@ -161,9 +191,9 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
   } else {
     tab <- tab[i, j, ..., drop=FALSE]
   }
-  
+
   # res <- genpop(tab,prevcall=prevcall,ploidy=x@ploidy)
-  
+
   ## handle 'other' slot
   nOther <- length(other(x))
   namesOther <- names(other(x))
@@ -177,26 +207,26 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
         obj <- obj[i]
         if(is.factor(obj)) {obj <- factor(obj)}
       } else {warning(paste("cannot treat the object",namesOther[counter]))}
-      
+
       return(obj)
     } # end f1
-    
+
     x@other <- lapply(other(x), f1) # treat all elements
-    
+
   } else {
     other(x) <- old.other
   } # end treatOther
-  
+
   x@tab    <- tab
   x@call   <- prevcall
   x@type   <- x@type
-  
+
   # Treat populations
   x@ploidy    <- ploidy(x)
-  
+
   # Treat locus items
   x <- .drop_alleles(x, j)
-  
+
   return(x)
 })
 
@@ -210,40 +240,40 @@ setMethod ("show", "genind", function(object){
   indTxt <- ifelse(nInd(x)>1, "individuals;", "individual;")
   locTxt <- ifelse(nLoc(x)>1, "loci;", "locus;")
   allTxt <- ifelse(ncol(tab((x)))>1, "alleles;", "allele;")
-  
+
   ## HEADER
   cat("/// GENIND OBJECT /////////")
-  
+
   cat("\n\n //", format(nInd(x), big.mark=","), indTxt,
       format(nLoc(x), big.mark=","), locTxt,
       format(ncol(tab(x)), big.mark=","), allTxt,
       "size:", format(object.size(x), units="auto"))
-  
+
   ## BASIC CONTENT
   cat("\n\n // Basic content")
   p <- ncol(tab(x))
   len <- 7
-  
+
   cat("\n   @tab: ", nrow(tab(x)), "x", ncol(tab(x)), "matrix of allele counts" )
-  
+
   if(!is.null(nAll(x))){
     alleletxt <- paste("(range: ", paste(range(nAll(x)), collapse="-"), ")", sep="")
     cat("\n   @loc.n.all: number of alleles per locus", alleletxt)
   }
-  
+
   if(!is.null(locFac(x))){
     cat("\n   @loc.fac: locus factor for the", ncol(tab(x)), "columns of @tab")
   }
   if(!is.null(alleles(x))){
     cat("\n   @all.names: list of allele names for each locus")
   }
-  
+
   ploidytxt <- paste("(range: ", paste(range(ploidy(x)), collapse="-"), ")", sep="")
   cat("\n   @ploidy: ploidy of each individual ", ploidytxt)
   cat("\n   @type: ",x@type)
   cat("\n   @call: ")
   print(x@call)
-  
+
   ## OPTIONAL CONTENT
   cat("\n // Optional content")
   optional <- FALSE
@@ -252,7 +282,7 @@ setMethod ("show", "genind", function(object){
     poptxt <- paste("(group size range: ", paste(range(table(pop(x))), collapse="-"), ")", sep="")
     cat("\n   @pop:", paste("population of each individual", poptxt))
   }
-  
+
   if (!is.null(x@strata)){
     optional <- TRUE
     cat("\n   @strata: ")
@@ -264,21 +294,21 @@ setMethod ("show", "genind", function(object){
     }
     cat("a data frame with", length(x@strata), "columns (", levs, ")")
   }
-  
+
   if (!is.null(x@hierarchy)){
     optional <- TRUE
     cat("\n   @hierarchy:", paste(x@hierarchy, collapse = ""))
   }
-  
+
   if(!is.null(other(x))){
     optional <- TRUE
     cat("\n   @other: ")
     cat("a list containing: ")
     cat(ifelse(is.null(names(other(x))), "elements without names", paste(names(other(x)), collapse= "  ")), "\n")
   }
-  
+
   if(!optional) cat("\n   - empty -")
-  
+
   cat("\n")
 }
 ) # end show method for genind
@@ -295,40 +325,40 @@ setMethod ("show", "genpop", function(object){
   popTxt <- ifelse(nPop(x)>1, "populations;", "population;")
   locTxt <- ifelse(nLoc(x)>1, "loci;", "locus;")
   allTxt <- ifelse(ncol(tab((x)))>1, "alleles;", "allele;")
-  
+
   ## HEADER
   cat("/// GENPOP OBJECT /////////")
-  
+
   cat("\n\n //", format(nPop(x), big.mark=","), popTxt,
       format(nLoc(x), big.mark=","), locTxt,
       format(ncol(tab(x)), big.mark=","), allTxt,
       "size:", format(object.size(x), units="auto"))
-  
+
   ## BASIC CONTENT
   cat("\n\n // Basic content")
   p <- ncol(tab(x))
   len <- 7
-  
+
   cat("\n   @tab: ", nrow(tab(x)), "x", ncol(tab(x)), "matrix of allele counts" )
-  
+
   if(!is.null(nAll(x))){
     alleletxt <- paste("(range: ", paste(range(nAll(x)), collapse="-"), ")", sep="")
     cat("\n   @loc.n.all: number of alleles per locus", alleletxt)
   }
-  
+
   if(!is.null(locFac(x))){
     cat("\n   @loc.fac: locus factor for the", ncol(tab(x)), "columns of @tab")
   }
   if(!is.null(alleles(x))){
     cat("\n   @all.names: list of allele names for each locus")
   }
-  
+
   ploidytxt <- paste("(range: ", paste(range(ploidy(x)), collapse="-"), ")", sep="")
   cat("\n   @ploidy: ploidy of each individual ", ploidytxt)
   cat("\n   @type: ",x@type)
   cat("\n   @call: ")
   print(x@call)
-  
+
   ## OPTIONAL CONTENT
   cat("\n // Optional content")
   optional <- FALSE
@@ -338,11 +368,11 @@ setMethod ("show", "genpop", function(object){
     cat("a list containing: ")
     cat(ifelse(is.null(names(other(x))), "elements without names", paste(names(other(x)), collapse= "  ")), "\n")
   }
-  
+
   if(!optional) cat("\n   - empty -")
-  
+
   cat("\n")
-  
+
 }
 ) # end show method for genpop
 
@@ -359,34 +389,34 @@ if(!isGeneric("summary")){
 setMethod ("summary", signature(object="genind"), function(object, verbose = TRUE, ...){
   x <- object
   if(!is.genind(x)) stop("Provided object is not a valid genind.")
-  
-  
+
+
   if(is.null(pop(x))){
     pop(x) <- rep("P1", nInd(x))
 #     x@pop <- factor(rep(1,nrow(x@tab)))
 #     x@pop.names <- ""
 #     names(x@pop.names) <- "P1"
   }
-  
+
   ## BUILD THE OUTPUT ##
   ## type-independent stuff
   res <- list()
-  
+
   res$N <- nrow(tab(x))
-  
+
   res$pop.eff <- as.numeric(table(pop(x)))
   names(res$pop.eff) <- popNames(x)
-  
+
   ## PA case ##
   if(x@type=="PA"){
     ## % of missing data
     res$NA.perc <- 100*sum(is.na(tab(x)))/prod(dim(tab(x)))
-    
+
     ## display and return
     listlab <- c("# Total number of genotypes: ",
                  "# Population sample sizes: ",
                  "# Percentage of missing data: ")
-    
+
     if (verbose) {
       cat("\n",listlab[1], res[[1]], "\n")
       for(i in 2:3){
@@ -394,21 +424,21 @@ setMethod ("summary", signature(object="genind"), function(object, verbose = TRU
         print(res[[i]])
       }
     }
-    
+
     return(invisible(res))
   }
-  
-  
+
+
   ## codom case ##
   res$loc.n.all <- nAll(x)
-  
+
   temp <- tab(genind2genpop(x,quiet=TRUE))
-  
+
   res$pop.nall <- apply(temp,1,function(r) sum(r!=0,na.rm=TRUE))
-  
+
   ##  res$NA.perc <- 100*sum(is.na(x@tab))/prod(dim(x@tab)) <- wrong
   res$NA.perc <- 100*(1-mean(propTyped(x,by="both")))
-  
+
   ## handle heterozygosity
   if(any(ploidy(x) > 1)){
     ## auxiliary function to compute observed heterozygosity
@@ -418,16 +448,16 @@ setMethod ("summary", signature(object="genind"), function(object, verbose = TRU
       H <- mean(H,na.rm=TRUE)
       return(H)
     }
-    
+
     res$Hobs <- unlist(lapply(temp,f1))
-    
+
     ## auxiliary function to compute expected heterozygosity
     ## freq is a vector of frequencies
     f2 <- function(freq){
       H <- 1-sum(freq*freq,na.rm=TRUE)
       return(H)
     }
-    
+
     temp <- genind2genpop(x,pop=rep(1,nInd(x)),quiet=TRUE)
     temp <- tab(temp, freq=TRUE, quiet=TRUE)
     res$Hexp <-tapply(temp^2, locFac(x), function(e) 1-sum(e, na.rm=TRUE))
@@ -435,7 +465,7 @@ setMethod ("summary", signature(object="genind"), function(object, verbose = TRU
     res$Hobs <- 0
     res$Xexp <- 0
   }
-  
+
   ## print to screen
   listlab <- c("# Total number of genotypes: ",
                "# Population sample sizes: ",
@@ -444,7 +474,7 @@ setMethod ("summary", signature(object="genind"), function(object, verbose = TRU
                "# Percentage of missing data: ",
                "# Observed heterozygosity: ",
                "# Expected heterozygosity: ")
-  
+
   if (verbose) {
     cat("\n",listlab[1],res[[1]], "\n")
     for(i in 2:7){
@@ -452,7 +482,7 @@ setMethod ("summary", signature(object="genind"), function(object, verbose = TRU
       print(res[[i]])
     }
   }
-  
+
   return(invisible(res))
 })  # end summary.genind
 
@@ -466,22 +496,22 @@ setMethod ("summary", signature(object="genind"), function(object, verbose = TRU
 setMethod ("summary", signature(object="genpop"), function(object, verbose = TRUE, ...){
   x <- object
   if(!inherits(x,"genpop")) stop("To be used with a genpop object")
-  
+
   ## BUILD THE OUTPUT ##
   ## type-independent stuff
   res <- list()
-  
+
   res$npop <- nrow(tab(x))
-  
+
   ## PA case ##
   if(x@type=="PA"){
     ## % of missing data
     res$NA.perc <- 100*sum(is.na(tab(x)))/prod(dim(tab(x)))
-    
+
     ## display and return
     listlab <- c("# Total number of genotypes: ",
                  "# Percentage of missing data: ")
-    
+
     if (verbose) {
       cat("\n",listlab[1],res[[1]],"\n")
       for(i in 2){
@@ -489,16 +519,16 @@ setMethod ("summary", signature(object="genpop"), function(object, verbose = TRU
         print(res[[i]])
       }
     }
-    
+
     return(invisible(res))
   }
-  
-  
+
+
   ## codom case ##
   res$loc.n.all <- nAll(x)
-  
+
   res$pop.nall <- apply(tab(x),1,function(r) sum(r>0,na.rm=TRUE))
-  
+
   ##  res$NA.perc <- 100*sum(is.na(x@tab))/prod(dim(x@tab)) <- old version
   mean.w <- function(x,w=rep(1/length(x),length(x))){
     x <- x[!is.na(x)]
@@ -506,17 +536,17 @@ setMethod ("summary", signature(object="genpop"), function(object, verbose = TRU
     w <- w/sum(w)
     return(sum(x*w))
   }
-  
+
   w <- apply(tab(x),1,sum,na.rm=TRUE) # weights for populations
   res$NA.perc <- 100*(1-mean.w(propTyped(x), w=w))
   ## res$NA.perc <- 100*(1-mean(propTyped(x,by="both"))) <- old
-  
+
   # print to screen
   listlab <- c("# Number of populations: ",
                "# Number of alleles per locus: ",
                "# Number of alleles per population: ",
                "# Percentage of missing data: ")
-  
+
   if (verbose) {
     cat("\n",listlab[1],res[[1]],"\n")
     for(i in 2:4){
@@ -524,9 +554,9 @@ setMethod ("summary", signature(object="genpop"), function(object, verbose = TRU
       print(res[[i]])
     }
   }
-  
+
   return(invisible(res))
-  
+
 }
 )# end summary.genpop
 
