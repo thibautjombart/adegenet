@@ -22,6 +22,10 @@ hybridize <- function(x1, x2, n, pop=NULL,
     ploidy <- ploidy(x1)[1]
     res.type <- match.arg(res.type)
 
+    ## ensure different names for pop
+    popNames(x1) <- "pop1"
+    popNames(x2) <- "pop2"
+
     ## repool data
     x1x2 <- repool(x1, x2)
     x1 <- x1x2[pop=1]
