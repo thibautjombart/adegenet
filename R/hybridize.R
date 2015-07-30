@@ -1,10 +1,92 @@
-##
-## Function hybridize takes two genind in inputs
-## and generates hybrids individuals having one parent
-## in both objects.
-##
-
-hybridize <- function(x1, x2, n, pop=NULL,
+#'
+#' Function hybridize takes two genind in inputs
+#' and generates hybrids individuals having one parent
+#' in both objects.
+#'
+#'The function \code{hybridize} performs hybridization between two set
+#' of genotypes stored in \linkS4class{genind} objects (referred as the "2
+#' populations"). Allelic frequencies are derived for each population,
+#' and then gametes are sampled following a multinomial distribution. \cr
+#'
+#' The result consists in a set of 'n' genotypes, with different possible
+#' outputs (see 'res.type' argument).
+#'
+#'
+#' @export
+#'
+#' @param x1 a \linkS4class{genind} object
+#' @param x2 a \linkS4class{genind} object
+#' @param n an integer giving the number of hybrids requested
+#' @param pop a character string giving naming the population of the
+#'  created hybrids.
+#' @param res.type a character giving the type of output requested. Must
+#'  be "genind" (default), "df" (i.e. data.frame like in
+#'  \code{\link{genind2df}}), or "STRUCTURE" to generate a .str file
+#'  readable by STRUCTURE (in which case the 'file' must be supplied). See
+#'  'details' for STRUCTURE output.
+#' @param file a character giving the name of the file to be written
+#'  when 'res.type' is "STRUCTURE"; if NULL, a the created file is of the
+#'  form "hybrids\_[the current date].str".
+#' @param quiet a logical specifying whether the writing to a file (when
+#'    'res.type' is "STRUCTURE") should be announced (FALSE, default) or
+#'    not (TRUE).
+#' @param sep a character used to separate two alleles
+#' @param hyb.label a character string used to construct the hybrids
+#'  labels; by default, "h", which gives labels: "h01", "h02", "h03",...
+#'
+#' @return
+#' A \linkS4class{genind} object (by default), or a data.frame of alleles
+#' (res.type="df"). No R output if res.type="STRUCTURE" (results written
+#' to the specified file).
+#'
+#' @details
+#'   If the output is a STRUCTURE file, this file will have the following
+#'  caracteristics:\cr
+#'  - file contains the genotypes of the parents, and then the genotypes
+#'  of hybrids\cr
+#'  - the first column identifies genotypes\cr
+#'  - the second column identifies the population (1 and 2 for parents x1 and x2;
+#'  3 for hybrids)\cr
+#'  - the first line contains the names of the markers\cr
+#'  - one row = one genotype (onerowperind will be true)\cr
+#'  - missing values coded by "-9" (the software's default)\cr
+#'
+#' @examples
+#' \dontrun{
+#' ## Let's make some cattle hybrids
+#' data(microbov)
+#'
+#' ## first, isolate each breed
+#' temp <- seppop(microbov)
+#' names(temp)
+#' salers <- temp$Salers
+#' zebu <- temp$Zebu
+#'
+#' ## let's make some... Zeblers
+#' zebler <- hybridize(salers, zebu, n=40,
+#'                     pop="Zebler")
+#'
+#'
+#' ## now let's merge all data into a single genind
+#' newDat <- repool(microbov, zebler)
+#'
+#' ## make a correspondance analysis
+#' ## and see where hybrids are placed
+#' X <- genind2genpop(newDat, quiet=TRUE)
+#' coa1 <- dudi.coa(tab(X),scannf=FALSE,nf=3)
+#' s.label(coa1$li)
+#' add.scatter.eig(coa1$eig,2,1,2)
+#'
+#' }
+#'
+#'
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#'
+#' @seealso \code{\link{seploc}}, \code{\link{seppop}}, \code{\link{repool}}
+#'
+#'
+#'
+hybridize <- function(x1, x2, n, pop="hybrid",
                       res.type=c("genind","df","STRUCTURE"),
                       file=NULL, quiet=FALSE, sep="/", hyb.label="h"){
     ## checks
@@ -119,9 +201,9 @@ hybridize <- function(x1, x2, n, pop=NULL,
         ##         res <- as.data.frame(matrix(res,ncol=k), stringsAsFactors=FALSE)
         ##         names(res) <- x1@loc.names
         ##         row.names(res) <- .genlab(hyb.label,n)
-        if(is.null(pop)){ # if pop is not provided, merge the two parent populations
-            pop <- paste(deparse(substitute(x1)) , deparse(substitute(x2)), sep="-")
-        }
+        ## if(is.null(pop)){ # if pop is not provided, merge the two parent populations
+        ##     pop <- paste(deparse(substitute(x1)) , deparse(substitute(x2)), sep="-")
+        ## }
         pop <- factor(rep(pop,n))
 
         res <- zyg
