@@ -1,7 +1,7 @@
 
 # Function to subset raw vectors
 .subsetbin <- function(x, i){
-    xint <- as.integer(rawToBits(x))[i]
+    xint <- as.integer(rawToBits(x)[i])
     zeroes <- 8 - (length(xint) %% 8)
     return(packBits(c(xint, rep(0L, zeroes))))
 }
