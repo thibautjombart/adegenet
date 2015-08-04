@@ -20,6 +20,7 @@ Collate: adegenet.package.R
 	 basicMethods.R 
 	 handling.R 
 	 auxil.R 
+	 minorAllele.R
 	 setAs.R 
 	 SNPbin.R 
 	 strataMethods.R 
