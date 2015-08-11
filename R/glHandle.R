@@ -1,8 +1,11 @@
 
 # Function to subset raw vectors
 .subsetbin <- function(x, i){
-    xint <- as.integer(rawToBits(x))[i]
+    # Take a raw vector, subset the bits and then convert to integers.
+    xint   <- as.integer(rawToBits(x)[i])
+    # Figure out how many zeroes are needed to pad the end.
     zeroes <- 8 - (length(xint) %% 8)
+    # Convert the integer vector with zeroes on the end back into a raw vector.
     return(packBits(c(xint, rep(0L, zeroes))))
 }
 
