@@ -47,7 +47,7 @@ AA36181      2     NA      2      2      2
 AA36183      2      2      2      2      2"
 
 xxdf <- read.table(text = x)
-xx   <- new("genlight", xxdf)
+xx   <- new("genlight", xxdf, parallel = FALSE)
 pop(xx) <- rep(LETTERS[1:2], each = 4)
 
 test_that("missing data is properly subset with logical subscripts", {
