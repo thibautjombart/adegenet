@@ -13,8 +13,10 @@ BUG FIXES
 	instead, computations are done using all available loci
 
 	o adegenetTutorial now opens up-to-date tutorials
-
-
+	
+	o subsetting genlight objects now treats missing data appropriately 
+	when given logical, character, or negative subscripts. 
+	(See issue #83 (https://github.com/thibautjombart/adegenet/issues/83))
 
 			CHANGES IN ADEGENET VERSION 2.0.0
 CHANGES IN GENIND/GENPOP/GENLIGHT OBJECTS

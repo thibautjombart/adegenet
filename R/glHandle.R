@@ -17,32 +17,81 @@
     return(x)
 }
 
+# Zhian N. Kamvar
+# Mon Aug 17 09:39:12 2015 ------------------------------
+# 
+# This function takes two steps:
+#   1. Subset the missing positions
+#   2. Subset the vectors of raw SNPs
+# 
+# Both steps are not exactly straighforward. Because the missing vector only
+# represents the positions of missing data, it must be subset by value as
+# opposed to position.
 .SNPbinset <- function(x, i){
-    if (missing(i)) i <- TRUE
-    n.loc     <- x@n.loc
-    if (length(x@NA.posi) > 0){
-        namatches <- match(i, x@NA.posi, nomatch = 0)
-        nas.kept  <- x@NA.posi[namatches]
-        if (length(nas.kept) > 0){
-            old.posi  <- 1:n.loc
-            x@NA.posi <- match(nas.kept, old.posi[i])
-        } else {
-            x@NA.posi <- nas.kept
-        }
-    }
-    if (length(i) == 1 && is.logical(i) && i){
+  if (missing(i)) i <- TRUE
+  
+  # Create a logical value indicating whether or not subsetting is necessary.
+  we_take_all <- length(i) == 1 && is.logical(i) && i
+  n.loc <- x@n.loc
+  if (length(x@NA.posi) > 0){
+    if (is.logical(i)){
+      if (we_take_all){
+        # Keep all of the data
         return(x)
-    } else if (all(is.logical(i))){
-        n.loc <- sum(i)
-    } else if (any(i < 0)){
-        n.loc <- n.loc - length(i)
+      } else {
+        # If the positons are logical, perhaps the best way to address this is
+        # to match the TRUE positions to the NA.posi vector. Adding nomatch = 0 
+        # avoids introducing NAs.
+        namatches <- match(which(i), x@NA.posi, nomatch = 0)
+        nas.kept  <- x@NA.posi[namatches]
+      }
+    } else if (is.character(i)){
+      stop("Cannot subset a SNPbin object with a character vector", call. = FALSE)
+    } else if (all(i < 0)){
+      # For negative subscripts, find which ones they match and then
+      # negate those. Luckily -0 is allowed.
+      namatches <- match(abs(i), x@NA.posi, nomatch = 0)
+      # Unfortunately, if nothing matches, then the default are zeroes. When you
+      # subset a vector in R with only zero, you will get an empty vector. This
+      # conditional makes sure that NA positions are retained.
+      if (all(namatches == 0)){
+        nas.kept  <- x@NA.posi
+      } else {
+        nas.kept  <- x@NA.posi[-namatches]
+      }
+      
+    } else if (all(i > 0)){
+      # Positive subscripts are much easier. First you find where the subscripts
+      # match and then your subset with those positions. 
+      namatches <- match(i, x@NA.posi, nomatch = 0)
+      nas.kept  <- x@NA.posi[namatches]
     } else {
-        n.loc <- length(i)
+      stop("Cannot subset a SNPbin with mixed subscripts.", call. = FALSE)
     }
-    x@snp     <- lapply(x@snp, .subsetbin, i)
-    x@n.loc   <- n.loc
-
+    # After we find out which missing positions we need to keep, we reset the 
+    # missing positions to the subset data.
+    if (length(nas.kept) > 0){
+      old.posi  <- 1:n.loc
+      x@NA.posi <- match(nas.kept, old.posi[i])
+    } else {
+      x@NA.posi <- nas.kept
+    }
+  }
+  # Here we calculate the number of loci we will have left in the data.
+  if (we_take_all){
     return(x)
+  } else if (all(is.logical(i))){
+    n.loc <- sum(i)
+  } else if (any(i < 0)){
+    n.loc <- n.loc - length(i)
+  } else {
+    n.loc <- length(i)
+  }
+  # Now we loop over all chromosomes and subset.
+  x@snp   <- lapply(x@snp, .subsetbin, i)
+  # Set the new value of the number of loci and return.
+  x@n.loc <- n.loc
+  return(x)
 }
 
 ###############
@@ -123,12 +172,15 @@ setMethod("[", signature(x="genlight", i="ANY", j="ANY", drop="ANY"), function(x
     ## SUBSET LOCI ##
 
     ## handle ind.names, loc.names, chromosome, position, and alleles
+    if (is.character(j)){
+      j <- match(j, x@loc.names, nomatch = 0)
+    }
     x@loc.names   <- x@loc.names[j]
     x@chromosome  <- chr(x)[j]
     x@position    <- position(x)[j]
     x@loc.all     <- alleles(x)[j]
-    x@gen       <- lapply(x@gen, function(e) e[j])
-    x@n.loc      <- x@gen[[1]]@n.loc
+    x@gen         <- lapply(x@gen, function(e) e[j])
+    x@n.loc       <- x@gen[[1]]@n.loc
 
     return(x)
 }) # end [] for genlight
