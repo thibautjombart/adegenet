@@ -78,27 +78,28 @@
 # @param result user's choice of result type
 # @param reps the number of replicates per number of retained PCs
 # @param ... methods to be passed on to boot such as parallel and ncores
+####################
+## .get.prop.pred ##
+####################
 .get.prop.pred <- function(n.pca, x, n.da, groups, grp, training.set, 
-                           training.set2, pcaX, result = "overall", reps = 100,
+                           pcaX, result = "overall", reps = 100,
                            ...){
   
-  groups_ge_ten <- vapply(groups, function(e) sum(grp == e) >= 10, logical(1))
   bootlist      <- list(DATA = x, GRP = grp, PCA = pcaX, KEEP = 1:nrow(x))
-  if (all(groups_ge_ten) == TRUE){
-    out <- boot::boot(bootlist, .boot_dapc_pred, sim = "parametric", R = reps,
+
+  out <- boot::boot(bootlist, .boot_dapc_pred, sim = "parametric", R = reps,
                       ran.gen = .boot_group_sampler, mle = training.set, 
-                      n.pca = n.pca, n.da = n.da, result = result, ...)$t
-  } else {
-    out <- boot::boot(bootlist, .boot_dapc_pred, sim = "parametric", R = reps,
-                      ran.gen = .boot_group_sampler, mle = training.set2, 
                       n.pca = n.pca, n.da = n.da, result = result, ...)$t      
-  }
+  #   }
   return(as.vector(out))
-}
+} # end .get.prop.pred
 
 
 
 
+##############
+## xvalDapc ##
+##############
 xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9, 
                      result = c("groupMean", "overall"), center = TRUE, scale = FALSE, 
                      n.pca = NULL, n.rep = 30, xval.plot = TRUE, ...){
@@ -113,7 +114,7 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
   #   if(missing(n.da)){
   #   n.da <- length(levels(grp))-1}
   #   if(is.null(n.da)){
-  #     n.da <- length(levels(grp))-1} # need to fix this to make interactive n.da selection an option! 
+  #     n.da <- length(levels(grp))-1} # want to fix this to make interactive n.da selection an option! 
   #   else{
   #     n.da <- n.da}
   if(missing(training.set)){
@@ -135,34 +136,38 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
   ## GET TRAINING SET SIZE ##
   N <- nrow(x)
   groups <- levels(grp)
-  if (all(lapply(groups, function(e) sum(as.vector(unclass(grp==e))))>=10)==TRUE){
-    N.training <- round(N*training.set)
-  } else {
-    groups1 <- (levels(grp))[(as.vector(which.min((lapply(groups, function(e) sum(as.vector(unclass(grp==e))))))))]
-    popmin <- length(which(grp%in%groups1))
-    if(popmin==1){
-      ## exclude smallest group; proceed with second smallest group:
-      counter <- 0
-      while(popmin==1){
-        groups.temp <- factor(as.vector(grp[-which(grp %in% groups1)]), exclude=groups1)
-        groups1.ori <- groups1
-        groups1 <- levels(groups.temp)[(as.vector(which.min((lapply(levels(groups.temp), 
-                                                              function(e) sum(as.vector(unclass(groups.temp==e))))))))]
-        popmin <- length(which(groups.temp%in%groups1))
-        groups1 <- c(groups1.ori, groups1)
-        counter <- sum(counter, 1)           
-      }
-      if(counter==1){        
-        msg <- "1 group has only 1 member so it cannot be represented in both training and validation sets."
-      }else{
-        msg <- paste(counter, "groups have only 1 member: these groups cannot be represented in both training and validation sets.") 
-                      
-      }      
-      warning(msg)
+  ## identify the sizes of groups
+  group.n <- as.vector(table(grp))
+  ## identify the smallest group size
+  popmin <- min(group.n)
+  
+  ## check if any groups are of length 1:
+  if(popmin == 1){
+    singles <- which(group.n == 1)
+    counter <- length(singles)
+    
+    ## get msg to print
+    if(counter == 1){
+      msg <- "1 group has only 1 member so it cannot be represented in both training and validation sets."
+    }else{
+      msg <- paste(counter, "groups have only 1 member: these groups cannot be represented in both training and validation sets.") 
     }
-    training.set2 <- ((popmin - 1)/popmin)
-    N.training <- round(N*training.set2)   
-  }
+    warning(msg)
+    
+    ## exclude groups of length 1
+    popmin <- min(group.n[-which(group.n==1)])        
+  } # end if popmin ==1
+  
+  ## get training.set2 
+  ## (ie. the max proportion we can use as training.set | smallest group)
+  ## to be used as argument to .get.prop.pred
+  training.set2 <- (popmin - 1)/popmin
+  ## update training.set if needs reduction to accommodate small groups
+  if(training.set2 < training.set) training.set <- training.set2
+  
+  ## get N.training | training.set 
+  N.training <- round(N*training.set)
+   
   
   
   ## GET FULL PCA ##
@@ -181,48 +186,11 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
   }
 
   n.pca <- n.pca[n.pca>0 & n.pca<(N.training-1) & n.pca<n.pca.max]
-
-  ## FUNCTION GETTING THE % OF ACCURATE PREDICTION FOR ONE NUMBER OF PCA PCs ##
-  ## n.pca is a number of retained PCA PCs
-  # get.prop.pred <- function(n.pca){
-  #   f1 <- function(){
-  #     if (all(lapply(groups, function(e) sum(as.vector(unclass(grp==e))))>=10)==TRUE){
-  #       toKeep <- unlist(lapply(groups, function(e) sample(which(grp==e), 
-  #                                                          size=(round(training.set*sum(as.vector(unclass(grp==e))))))))
-  #     } else {
-  #       ## check if any groups have only 1 member
-  #       grp.n.1 <- levels(grp)[which(lapply(groups, function(e) sum(as.vector(unclass(grp==e))))==1)]                
-  #       if(length(grp.n.1)!=0){
-  #         ## for groups with 1 member, keep that member in the training set
-  #         toKeep <- which(grp %in% grp.n.1) 
-  #         toKeep <- c(toKeep, unlist(lapply(groups[-which(groups %in% grp.n.1)], function(e) sample(which(grp==e), 
-  #                                                     size=(round(training.set2*sum(as.vector(unclass(grp==e)))))))))
-  #       }else{
-  #         ## if no group has only 1 member, proceed normally
-  #         toKeep <- unlist(lapply(groups, function(e) sample(which(grp==e), 
-  #                                                            size=(round(training.set2*sum(as.vector(unclass(grp==e))))))))
-  #       }
-  #       }
-  #     temp.pca <- pcaX
-  #     temp.pca$li <- temp.pca$li[toKeep,,drop=FALSE]
-  #     temp.dapc <- suppressWarnings(dapc(x[toKeep,,drop=FALSE], grp[toKeep], 
-  #                                        n.pca=n.pca, n.da=n.da, dudi=temp.pca))
-  #     temp.pred <- predict.dapc(temp.dapc, newdata=x[-toKeep,,drop=FALSE])
-  #     if(result=="overall"){
-  #       out <- mean(temp.pred$assign==grp[-toKeep])
-  #     }
-  #     if(result=="groupMean"){
-  #       out <- mean(tapply(temp.pred$assign==grp[-toKeep], grp[-toKeep], mean), na.rm=TRUE)
-  #     }
-  #     return(out)
-  #   }
-  #   return(replicate(n.rep, f1()))
-  # } # end get.prop.pred
   
   
   ## GET %SUCCESSFUL OF ACCURATE PREDICTION FOR ALL VALUES ##
   res.all <- unlist(lapply(n.pca, .get.prop.pred, x, n.da, groups, grp,
-                           training.set, training.set2, pcaX, result, 
+                           training.set, pcaX, result, 
                            n.rep, ...))
   xval <- data.frame(n.pca=rep(n.pca, each=n.rep), success=res.all)    
   
@@ -244,7 +212,9 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
   FTW <-sapply(lin, function(e) sum(cait[,e])/n.rep)
   RMSE <- sqrt(FTW)
   names(RMSE) <- xval$n.pca[temp]
-  best.n.pca <- names(which.min(RMSE))
+  ## if more than one n.pc give highest success, choose the largest one
+  best.n.pca <- names(which(RMSE == min(RMSE)))
+  if(length(best.n.pca) > 1) best.n.pca <- best.n.pca[length(best.n.pca)]
   
   # DAPC
   n.pca <- as.integer(best.n.pca)
