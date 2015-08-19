@@ -98,7 +98,7 @@ dist.genpop <- function(x, method = 1, diag = FALSE, upper = FALSE) {
       d <- unlist(lapply(w0,loca))
     }
     attr(d, "Size") <- nlig
-    attr(d, "Labels") <- x@pop.names
+    attr(d, "Labels") <- popNames(x)
     attr(d, "Diag") <- diag
     attr(d, "Upper") <- upper
     attr(d, "method") <- METHODS[method]

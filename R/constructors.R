@@ -9,13 +9,13 @@
 #'
 #' @export
 #' @docType methods
-#'   
+#'
 #' @aliases initialize,genind-methods
 #' @aliases genind
 #' @aliases as.genind
-#'   
+#'
 #' @rdname new.genind
-#'   
+#'
 #' @param .Object prototyped object (generated automatically when calling 'new')
 #' @param tab A matrix of integers corresponding to the @@tab slot of a genind
 #'   object, with individuals in rows and alleles in columns, and containing
@@ -46,13 +46,10 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
     if (missing(tab)){
         .Object@tab       <- matrix(0L, ncol = 0, nrow = 0)
         .Object@pop       <- NULL
-        .Object@pop.names <- NULL
         .Object@strata    <- NULL
         .Object@hierarchy <- NULL
         .Object@call      <- NULL
-        .Object@ind.names <- character(0)
-        .Object@loc.names <- character(0)
-        .Object@loc.nall  <- integer(0)
+        .Object@loc.n.all  <- integer(0)
         .Object@loc.fac   <- NULL
         .Object@ploidy    <- integer(0)
         .Object@other     <- NULL
@@ -63,6 +60,7 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
     if(is.null(rownames(tab))) {rownames(tab) <- seq(nrow(tab))}
 
     ## force matrix & integer
+    if(!is.matrix(tab)) tab <- as.matrix(tab)
     old.rownames <- rownames(tab)
     old.colnames <- colnames(tab)
     old.dim <- dim(tab)
@@ -98,9 +96,9 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
     if (!is.null(strata)){
       # Make sure that the hierarchies are factors.
       strata <- data.frame(lapply(strata, function(f) factor(f, unique(f))))
-      rownames(strata) <- rownames(tab)  
-    } 
-    
+      rownames(strata) <- rownames(tab)
+    }
+
     if (!is.null(strata) && !is.null(hierarchy)){
       if (is.language(hierarchy)){
         the_names <- all.vars(hierarchy)
@@ -118,13 +116,13 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
 
 
     if(type=="codom"){
-        ## loc.nall
-        loc.nall <-  table(temp)[match(loc.names,names(table(temp)))]
-        loc.nall <- as.integer(loc.nall)
-        names(loc.nall) <- loc.names
+        ## loc.n.all
+        loc.n.all <-  table(temp)[match(loc.names,names(table(temp)))]
+        loc.n.all <- as.integer(loc.n.all)
+        names(loc.n.all) <- loc.names
 
         ## loc.fac
-        loc.fac <- factor(rep(loc.names,loc.nall),levels=loc.names)
+        loc.fac <- factor(rep(loc.names,loc.n.all),levels=loc.names)
 
         ## alleles name
         temp <- colnames(tab)
@@ -136,14 +134,12 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
     } else { # end if type=="codom" <=> if type=="PA"
         loc.fac   <- NULL
         all.names <- NULL
-        loc.nall  <- NULL
+        loc.n.all  <- NULL
     }
 
     ## Ideally I should use an 'initialize' method here
     out@tab       <- tab
-    out@ind.names <- ind.names
-    out@loc.names <- loc.names
-    out@loc.nall  <- loc.nall
+    out@loc.n.all  <- loc.n.all
     out@loc.fac   <- loc.fac
     out@all.names <- all.names
     out@strata    <- strata
@@ -155,7 +151,6 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
         # convert pop to a factor if it is not
         if(!is.factor(pop)) {pop <- factor(pop)}
         out@pop <- pop
-        out@pop.names <- levels(pop)
     }
 
     ## ploidy
@@ -228,10 +223,8 @@ setMethod("initialize", "genpop", function(.Object, tab, prevcall=NULL, ploidy=2
     out <- .Object
     if (missing(tab)){
         .Object@tab       <- matrix(0L, ncol = 0, nrow = 0)
-        .Object@pop.names <- character(0)
         .Object@call      <- NULL
-        .Object@loc.names <- character(0)
-        .Object@loc.nall  <- integer(0)
+        .Object@loc.n.all  <- integer(0)
         .Object@loc.fac   <- NULL
         .Object@ploidy    <- integer(0)
         .Object@other     <- NULL
@@ -242,6 +235,7 @@ setMethod("initialize", "genpop", function(.Object, tab, prevcall=NULL, ploidy=2
     if(is.null(rownames(tab))) {rownames(tab) <- 1:nrow(tab)}
 
     ## force matrix & integer
+    if(!is.matrix(tab)) tab <- as.matrix(tab)
     old.rownames <- rownames(tab)
     old.colnames <- colnames(tab)
     old.dim <- dim(tab)
@@ -276,13 +270,13 @@ setMethod("initialize", "genpop", function(.Object, tab, prevcall=NULL, ploidy=2
     }
 
     if(type=="codom"){
-        ## loc.nall
-        loc.nall <-  table(temp)[match(loc.names,names(table(temp)))]
-        loc.nall <- as.integer(loc.nall)
-        names(loc.nall) <- loc.names
+        ## loc.n.all
+        loc.n.all <-  table(temp)[match(loc.names,names(table(temp)))]
+        loc.n.all <- as.integer(loc.n.all)
+        names(loc.n.all) <- loc.names
 
         ## loc.fac
-        loc.fac <- rep(loc.names,loc.nall)
+        loc.fac <- factor(rep(loc.names,loc.n.all),levels=loc.names)
 
         ## alleles name
         temp <- colnames(tab)
@@ -295,14 +289,12 @@ setMethod("initialize", "genpop", function(.Object, tab, prevcall=NULL, ploidy=2
     } else { # end if type=="codom" <=> if type=="PA"
         loc.fac <- NULL
         all.names <- NULL
-        loc.nall <- NULL
+        loc.n.all <- NULL
     }
 
     ## build final output
     out@tab <- tab
-    out@pop.names <- pop.names
-    out@loc.names <- loc.names
-    out@loc.nall <- loc.nall
+    out@loc.n.all <- loc.n.all
     out@loc.fac <- loc.fac
     out@all.names <- all.names
     out@ploidy <- ploidy

@@ -493,11 +493,11 @@ setMethod("initialize", "genlight", function(.Object, ..., parallel=require("par
 ## show SNPbin
 ###############
 setMethod ("show", "SNPbin", function(object){
-    cat(" === S4 class SNPbin ===")
+    cat("/// SNPBIN OBJECT /////////")
     if(!is.null(object@label)) {
         cat("\n", object@label)
     }
-    cat("\n", nLoc(object), "SNPs coded as bits")
+    cat("\n", format(nLoc(object), big.mark=","), "SNPs coded as bits, size:", format(object.size(object), units="auto"))
     cat("\n Ploidy:", object@ploidy)
     temp <- round(length(object@NA.posi)/nLoc(object) *100,2)
     cat("\n ", length(object@NA.posi), " (", temp," %) missing data\n", sep="")
@@ -507,65 +507,89 @@ setMethod ("show", "SNPbin", function(object){
 
 
 
-###############
+#################
 ## show genlight
-###############
+#################
 setMethod ("show", "genlight", function(object){
-    cat(" === S4 class genlight ===")
-    cat("\n", nInd(object), "genotypes, ", nLoc(object),  "binary SNPs")
-    temp <- unique(ploidy(object))
-    if(!is.null(temp)){
-        if(length(temp)==1){
-            cat("\n Ploidy:", temp)
-        } else {
-            temp <- summary(ploidy(object))
-            cat("\n Ploidy statistics (min/median/max):", temp[1], "/", temp[3], "/", temp[6])
-        }
-    }
+    ## HEADER
+    cat(" /// GENLIGHT OBJECT /////////")
+    cat("\n\n //", format(nInd(object), big.mark=","), "genotypes, ",
+        format(nLoc(object), big.mark=","), "binary SNPs, size:", format(object.size(object), units="auto"))
+
     temp <- sapply(object@gen, function(e) length(e@NA.posi))
     if(length(temp>1)){
-        cat("\n ", sum(temp), " (", round(sum(temp)/(nInd(object)*nLoc(object)),2)," %) missing data", sep="")
+        cat("\n ", sum(temp), " (", round((sum(temp)/(nInd(object)*nLoc(object))) *100,2)," %) missing data", sep="")
     }
 
-    if(!is.null(pop(object))){
-        cat("\n @pop: individual membership for", length(levels(pop(object))), "populations")
+    ## BASIC CONTENT
+    cat("\n\n // Basic content")
+    cat("\n   @gen: list of", length(object@gen), "SNPbin")
+
+    if(!is.null(object@ploidy)){
+        ploidytxt <- paste("(range: ", paste(range(object@ploidy), collapse="-"), ")", sep="")
+        cat("\n   @ploidy: ploidy of each individual ", ploidytxt)
     }
 
-    if(!is.null(object@strata)){
-        levs <- names(object@strata)
-        if (length(levs) > 6){
-          levs <- paste(head(levs), "...", collapse = ", ", sep = ", ")
-        } else {
-          levs <- paste(levs, collapse = ", ")
-        }
-        cat("\n @strata: ", length(object@strata), "levels (", levs, ")")
-    }
-    if (!is.null(object@hierarchy)){
-        cat("\n@hierarchy: ", paste(object@hierarchy, collapse = ""))
-    }
+    ## OPTIONAL CONTENT
+    cat("\n\n // Optional content")
+    optional <- FALSE
 
-    if(!is.null(chr(object))){
-        cat("\n @chromosome: chromosome of the SNPs")
-    }
-
-    if(!is.null(position(object))){
-        cat("\n @position: position of the SNPs")
-    }
-
-    if(!is.null(alleles(object))){
-        cat("\n @alleles: alleles of the SNPs")
+    if(!is.null(object@ind.names)){
+        optional <- TRUE
+        cat("\n   @ind.names: ", length(object@ind.names), "individual labels")
     }
 
     if(!is.null(object@loc.names)){
-        cat("\n @loc.names: labels of the SNPs")
+        optional <- TRUE
+        cat("\n   @loc.names: ", length(object@loc.names), "locus labels")
     }
 
-    if(!is.null(other(object))){
-        cat("\n @other: ")
-        cat("a list containing: ")
-        cat(ifelse(is.null(names(other(object))), paste(length(other(object)),"unnamed elements"),
-                   paste(names(other(object)), collapse= "  ")), "\n")
+    if(!is.null(object@loc.all)){
+        optional <- TRUE
+        cat("\n   @loc.all: ", length(object@loc.all), "alleles")
     }
+
+    if(!is.null(object@chromosome)){
+        optional <- TRUE
+        cat("\n   @chromosome: factor storing chromosomes of the SNPs")
+    }
+
+    if(!is.null(object@position)){
+        optional <- TRUE
+        cat("\n   @position: integer storing positions of the SNPs")
+    }
+
+    if(!is.null(object@pop)){
+        optional <- TRUE
+        poptxt <- paste("(group size range: ", paste(range(table(object@pop)), collapse="-"), ")", sep="")
+        cat("\n   @pop:", paste("population of each individual", poptxt))
+    }
+
+    if (!is.null(object@strata)){
+        optional <- TRUE
+        cat("\n   @strata: ")
+        levs <- names(object@strata)
+        if (length(levs) > 6){
+            levs <- paste(paste(head(levs), collapse = ", "), "...", sep = ", ")
+        } else {
+            levs <- paste(levs, collapse = ", ")
+        }
+        cat("a data frame with", length(object@strata), "columns (", levs, ")")
+    }
+
+    if (!is.null(object@hierarchy)){
+        optional <- TRUE
+        cat("\n   @hierarchy:", paste(object@hierarchy, collapse = ""))
+    }
+
+    if(!is.null(object@other)){
+        optional <- TRUE
+        cat("\n   @other: ")
+        cat("a list containing: ")
+        cat(ifelse(is.null(names(object@other)), "elements without names", paste(names(object@other), collapse= "  ")), "\n")
+    }
+
+    if(!optional) cat("\n   - empty -")
 
     cat("\n")
 }) # end show method
@@ -599,6 +623,9 @@ setMethod("nPop","genlight", function(x,...){
     return(length(levels(pop(x))))
 })
 
+setMethod("dim", "genlight", function(x){
+    return(c(nInd(x), nLoc(x)))
+})
 
 ## $
 setMethod("$","SNPbin",function(x,name) {
@@ -688,6 +715,8 @@ setMethod("locNames","genlight", function(x,...){
     if(!is.null(res <- position(x))){
         if(!is.null(alleles(x))){
             res <- paste(res, alleles(x), sep=".")
+        } else { # force position to be character
+            res <- as.character(res)
         }
         return(res)
     }
@@ -737,8 +766,8 @@ setReplaceMethod("popNames","genlight",function(x,value) {
     }
     value <- as.character(value)
     if(length(value) != length(levels(pop(x)))){
-      stop("Vector length does no match number of populations")  
-    } 
+      stop("Vector length does no match number of populations")
+    }
     levels(pop(x)) <- value
     return(x)
 })
@@ -930,9 +959,6 @@ setReplaceMethod("other","genlight",function(x,value) {
     res <- .C("bytesToBinInt", x, length(x), integer(length(x)*8), PACKAGE="adegenet")[[3]]
     return(res)
 } # end .raw2bin
-
-
-
 
 
 #############

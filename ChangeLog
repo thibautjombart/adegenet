@@ -1,3 +1,101 @@
+			CHANGES IN ADEGENET VERSION 2.0.1
+NEW FEATURES
+	o Hs is now much faster and will scale better for large number of
+	loci
+
+	o Hs.test allows for testing differences in expected
+	heterozygosity between two groups of individuals
+
+	o strata tutorial is now available via adegenetTutorial(which="strata")
+
+BUG FIXES
+	o Hs no longer returns NaN if one locus has not been typed;
+	instead, computations are done using all available loci
+
+	o adegenetTutorial now opens up-to-date tutorials
+	
+	o subsetting genlight objects now treats missing data appropriately 
+	when given logical, character, or negative subscripts. 
+	(See issue #83 (https://github.com/thibautjombart/adegenet/issues/83))
+
+			CHANGES IN ADEGENET VERSION 2.0.0
+CHANGES IN GENIND/GENPOP/GENLIGHT OBJECTS
+	o generic labels are no longer used; therefore, 'truenames' is now
+	deprecated
+
+	o @tab now stores integers representing counts of alleles, as
+	opposed to the former numeric for allele frequencies
+
+	o @ploidy is now a vector with one value per individual; ploidy
+	can differ across individuals
+
+	o @loc.names, @ind.names, @pop.names have been removed
+
+	o accessors locNames, indNames and popNames can be used to replace
+	calls to the removed slots
+
+	o hierarchical structure is implemented in genind and genlight
+	objects, by the addition of two new slots @strata and @hierarchy.
+
+	o subsetting genlight objects is now up to 10x faster.
+
+
+NEW FEATURES
+	o ploidy can now vary across individuals
+
+	o printing is now consistent across objects classes
+
+	o summary methods now get a verbose argument
+
+	o df2genind is more flexible and faster
+
+	o genind objects size is roughly divided by 2
+
+	o adegenet is now better integrated alongside other packages
+	including pegas and hierfstat; functions for HW test and F
+	statistics have been migrated into these packages and removed from
+	adegenet or deprecated
+
+	o new accessor tab(...) replaces 'truenames' and should be used to
+	get tables of allele counts, frequencies, and optionally replace
+	missing data
+
+	o new accessor locNames<- can be used to rename loci in
+	genind/genpop
+
+	o new accessors 'strata' and 'hier' can be used to get/set
+	hierarchical clustering information!
+
+	o genind2genpop can now take a formula argument for pop to
+	specify strata.
+
+	o subsetting of genind/genpop is more powerful, allowing:
+	x[loc=a , pop=b] where a and b are any subset of loci and
+	populations (characters, integers, logicals)
+
+	o dapc can now store loadings of original variables (argument
+	var.loadings=TRUE)
+
+	o hybridize is now more tolerant towards heterogeneous parent
+	populations and repools data systematically
+
+	o xvalDapc can now run in parallel!
+
+	o roxygen2 is now used for part of the documentation, and
+	mandatory for new contributions
+
+	o new tutorials (distributed on github and on the adegenet
+	website) are now available, including one on strata
+
+	o adegenetIssues() will take you to the issues page of the project
+	on github
+
+	o new welcoming message upon loading the package!
+
+	o a hidden function for listening to music
+
+
+
 			CHANGES IN ADEGENET VERSION 1.4-3
 NEW FEATURES
 	o the generic function pairDist has been added; it plots pairwise

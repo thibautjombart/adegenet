@@ -57,7 +57,9 @@ opts_chunk$set(fig.path='figs/base-', fig.keep='high', dev='pdf', fig.width=7, f
   \textit{adegenet} now also handles dominant markers, allows for any ploidy in the data, handles
   SNPs and sequence data, and implements a memory-efficient storage for genome-wide SNP data.
   This tutorial provides an overview of \textit{adegenet}'s basic functionalities. Since
-  \textit{adegenet} 1.4-0, this tutorial is no longer distributed as a package vignette.
+  \textit{adegenet} 1.4-0, this tutorial is no longer distributed as a package vignette. Also note
+  that \textit{adegenet} has undergone substantial changes with version 2.0.0, including a reform of
+  the data structure and new accessors, all documented in this tutorial.
 \end{abstract}
 
 
@@ -120,12 +122,12 @@ Other tutorials are available via the command \texttt{adegenetTutorial}:
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Installing the package}
+\subsection{Installing the package - stable version}
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 Before going further, we shall make sure that \textit{adegenet} is well installed
 on the computer.
 The current version of the package is \Sexpr{packageDescription("adegenet", fields = "Version")}.
-Make sure you have a recent version of R ($\geq 3.0.3$) by typing:
+Make sure you have a recent version of R ($\geq 3.2.1$) by typing:
 <<>>=
 R.version.string
 @
@@ -136,25 +138,44 @@ install.packages("adegenet", dep=TRUE)
 @
 
 We can now load the package alongside other useful packages:
-<<results="hide">>=
+<<results="hide", message=FALSE>>=
 library("ape")
-library("genetics")
 library("pegas")
 library("seqinr")
 library("ggplot2")
+@
+<<>>=
 library("adegenet")
 @
-\noindent You can make sure that the right version of the package is installed using:
+
+If at some point you are unsure about the version of the package, you can check it using:
 <<>>=
 packageDescription("adegenet", fields = "Version")
 @
 \textit{adegenet} version should read \Sexpr{packageDescription("adegenet", fields = "Version")}.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Installing the package - devel version}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+The development of \textit{adegenet} is hosted on github:\\
+\url{https://github.com/thibautjombart/adegenet}.
+
+You can install this version using the package \textit{devtools} and the following commands:
+<<eval=FALSE>>=
+library("devtools")
+install_github("thibautjombart/adegenet")
+library("adegenet")
+@
+
+The development version may implement new features and fix known issues. However, it may also
+occasionally be broken, as this is our working copy of the project.
+Usual disclaimers apply here: this package is provided with no warranty, etc.
+If unsure, use the stable version.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Getting help}
+\subsection{Getting help in R}
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 There are several ways of getting information about R in general, and about
 \textit{adegenet} in particular.
@@ -206,20 +227,77 @@ To go to the \textit{adegenet} page, click `packages', `adegenet', and
 \\
 
 
-Lastly, several mailing lists are available to find different kinds of
-information on R; to name a few:
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Asking help on a forum}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+Several mailing lists are available to find different kinds of
+information on R.
+\textit{adegenet} has its own dedicated forum/mailing list:
+\url{adegenet-forum@lists.r-forge.r-project.org}
+To avoid spam, this list is filtered; subscription is recommended, and can be done at:
+\url{https://lists.r-forge.r-project.org/cgi-bin/mailman/listinfo/adegenet-forum}
+\\
+
+Posting questions on R forums can sometimes be a traumatic experience, and we are trying to avoid
+this as much as possible on the adegenet forum.
+To this end, the following points are worth keeping in mind:
 \begin{itemize}
-\item \textit{adegenet forum}: adegenet and multivariate analysis of genetic markers.\\
-  \url{https://lists.r-forge.r-project.org/cgi-bin/mailman/listinfo/adegenet-forum}
-\item \textit{R-help}: general questions about R.\\
-  \url{https://stat.ethz.ch/mailman/listinfo/r-help}
+\item \textbf{read the doc first:} manpages and tutorials take an awful long time to write and
+  maintain; make sure your answer is not in an obvious place before asking a question; pretending to
+  have read all the available doc while you have not even looked at the basics tutorial is a clever,
+  yet often unsuccessful strategy.
+\item \textbf{search the archives:} adegenet forum has searchable archives (see the adegenet
+  website); your answer may be there already, so it is worth checking.
+\item \textbf{give us info:} you tried something, it is not working.. give us some information: what
+  version of adegenet are you using, what commands did you enter and what was the output, etc.
+\item \textbf{avoid personal messages:} the adegenet forum has plenty of advantages: several people
+  are likely to reply and participate in the conversation, answers are generally faster, and all of
+  this is archived and searchable. Please do not email the developers directly, unless you need to
+  discuss confidential matters.
+\item \textbf{short answers are okay:} some answers will be short. Do not take them as rude, or
+  think people are upset: answering questions on a forum is a time-consuming activity and the reward
+  for it is low. Sometimes the best answer will be pointing to relevant documentation,
+  e.g. ``Please check ?xvalDapc''. If you get this, we (most likely) still like you.
+\end{itemize}
+
+
+The adegenet forum is not the only forum that might be relevant.
+Others include:
+\begin{itemize}
 \item \textit{R-sig-genetics}: genetics in R.\\
   \url{https://stat.ethz.ch/mailman/listinfo/r-sig-genetics}
 \item \textit{R-sig-phylo}: phylogenetics in R.\\
   \url{https://stat.ethz.ch/mailman/listinfo/r-sig-phylo}
+\item \textit{R-help}: general questions about R.\\
+  \url{https://stat.ethz.ch/mailman/listinfo/r-help}
 \end{itemize}
 
+Please avoid double-posting (it is often considered to be rude).
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Bug report, feature requests, contributions: we are all one!}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+Free software evolves through interactions between communities of developers and users.
+This is especially true in R, where these two communities are very much intermingled.
+In short: \textbf{we are all contributors!}
+These contributions include:
+\begin{itemize}
+  \item \textbf{asking a question:} see section above
+  \item \textbf{asking for a new feature:} something useful is missing, and you think it will be
+    useful to others? Say it! Post a feature request using github's \emph{issues}:\\
+    \url{https://github.com/thibautjombart/adegenet/issues}
+  \item \textbf{reporting a possible bug:} bugs are rare, but if you think you found one, post it as
+    an issue on github: \\
+    \url{https://github.com/thibautjombart/adegenet/issues}
+  \item \textbf{contributions:} github makes contributions very easy; fork the project, make the
+    changes you want, and when you are happy and the package passes the checks, send a pull request;
+    for more on this go to the github page:\\
+    \url{https://github.com/thibautjombart/adegenet}
+    And please, remember to add yourself as a contributor in the DESCRIPTION and relevant manpages!
+\end{itemize}
 
 
 
@@ -242,9 +320,11 @@ information on this topic.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{genind objects}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-These objects can be obtained by reading data files from other software,
+These objects store \textbf{gen}etic data at an \textbf{ind}ividual level, plus various meta-data
+(e.g. group membership).
+\texttt{genind} objects can be obtained by reading data files from other software,
 from a \texttt{data.frame} of genotypes, by conversion from a table of
-allelic frequencies, or even from aligned DNA or proteic sequences (see 'importing data').
+allele counts, or even from aligned DNA or proteic sequences (see 'importing data').
 Here, we introduce this class using the dataset \texttt{nancycats}, which is already stored as a
 \texttt{genind} object:
 <<genind>>=
@@ -258,92 +338,48 @@ Note that the '\texttt{\$}' is also implemented for adegenet objects,
 so that slots can be accessed as if they were components of a list.
 \\
 
-The structure of \texttt{genind} objects is described by:
-<<>>=
-getClassDef("genind")
-@
-
-The slightly cryptic output of this function means that \texttt{genind} objects possess the following slots:
+\texttt{genind} objects possess the following slots:
 \begin{itemize}
-  \item \texttt{tab}: a matrix of relative allele frequencies (individuals in rows, alleles in columns).
-  \item \texttt{loc.names}: a vector of labels for the loci.
+  \item \texttt{tab}: a matrix of alleles counts (individuals in rows, alleles in columns).
+  \item \texttt{loc.n.all}: the number of alleles in each marker.
   \item \texttt{loc.fac}: a factor indicating which columns in \texttt{@tab} correspond to which marker.
-  \item \texttt{loc.nall}: the number of alleles in each marker.
-  \item \texttt{all.names}: a vector of labels for the alleles.
-  \item \texttt{ind.names}:  a vector of labels for the individuals.
-  \item \texttt{pop}: a factor storing group membership of the individuals.
-  \item \texttt{pop.names}: labels used for populations.
-  \item \texttt{ploidy}: a single integer indicating the ploidy of the individuals.
+  \item \texttt{all.names}: a list of allele names for each locus.
+  \item \texttt{ploidy}: a vector of integer indicating the ploidy of each individual; constant
+    ploidy is assumed across different loci of a single individual, but different individuals can
+    have different ploidy.
   \item \texttt{type}: a character string indicating whether the marker is codominant
     (\texttt{codom}) or presence/absence (\texttt{PA}).
-  \item \texttt{other}: a list storing optional information.
   \item \texttt{call}: the matched call, i.e. command used to create the object.
+  \item \texttt{pop}: (optional) a factor storing group membership of the individuals; when present,
+    method needing a population information will automatically use this if nothing else is provided.
+  \item \texttt{strata}: (optional) a data.frame storing hierarchical structure of individuals (see
+    dedicated tutorial).
+  \item \texttt{hierarchy}: (optional) a formula defining the hierarchical structure of individuals (see
+    dedicated tutorial).
+  \item \texttt{other}: (optional) a list storing optional information.
 \end{itemize}
-Slots can be accessed using '\texttt{@}' or '\texttt{\$}', although in some cases it is more
-convenient to use accessors (i.e. functions which return specific contents of the object) than
-accessing the slot directly (see section 'Using accessors').
+Slots can be accessed using '\texttt{@}' or '\texttt{\$}', although it is recommended to use
+accessors to retrieve and change slot values (see section 'Using accessors').
 \\
 
-The main slot in \texttt{genind} is the table of allelic frequencies of individuals (in rows) for
-every alleles in every loci stored in \texttt{@tab}.
-Being frequencies, data sum to one per locus, giving the score of 1 for an homozygote and 0.5 for a diploid heterozygote.
-The particular case of presence/absence data is described in a
-dedicated section (see 'Handling presence/absence data').
+The main slot of a \texttt{genind} is the table of allelic counts \texttt{@tab}, with individuals in rows and
+alleles in columns.
 For instance:
 <<>>=
-nancycats$tab[10:18,1:10]
+nancycats[10:18, loc="fca8"]@tab
 @
-Individual '010' is an homozygote for the allele 09 at locus 1, while '018' is an heterozygote with alleles 06 and 09.
-As user-defined labels are not always valid (for instance, they can
-be duplicated), generic labels are used for individuals, markers, alleles and eventually population.
-The true names are stored in the object (components \texttt{\$[...].names} where \texttt{\$[...]} can be \texttt{ind}, \texttt{loc}, \texttt{all} or \texttt{pop}).
-For instance :
-<<>>=
-nancycats$loc.names
-@
-gives the true marker names, and
-<<>>=
-nancycats$all.names[[3]]
-@
-gives the allele names for marker 3.
-\\
-
-The slot 'ploidy' is an integer giving the level of ploidy
-of the considered organisms (defaults to 2).
-This parameter is essential, in particular when switching from
-individual frequencies (\texttt{genind} object) to allele counts per
-populations (\texttt{genpop}).
-
-\noindent
-The slot 'type' describes the type of marker used: codominant (\texttt{codom}, e.g. microsatellites) or presence/absence (\texttt{PA}, e.g. AFLP).
-By default, adegenet considers that markers are codominant.
-Note that actual handling of presence/absence markers has been made available since version 1.2-3.
-See the dedicated section for more information about presence/absence markers.
+Individual 'N224' is an homozygote for the allele 135 at the locus 'fca8', while N141'' is an heterozygote with alleles 129/133.
+Note that as of \textit{adegenet} 2.0.0, this table is no storing data as relative frequencies. These can
+still be obtained using the accessor '\texttt{tab}'.
+The particular case of presence/absence data is described in a
+dedicated section (see 'Handling presence/absence data').
+As of version 2.0.0 of adegenet, the slots \texttt{@strata} and \texttt{@hierarchy} implement
+hierarchical population structures. See dedicated tutorial for more on this topic.
 \\
 
 
-Optional content can are also be stored within the object.
-The slot \texttt{@other} is a list that can include any additional information.
-The optional slot \texttt{@pop} (a factor giving a grouping of individuals) is particular in that
-the behaviour of many functions will check automatically its content and behave accordingly.
-In fact, each time an argument 'pop' is required by a function, it is first seeked in \texttt{@pop}.
-For instance, using the function \texttt{genind2genpop} to convert \texttt{nancycats} to a \texttt{genpop} object, there is no need to give a 'pop' argument as it exists in the \texttt{genind} object:
-<<>>=
-head(pop(nancycats))
-catpop <- genind2genpop(nancycats)
-catpop
-@
-Other additional components can be stored (like here, spatial coordinates of populations in \$xy)
-and processed during the conversion if the argument \texttt{process.other} is set to \texttt{TRUE}.
-In this case, numeric vectors with a length corresponding to the number of individuals will we
-averaged per groups; note that any other function than \texttt{mean} can be used by providing any
-function to the argument \texttt{other.action}.
-Matrices with a number of rows corresponding to the number of individuals are processed similarly.
-\\
-
-Finally, a \texttt{genind} object generally contains its matched call, \textit{i.e.} the instruction that created it.
-%%This is not the case, however, for objects loaded using \texttt{data}.
-When call is available, it can be used to regenerate an object.
+Note that objects can be regenerated using the matched call stored in \textit{genind} objects, \textit{i.e.} the instruction that created it.
+For instance:
 <<>>=
 obj <- read.genetix(system.file("files/nancycats.gtx",package="adegenet"))
 obj$call
@@ -355,18 +391,20 @@ identical(obj,toto)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{genpop objects}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We use the previously built \texttt{genpop} object:
+These objects store \textbf{gen}etic data at a \textbf{pop}ulation level, plus various meta-data.
+Their struture is nearly identical to \texttt{genind} objects, only simpler as they no longer store
+group membership for individuals.
+\texttt{genpop} objects are created from \texttt{genind} objects using \texttt{genind2genpop}:
 <<>>=
+data(nancycats)
+catpop <- genind2genpop(nancycats)
 catpop
-is.genpop(catpop)
-catpop$tab[1:5,1:10]
 @
-The matrix \$tab contains alleles counts per population (here, cat colonies).
-These objects are otherwise very similar to \texttt{genind} in their
-structure, and possess generic names, true names, the matched call and
-an \texttt{@other} slot:
+
+As in \texttt{genind} objects, data are stored as numbers of alleles, but this time for populations
+(here, cat colonies):
 <<>>=
-getClassDef("genpop")
+catpop$tab[1:5,1:10]
 @
 
 
@@ -381,18 +419,25 @@ Another advantage of this approach is that as long as accessors remain identical
 side, the internal structure of an object may change from one release to another without generating
 errors in old scripts.
 Although \texttt{genind} and \texttt{genpop} objects are fairly simple, we recommend using accessors whenever possible
-to access their content.
+to access or modify their content.
 \\
 
 Available accessors are:
 \begin{itemize}
   \item \texttt{nInd}: returns the number of individuals in the object; only for \texttt{genind}.
-  \item \texttt{nLoc}: returns the number of loci (SNPs).
+  \item \texttt{nLoc}: returns the number of loci.
+  \item \texttt{nAll}: returns the number of alleles for each locus.
+  \item \texttt{nPop}: returns the number of populations.
+  \item \texttt{tab}: returns a table of allele numbers, or frequencies (if requested), with
+    optional replacement of missing values; replaces the former accessor '\texttt{truenames}'.
   \item \texttt{indNames}$^{\dagger}$: returns/sets labels for individuals; only for \texttt{genind}.
-  \item \texttt{locNames}$^{\dagger}$: returns/sets labels for loci (SNPs).
+  \item \texttt{locNames}$^{\dagger}$: returns/sets labels for loci.
   \item \texttt{alleles}$^{\dagger}$: returns/sets alleles.
-  \item \texttt{ploidy}$^{\dagger}$: returns/sets ploidy of the individuals.
+  \item \texttt{ploidy}$^{\dagger}$: returns/sets ploidy of the individuals; when setting values, a
+    single value can be provided, in which case constant ploidy is assumed.
   \item \texttt{pop}$^{\dagger}$: returns/sets a factor grouping individuals; only for \texttt{genind}.
+  \item \texttt{strata}$^{\dagger}$: returns/sets data defining strata of individuals; only for \texttt{genind}.
+  \item \texttt{hier}$^{\dagger}$: returns/sets hierarchical groups of individuals; only for \texttt{genind}.
   \item \texttt{other}$^{\dagger}$: returns/sets misc information stored as a list.
 \end{itemize}
 where $^{\dagger}$ indicates that a replacement method is available using \texttt{<-}; for instance:
@@ -421,6 +466,16 @@ pop(obj)
 pop(obj) <- rep("newPop",10)
 pop(obj)
 @
+Accessors make things easier. For instance, when setting new names for loci, the columns of
+\texttt{@tab} are renamed automatically:
+<<>>=
+head(colnames(tab(obj)),20)
+locNames(obj)
+locNames(obj)[1] <- "newLocusName"
+locNames(obj)
+head(colnames(tab(obj)),20)
+@
+
 An additional advantage of using accessors is they are most of the time safer to use. For instance,
 \texttt{pop<-} will check the length of the new group membership vector against the data, and
 complain if there is a mismatch. It also converts the provided replacement to a factor, while the command:
@@ -428,6 +483,7 @@ complain if there is a mismatch. It also converts the provided replacement to a 
 obj@pop <- rep("newPop",10)
 @
 generates an error (since replacement is not a factor).
+
 
 
 
@@ -503,7 +559,7 @@ obj
 @
 
 \noindent \texttt{obj} is a \texttt{genind} containing the same information, but recoded as a matrix of allele
-frequencies (\texttt{\$tab} slot).
+numbers (\texttt{\$tab} slot).
 We can check that the conversion was exact by converting back the object into a table of character
 strings (function \texttt{genind2df}):
 <<>>=
@@ -533,7 +589,7 @@ frequencies, but only presence/absence of alleles in a genotype.
 Similarly, the \texttt{tab} slot of a genpop object not longer contains
 counts of alleles in the populations; instead, it contains the number
 of genotypes in each population possessing at least one copy of the concerned alleles.
-Moreover, in the case of presence/absence, the slots 'loc.nall', 'loc.fac', and 'all.names'
+Moreover, in the case of presence/absence, the slots 'loc.n.all', 'loc.fac', and 'all.names'
 become useless, and are thus all set to NULL.
 \\
 
@@ -550,7 +606,7 @@ dat
 @
 \noindent The function \texttt{df2genind} is used to obtain a genind object:
 <<>>=
-obj <- genind(dat, ploidy=1, type="PA")
+obj <- df2genind(dat, ploidy=1, type="PA")
 obj
 tab(obj)
 @
@@ -569,22 +625,30 @@ obj2
 tab(obj2)
 @
 
-\noindent To continue with the toy example, we can proceed to a simple PCA.
-NAs are first replaced:
+\noindent To continue with the toy example, we can perform a simple PCA.
+Allele presence absence data are extracted and NAs replaced using \texttt{tab}:
 <<>>=
-objNoNa <- na.replace(obj,met=0)
-objNoNa@tab
+X <- tab(obj, NA.method="mean")
 @
 
 \noindent Now the PCA is performed and plotted:
 <<pcaaflp>>=
-pca1 <- dudi.pca(objNoNa,scannf=FALSE,scale=FALSE)
-temp <- as.integer(pop(objNoNa))
+## make PCA
+pca1 <- dudi.pca(X,scannf=FALSE,scale=FALSE)
+temp <- as.integer(pop(obj))
 myCol <- transp(c("blue","red"),.7)[temp]
 myPch <- c(15,17)[temp]
+
+## basic plot
 plot(pca1$li, col=myCol, cex=3, pch=myPch)
+
+## use wordcloud for non-overlapping labels
+library(wordcloud)
+textplot(pca1$li[,1], pca1$li[,2], words=rownames(X), cex=1.4, new=FALSE)
+
+## legend the axes by adding loadings
 abline(h=0,v=0,col="grey",lty=2)
-s.arrow(pca1$c1, add.plot=TRUE)
+s.arrow(pca1$c1*.5, add.plot=TRUE)
 legend("topright", pch=c(15,17), col=transp(c("blue","red"),.7),
        leg=c("Group A","Group B"), pt.cex=2)
 @
@@ -767,7 +831,9 @@ Coordinate Analyses (PCoA), which in this case will give identical results to PC
 (centred, non-scaled) data:
 <<>>=
 pco1 <- dudi.pco(D, scannf=FALSE,nf=2)
-scatter(pco1, posi="bottomright")
+s.label(pco1$li*1.1, clab=0, pch="")
+textplot(pco1$li[,1], pco1$li[,2], words=rownames(pco1$li),
+         cex=1.4, new=FALSE, xpd=TRUE)
 title("Principal Coordinate Analysis\n-based on proteic distances-")
 @
 
@@ -777,18 +843,10 @@ title("Principal Coordinate Analysis\n-based on proteic distances-")
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Using \texttt{genind}/\texttt{genpop} constructors}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\texttt{genind} or \texttt{genpop} objects can be constructed from data matrices similar to the \texttt{\$tab} component (respectively, alleles frequencies and alleles counts).
-This is achieved by the constructors \texttt{genind} (or \texttt{as.genind})  and \texttt{genpop}
-(or \texttt{as.genpop}).
-However, these low-level functions are first meant for internal use, and are called for instance by
-functions such as \texttt{read.genetix}.
-Consequently, there is much less control on the arguments and improper specification can lead to
-creating improper \texttt{genind}/\texttt{genpop} objects without issuing a warning or an error.
-One should therefore use these functions with additional care as to how information is coded.
-The table passed as argument to these constructors must have correct
-names: unique rownames identifying genotypes/populations, and unique colnames
-having the form '[marker].[allele]'.
-
+\texttt{genind} or \texttt{genpop} objects are best obtained using the procedures described above.
+However, one can also build new \texttt{genind} or \texttt{genpop} objects using the constructor \texttt{new()}.
+In this case, the function must be given as main input an object corresponding to the \texttt{@tab}
+slot: a matrix of integers with individuals in row and alleles in columns, with columns being named as '[marker].[allele]'.
 Here is an example for \texttt{genpop} using a dataset from \textit{ade4}:
 <<>>=
 data(microsatt)
@@ -798,7 +856,7 @@ microsatt$tab[10:15,12:15]
 Moreover, column names are set as required, and row names are unique.
 It is therefore safe to convert these data into a \texttt{genpop} using the constructor:
 <<>>=
-toto <- genpop(microsatt$tab)
+toto <- new("genpop", tab=microsatt$tab)
 toto
 summary(toto)
 @
@@ -809,40 +867,15 @@ summary(toto)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Exporting data}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Genotypes in \texttt{genind} format can be exported to the R packages
-\emph{genetics} (using \texttt{genind2genotype}) and \emph{hierfstat} (using \texttt{genind2hierfstat}).
-The package \emph{genetics} is now deprecated, but the implemented
-class \texttt{genotype} is still used in various packages.
-The package \emph{hierfstat} does not define a class, but requires
-data to be formated in a particular way.
-It has been removed from CRAN as of R version 2.13.0 for maintainance issues, but is supposed to be
-back eventually.
-
-Here are examples of how to use these functions:
-<<genind2genotype>>=
-obj <- genind2genotype(nancycats)
-class(obj)
-obj[1:4,1:5]
-class(obj$fca8)
-@
-
-<<genind2hierfstat>>=
-obj <- genind2hierfstat(nancycats)
-class(obj)
-obj[1:4,1:5]
-@
-
-%% \noindent Now we can use the function \texttt{varcomp.glob} from
-%% \emph{hierfstat} to compute 'variance' components:
-%% <<echo=FALSE,eval=FALSE>>=
-%% detach("package:ape")
-%% @
-%% <<>>=
-%% varcomp.glob(obj$pop,obj[,-1])
-%% @
+The \texttt{genind} class tends to become a standard in population genetics packages.
+As of \emph{adegenet} 2.0.0, export functions towards \emph{hierfstat} have been removed, as the
+package now uses \texttt{genind} objects as a native class.
+Similarly, export towards the package \emph{genetics} have been removed, as \emph{adegenet} now
+relies on \emph{pegas} for basic population genetics.
+\\
 
 
-A more generic way to export data is to produce a \texttt{data.frame} of genotypes
+A generic way to export data is to produce a \texttt{data.frame} of genotypes
 coded by character strings.
 This is done by \texttt{genind2df}:
 <<genind2df>>=
@@ -850,10 +883,7 @@ obj <- genind2df(nancycats)
 obj[1:5,1:5]
 @
 
-\noindent However, some software will require alleles to be
-separated.
-The argument \texttt{sep} allows one to specify any separator.
-For instance:
+This function is flexible; for instance, one can separate alleles by any character string:
 <<>>=
 genind2df(nancycats,sep="|")[1:5,1:5]
 @
@@ -884,25 +914,33 @@ The \texttt{$[$} operator does this, forming a new object with the retained geno
 data(microbov)
 toto <- genind2genpop(microbov)
 toto
-toto@pop.names
+popNames(toto)
 titi <- toto[1:3,]
-titi@pop.names
+popNames(titi)
 @
 
 \noindent The object \texttt{toto} has been subsetted, keeping only the
 first three populations.
 Of course, any subsetting available for a matrix can be used with \texttt{genind} and \texttt{genpop} objects.
-In addition, we can subset loci directly using the generic marker names:
+In addition, we can subset loci directly using indices or logicals, in which case they refer to the
+output of \texttt{locNames}:
 <<>>=
-tata <- titi[,loc="L03"]
+nAll(titi)
+tata <- titi[,loc=c(1,3)]
 tata
+nAll(tata)
 @
 
-\noindent Now, \texttt{tata} only contains the 12 alleles of the third
-marker of \texttt{titi}.
-\\
+Alternatively, one can subset loci using their explicit name:
+<<>>=
+locNames(titi)
+hel5 <- titi[,loc="HEL5"]
+hel5
+locNames(hel5)
+@
 
-To simplify the task of separating data by marker, the function
+
+To simplify the task of separating data by marker systematically, the function
 \texttt{seploc} can be used.
 It returns a list of objects (optionnaly, of data matrices), each
 corresponding to a marker:
@@ -912,6 +950,7 @@ sepCats <- seploc(nancycats)
 class(sepCats)
 names(sepCats)
 sepCats$fca45
+identical(tab(sepCats$fca45), tab(nancycats[,loc="fca45"]))
 @
 
 \noindent The object \texttt{sepCats\$fca45} only contains data of the
@@ -965,11 +1004,34 @@ obj <- seppop(microbov)
 names(obj)
 newObj <- repool(obj$Borgou, obj$Charolais)
 newObj
-newObj$pop.names
+popNames(newObj)
 @
 Done !
+\\
 
 
+Note that the content of \texttt{@other} can be processed during the conversion from \texttt{genind} to
+\texttt{genpop} if the argument \texttt{process.other} is set to \texttt{TRUE}.
+Only vectors of a length, or matrices with a number of rows matching the number individuals will be
+processed. The way they are processed is defined by a function passed as the argument
+\texttt{other.action} (defaulting to 'mean').
+Let us illustrate this using \texttt{sim2pop}:
+<<>>=
+data(sim2pop)
+sim2pop
+nInd(sim2pop)
+head(other(sim2pop)$xy)
+dim(other(sim2pop)$xy)
+@
+The component \texttt{sim2pop@other\$xy} contains spatial coordinates of individuals from 2 populations.
+<<>>=
+other(genind2genpop(sim2pop, process.other=TRUE))
+@
+In this case, numeric vectors with a length corresponding to the number of individuals will we
+averaged per groups; note that any other function than \texttt{mean} can be used by providing any
+function to the argument \texttt{other.action}.
+Matrices with a number of rows corresponding to the number of individuals are processed similarly.
+\\
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -989,7 +1051,7 @@ plot(toto$pop.eff, toto$pop.nall, xlab="Colonies sample size",
      type="n")
 text(toto$pop.eff,toto$pop.nall,lab=names(toto$pop.eff))
 
-barplot(toto$loc.nall, ylab="Number of alleles",
+barplot(toto$loc.n.all, ylab="Number of alleles",
         main="Number of alleles per locus")
 
 barplot(toto$Hexp-toto$Hobs, main="Heterozygosity: expected-observed",
@@ -1014,84 +1076,58 @@ Yes, it is.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Testing for Hardy-Weinberg equilibrium}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The Hardy-Weinberg equilibrium test is implemented for \texttt{genind} objects.
-The function to use is \texttt{HWE.test.genind}, and requires the package \emph{genetics}.
-Here we first produce a matrix of p-values (\texttt{res="matrix"}) using parametric test.
-Monte Carlo procedure are more reliable but also more computer-intensive (use \texttt{permut=TRUE}).
+As of version 2.0.0, \textit{adegenet} is designed to work alongside a number of other packages,
+especially \textit{pegas} and \textit{hierfstat} for a number of classical population genetics methods.
+The former function \texttt{HWE.test.genind} has consequently been removed, and replaced by
+\emph{pegas}'s \texttt{hw.test}, which performs one test per locus:
 <<HWE>>=
-toto <- HWE.test.genind(nancycats,res="matrix")
-dim(toto)
-@
-One test is performed per locus and population, \textit{i.e.} 153 tests in this case.
-Thus, the first question is: which tests are highly significant?
-<<>>=
-colnames(toto)
-idx <- which(toto<0.0001,TRUE)
-idx
-@
-Here, only 4 tests indicate departure from HW.
-Rows give populations, columns give markers.
-Now complete tests are returned, but the significant ones are already known.
-<<>>=
-toto <- HWE.test.genind(nancycats,res="full")
-mapply(function(i,j) toto[[i]][[j]], idx[,2], idx[,1], SIMPLIFY=FALSE)
+library(pegas)
+data(nancycats)
+cats.hwt <- hw.test(nancycats, B=0)
+cats.hwt
 @
 
-
+Note that \texttt{B=0} is used for the parametric version; larger numbers will indicate the number
+of permutations to use for a Monte-Carlo version.
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Measuring and testing population structure (a.k.a F statistics)}
+\subsection{Measuring and testing population structure (a.k.a $F$ statistics)}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Population structure is traditionally measured and tested using F statistics, in particular Fst.
-Since version 2.13.0 of R, the package \emph{hierfstat}, which implemented most F statistics and
-related tests, has been removed from CRAN for maintenance issues.
-As a consequence, \emph{adegenet} has lost a few functionalities, namely general F statistics
-(function \texttt{fstat}) and a test of overall population structure (\texttt{gstat.randtest}).
+Population structure is traditionally measured and tested using $F$ statistics, in particular $F_{st}$.
+As of version 2.0.0, \textit{adegenet} relies on \emph{hierfstat} and \emph{pegas} for most $F$ statistics.
+Note that some of these features might be part of the current devel version of \emph{hierfstat},
+which can be installed by:
+<<eval=FALSE>>=
+library(devtools)
+install_github("jgx65/hierfstat")
+@
+
+Can we find any population structure in the cat colonies from Nancy?
+The basic $F$ statistics are provided by:
+<<>>=
+library("hierfstat")
+fstat(nancycats)
+@
+This table provides the three F statistics $Fst$ (pop/total), $Fit$ (Ind/total), and $Fis$ (ind/pop).
+These are overall measures which take into account all genotypes and all loci.
 \\
 
+For more detail, \emph{pegas} provides estimates by locus:
+<<>>=
+library(pegas)
+Fst(as.loci(nancycats))
+@
 
-%% The first two are wrappers for functions implemented in the \emph{hierfstat} package; pairwise Fst
-%% is implemented in \emph{adegenet}.
+Are these values significant? This question can be addressed using the G-statistic test \cite{tj511}; it is implemented for \texttt{genind} objects and produces a \texttt{randtest} object (package ade4).
+<<>>=
+Gtest <- gstat.randtest(nancycats,nsim=99)
+Gtest
+plot(Gtest)
+@
 
-%% We illustrate their use using the dataset of microsatellite of cats from Nancy:
-%% <<>>=
-%% library(hierfstat)
-%% data(nancycats)
-%% fstat(nancycats)
-%% @
-%% This table provides the three F statistics $Fst$ (pop/total), $Fit$ (Ind/total), and $Fis$ (ind/pop).
-%% These are overall measures which take into account all genotypes and all loci.
-
-%% Is the structure between populations significant?
-%% This question can be addressed using the G-statistic test \cite{tj511}; it is implemented for \texttt{genind} objects and produces a \texttt{randtest} object (package ade4).
-%% <<fig=TRUE>>=
-%% toto <- gstat.randtest(nancycats,nsim=99)
-%% toto
-%% plot(toto)
-%% @
-
-%% \noindent Yes, it is (the observed value is indicated on the right, while histograms correspond to
-%% the permuted values).
-%% Note that \emph{hierfstat} allows for more ellaborated tests, in particular when different levels of
-%% hierarchical clustering are available.
-%% Such tests are better done directly in \emph{hierfstat}; for this, \texttt{genind} objects can be
-%% converted to the adequat format using \texttt{genind2hierfstat}.
-%% For instance:
-%% <<>>=
-%% toto <- genind2hierfstat(nancycats)
-%% head(toto)
-%% varcomp.glob(toto$pop,toto[,-1])
-%% @
-%% F statistics are provided in \$F; for instance, here, $F_{st}$ is $0.083$.
-
-
-%% ~\\
-
-
-However, it is still possible to compute pairwise $Fst$ using \textit{adegenet}.
-Pairwise $Fst$ is frequently used as a measure of distance between populations.
+Finally, pairwise $Fst$ is frequently used as a measure of distance between populations.
 The function \texttt{pairwise.fst} computes Nei's estimator \cite{tj814} of pairwise $Fst$, defined as:
 $$
 Fst(A,B) = \frac{H_t - (n_AH_s(A) + n_BH_s(B))/(n_A + n_B)}{Ht}
@@ -1105,8 +1141,7 @@ These computations are achieved for all pairs of populations by the function \te
 illustrate this on a subset of individuals of \texttt{nancycats} (computations for the whole dataset
 would take a few tens of seconds):
 <<>>=
-data(nancycats)
-matFst <- pairwise.fst(nancycats[1:50, treatOther=FALSE])
+matFst <- pairwise.fst(nancycats[1:50,])
 matFst
 @
 
@@ -1315,7 +1350,7 @@ sum(is.na(microbov$tab))
 @
 There are 6325 missing data. They will all be replaced by \texttt{scaleGen}:
 <<>>=
-X <- scaleGen(microbov, missing="mean")
+X <- scaleGen(microbov, NA.method="mean")
 class(X)
 dim(X)
 X[1:5,1:5]
@@ -1414,34 +1449,44 @@ abline(v=0,h=0,col="grey", lty=2)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Being contingency tables, the \texttt{@tab} slot in \texttt{genpop} objects can be submitted to a Correspondance Analysis (CA) to seek a typology of populations.
 The approach is very similar to the previous one for PCA.
-Missing data are first replaced during convertion from \texttt{genind},
-but one could create a \texttt{genpop} with NAs and then use
-\texttt{na.replace} to get rid of missing observations.
 <<caexpl>>=
 data(microbov)
-obj <- genind2genpop(microbov,missing="chi2")
-ca1 <- dudi.coa(as.data.frame(obj$tab),scannf=FALSE,nf=3)
+obj <- genind2genpop(microbov)
+ca1 <- dudi.coa(tab(obj),scannf=FALSE,nf=3)
 barplot(ca1$eig,main="Correspondance Analysis eigenvalues",
         col=heat.colors(length(ca1$eig)))
 @
 
 Now we display the resulting typology using a basic scatterplot:
 <<>>=
-s.label(ca1$li,lab=obj$pop.names,sub="CA 1-2",csub=2)
+s.label(ca1$li, sub="CA 1-2",csub=2)
 add.scatter.eig(ca1$eig,nf=3,xax=1,yax=2,posi="bottomright")
 @
 
+The same graph is derived for the axes 2-3:
 <<>>=
-s.label(ca1$li,xax=1,yax=3,lab=obj$pop.names,sub="CA 1-3",csub=2)
+s.label(ca1$li,xax=2,yax=3,lab=popNames(obj),sub="CA 1-3",csub=2)
 add.scatter.eig(ca1$eig,nf=3,xax=2,yax=3,posi="topleft")
 @
-
 \noindent As in the PCA above, axes are to be interpreted separately in terms of continental differentiation, and between-breeds diversity.
 Importantly, as in any analysis carried out at a population level, all information about the
 diversity within populations is lost in this analysis.
 See the tutorial on DAPC for an individual-based approach which is nontheless optimal in terms of
 group separation (\textit{dapc}).
+\\
 
+
+Note that as an alternative, \emph{wordcloud} can be used to avoid overlaps in labels:
+<<>>=
+library(wordcloud)
+set.seed(1)
+s.label(ca1$li*1.2, sub="CA 1-2",csub=2, clab=0, cpoint="")
+textplot(ca1$li[,1], ca1$li[,2], words=popNames(obj),
+         cex=1.4, new=FALSE, xpd=TRUE)
+add.scatter.eig(ca1$eig,nf=3,xax=1,yax=2,posi="bottomright")
+@
+However, only general trends can be interpreted: labels positions are randomised to avoid overlap,
+so they no longer accurately position populations on the factorial axes.
 
 
 
@@ -1471,7 +1516,7 @@ This example uses cat colonies from the city of Nancy.
 We test the correlation between Edwards' distances and Euclidean geographic distances between colonies.
 <<ibd>>=
 data(nancycats)
-toto <- genind2genpop(nancycats,miss="0")
+toto <- genind2genpop(nancycats)
 Dgen <- dist.genpop(toto,method=2)
 Dgeo <- dist(nancycats$other$xy)
 ibd <- mantel.randtest(Dgen,Dgeo)
@@ -1526,7 +1571,8 @@ Local density is measured using a 2-dimensional kernel density estimation (\text
 results are displayed using \texttt{image}; \texttt{colorRampPalette} is used to generate a
 customized color palette:
 <<eval=TRUE>>=
-dens <- kde2d(Dgeo,Dgen, n=300, lims=c(-.1, 1.5,-.5,4))
+library(MASS)
+dens <- kde2d(Dgeo,Dgen, n=300)
 myPal <- colorRampPalette(c("white","blue","gold", "orange", "red"))
 plot(Dgeo, Dgen, pch=20,cex=.5)
 image(dens, col=transp(myPal(300),.7), add=TRUE)
@@ -1730,7 +1776,7 @@ F3 <- hybridize(salers, F2, n=40)
 F4 <- hybridize(salers, F3, n=40)
 @
 Finally, note that despite this example shows hybridization between
-diploid organisms, \texttt{hybridize} is not retrained to this case.
+diploid organisms, \texttt{hybridize} is not restrained to this case.
 In fact, organisms with any even level of ploidy can be used, in which
 case half of the genes is taken from each reference population.
 Ultimately, more complex mating schemes could be
@@ -1740,58 +1786,62 @@ implemented... suggestion or (better) contributions are welcome!
 
 
 \newpage
-\begin{thebibliography}{9}
+\bibliography{biblioTJ}
+\bibliographystyle{plain}
+%% \begin{thebibliography}{13}
 
-\bibitem{tjart05}
-  Jombart, T. (2008) adegenet: a R package for the multivariate
-  analysis of genetic markers. \textit{Bioinformatics} 24: 1403-1405.
+%% \bibitem{tjart05}
+%%   Jombart, T. (2008) adegenet: a R package for the multivariate
+%%   analysis of genetic markers. \textit{Bioinformatics} 24: 1403-1405.
 
-\bibitem{np145}
-  R Development Core Team (2014). R: A language and environment for
-  statistical computing. R Foundation for Statistical Computing,
-  Vienna, Austria. ISBN 3-900051-07-0.
+%% \bibitem{np145}
+%%   R Development Core Team (2014). R: A language and environment for
+%%   statistical computing. R Foundation for Statistical Computing,
+%%   Vienna, Austria. ISBN 3-900051-07-0.
 
-\bibitem{tj548}
-  Dray S and Dufour A-B (2007) The ade4 package: implementing the duality diagram for ecologists. \textit{Journal of Statistical Software} 22: 1-20.
+%% \bibitem{tj548}
+%%   Dray S and Dufour A-B (2007) The ade4 package: implementing the duality diagram for ecologists. \textit{Journal of Statistical Software} 22: 1-20.
 
-\bibitem{tjart19}
-  Jombart T, Devillard S and Balloux, F (2010).
-  Discriminant analysis of principal components: a new method for the analysis of genetically structured populations.
-  \textit{BMC Genetics} 11: 94.
+%% \bibitem{tjart19}
+%%   Jombart T, Devillard S and Balloux, F (2010).
+%%   Discriminant analysis of principal components: a new method for the analysis of genetically structured populations.
+%%   \textit{BMC Genetics} 11: 94.
 
-\bibitem{tjart04}
-  Jombart T, Devillard S, Dufour A-B and Pontier D (2008) Revealing cryptic spatial
-  patterns in genetic variability by a new multivariate method.  \textit{Heredity} 101: 92-103.
+%% \bibitem{tjart04}
+%%   Jombart T, Devillard S, Dufour A-B and Pontier D (2008) Revealing cryptic spatial
+%%   patterns in genetic variability by a new multivariate method.  \textit{Heredity} 101: 92-103.
 
-\bibitem{tjart20}
-  Jombart T, Eggo RM, Dodd PJ and Balloux F (2010) Reconstructing disease outbreaks from genetic
-  data: a graph approach. \textit{Heredity} 106: 383-390.
+%% \bibitem{tjart20}
+%%   Jombart T, Eggo RM, Dodd PJ and Balloux F (2010) Reconstructing disease outbreaks from genetic
+%%   data: a graph approach. \textit{Heredity} 106: 383-390.
 
-\bibitem{tjart10}
-  Jombart T, Pontier D and Dufour A-B (2009) Genetic markers in the playground of multivariate analysis.
-  \textit{Heredity} 102: 330-341.
+%% \bibitem{tjart10}
+%%   Jombart T, Pontier D and Dufour A-B (2009) Genetic markers in the playground of multivariate analysis.
+%%   \textit{Heredity} 102: 330-341.
 
-\bibitem{tj527}
-  Paradis E, Claude J, and Strimmer K (2004) APE: analyses of phylogenetics and evolution in R language.
-  \textit{Bioinformatics}: 20, 289-290.
+%% \bibitem{tj527}
+%%   Paradis E, Claude J, and Strimmer K (2004) APE: analyses of phylogenetics and evolution in R language.
+%%   \textit{Bioinformatics}: 20, 289-290.
 
-\bibitem{np160}
-  Charif D, and Lobry J (2007) SeqinR 1.0-2: a contributed package to the R project for statistical
-  computing devoted to biological sequences retrieval and analysis. \textit{in} Structural approaches to sequence evolution: Molecules, networks, populations, \textit{Springer Verlag}, 207-232.
+%% \bibitem{np160}
+%%   Charif D, and Lobry J (2007) SeqinR 1.0-2: a contributed package to the R project for statistical
+%%   computing devoted to biological sequences retrieval and analysis. \textit{in} Structural approaches to sequence evolution: Molecules, networks, populations, \textit{Springer Verlag}, 207-232.
 
-\bibitem{tj814}
-  Nei M (1973) Analysis of gene diversity in subdivided populations. \textit{Proc Natl Acad Sci USA} 70: 3321-3323.
+%% \bibitem{tj551}
+%%   Goudet J, Raymond M, DeMeeus T and Rousset F (1996) Testing differentiation in diploid populations. \textit{Genetics} 144: 1933-1940.
+
+%% \bibitem{tj814}
+%%   Nei M (1973) Analysis of gene diversity in subdivided populations. \textit{Proc Natl Acad Sci USA} 70: 3321-3323.
+
+%% \bibitem{tj433}
+%%   Monmonier M (1973) Maximum-difference barriers: an alternative numerical regionalization method. \textit{Geographical Analysis} 3: 245-261.
+
+%% \bibitem{np120}
+%%   Manni F, Guerard E and Heyer E (2004) Geographic patterns of (genetic, morphologic, linguistic)
+%%   variation: how barriers can be detected by "Monmonier's algorithm". \textit{Human Biology} 76: 173-190.
 
 
-\bibitem{tj433}
-  Monmonier M (1973) Maximum-difference barriers: an alternative numerical regionalization method. \textit{Geographical Analysis} 3: 245-261.
-
-\bibitem{np120}
-  Manni F, Guerard E and Heyer E (2004) Geographic patterns of (genetic, morphologic, linguistic)
-  variation: how barriers can be detected by "Monmonier's algorithm". \textit{Human Biology} 76: 173-190.
-
-
-\end{thebibliography}
+%% \end{thebibliography}
 
 \end{document}
 

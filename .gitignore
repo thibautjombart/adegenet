@@ -6,3 +6,6 @@ adegenet.Rcheck
 .Rhistory
 .Rproj.user/
 .Rproj.user
+tutorials/*bbl
+tutorials/*gz
+*.blg

@@ -133,7 +133,7 @@ shinyServer(function(input, output) {
         if(!is.null(input$doxval)) doxval <- input$doxval
         if(input$useoptimnpca || doxval){
             x <- getData()
-            mat <- as.matrix(na.replace(x, method="mean"))
+            mat <- tab(x, NA.method="mean")
             grp <- pop(x)
             result <- input$result
             n.rep <- input$nrep
@@ -158,7 +158,7 @@ shinyServer(function(input, output) {
         xval1 <- xvaldapc()
         if(!is.null(xval1)){
             x <- getData()
-            mat <- as.matrix(na.replace(x, method="mean"))
+            mat <- tab(x, NA.method="mean")
             grp <- pop(x)
             xval2 <- xval1[[1]]
             successV <-as.vector(xval2$success)
@@ -316,7 +316,7 @@ shinyServer(function(input, output) {
        if(!is.null(input$thresholdMethod)) method <- input$thresholdMethod
        if(!is.null(input$LPaxis)) dimension <- input$LPaxis
        x <- getData()
-       mat <- as.matrix(na.replace(x, method="mean", quiet=TRUE))
+       mat <- tab(x, NA.method="mean")
      }
 
      if(method=="quartile"){

@@ -6,17 +6,17 @@ test_that("strata methods work for genind objects.", {
   data(microbov, package = "adegenet")
   expect_null(strata(microbov))
   strata(microbov) <- data.frame(other(microbov))
-  breeds <- c("Borgou", "Zebu", "Lagunaire", "NDama", "Somba", "Aubrac", "Bazadais", 
-              "BlondeAquitaine", "BretPieNoire", "Charolais", "Gascon", "Limousin", 
+  breeds <- c("Borgou", "Zebu", "Lagunaire", "NDama", "Somba", "Aubrac", "Bazadais",
+              "BlondeAquitaine", "BretPieNoire", "Charolais", "Gascon", "Limousin",
               "MaineAnjou", "Montbeliard", "Salers")
 
   expect_that(length(strata(microbov)), equals(3))
-  expect_that(microbov@pop.names, equals(breeds))
+  expect_that(popNames(microbov), equals(breeds))
   expect_that({microbovsplit <- splitStrata(microbov, ~Pop/Subpop)}, throws_error())
   nameStrata(microbov) <- ~Country/Breed/Species
   expect_that(names(strata(microbov)), equals(c("Country", "Breed", "Species")))
   setPop(microbov) <- ~Country/Species
-  expect_that(microbov@pop.names, equals(c("AF_BI", "AF_BT", "FR_BT")))
+  expect_that(popNames(microbov), equals(c("AF_BI", "AF_BT", "FR_BT")))
 })
 
 test_that("strata produce proper errors", {
@@ -32,7 +32,7 @@ test_that("strata produce proper errors", {
 
 test_that("strata methods work for genlight objects", {
   skip_on_cran()
-  
+
   michier <- data.frame(other(microbov))
   make_gl <- function(n = 10, hier = michier){
     objs <- lapply(seq(n), function(x) sample(c(0, 1, NA), 10, replace = TRUE, prob = c(0.49, 0.49, 0.01)))

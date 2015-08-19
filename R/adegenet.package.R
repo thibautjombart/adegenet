@@ -63,8 +63,6 @@
 #' using \code{\link{fasta2genlight}}\cr
 #'
 #' === EXPORTING DATA ===\cr \code{adegenet} exports data from
-#' \linkS4class{genind} object to formats recognized by other R packages:\cr - the hierfstat
-#' package: see \code{\link{genind2hierfstat}}\cr
 #'
 #' Genotypes can also be recoded from a \linkS4class{genind} object into a
 #' data.frame of character strings, using any separator between alleles. This
@@ -94,9 +92,7 @@
 #'
 #' === ANALYZING DATA ===\cr Several functions allow to use usual, and less
 #' usual analyses:\cr - \code{\link{HWE.test.genind}}: performs HWE test for
-#' all populations and loci combinations \cr - \code{\link{pairwise.fst}}:
-#' computes simple pairwise Fst between populations\cr -
-#' \code{\link{dist.genpop}}: computes 5 genetic distances among populations.
+#' all populations and loci combinations \cr - \code{\link{dist.genpop}}: computes 5 genetic distances among populations.
 #' \cr - \code{\link{monmonier}}: implementation of the Monmonier algorithm,
 #' used to seek genetic boundaries among individuals or populations. Optimized
 #' boundaries can be obtained using \code{\link{optimize.monmonier}}. Object of
@@ -153,22 +149,21 @@
 #' For more information, visit the adegenet website using the function
 #' \code{\link{adegenetWeb}}.\cr
 #'
-#' Tutorials are available via the command \code{\link{adegenetTutorials}}.\cr
+#' Tutorials are available via the command \code{adegenetTutorial}.\cr
 #'
 #' To cite adegenet, please use the reference given by
-#' \code{citation("adegenet")} (or see reference below).
-#'
-#' \tabular{ll}{ Package: \tab adegenet\cr Type: \tab Package\cr Version: \tab
-#' 1.4-2\cr Date: \tab 2014-05-13 \cr License: \tab GPL (>=2) }
+#' \code{citation("adegenet")} (or see references below).
 #'
 #' @name adegenet.package
 #' @encoding utf-8
 #' @aliases adegenet.package adegenet
 #' @docType package
-#' @author Thibaut Jombart <t.jombart@@imperial.ac.uk>\cr Developers: Caitlin
-#' Collins <caitiecollins17@@gmail.com> Ismail Ahmed <ismail.ahmed@@inserm.fr>,
-#' Federico Calboli <f.calboli@@imperial.ac.uk>, Tobias Erik Reiners, Peter
-#' Solymos, Anne Cori, Zhian N. Kamvar\cr Contributed datasets from: Katayoun
+#' @author Thibaut Jombart <t.jombart@@imperial.ac.uk>\cr
+#' Developers: Zhian N. Kamvar <zkamvar@@gmail.com>,
+#' Caitlin Collins <caitiecollins17@@gmail.com>,
+#' Ismail Ahmed <ismail.ahmed@@inserm.fr>,
+#' Federico Calboli, Tobias Erik Reiners, Peter
+#' Solymos, Anne Cori, \cr Contributed datasets from: Katayoun
 #' Moazami-Goudarzi, Denis Laloë, Dominique Pontier, Daniel Maillard, Francois
 #' Balloux.
 #' @seealso adegenet is related to several packages, in particular:\cr -
@@ -206,17 +201,85 @@
 #'
 #' @export .rmspaces .readExt .genlab .render.server.info
 #'
+#' @S3method as.POSIXct haploGen
+#' @S3method as.data.frame genind
+#' @S3method as.data.frame genlight
+#' @S3method as.data.frame genpop
+#' @S3method as.integer SNPbin
+#' @S3method as.lda dapc
+#' @S3method as.list genlight
+#' @S3method as.matrix genind
+#' @S3method as.matrix genlight
+#' @S3method as.matrix genpop
+#' @S3method c SNPbin
+#' @S3method colorplot default
+#' @S3method colorplot spca
+#' @S3method dapc data.frame
+#' @S3method dapc dudi
+#' @S3method dapc genind
+#' @S3method dapc genlight
+#' @S3method dapc matrix
+#' @S3method find.clusters data.frame
+#' @S3method find.clusters genind
+#' @S3method find.clusters genlight
+#' @S3method find.clusters matrix
+#' @S3method findMutations DNAbin
+#' @S3method gengraph DNAbin
+#' @S3method gengraph default
+#' @S3method gengraph dist
+#' @S3method gengraph genind
+#' @S3method gengraph genpop
+#' @S3method gengraph matrix
+#' @S3method get.likelihood seqTrack
+#' @S3method graphMutations DNAbin
+#' @S3method labels haploGen
+#' @S3method loadingplot default
+#' @S3method loadingplot glPca
+#' @S3method pairDistPlot DNAbin
+#' @S3method pairDistPlot default
+#' @S3method pairDistPlot dist
+#' @S3method pairDistPlot genind
+#' @S3method pairDistPlot matrix
+#' @S3method plot haploGen
+#' @S3method plot monmonier
+#' @S3method plot seqTrack
+#' @S3method plot spca
+#' @S3method predict dapc
+#' @S3method print dapc
+#' @S3method print glPca
+#' @S3method print haploGen
+#' @S3method print monmonier
+#' @S3method print spca
+#' @S3method scatter dapc
+#' @S3method scatter glPca
+#' @S3method screeplot spca
+#' @S3method seqTrack default
+#' @S3method seqTrack haploGen
+#' @S3method seqTrack matrix
+#' @S3method snpposi.plot DNAbin
+#' @S3method snpposi.plot integer
+#' @S3method snpposi.plot numeric
+#' @S3method snpposi.test DNAbin
+#' @S3method snpposi.test integer
+#' @S3method snpposi.test numeric
+#' @S3method summary dapc
+#' @S3method summary spca
+#'
 #' @import methods
 #'
 #' @import parallel
 #'
+#' @import utils
+#'
+#' @import stats
+#'
+#' @import graphics
+#'
+#' @import grDevices
+#'
 #' @import ade4
 #'
-#' @importFrom utils "packageDescription"
-#'
 #' @importFrom seqinr s2c
-#'
-#' @importFrom stats "kmeans" "optimize"
 #'
 #' @importFrom MASS "lda"
 #'

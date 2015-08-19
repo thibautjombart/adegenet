@@ -481,15 +481,8 @@ contributing alleles (i.e., contributions above a given threshold -- argument \t
 In this case, SNPs \texttt{906} and \texttt{399} reflect most the temporal evolution of the virus.
 We can look into their allele frequencies over 2002-2006:
 <<echo=TRUE>>=
-temp <- seploc(H3N2)
-snp906 <- truenames(temp[["906"]])$tab
-snp399 <- truenames(temp[["399"]])$tab
-freq906 <- apply(snp906, 2, function(e)
-                 tapply(e, pop(H3N2), mean, na.rm=TRUE))
-freq399 <- apply(snp399, 2, function(e)
-                 tapply(e, pop(H3N2), mean, na.rm=TRUE))
-freq906
-freq399
+freq399 <- tab(genind2genpop(H3N2[loc=c("399")]),freq=TRUE)
+freq906 <- tab(genind2genpop(H3N2[loc=c("906")]),freq=TRUE)
 par(mfrow=c(1,2), mar=c(5.1,4.1,4.1,.1),las=3)
 matplot(freq906, pch=c("a","c"), type="b",
         xlab="year",ylab="allele frequency", xaxt="n",
@@ -559,7 +552,7 @@ or misclassified individuals.
 Note that this information can also be plotted in a STRUCTURE-like (!) way using \texttt{compoplot}
 (see \code{?compoplot} to customize the plot).
 We can plot information of all individuals to have a global picture of the clusters composition.
-<<>>=
+<<fig.width=10,out.width="\\textwidth">>=
 compoplot(dapc1, posi="bottomright",
           txt.leg=paste("Cluster", 1:6), lab="",
           ncol=1, xlab="individuals", col=funky(6))
@@ -708,7 +701,7 @@ We perform the analysis with 20 PCs retained, and then map the membership probab
 dapc3 <- dapc(microbov, n.da=100, n.pca=20)
 myCol <- rainbow(15)
 @
-<<>>=
+<<fig.width=10,out.width="\\textwidth">>=
 par(mar=c(5.1,4.1,1.1,1.1), xpd=TRUE)
 compoplot(dapc3, lab="", posi=list(x=12,y=-.01), cleg=.7)
 @

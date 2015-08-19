@@ -34,3 +34,59 @@ test_that("population accessors work", {
   expect_error(popNames(x) <- NULL)
   expect_error(popNames(x)[2] <- NA)
 })
+
+x <- "
+X13049 X13050 X13051 X13052 X13053
+AA36881      2     NA      2      2      2
+AA36883      2      2      2      2      2
+AA36884      2      2      2      2      2
+AA36802     NA      2      2      2      2
+AA36803      2      2      2      2      2
+AA36804      2     NA      2      2      2
+AA36181      2     NA      2      2      2
+AA36183      2      2      2      2      2"
+
+xxdf <- read.table(text = x)
+xx   <- new("genlight", xxdf, parallel = FALSE)
+pop(xx) <- rep(LETTERS[1:2], each = 4)
+
+test_that("missing data is properly subset with logical subscripts", {
+  skip_on_cran()
+  Apop <- pop(xx) == "A"
+  Bpop <- pop(xx) == "B"
+  expect_identical(NA.posi(xx), NA.posi(xx[]))
+  expect_identical(xxdf[Apop, ], as.data.frame(xx[Apop, ]))
+  expect_identical(xxdf[Bpop, ], as.data.frame(xx[Bpop, ]))
+  keepers <- c(FALSE, rep(TRUE, 4))
+  expect_identical(xxdf[keepers], as.data.frame(xx[, keepers]))
+})
+
+test_that("missing data is properly subset with positive subscripts", {
+  skip_on_cran()
+  rl <- sample(5)
+  # Can subset single locus
+  expect_identical(xxdf[, 1, drop = FALSE], as.data.frame(xx[, 1]))
+  # Can subset range of loci
+  expect_identical(xxdf[, 1:3, drop = FALSE], as.data.frame(xx[, 1:3]))
+  # Can subset by position
+  expect_identical(xxdf[, rl, drop = FALSE], as.data.frame(xx[, rl]))
+})
+
+test_that("missing data is properly subset with negative subscripts", {
+  skip_on_cran()
+  expect_identical(xxdf[, -1], as.data.frame(xx[, -1]))
+  expect_identical(xxdf[, -c(1, 3)], as.data.frame(xx[, -c(1, 3)]))
+})
+
+test_that("missing data is properly subset with a character vector", {
+  skip_on_cran()
+  lnames <- locNames(xx)
+  rl     <- sample(lnames)
+  expect_identical(xxdf[, rl], as.data.frame(xx[, rl]))
+  expect_identical(xxdf[, lnames[1:2]], as.data.frame(xx[, lnames[1:2]]))
+})
+
+test_that("genlight objects do not take a mixture of positive and negative subscripts", {
+  skip_on_cran()
+  expect_error(xx[, c(2, -1)], "subscripts.")
+})

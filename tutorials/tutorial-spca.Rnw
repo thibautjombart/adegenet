@@ -157,15 +157,17 @@ denoted $\m{X}$ exactly corresponds to the \texttt{@tab} slot of \texttt{genind}
 \texttt{genpop} objects:
 <<>>=
 library(adegenet)
+@
+<<message=FALSE>>=
 library(spdep)
 library(adehabitat)
 data(spcaIllus)
 obj <- spcaIllus$dat2A
 obj
-head(truenames(obj[loc="L01"])$tab)
+head(tab(obj[loc=1]))
 @
 \noindent The object \texttt{obj} is a \texttt{genind} object; note
-that here, we only displayed the table for the first locus (\texttt{loc="L01"}).
+that here, we only displayed the table for the first locus (\texttt{loc=1}).
 \\
 
 

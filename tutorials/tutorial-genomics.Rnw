@@ -181,6 +181,7 @@ print(object.size(dat),unit="auto")
 @
 <<eval=FALSE>>=
 x <- new("SNPbin", dat, parallel=FALSE)
+x
 @
 <<echo=FALSE>>=
 load("Robjects/x.snpbin.RData")
@@ -287,14 +288,9 @@ dat <- lapply(1:50, function(i) sample(c(0,1,NA), 1e5, prob=c(.5, .499, .001),
 names(dat) <- paste("indiv", 1:length(dat))
 print(object.size(dat),unit="auto")
 @
-<<eval=FALSE>>=
-x <- new("genlight", dat)
-@
-<<echo=FALSE>>=
-load("Robjects/x.genlight.RData")
-@
 <<>>=
-print(object.size(x),unit="auto")
+x <- new("genlight", dat)
+x
 object.size(dat)/object.size(x)
 @
 here again, the storage if the data is much more efficient in \texttt{genlight} than using integers: converted data occupy
@@ -1077,22 +1073,22 @@ compoplot(dapc1, col=c("red","blue"),lab="", txt.leg=paste("group", 1:2), ncol=2
 @
 
 \noindent ... the loading plot identifies pretty well the most discriminating alleles:
-<<eval=FALSE>>=
+<<>>=
 loadingplot(dapc1$var.contr, thres=1e-3)
 @
 
-\begin{center}
-  \includegraphics{figs/loadingplotGL}
-\end{center}
+%% \begin{center}
+%%   \includegraphics{figs/loadingplotGL}
+%% \end{center}
 
 \noindent And we can zoom in to the contributions of the last 100 SNPs to make sure that the tail indeed
 corresponds to the 50 last structured loci:
-<<eval=FALSE>>=
+<<>>=
 loadingplot(tail(dapc1$var.contr[,1],100), thres=1e-3)
 @
-\begin{center}
-  \includegraphics{figs/loadingplotGLzoom}
-\end{center}
+%% \begin{center}
+%%   \includegraphics{figs/loadingplotGLzoom}
+%% \end{center}
 
 \noindent Here, we indeed identified the structured region of the genome fairly well.
 

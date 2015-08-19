@@ -1,13 +1,106 @@
 
-###############
-## '[' operators
-###############
-## SNPbin
-setMethod("[", signature(x="SNPbin", i="ANY"), function(x, i) {
+# Function to subset raw vectors
+.subsetbin <- function(x, i){
+    # Take a raw vector, subset the bits and then convert to integers.
+    xint   <- as.integer(rawToBits(x)[i])
+    # Figure out how many zeroes are needed to pad the end.
+    zeroes <- 8 - (length(xint) %% 8)
+    # Convert the integer vector with zeroes on the end back into a raw vector.
+    return(packBits(c(xint, rep(0L, zeroes))))
+}
+
+# old method for [] for SNPbin
+.oldSNPbinset <- function(x, i){
     if (missing(i)) i <- TRUE
     temp <- .SNPbin2int(x) # data as integers with NAs
     x <- new("SNPbin", snp=temp[i], label=x@label, ploidy=x@ploidy)
     return(x)
+}
+
+# Zhian N. Kamvar
+# Mon Aug 17 09:39:12 2015 ------------------------------
+# 
+# This function takes two steps:
+#   1. Subset the missing positions
+#   2. Subset the vectors of raw SNPs
+# 
+# Both steps are not exactly straighforward. Because the missing vector only
+# represents the positions of missing data, it must be subset by value as
+# opposed to position.
+.SNPbinset <- function(x, i){
+  if (missing(i)) i <- TRUE
+  
+  # Create a logical value indicating whether or not subsetting is necessary.
+  we_take_all <- length(i) == 1 && is.logical(i) && i
+  n.loc <- x@n.loc
+  if (length(x@NA.posi) > 0){
+    if (is.logical(i)){
+      if (we_take_all){
+        # Keep all of the data
+        return(x)
+      } else {
+        # If the positons are logical, perhaps the best way to address this is
+        # to match the TRUE positions to the NA.posi vector. Adding nomatch = 0 
+        # avoids introducing NAs.
+        namatches <- match(which(i), x@NA.posi, nomatch = 0)
+        nas.kept  <- x@NA.posi[namatches]
+      }
+    } else if (is.character(i)){
+      stop("Cannot subset a SNPbin object with a character vector", call. = FALSE)
+    } else if (all(i < 0)){
+      # For negative subscripts, find which ones they match and then
+      # negate those. Luckily -0 is allowed.
+      namatches <- match(abs(i), x@NA.posi, nomatch = 0)
+      # Unfortunately, if nothing matches, then the default are zeroes. When you
+      # subset a vector in R with only zero, you will get an empty vector. This
+      # conditional makes sure that NA positions are retained.
+      if (all(namatches == 0)){
+        nas.kept  <- x@NA.posi
+      } else {
+        nas.kept  <- x@NA.posi[-namatches]
+      }
+      
+    } else if (all(i > 0)){
+      # Positive subscripts are much easier. First you find where the subscripts
+      # match and then your subset with those positions. 
+      namatches <- match(i, x@NA.posi, nomatch = 0)
+      nas.kept  <- x@NA.posi[namatches]
+    } else {
+      stop("Cannot subset a SNPbin with mixed subscripts.", call. = FALSE)
+    }
+    # After we find out which missing positions we need to keep, we reset the 
+    # missing positions to the subset data.
+    if (length(nas.kept) > 0){
+      old.posi  <- 1:n.loc
+      x@NA.posi <- match(nas.kept, old.posi[i])
+    } else {
+      x@NA.posi <- nas.kept
+    }
+  }
+  # Here we calculate the number of loci we will have left in the data.
+  if (we_take_all){
+    return(x)
+  } else if (all(is.logical(i))){
+    n.loc <- sum(i)
+  } else if (any(i < 0)){
+    n.loc <- n.loc - length(i)
+  } else {
+    n.loc <- length(i)
+  }
+  # Now we loop over all chromosomes and subset.
+  x@snp   <- lapply(x@snp, .subsetbin, i)
+  # Set the new value of the number of loci and return.
+  x@n.loc <- n.loc
+  return(x)
+}
+
+###############
+## '[' operators
+###############
+## SNPbin
+
+setMethod("[", signature(x="SNPbin", i="ANY"), function(x, i) {
+    .SNPbinset(x, i)
 }) # end [] for SNPbin
 
 
@@ -19,6 +112,11 @@ setMethod("[", signature(x="genlight", i="ANY", j="ANY", drop="ANY"), function(x
     if (missing(j)) j <- TRUE
 
     ori.n <- nInd(x)
+    ori.p <- nLoc(x)
+
+    ## recycle logicals if needed
+    if(!is.null(i) && is.logical(i)) i <- rep(i, length=ori.n)
+    if(!is.null(j) && is.logical(j)) j <- rep(j, length=ori.p)
 
 
     ## SUBSET INDIVIDUALS ##
@@ -72,23 +170,17 @@ setMethod("[", signature(x="genlight", i="ANY", j="ANY", drop="ANY"), function(x
 
 
     ## SUBSET LOCI ##
-    if(length(j)==1 && is.logical(j) && j){ # no need to subset SNPs
-        return(x)
-    } else { # need to subset SNPs
-        old.other <- other(x)
-        old.ind.names <- indNames(x)
 
-        ## handle ind.names, loc.names, chromosome, position, and alleles
-        new.loc.names <- locNames(x)[j]
-        new.chr <- chr(x)[j]
-        new.position <- position(x)[j]
-        new.alleles <- alleles(x)[j]
-        new.gen <- lapply(x@gen, function(e) e[j])
-        ##x <- as.matrix(x)[, j, drop=FALSE] # maybe need to process one row at a time
-        x <- new("genlight", gen=new.gen, pop=ori.pop, ploidy=ori.ploidy,
-                 ind.names=old.ind.names, loc.names=new.loc.names, strata = ori.strata,
-                 chromosome=new.chr, position=new.position, alleles=new.alleles, other=old.other, parallel=FALSE,...)
+    ## handle ind.names, loc.names, chromosome, position, and alleles
+    if (is.character(j)){
+      j <- match(j, x@loc.names, nomatch = 0)
     }
+    x@loc.names   <- x@loc.names[j]
+    x@chromosome  <- chr(x)[j]
+    x@position    <- position(x)[j]
+    x@loc.all     <- alleles(x)[j]
+    x@gen         <- lapply(x@gen, function(e) e[j])
+    x@n.loc       <- x@gen[[1]]@n.loc
 
     return(x)
 }) # end [] for genlight
@@ -258,7 +350,11 @@ rbind.genlight <- function(...){
 setMethod("seppop", signature(x="genlight"), function(x, pop=NULL, treatOther=TRUE, quiet=TRUE, ...){
     ## HANDLE POP ARGUMENT ##
     if(!is.null(pop)) {
+      if (is.language(pop)){
+        setPop(x) <- pop
+      } else {
         pop(x) <- pop
+      }
     }
 
     if(is.null(pop(x))) stop("pop not provided and pop(x) is NULL")

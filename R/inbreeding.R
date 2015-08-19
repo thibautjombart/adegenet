@@ -13,7 +13,7 @@ inbreeding <- function(x, pop=NULL, truenames=TRUE, res.type=c("sample","functio
 
     if(!is.null(pop)) pop(x) <- pop
     if(is.null(x@pop) && is.null(pop)) {
-        pop(x) <- factor(rep(1, nrow(x@tab)))
+        pop(x) <- factor(rep(1, nInd(x)))
     }
 
       ## COMPUTATIONS ##
@@ -21,7 +21,8 @@ inbreeding <- function(x, pop=NULL, truenames=TRUE, res.type=c("sample","functio
     ## get allele frequencies and \sum p_i^2 by pop and loc ##
     ## (generalized to any ploidy) ##
     ## tabfreq2 <- (makefreq(x = genind2genpop(x, quiet = TRUE), quiet=TRUE, truenames=truenames)$tab) ^2
-    tabfreq2 <- makefreq(x = genind2genpop(x, quiet = TRUE), quiet=TRUE) ^ PLO
+    ## For genpop objects, a constant ploidy is assumed/needed. This kludge will do for now.
+    tabfreq2 <- tab(genind2genpop(x, quiet = TRUE), freq=TRUE) ^ PLO[1]
     sumpi2 <- t(apply(tabfreq2, 1, tapply, x$loc.fac, sum))
 
     ## function to check a 1-locus genotype for homozigosity
@@ -29,22 +30,23 @@ inbreeding <- function(x, pop=NULL, truenames=TRUE, res.type=c("sample","functio
     ## !!! NOTE : reverse the values returned by f1 to obtain a strange thing !!!
     f1 <- function(gen){
         if(any(is.na(gen))) return(NA)
-        if(any(round(gen, 10)==1)) return(1)
-        return(0)
+        return(ifelse(sum(gen > 0) == 1, 1, 0))
+        # if(any(round(gen, 10)==1)) return(1)
+        # return(0)
     }
 
     ## get the table of binary hetero/homo data
-    if(truenames) {
-        X <- truenames(x)$tab
+    if (truenames) {
+        X <- tab(x)
     } else
-    X <- x$tab
+    X <- tab(x)
 
     homotab <- t(apply(X, 1, tapply, x@loc.fac, f1))
 
 
     ## get pi2 for the appropriate pop
     if(truenames){
-    popx <- pop(x)
+        popx <- pop(x)
     } else {
         popx <- x$pop
     }
@@ -81,7 +83,7 @@ inbreeding <- function(x, pop=NULL, truenames=TRUE, res.type=c("sample","functio
 
     ## name output
     if(truenames) {
-        names(res) <- x$ind.names
+        names(res) <- indNames(x)
     } else {
         names(res) <- names(x$tab)
     }
