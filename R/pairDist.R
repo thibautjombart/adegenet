@@ -41,7 +41,7 @@ pairDistPlot.dist <- function(x, grp, within=FALSE, sep="-", data=TRUE, violin=T
     ## CHECKS ##
     if(attr(x, "Size")!=length(grp)) stop("inconsistent length for grp")
     grp <- factor(grp)
-    K <- length(levels(K))
+    K <- length(levels(grp))
     N <- length(grp)
 
 
