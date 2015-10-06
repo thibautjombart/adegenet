@@ -264,6 +264,8 @@
 #' @S3method snpposi.test numeric
 #' @S3method summary dapc
 #' @S3method summary spca
+#' @S3method print genindSummary
+#' @S3method print genpopSummary
 #'
 #' @import methods
 #'
