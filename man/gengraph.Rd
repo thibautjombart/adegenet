@@ -108,9 +108,11 @@ gengraph(x, \dots)
   Implementation by Thibaut Jombart \email{t.jombart@imperial.ac.uk}.
  }
 \examples{
-\dontrun{
-dat <- haploGen()
-res <- gengraph(dat$seq, ngrp=1)
-plot(res$graph)
+if(require(ape)){
+    data(woodmouse)
+    g <- gengraph(woodmouse, cutoff=5)
+    g
+    plot(g$graph)
+
 }
 }

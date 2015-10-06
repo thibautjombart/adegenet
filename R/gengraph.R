@@ -94,6 +94,12 @@ gengraph.matrix <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
             E(g)$label <- E(g)$weight
         }
 
+        ## graph plotting options ##
+        V(g)$label.dist <- 0.75
+        V(g)$size <- 10
+        V(g)$label.family <- "sans"
+        V(g)$label.color <- "black"
+
         ## make result
         res <- list(graph=g, clust=clusters(g), cutoff=cutoff, col=col)
 
@@ -126,12 +132,6 @@ gengraph.matrix <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
 
 
     ## RETURN ##
-    ## if(truenames){
-    ##     V(res$graph)$label <- rownames(x)
-    ## } else {
-    ##     V(res$graph)$label <- 1:nrow(x)
-    ## }
-
     return(res)
 
 } # end gengraph.matrix
@@ -198,7 +198,7 @@ gengraph.genpop <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
     ## COMPUTE DISTANCES ##
     x$tab[is.na(x$tab)] <- 0
     D <- as.matrix(dist.genpop(x, method=method))
-    
+
     ## USE MATRIX METHOD ##
     res <- gengraph(D, cutoff=cutoff, ngrp=ngrp, computeAll=computeAll, plot=plot, show.graph=show.graph, col.pal=col.pal,
                     truenames=truenames, nbreaks=nbreaks, ...)
