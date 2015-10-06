@@ -522,6 +522,15 @@ print.genindSummary <- function(x, ...){
 } # end print.genindSummary
 
 
+print.genpopSummary <- function(x, ...){
+    if(!is.null(x$n.pop)) cat("\n// Number of populations:", x$n.pop)
+    if(!is.null(x$loc.n.all)) cat("\n// Number of alleles per locus:", x$loc.n.all)
+    if(!is.null(x$pop.n.all)) cat("\n// Number of alleles per group:", x$pop.n.all)
+    if(!is.null(x$NA.perc)) cat("\n// Percentage of missing data:", round(x$NA.perc,2), "%")
+    cat("\n")
+} # end print.genpopSummary
+
+
 
 ###############
 # Methods "is"
