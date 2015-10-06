@@ -127,31 +127,25 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
 
     }
     if(any(ploidy < 1L)) stop("ploidy cannot be less than 1")
-    ind.test <- FALSE -> loc.test
-    if (is.null(ind.names) || (ind.test <- length(unique(ind.names)) != nrow(X))){
-      ind.names <- rownames(X)
-      if (!is.null(ind.names) & ind.test){
-        warning("duplicate labels detected for some individuals; using row names")
-      }
-      if (is.null(ind.names) || any(duplicated(ind.names))){
+
+    ## check individual labels
+    if(is.null(ind.names)) ind.names <- rownames(X)
+    if(is.null(ind.names)) ind.names <- .genlab("",n)
+    if(any(duplicated(ind.names))){
         warning("duplicate labels detected for some individuals; using generic labels")
-        rownames(X) <- ind.names <- .genlab("", n)
-      }
-    } else {
-      rownames(X) <- ind.names
+        ind.names <- .genlab("",n)
     }
-    if (is.null(loc.names) || (loc.test <- length(unique(loc.names)) != ncol(X))){
-      loc.names <- colnames(X)
-      if (!is.null(loc.names) & loc.test){
-        warning("duplicate labels detected for some individuals; using column names")
-      }
-      if (is.null(loc.names) || any(duplicated(loc.names))){
+    rownames(X) <- ind.names
+
+    ## check locus labels
+    if(is.null(loc.names)) loc.names <- colnames(X)
+    if(is.null(loc.names)) loc.names <- .genlab("loc",nloc)
+    if(any(duplicated(loc.names))){
         warning("duplicate labels detected for some loci; using generic labels")
-        colnames(X) <- loc.names <- .genlab("L", nloc)
-      }
-    } else {
-      colnames(X) <- loc.names
+        loc.names <- .genlab("loc",nloc)
     }
+    colnames(X) <- loc.names
+
 
     ## pop argument
     if(!is.null(pop)){
