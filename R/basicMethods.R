@@ -401,26 +401,13 @@ setMethod ("summary", signature(object="genind"), function(object, verbose = TRU
 
   res$N <- nrow(tab(x))
 
-  res$pop.eff <- as.numeric(table(pop(x)))
-  names(res$pop.eff) <- popNames(x)
+  res$N.by.pop <- as.numeric(table(pop(x)))
+  names(res$N.by.pop) <- popNames(x)
 
   ## PA case ##
   if(x@type=="PA"){
     ## % of missing data
     res$NA.perc <- 100*sum(is.na(tab(x)))/prod(dim(tab(x)))
-
-    ## ## display and return
-    ## listlab <- c("# Total number of genotypes: ",
-    ##              "# Population sample sizes: ",
-    ##              "# Percentage of missing data: ")
-
-    ## if (verbose) {
-    ##   cat("\n",listlab[1], res[[1]], "\n")
-    ##   for(i in 2:3){
-    ##     cat("\n",listlab[i], "\n")
-    ##     print(res[[i]])
-    ##   }
-    ## }
 
     return(invisible(res))
   }
@@ -462,23 +449,6 @@ setMethod ("summary", signature(object="genind"), function(object, verbose = TRU
     res$Xexp <- 0
   }
 
-  ## ## print to screen
-  ## listlab <- c("# Total number of genotypes: ",
-  ##              "# Population sample sizes: ",
-  ##              "# Number of alleles per locus: ",
-  ##              "# Number of alleles per population: ",
-  ##              "# Percentage of missing data: ",
-  ##              "# Observed heterozygosity: ",
-  ##              "# Expected heterozygosity: ")
-
-  ## if (verbose) {
-  ##   cat("\n",listlab[1],res[[1]], "\n")
-  ##   for(i in 2:7){
-  ##     cat("\n",listlab[i], "\n")
-  ##     print(res[[i]])
-  ##   }
-  ## }
-
   ## add class and return
   class(res) <- "genindSummary"
   return(res)
@@ -506,18 +476,6 @@ setMethod ("summary", signature(object="genpop"), function(object, verbose = TRU
     ## % of missing data
     res$NA.perc <- 100*sum(is.na(tab(x)))/prod(dim(tab(x)))
 
-    ## ## display and return
-    ## listlab <- c("# Total number of genotypes: ",
-    ##              "# Percentage of missing data: ")
-
-    ## if (verbose) {
-    ##   cat("\n",listlab[1],res[[1]],"\n")
-    ##   for(i in 2){
-    ##     cat("\n",listlab[i],"\n")
-    ##     print(res[[i]])
-    ##   }
-    ## }
-
     ## add class and return
     class(res) <- "genpopSummary"
     return(res)
@@ -540,21 +498,6 @@ setMethod ("summary", signature(object="genpop"), function(object, verbose = TRU
   w <- apply(tab(x),1,sum,na.rm=TRUE) # weights for populations
   res$NA.perc <- 100*(1-mean.w(propTyped(x), w=w))
 
-  ## # print to screen
-  ## listlab <- c("# Number of populations: ",
-  ##              "# Number of alleles per locus: ",
-  ##              "# Number of alleles per population: ",
-  ##              "# Percentage of missing data: ")
-
-  ## if (verbose) {
-  ##   cat("\n",listlab[1],res[[1]],"\n")
-  ##   for(i in 2:4){
-  ##     cat("\n",listlab[i],"\n")
-  ##     print(res[[i]])
-  ##   }
-  ## }
-
-
   ## add class and return
   class(res) <- "genpopSummary"
   return(res)
@@ -567,7 +510,16 @@ setMethod ("summary", signature(object="genpop"), function(object, verbose = TRU
 #######################
 ## print for summaries
 #######################
-print.genindSummary <- function(){
+print.genindSummary <- function(x, ...){
+    ## N N.by.pop loc.n.all pop.n.all NA.perc Hobs Hexp
+    cat("\n")
+    if(!is.null(x$N)) cat("\n//Number of individuals:", x$N)
+    if(!is.null(x$N.by.pop)) cat("\n//Group sizes:", x$N.by.pop)
+    if(!is.null(x$loc.n.all)) cat("\n//Number of alleles per locus:", x$loc.n.all)
+    if(!is.null(x$pop.n.all)) cat("\n//Number of alleles per group:", x$loc.n.all)
+    if(!is.null(x$NA.perc)) cat("\n//Percentage of missing data:", x$NA.perc, "%")
+    if(!is.null(x$Hobs)) cat("\n//Observed heterozygosity:", x$Hobs)
+    if(!is.null(x$Hexp)) cat("\n//Expected heterozygosity:", x$Hexp)
 } # end print.genindSummary
 
 
