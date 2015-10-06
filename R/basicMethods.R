@@ -399,10 +399,10 @@ setMethod ("summary", signature(object="genind"), function(object, verbose = TRU
   ## type-independent stuff
   res <- list()
 
-  res$N <- nrow(tab(x))
+  res$n <- nrow(tab(x))
 
-  res$N.by.pop <- as.numeric(table(pop(x)))
-  names(res$N.by.pop) <- popNames(x)
+  res$n.by.pop <- as.numeric(table(pop(x)))
+  names(res$n.by.pop) <- popNames(x)
 
   ## PA case ##
   if(x@type=="PA"){
@@ -511,15 +511,14 @@ setMethod ("summary", signature(object="genpop"), function(object, verbose = TRU
 ## print for summaries
 #######################
 print.genindSummary <- function(x, ...){
-    ## N N.by.pop loc.n.all pop.n.all NA.perc Hobs Hexp
+    if(!is.null(x$n)) cat("\n// Number of individuals:", x$n)
+    if(!is.null(x$n.by.pop)) cat("\n// Group sizes:", x$n.by.pop)
+    if(!is.null(x$loc.n.all)) cat("\n// Number of alleles per locus:", x$loc.n.all)
+    if(!is.null(x$pop.n.all)) cat("\n// Number of alleles per group:", x$pop.n.all)
+    if(!is.null(x$NA.perc)) cat("\n// Percentage of missing data:", round(x$NA.perc,2), "%")
+    if(!is.null(x$Hobs)) cat("\n// Observed heterozygosity:", round(x$Hobs,2))
+    if(!is.null(x$Hexp)) cat("\n// Expected heterozygosity:", round(x$Hexp,2))
     cat("\n")
-    if(!is.null(x$N)) cat("\n//Number of individuals:", x$N)
-    if(!is.null(x$N.by.pop)) cat("\n//Group sizes:", x$N.by.pop)
-    if(!is.null(x$loc.n.all)) cat("\n//Number of alleles per locus:", x$loc.n.all)
-    if(!is.null(x$pop.n.all)) cat("\n//Number of alleles per group:", x$loc.n.all)
-    if(!is.null(x$NA.perc)) cat("\n//Percentage of missing data:", x$NA.perc, "%")
-    if(!is.null(x$Hobs)) cat("\n//Observed heterozygosity:", x$Hobs)
-    if(!is.null(x$Hexp)) cat("\n//Expected heterozygosity:", x$Hexp)
 } # end print.genindSummary
 
 
