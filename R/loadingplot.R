@@ -23,21 +23,14 @@ loadingplot.default <- function(x, at=NULL, threshold=quantile(x,0.75), axis=1, 
         warning("Some values in x are less than 0\n Using abs(x) instead, but this might not be optimal.")
         x <- abs(x)
     }
-    if(is.null(at)){
-        at <- 1:length(x)
-    } else {
-        if(length(at) != length(x)) stop("x and at do not have the same length.")
-    }
 
-    ## preliminary computations
-    y.min <- min(min(x),0)
-    y.max <- max(max(x),0)
-    y.offset <- (y.max-y.min)*0.02
+    ## handle lab
     if(is.null(lab)) {lab <- 1:length(x)}
 
+    ## handle fac
     if(!is.null(fac)){
         if(byfac){
-            x <- tapply(x, fac, mean)
+            x <- tapply(x, fac, sum)
             if(length(lab) != length(x)) lab <- names(x)
         } else {
             fac <- factor(fac, levels=unique(fac))
@@ -45,8 +38,20 @@ loadingplot.default <- function(x, at=NULL, threshold=quantile(x,0.75), axis=1, 
             grp.lab.idx <- tapply(1:length(x), fac, mean)
             grp.lab <- names(grp.idx)
             grp.idx <- grp.idx[-length(grp.idx)]
+        }
     }
-    } # end fac handling
+
+    ## preliminary computations
+    y.min <- min(min(x),0)
+    y.max <- max(max(x),0)
+    y.offset <- (y.max-y.min)*0.02
+
+    ## handle 'at'
+    if(is.null(at)){
+        at <- 1:length(x)
+    } else {
+        if(length(at) != length(x)) stop("x and at do not have the same length.")
+    }
 
 
     ## start the plot
@@ -70,12 +75,12 @@ loadingplot.default <- function(x, at=NULL, threshold=quantile(x,0.75), axis=1, 
 
         txt.ann <- lab[x > threshold]
         text(x=x.ann, y=y.ann, label=txt.ann, cex=cex.lab, srt=srt, adj=adj)
-    
+
     ## indicate the threshold
     abline(h=threshold, col="grey")
 
     ## build the result
-    
+
     res <- list(threshold=threshold,
                 var.names=txt.ann,
                 var.idx=which(x > threshold),
