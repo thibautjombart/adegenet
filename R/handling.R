@@ -481,8 +481,18 @@ repool <- function(..., list=FALSE){
     listTab <- lapply(x,genind2df,usepop=FALSE,sep="/")
     newPloidy <- unlist(lapply(x,ploidy))
 
+
+    ## SET POPS IF MISSING
     ## STORE OLD POP
     old.pop <- lapply(x, pop)
+
+    for(i in 1:length(x)){
+        if(is.null(pop(x[[i]]))){
+            pop(x[[i]]) <- rep(paste("unknown",i,sep="_"), nInd(x[[i]]))
+        }
+    }
+
+    new.pop <- lapply(x, pop)
 
 
     ## MERGE RAW DATASETS
@@ -498,7 +508,7 @@ repool <- function(..., list=FALSE){
 
     ## GET SINGLE GENIND
     res <- df2genind(tab, ploidy=newPloidy, type=x[[1]]@type, sep="/")
-    pop(res) <- unlist(old.pop)
+    pop(res) <- unlist(new.pop)
     res <- .rbind_strata(x, res)
     res@hierarchy <- NULL
     res$call <- match.call()
