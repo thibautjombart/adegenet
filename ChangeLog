@@ -13,20 +13,23 @@ NEW FEATURES
 	and can return a list of repooled genind (argument 'list'
 	defauling to FALSE)
 
+	o read.fstat can now handle missing data coded by any number of
+	"0"
+
 BUG FIXES
 	o Hs no longer returns NaN if one locus has not been typed;
 	instead, computations are done using all available loci
 
 	o adegenetTutorial now opens up-to-date tutorials
-	
-	o subsetting genlight objects now treats missing data appropriately 
-	when given logical, character, or negative subscripts. 
+
+	o subsetting genlight objects now treats missing data appropriately
+	when given logical, character, or negative subscripts.
 	(See issue #83 (https://github.com/thibautjombart/adegenet/issues/83))
 
 	o fixed occasional spurious warning about duplicated individual
 	labels in df2genind
-	
-	
+
+
 
 			CHANGES IN ADEGENET VERSION 2.0.0
 CHANGES IN GENIND/GENPOP/GENLIGHT OBJECTS
@@ -343,7 +346,7 @@ NEW FEATURES
 	o a.score and optim.a.score are released in their beta versions.
 
 	o scatter.dapc is now adapted to representation 1-dimensional DAPC results.
-	
+
 
 BUG FIXES
 
@@ -456,7 +459,7 @@ NEW FEATURES
 	of markers and/or alleles.
 
 	o the loadingplot has been modified to allow specifying x axis, so
-	that scoring SNPs along their sequence is now possible. 
+	that scoring SNPs along their sequence is now possible.
 
 
 BUG FIXES
@@ -475,7 +478,7 @@ NEW FEATURES
 	input function df2genind, which has been recoded almost
 	entierely. Different levels of ploidy are now handled by different
 	functions.
-	
+
 	o a "sep" argument is now handled by df2genind: this allows
 	reading many data formats.
 
@@ -496,22 +499,22 @@ NEW FEATURES
 
 	o enable reading data from URL (import2genind, read.[...])
 
-	o permit specification of a matrix of spatial weights in spca 
-	
+	o permit specification of a matrix of spatial weights in spca
+
 
 BUG FIXES
 
 	o fixed bug 1.2-2.01 (read.structure issue): was due to the
 	default of "onerowperind" argument.
-	
+
 	o fixed bug 1.2-2.02 (read.genetix issue): was due to an
 	error in the data file (wrong nloc); now read.genetix corrects
 	that automatically and issues a warning.
-	
+
 	o fixed bug 1.2-2.03 (monmonier issue): was a non-detected
 	code 2 due to intersection check with previously drawn segment
 	(was not always removed).
-	
+
 	o fixed bug 1.2-2.05 (a few fixes/improvement for monmonier)
 
 

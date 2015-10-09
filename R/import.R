@@ -440,7 +440,7 @@ read.genetix <- function(file=NULL,quiet=FALSE) {
 #' obj
 #'
 #' @export read.fstat
-read.fstat <- function(file,quiet=FALSE){
+read.fstat <- function(file, quiet=FALSE){
     ##if(!file.exists(file)) stop("Specified file does not exist.") <- not needed
     if(toupper(.readExt(file)) != "DAT") stop("File extension .dat expected")
 
@@ -473,6 +473,11 @@ read.fstat <- function(file,quiet=FALSE){
     colnames(X) <- loc.names
     rownames(X) <- 1:nrow(X)
 
+    ## replace all possible missing data coding by NA.char
+    allNAs <- sapply(1:8, function(i) paste(rep("0",i),collapse=""))
+    X[X %in% allNAs] <- NA.char
+
+    ## call df2genind
     res <- df2genind(X=X,pop=pop, ploidy=2, ncode=ncode, NA.char=NA.char)
     res@call <- call
 
