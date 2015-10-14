@@ -1367,10 +1367,10 @@ read.PLINK <- function(file, map.file=NULL, quiet=FALSE, chunkSize=1000,
         txt <- lapply(txt, function(e) suppressWarnings(as.integer(e[-(1:6)])))
 
         if(parallel){
-            res <- c(res, mclapply(txt, function(e) new("SNPbin", snp=e, ploidy=2),
+            res <- c(res, mclapply(txt, function(e) new("SNPbin", snp=e, ploidy=2L),
                                    mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE) )
         } else {
-            res <- c(res, lapply(txt, function(e) new("SNPbin", snp=e, ploidy=2)) )
+            res <- c(res, lapply(txt, function(e) new("SNPbin", snp=e, ploidy=2L)) )
         }
 
         lines.to.skip <-lines.to.skip + length(txt)
@@ -1388,7 +1388,7 @@ read.PLINK <- function(file, map.file=NULL, quiet=FALSE, chunkSize=1000,
     ## BUILD FINAL OBJECT ##
     if(!quiet) cat("\n Building final object... \n")
 
-    res <- new("genlight",res, ploidy=2, parallel=parallel)
+    res <- new("genlight",res, ploidy=2L, parallel=parallel)
     indNames(res) <- misc.info$IID
     pop(res) <- misc.info$FID
     locNames(res) <- loc.names

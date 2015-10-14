@@ -108,7 +108,7 @@ setMethod("initialize", "SNPbin", function(.Object, ...) {
             }
             x@n.loc <- length(input$snp)
             x@NA.posi <- which(is.na(input$snp))
-            x@ploidy <- input$ploidy
+            x@ploidy <- as.integer(input$ploidy)
             return(x)
         }
     }
@@ -120,7 +120,7 @@ setMethod("initialize", "SNPbin", function(.Object, ...) {
         x@snp[[1]] <- .bin2raw(rep(0L, length(input$snp)))$snp
         x@NA.posi <- 1:length(input$snp)
         if(!is.null(input$ploidy)){
-            x@ploidy <- input$ploidy
+            x@ploidy <- as.integer(input$ploidy)
         } else {
             x@ploidy <- as.integer(NA)
         }
@@ -259,7 +259,7 @@ setMethod("initialize", "genlight", function(.Object, ..., parallel=require("par
                     res <- as.integer(x)
                     res[res==0] <- NA
                     res <- res-1
-                    return(new("SNPbin", as.integer(res), ploidy=2))
+                    return(new("SNPbin", as.integer(res), ploidy=2L))
                 }
 
                 ## create SNPbin list
