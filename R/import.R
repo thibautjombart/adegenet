@@ -43,8 +43,8 @@
 #' @param ncode an optional integer giving the number of characters used for
 #'   coding one genotype at one locus. If not provided, this is determined from
 #'   data.
-#' @param ind.names an optional character vector giving the individuals names;
-#'   if NULL, taken from rownames of X.
+#' @param ind.names optinal, a vector giving the individuals names; if NULL, taken 
+#' from rownames of X. If factor or numeric, vector is converted to character.
 #' @param loc.names an optional character vector giving the markers names; if
 #'   NULL, taken from colnames of X.
 #' @param pop an optional factor giving the population of each individual.
@@ -80,7 +80,7 @@
 #'
 #' obj <- df2genind(df, ploidy=2, ncode=1)
 #' obj
-#' obj@@tab
+#' tab(obj)
 #'
 #'
 #' ## converting a genind as data.frame
@@ -104,6 +104,11 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     if(length(NA.char)>1) {
         warning("NA.char has several values; only the first one will be considered")
         NA.char <- NA.char[1]
+    }
+    
+    # If by any chance provided ind.names are of class int/factor, they are (silently?) converted to characters.
+    if (!is.character(ind.names) & !is.null(ind.names)) {
+      ind.names <- as.character(ind.names)
     }
 
 
@@ -263,7 +268,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     NA.posi <- which(is.na(allele.data))
     NA.ind <- ind.data[NA.posi]
     NA.locus <- locus.data[NA.posi]
-
+ 
     ## remove NAs
     if(length(NA.posi)>0){
         allele.data <- allele.data[-NA.posi]
@@ -286,7 +291,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
          out.colnames <- colnames(out)
          for(i in 1:length(NA.ind)){
             loc <- paste0(NA.locus[i], "\\.")
-            out[NA.ind[i], grep(loc, out.colnames)] <- NA
+            out[rownames(out) %in% NA.ind[i], grep(loc, out.colnames)] <- NA
          }
      }
 
@@ -1037,7 +1042,6 @@ read.snp <- function(file, quiet=FALSE, chunkSize=1000,
     }
 
     call <- match.call()
-
 
     ## HANDLE THE COMMENTS ##
     if(!quiet) cat("\n Reading comments... \n")

@@ -27,6 +27,29 @@ test_that("df2genind makes sense for given example", {
   expect_that(df, is_equivalent_to(df))
 })
 
+test_that("df2genind handles NAs for 'numerically named' samples correctly", {
+  skip_on_cran()
+  
+  df <- read.table(text = "
+AnimalID,Samp,INRA21,AHT137,REN169D01,AHTk253
+730,AX.0CCE,092 098,132 132,NA,284 286
+498,AP.07P4,092 092,124 142,204 208,280 280
+677,AP.088P,092 096,140 146,204 204,280 280
+678,AP.088T,096 098,124 148,198 204,280 280
+544,AP.07XM,096 098,134 146,198 198,280 286
+533,AP.07UM,092 098,134 148,198 204,280 286", 
+                   header = TRUE, sep = ",", colClasses = rep("factor", 6))
+  
+  obj <- df2genind(X = df[, !grepl("AnimalID|Samp", colnames(df))], ind.names = df$AnimalID,
+                   sep = " ", ncode = 6)
+  g <- tab(obj)
+  expect_that(g["730", grepl("REN169D01", colnames(g))], 
+              is_equivalent_to(c(REN169D01.204 = as.integer(NA), 
+                                 REN169D01.208 = as.integer(NA), 
+                                 REN169D01.198 = as.integer(NA)))
+  )
+  })
+
 test_that("df2genind will handle duplicate samples and loci", {
   skip_on_cran()
   x <-
