@@ -77,7 +77,7 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
 
     ## HANDLE LABELS ##
     ## loc names is not type-dependent
-    temp <- gsub("[.][^.]*$", "", old.colnames)
+    temp <- sub("[.].*$", "", old.colnames)
     temp <- .rmspaces(temp)
     loc.names <- unique(temp)
     nloc <- length(loc.names)
@@ -126,7 +126,7 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
 
         ## alleles name
         temp <- colnames(tab)
-        temp <- gsub("^.*[.]","",temp)
+        temp <- sub("^[^.]*[.]","",temp)
         temp <- .rmspaces(temp)
         all.names <- split(temp,loc.fac)
         all.names <- all.names[loc.names]
@@ -253,7 +253,7 @@ setMethod("initialize", "genpop", function(.Object, tab, prevcall=NULL, ploidy=2
     ## HANDLE LABELS ##
 
     ## loc names is not type-dependent
-    temp <- gsub("[.][^.]*$", "", old.colnames)
+    temp <-  sub("[.].*$", "", old.colnames)
     temp <- .rmspaces(temp)
     loc.names <- unique(temp)
     nloc <- length(loc.names)
@@ -280,7 +280,7 @@ setMethod("initialize", "genpop", function(.Object, tab, prevcall=NULL, ploidy=2
 
         ## alleles name
         temp <- colnames(tab)
-        temp <- gsub("^.*[.]","",temp)
+        temp <- sub("^[^.]*[.]","",temp)
         temp <- .rmspaces(temp)
         all.names <- split(temp,loc.fac)
         all.names <- all.names[loc.names]
