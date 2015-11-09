@@ -77,6 +77,9 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
 
     ## HANDLE LABELS ##
     ## loc names is not type-dependent
+    if(length(grep("([.][^.]*){2,}", old.colnames))>0L){
+        stop("more than one '.' in column names; please name column as [LOCUS].[ALLELE]")
+    }
     temp <- sub("[.].*$", "", old.colnames)
     temp <- .rmspaces(temp)
     loc.names <- unique(temp)
