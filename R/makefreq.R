@@ -32,7 +32,7 @@
 #' @seealso \code{\link{genpop}}
 #' @keywords manip multivariate
 #'
-#'#' @examples
+#' @examples
 #'
 #' \dontrun{
 #' data(microbov)
@@ -53,7 +53,7 @@
 #' add.scatter.eig(pca1$eig,nf=2,xax=1,yax=2,posi="top")
 #' }
 #'
-#' @export makefreq
+#' @export
 #' @docType methods
 #' @rdname makefreq
 #'
