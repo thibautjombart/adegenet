@@ -43,7 +43,7 @@
 #' @param ncode an optional integer giving the number of characters used for
 #'   coding one genotype at one locus. If not provided, this is determined from
 #'   data.
-#' @param ind.names optinal, a vector giving the individuals names; if NULL, taken 
+#' @param ind.names optinal, a vector giving the individuals names; if NULL, taken
 #' from rownames of X. If factor or numeric, vector is converted to character.
 #' @param loc.names an optional character vector giving the markers names; if
 #'   NULL, taken from colnames of X.
@@ -105,7 +105,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
         warning("NA.char has several values; only the first one will be considered")
         NA.char <- NA.char[1]
     }
-    
+
     # If by any chance provided ind.names are of class int/factor, they are (silently?) converted to characters.
     if (!is.character(ind.names) & !is.null(ind.names)) {
       ind.names <- as.character(ind.names)
@@ -148,6 +148,10 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     if(any(duplicated(loc.names))){
         warning("duplicate labels detected for some loci; using generic labels")
         loc.names <- .genlab("loc",nloc)
+    }
+    if(length(grep("[.]", loc.names))>0L){
+        warning("character '.' detected in names of loci; replacing with '_'")
+        gsub("[.]","_", loc.names)
     }
     colnames(X) <- loc.names
 
@@ -268,7 +272,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     NA.posi <- which(is.na(allele.data))
     NA.ind <- ind.data[NA.posi]
     NA.locus <- locus.data[NA.posi]
- 
+
     ## remove NAs
     if(length(NA.posi)>0){
         allele.data <- allele.data[-NA.posi]
