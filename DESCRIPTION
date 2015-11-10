@@ -3,8 +3,7 @@ Version: 2.0.1
 Encoding: UTF-8
 Date: 2015-09-01
 Title: Exploratory Analysis of Genetic and Genomic Data
-Author: Thibaut Jombart, Zhian N. Kamvar, Caitlin Collins, Roman Lustrik, Peter
-    Solymos, Klaus Schliep, Ismail Ahmed, Anne Cori, Federico Calboli
+Author: Thibaut Jombart, Zhian N. Kamvar, Caitlin Collins, Roman Lustrik, Marie-Pauline Beugin, Peter Solymos, Klaus Schliep, Ismail Ahmed, Anne Cori, Federico Calboli
 Maintainer: Thibaut Jombart <t.jombart@imperial.ac.uk>
 Suggests:
     pegas,
