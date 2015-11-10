@@ -128,20 +128,39 @@ hybridize <- function(x1, x2, n, pop="hybrid",
     freq2 <- tab(y2, freq=TRUE) # get frequencies
     freq2 <- split(freq2, y2@loc.fac) # split by locus
     freq2 <- freq2[locNames(x2)] # ensure right order
-
+    
     #### sampling of gametes
     ## kX1 / kX2 are lists of tables of sampled gametes
     kX1 <- lapply(freq1, function(v) t(rmultinom(n,ploidy/2,v)))
     names(kX1) <- locNames(x1)
-    for(i in 1:k) { colnames(kX1[[i]]) <- alleles(x1)[[i]]}
+    vec.paste1<-NULL
+    Vec.all1<-NULL
+    for(i in 1:k) { 
+      colnames(kX1[[i]]) <- alleles(x1)[[i]]
+      ## Paste the alleles locus after locus
+      vec.paste1<-c(vec.paste1, alleles(x1)[[i]])
+      ## Paste the number of alleles, locus after locus
+      Vec.all1<-c(Vec.all1, length(alleles(x1)[[i]]))
+    }
     kX2 <- lapply(freq2, function(v) t(rmultinom(n,ploidy/2,v)))
     names(kX2) <- locNames(x2)
-    for(i in 1:k) { colnames(kX2[[i]]) <- alleles(x2)[[i]]}
-
+    vec.paste2<-NULL
+    Vec.all2<-NULL
+    for(i in 1:k) { 
+      colnames(kX2[[i]]) <- alleles(x2)[[i]]
+      vec.paste2<-c(vec.paste2, alleles(x2)[[i]])
+      Vec.all2<-c(Vec.all2, length(alleles(x2)[[i]]))
+    }
+    
+    
     ## construction of zygotes ##
     ## individual gamete tables
     tab1 <- as.matrix(cbind.data.frame(kX1))
+    ## Force the names of the columns for tab1 and tab2 with the pattern "locNames.allele"
+    colnames(tab1)<-paste(rep(locNames(x1), Vec.all1), ".",vec.paste1, sep = "")
     tab2 <- as.matrix(cbind.data.frame(kX2))
+    colnames(tab2)<-paste(rep(locNames(x2), Vec.all2), ".",vec.paste2, sep = "")
+    
 
     ## make empty matrix with all alleles in tab1 and tab2
     zyg.rownames <- .genlab(hyb.label,n)
