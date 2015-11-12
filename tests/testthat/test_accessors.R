@@ -137,3 +137,13 @@ test_that("tab will retain dimensions", {
   expect_that(tabdim, equals(dim(tab(micpop))))
   expect_that(tabdim, equals(dim(tab(micpop, freq = TRUE))))
 })
+
+test_that("tab will return frequencies for PA data", {
+  skip_on_cran()
+  x <- read.table(system.file("files/AFLP.txt", package = "adegenet"))
+  aflp <- df2genind(x, type = "PA", ploidy = 1, pop = c(rep(1, 4), rep(2, 3)))
+  apop <- genind2genpop(aflp)
+  atab <- tab(apop, freq = TRUE)
+  res  <- tab(apop)/rowSums(tab(apop))
+  expect_equivalent(atab, res)
+})
