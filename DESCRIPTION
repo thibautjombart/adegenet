@@ -15,8 +15,7 @@ Suggests:
     splancs,
     adehabitat,
     tripack,
-    testthat,
-    vegan
+    testthat
 Depends:
     R (>= 2.14),
     methods,
@@ -35,7 +34,8 @@ Imports:
     spdep,
     boot,
     reshape2,
-    dplyr (>= 0.4.1)
+    dplyr (>= 0.4.1),
+    vegan
 URL: http://adegenet.r-forge.r-project.org/
 Description: Toolset for the exploration of genetic and genomic data. Adegenet
     provides formal (S4) classes for storing and handling various genetic data,
