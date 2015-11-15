@@ -240,12 +240,13 @@ dapc1 <- dapc(H3N2, var.contrib=FALSE, scale=FALSE, n.pca=150, n.da=5)
 scatter(dapc1, cell=0, pch=18:23, cstar=0, mstree=TRUE, lwd=2, lty=2)
 
 ## label individuals at the periphery
+# air = 2 is a measure of how much space each label needs
 # pch = NA suppresses plotting of points
 scatter(dapc1, label.inds = list(air = 2, pch = NA))
 
 ## only ellipse, custom labels
 scatter(dapc1, cell=2, pch="", cstar=0, posi.da="top",
-label=paste("year\n",2001:2006), axesel=FALSE, col=terrain.colors(10))
+        label=paste("year\n",2001:2006), axesel=FALSE, col=terrain.colors(10))
 
 
 ## SHOW COMPOPLOT ON MICROBOV DATA ##

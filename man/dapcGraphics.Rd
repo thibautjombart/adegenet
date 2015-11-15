@@ -113,8 +113,10 @@ compoplot(x, only.grp=NULL, subset=NULL, new.pred=NULL, col=NULL, lab=NULL,
     defaulting to 4.}
   \item{posi}{a characther string indicating the position of the legend; can match
     any combination of "top/bottom" and "left/right". See \code{?legend}.}
-  \item{label.inds}{Named list. Label individuals using \code{\link[vegan]{orditorp}} function.
-    Arguments \code{x} and \code{display} are hardcoded and should not be specified by user.}
+  \item{label.inds}{Named list of arguments passed to the 
+    \code{\link[vegan]{orditorp}} function. This will label individual points 
+    witout overlapping. Arguments \code{x} and \code{display} are hardcoded and 
+    should not be specified by user.}
   \item{\ldots}{further arguments to be passed to other functions. For
     \code{scatter}, arguments passed to \code{points}; for \code{compoplot},
     arguments passed to \code{barplot}.}
@@ -150,6 +152,7 @@ dapc1 <- dapc(H3N2, pop=H3N2$other$epid, n.pca=30,n.da=6)
 scatter(dapc1)
 
 ## label individuals at the periphery
+# air = 2 is a measure of how much space each label needs
 # pch = NA suppresses plotting of points
 scatter(dapc1, label.inds = list(air = 2, pch = NA))
 
