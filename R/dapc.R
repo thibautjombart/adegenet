@@ -502,7 +502,7 @@ scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=seasun(length(levels(gr
                          legend=FALSE, posi.leg="topright", cleg=1, txt.leg=levels(grp),
                          cstar = 1, cellipse = 1.5, axesell = FALSE, label = levels(grp), clabel = 1, xlim = NULL, ylim = NULL,
                          grid = FALSE, addaxes = TRUE, origin = c(0,0), include.origin = TRUE, sub = "", csub = 1, possub = "bottomleft",
-                         cgrid = 1, pixmap = NULL, contour = NULL, area = NULL, ...){
+                         cgrid = 1, pixmap = NULL, contour = NULL, area = NULL, label.inds = NULL, ...){
     ONEDIM <- xax==yax | ncol(x$ind.coord)==1
 
 
@@ -551,6 +551,26 @@ scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=seasun(length(levels(gr
                 clabel = clabel, xlim = xlim, ylim = ylim, grid = grid, addaxes = addaxes, origin = origin, include.origin = include.origin,
                 sub = sub, csub = csub, possub = possub, cgrid = cgrid, pixmap = pixmap, contour = contour, area = area)
 
+        # Add labels of individuals if specified. Play around with "air" to get
+        # a satisfactory result.
+        if (!is.null(label.inds) & is.list(label.inds)) {
+          appendList <- function (x, val) {
+            # recursevly "bind" a list into a longer list,
+            # from http://stackoverflow.com/a/9519964/322912
+            stopifnot(is.list(x), is.list(val))
+            xnames <- names(x)
+            for (v in names(val)) {
+              x[[v]] <- if (v %in% xnames && is.list(x[[v]]) && is.list(val[[v]])) 
+                appendList(x[[v]], val[[v]])
+              else c(x[[v]], val[[v]])
+            }
+            x
+          }
+          
+          do.call("orditorp", c(appendList(list(x = x$ind.coord[, c(xax, yax)], display = "species"), 
+                                           label.inds)))
+        }
+        
         ## add minimum spanning tree if needed
         if(mstree){
             meanposi <- apply(x$tab,2, tapply, grp, mean)

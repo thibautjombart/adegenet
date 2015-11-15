@@ -15,7 +15,8 @@ Suggests:
     splancs,
     adehabitat,
     tripack,
-    testthat
+    testthat,
+    vegan
 Depends:
     R (>= 2.14),
     methods,
