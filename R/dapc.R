@@ -495,6 +495,7 @@ summary.dapc <- function(object, ...){
 ##############
 ## scatter.dapc
 ##############
+#' @importFrom vegan orditorp
 scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=seasun(length(levels(grp))), pch=20, bg="white", solid=.7,
                          scree.da=TRUE, scree.pca=FALSE, posi.da="bottomright", posi.pca="bottomleft", bg.inset="white",
                          ratio.da=.25, ratio.pca=.25, inset.da=0.02, inset.pca=0.02, inset.solid=.5,
