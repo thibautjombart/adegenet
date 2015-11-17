@@ -618,7 +618,8 @@ read.genepop <- function(file, ncode=2L, quiet=FALSE){
     levels(pop) <- pop.names
 
     ## check that data are consistent with NCODE and ploidy=2
-    if(!all(unique(nchar(X))==(ncode*2))) stop(paste("some data are not encoded with",ncode*2,"characters\nCheck 'ncode' argument"))
+    if(!all(unique(nchar(X))==(ncode*2))) stop(paste("some alleles are not encoded with", ncode,
+                                                     "characters\nCheck 'ncode' argument"))
 
     res <- df2genind(X=X,pop=pop, ploidy=2, ncode=ncode, NA.char=NA.char)
     res@call <- prevcall
