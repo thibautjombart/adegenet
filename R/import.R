@@ -222,7 +222,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
 
     ## HANDLE NAs
     ## find all strings which are in fact NAs
-    NA.list <- unlist(lapply(unique(ploidy), function(nrep) paste(rep(NA.char, nrep), collapse="/")))
+    NA.list <- unlist(lapply(unique(ploidy), function(nrep) paste(rep(NA.char, nrep), collapse=sep)))
     NA.list <- unique(c(NA.list, NA.char))
 
     ## replace NAs
