@@ -33,7 +33,7 @@
                        NULL, ylim = NULL, grid = FALSE, addaxes = TRUE, origin =
                        c(0,0), include.origin = TRUE, sub = "", csub = 1, possub =
                        "bottomleft", cgrid = 1, pixmap = NULL, contour = NULL, area
-                       = NULL, \ldots)
+                       = NULL, label.inds = NULL, \ldots)
 
 assignplot(x, only.grp=NULL, subset=NULL, new.pred=NULL, cex.lab=.75,pch=3)
 
@@ -113,6 +113,10 @@ compoplot(x, only.grp=NULL, subset=NULL, new.pred=NULL, col=NULL, lab=NULL,
     defaulting to 4.}
   \item{posi}{a characther string indicating the position of the legend; can match
     any combination of "top/bottom" and "left/right". See \code{?legend}.}
+  \item{label.inds}{Named list of arguments passed to the 
+    \code{\link[vegan]{orditorp}} function. This will label individual points 
+    witout overlapping. Arguments \code{x} and \code{display} are hardcoded and 
+    should not be specified by user.}
   \item{\ldots}{further arguments to be passed to other functions. For
     \code{scatter}, arguments passed to \code{points}; for \code{compoplot},
     arguments passed to \code{barplot}.}
@@ -147,13 +151,18 @@ dapc1 <- dapc(H3N2, pop=H3N2$other$epid, n.pca=30,n.da=6)
 ## defautl plot ##
 scatter(dapc1)
 
+## label individuals at the periphery
+# air = 2 is a measure of how much space each label needs
+# pch = NA suppresses plotting of points
+scatter(dapc1, label.inds = list(air = 2, pch = NA))
+
 ## showing different scatter options ##
 ## remove internal segments and ellipses, different pch, add MStree
 scatter(dapc1, pch=18:23, cstar=0, mstree=TRUE, lwd=2, lty=2, posi.da="topleft")
 
 ## only ellipse, custom labels, use insets
 scatter(dapc1, cell=2, pch="", cstar=0, posi.pca="topleft", posi.da="topleft", scree.pca=TRUE,
-inset.pca=c(.01,.3), lab=paste("year\n",2001:2006), axesel=FALSE, col=terrain.colors(10))
+inset.pca=c(.01,.3), label=paste("year\n",2001:2006), axesel=FALSE, col=terrain.colors(10))
 
 ## without ellipses, use legend for groups
 scatter(dapc1, cell=0, cstar=0, scree.da=FALSE, clab=0, cex=3,

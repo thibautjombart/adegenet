@@ -15,6 +15,9 @@ NEW FEATURES
 
 	o read.fstat can now handle missing data coded by any number of
 	"0"
+	
+	o `scatter.dapc` function can now label individuals using `orditorp`
+	function from `vegan` package, which takes care of overlapping
 
 BUG FIXES
 	o Hs no longer returns NaN if one locus has not been typed;
