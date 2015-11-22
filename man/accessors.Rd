@@ -128,6 +128,7 @@
     \item{locNames}{returns the names of markers and/or alleles.}
     \item{locNames<-}{sets the names of markers using a vector of
       length \code{nLoc(x)}.}
+    \item{locFac}{returns a factor that defines which locus each column of the \code{@tab} slot belongs to}
     \item{ploidy}{returns the ploidy of the data.}
     \item{ploidy<-}{sets the ploidy of the data using an integer.}
     \item{alleles}{returns the alleles of each locus.}
