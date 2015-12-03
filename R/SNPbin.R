@@ -170,6 +170,9 @@ setMethod("initialize", "genlight", function(.Object, ..., parallel=require("par
     if(parallel && is.null(n.cores)){
         n.cores <- parallel::detectCores()
     }
+    if( .Platform$OS.type == "windows" ){
+        n.cores <- 1
+    }
 
     x <- .Object
     input <- list(...)
