@@ -295,7 +295,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
          out.colnames <- colnames(out)
          for(i in 1:length(NA.ind)){
             loc <- paste0(NA.locus[i], "\\.")
-            out[rownames(out) %in% NA.ind[i], grep(loc, out.colnames)] <- NA
+            out[NA.ind[i], grep(loc, out.colnames)] <- NA
          }
      }
 
