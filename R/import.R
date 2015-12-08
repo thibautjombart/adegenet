@@ -291,13 +291,40 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     dimnames(out) <- list(rownames(out), colnames(out))
 
     ## restore NAs
-     if(length(NA.posi)>0){
-         out.colnames <- colnames(out)
-         for(i in 1:length(NA.ind)){
-            loc <- paste0(NA.locus[i], "\\.")
-            out[NA.ind[i], grep(loc, out.colnames)] <- NA
-         }
-     }
+    ## 
+    ## Thanks to Klaus Schliep for the proposed speedup:
+    ## 
+    # if (length(NA.posi) > 0) {
+    #     out.colnames <- colnames(out)
+    #     NA.row <- match(NA.ind, rownames(out))
+    #     loc <- paste0(NA.locus, "\\.")
+    #     uloc <- unique(loc)
+    #     loc.list <- lapply(uloc, grep, out.colnames)
+    #     NA.col <- match(loc, uloc)
+    #     out[cbind(rep(NA.row, unlist(lapply(loc.list, length))[NA.col]), unlist(loc.list[NA.col]))] <- NA
+    #  }  
+    ## This one is modified from above to make everything more explicit. 
+    if (length(NA.posi) > 0) {
+      out.colnames <- colnames(out)
+      NA.row <- match(NA.ind, rownames(out))
+      loc <- paste0(NA.locus, "\\.")
+      uloc <- unique(loc)
+      loc.list <- lapply(uloc, grep, out.colnames)
+      NA.col <- match(loc, uloc)
+      
+      # Coordinates for missing rows
+      missing.ind <- vapply(loc.list, length, integer(1))[NA.col]
+      missing.ind <- rep(NA.row, missing.ind)
+      # Coordinates for missing columns
+      missing.loc <- unlist(loc.list[NA.col], use.names = FALSE)
+      
+      missing_coordinates <- matrix(0L, nrow = length(missing.ind), ncol = 2L)
+      missing_coordinates[, 1] <- missing.ind
+      missing_coordinates[, 2] <- missing.loc
+      
+      out[missing_coordinates] <- NA
+    }
+
 
     ## call upon genind constructor
     prevcall <- match.call()
