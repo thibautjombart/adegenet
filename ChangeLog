@@ -18,6 +18,11 @@ NEW FEATURES
 	
 	o `scatter.dapc` function can now label individuals using `orditorp`
 	function from `vegan` package, which takes care of overlapping
+	(See issue #100)
+	
+	o df2genind is now faster at handling missing data (See issue #114)
+	
+	o the summary method has better formatting
 
 BUG FIXES
 	o Hs no longer returns NaN if one locus has not been typed;
@@ -31,6 +36,13 @@ BUG FIXES
 
 	o fixed occasional spurious warning about duplicated individual
 	labels in df2genind
+	
+	o fixed issues with mis-placed missing data in df2genind when samples
+	were labeled with numbers (See issue #96)
+	
+	o frequencies can now be obtained from P/A genpop objects (See issue #105)
+	
+	o Windows no longer throws an error with as.genlight (See issue #109)
 
 
 
