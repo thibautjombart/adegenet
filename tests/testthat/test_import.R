@@ -64,3 +64,28 @@ test_that("df2genind will handle duplicate samples and loci", {
   expect_that(unique(rowSums(tab(xgid))), is_equivalent_to(4))
   expect_that(genind2df(xgid, sep = "/"), is_equivalent_to(xdf))
 })
+
+
+test_that("read.X functions work as expected", {
+  skip_on_cran()
+  gpop <- read.genepop(system.file("files/nancycats.gen",package="adegenet"), quiet = TRUE)
+  fsta <- read.fstat(system.file("files/nancycats.dat",package="adegenet"), quiet = TRUE)
+  gntx <- read.genetix(system.file("files/nancycats.gtx",package="adegenet"), quiet = TRUE)
+  stru <- read.structure(system.file("files/nancycats.str",package="adegenet"),
+                         onerowperind=FALSE, n.ind=237, n.loc=9, col.lab=1, 
+                         col.pop=2, ask=FALSE, quiet = TRUE)
+  data("nancycats", package = "adegenet")
+  # Making sure that the populations are all named the same. The order of the
+  # isolates are mixed up within these data.
+  levels(pop(gpop)) <- levels(pop(nancycats))
+  levels(pop(fsta)) <- levels(pop(nancycats))
+  levels(pop(gntx)) <- levels(pop(nancycats))
+  levels(pop(stru)) <- levels(pop(nancycats))
+  
+  # Ensuring that the locus and population summaries are equivalent
+  summary_stats <- summary(nancycats)
+  expect_equivalent(summary(gpop), summary_stats)
+  expect_equivalent(summary(fsta), summary_stats)
+  expect_equivalent(summary(gntx), summary_stats)
+  expect_equivalent(summary(stru), summary_stats)
+})
