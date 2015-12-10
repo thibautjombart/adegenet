@@ -635,7 +635,14 @@ read.genepop <- function(file, ncode=2L, quiet=FALSE){
     ## X is a individual x locus genotypes matrix
     X <- matrix(unlist(strsplit(vec.genot,"[[:space:]]+")),ncol=nloc,byrow=TRUE)
 
-    rownames(X) <- 1:nrow(X)
+    # If there are any duplicate names, make them unique and issue a warning. Else
+    # use existing individual names.
+    if (any(duplicated(ind.names))) {
+      rownames(X) <- 1:nrow(X)
+      warning("Duplicate individual names detected. Coercing them to be unique.")
+    } else {
+      rownames(X) <- ind.names
+    }
     colnames(X) <- loc.names
 
     ## give right pop names
