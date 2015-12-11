@@ -89,3 +89,41 @@ test_that("read.X functions work as expected", {
   expect_equivalent(summary(gntx), summary_stats)
   expect_equivalent(summary(stru), summary_stats)
 })
+
+test_that("read.genpop can import duplicate names", {
+  skip_on_cran()
+  x <- "
+  Microsat on Chiracus radioactivus, a pest species 
+     Loc1, Loc2, Loc3, Y-linked, Loc4 
+POP 
+AA8, 0405 0711 0304 0000      0505 
+AA9, 0405 0609 0208 0000      0505 
+A10, 0205 0609 0101 0000      0305 
+A11, 0405 0606 0102 0000      0504 
+A12, 0202 0609 0105 0000      0507 
+A13, 0505 0909 0107 0000      0505 
+A14, 0202 0609 0207 0000      0503 
+A15, 0405 0609 0101 0000      0505 
+Pop
+AF, 0000 0000 0000 0000      0505 
+AF, 0205 0307 0102 0000      0505 
+AF, 0202 0609 0202 0000      0505 
+AF, 0205 0909 0000 0000      0505 
+AF, 0205 0307 0202 0000      0505 
+AF, 0505 0303 0102 0000      0505 
+AF, 0205 0700 0000 0000      0505 
+AF, 0505 0900 0000 0000      0405 
+AF, 0205 0600 0000 0000      0505 
+AF, 0505 0606 0202 0000      0505 
+pop 
+C45, 0505 0606 0202 0000      0505 
+C45, 0505 0909 0202 0000      0505 
+C45, 0505 0306 0202 0000      0505 
+C45, 0505 0909 0102 0000      0405 
+C45, 0205 0303 0202 0000      0505 
+C45, 0205 0909 0202 0000      0405 
+  "
+  tmp <- tempfile(fileext = ".gen")
+  cat(x, file = tmp)
+  indNames(read.genepop(tmp))
+})
