@@ -125,5 +125,7 @@ C45, 0205 0909 0202 0000      0405
   "
   tmp <- tempfile(fileext = ".gen")
   cat(x, file = tmp)
-  indNames(read.genepop(tmp))
+  expect_warning(gp <- read.genepop(tmp))
+  expect_identical(indNames(gp), .genlab("", nInd(gp)))
+  
 })
