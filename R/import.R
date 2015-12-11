@@ -638,7 +638,7 @@ read.genepop <- function(file, ncode=2L, quiet=FALSE){
     # If there are any duplicate names, make them unique and issue a warning. Else
     # use existing individual names.
     if (any(duplicated(ind.names))) {
-      rownames(X) <- 1:nrow(X)
+      rownames(X) <- .genlab("", nrow(X))
       warning("Duplicate individual names detected. Coercing them to be unique.")
     } else {
       rownames(X) <- ind.names
