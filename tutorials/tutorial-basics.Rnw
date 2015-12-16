@@ -1097,12 +1097,12 @@ of permutations to use for a Monte-Carlo version.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Population structure is traditionally measured and tested using $F$ statistics, in particular $F_{st}$.
 As of version 2.0.0, \textit{adegenet} relies on \emph{hierfstat} and \emph{pegas} for most $F$ statistics.
-Note that some of these features might be part of the current devel version of \emph{hierfstat},
-which can be installed by:
-<<eval=FALSE>>=
-library(devtools)
-install_github("jgx65/hierfstat")
-@
+%' Note that some of these features might be part of the current devel version of \emph{hierfstat},
+%' which can be installed by:
+%' <<eval=FALSE>>=
+%' library(devtools)
+%' install_github("jgx65/hierfstat")
+%' @
 
 Can we find any population structure in the cat colonies from Nancy?
 The basic $F$ statistics are provided by:
