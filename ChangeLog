@@ -43,6 +43,8 @@ BUG FIXES
 	o frequencies can now be obtained from P/A genpop objects (See issue #105)
 	
 	o Windows no longer throws an error with as.genlight (See issue #109)
+	
+	o read.genpop now returns individual names (See issue #117)
 
 
 
