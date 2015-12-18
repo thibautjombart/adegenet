@@ -105,6 +105,10 @@
   populations 2, 3 and 4, using \code{popNames(obj)} as reference;
   logicals, or named populations also work; this overrides other
   subsetting of individuals.\cr
+
+  \item "obj[i=1:2, drop=TRUE]" returns an object keeping only the first
+  two individuals (or populations), dropping the alleles no longer
+  present in the data.\cr
 }
   The argument \code{treatOther} handles the treatment of objects in the
   \code{@other} slot (see details). The argument \code{drop} can be set
