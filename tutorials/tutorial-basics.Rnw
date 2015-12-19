@@ -271,6 +271,8 @@ Others include:
   \url{https://stat.ethz.ch/mailman/listinfo/r-sig-phylo}
 \item \textit{R-help}: general questions about R.\\
   \url{https://stat.ethz.ch/mailman/listinfo/r-help}
+\item \textit{stackoverflow.com}: general questions about R.\\
+  \url{http://stackoverflow.com/questions/tagged/r}  
 \end{itemize}
 
 Please avoid double-posting (it is often considered to be rude).
@@ -939,13 +941,20 @@ hel5
 locNames(hel5)
 @
 
+When subsetting individuals/samples, some alleles may not be included in the subset anymore. In case you want these alleles to be dropped, use the \texttt{drop = TRUE} argument.
+
+<<>>=
+data(nancycats)
+
+nAll(nancycats[1:3, ])
+nAll(nancycats[1:3, , drop = TRUE])
+@
 
 To simplify the task of separating data by marker systematically, the function
 \texttt{seploc} can be used.
 It returns a list of objects (optionnaly, of data matrices), each
 corresponding to a marker:
 <<seploc>>=
-data(nancycats)
 sepCats <- seploc(nancycats)
 class(sepCats)
 names(sepCats)
