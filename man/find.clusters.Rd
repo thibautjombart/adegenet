@@ -86,7 +86,7 @@
     informative, and ii) no criteria for automatic selection is
     appropriate to all cases (see details).}
   \item{criterion}{ a \code{character} string matching "diffNgroup",
-    "min","goesup", "smoothNgoesup", or "conserv", indicating the criterion for automatic
+    "min","goesup", "smoothNgoesup", or "goodfit", indicating the criterion for automatic
     selection of the optimal number of clusters. See \code{details} for
     an explanation of these procedures.}
   \item{max.n.clust}{ an \code{integer} indicating the maximum number of
