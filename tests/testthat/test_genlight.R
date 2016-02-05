@@ -90,3 +90,15 @@ test_that("genlight objects do not take a mixture of positive and negative subsc
   skip_on_cran()
   expect_error(xx[, c(2, -1)], "subscripts.")
 })
+
+
+test_that("glSim does not call parallel by default", {
+  skip_on_cran()
+  detach("package:parallel")
+  no_parallel <- sessionInfo()$basePkgs
+  expect_false("parallel" %in% no_parallel)
+  x <- glSim(2, n.snp.nonstruc = 10, n.snp.struc = 10, parallel = FALSE)
+  check_parallel <- sessionInfo()$basePkgs
+  expect_false("parallel" %in% check_parallel)
+  expect_is(x, "genlight")
+})

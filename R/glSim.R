@@ -214,7 +214,7 @@ glSim <- function(n.ind, n.snp.nonstruc, n.snp.struc = 0, grp.size = c(0.5, 0.5)
   pop <- res.ns[[2]]
   res.ns <- res.ns[[1]]
   if(n.snp.struc>0){
-    res <- cbind(res.ns, struct)
+    res <- cbind(res.ns, struct, parallel = parallel)
     res@pop <- phen
   }
   else{
