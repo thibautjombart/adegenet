@@ -1,5 +1,19 @@
 context("Genlight construction")
 
+
+test_that("glSim does not call parallel by default", {
+  skip_on_cran()
+  if ("parallel" %in% sessionInfo()$basePkgs){
+    skip("parallel is already loaded")
+  }
+  no_parallel <- sessionInfo()$basePkgs
+  expect_false("parallel" %in% no_parallel)
+  x <- glSim(2, n.snp.nonstruc = 10, n.snp.struc = 10, parallel = FALSE)
+  check_parallel <- sessionInfo()$basePkgs
+  expect_false("parallel" %in% check_parallel)
+  expect_is(x, "genlight")
+})
+
 test_that("Genlight objects can be created predictably", {
   skip_on_cran()
   expect_warning(a <- new("genlight", list(c(1,0,1), c(0,0,1,0)), parallel = FALSE ))
@@ -89,16 +103,4 @@ test_that("missing data is properly subset with a character vector", {
 test_that("genlight objects do not take a mixture of positive and negative subscripts", {
   skip_on_cran()
   expect_error(xx[, c(2, -1)], "subscripts.")
-})
-
-
-test_that("glSim does not call parallel by default", {
-  skip_on_cran()
-  detach("package:parallel")
-  no_parallel <- sessionInfo()$basePkgs
-  expect_false("parallel" %in% no_parallel)
-  x <- glSim(2, n.snp.nonstruc = 10, n.snp.struc = 10, parallel = FALSE)
-  check_parallel <- sessionInfo()$basePkgs
-  expect_false("parallel" %in% check_parallel)
-  expect_is(x, "genlight")
 })
