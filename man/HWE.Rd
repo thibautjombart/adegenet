@@ -48,7 +48,7 @@
   In all cases, NA values are likely to appear in fixed loci, or
   entirely non-typed loci.
 }
-\seealso{\code{\link[genetics]{HWE.test}},\code{\link[stats]{chisq.test}}
+\seealso{\code{HWE.test} in the \code{genetics} package, \code{\link[stats]{chisq.test}}
 }
 \author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
