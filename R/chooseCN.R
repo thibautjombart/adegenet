@@ -240,7 +240,7 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
         }
         if(a<1) { a <- 1 }
         thres <- mean(cn)/1e8
-        if(dmin > thres) dmin <- thres
+        if(dmin < thres) dmin <- thres
         cn[cn < dmin] <- dmin
         cn <- 1/(cn^a)
         diag(cn) <- 0
