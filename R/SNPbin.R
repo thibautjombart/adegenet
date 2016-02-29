@@ -165,7 +165,7 @@ setMethod("initialize", "SNPbin", function(.Object, ...) {
 ########################
 ## genlight constructor
 ########################
-setMethod("initialize", "genlight", function(.Object, ..., parallel=require("parallel"), n.cores=NULL) {
+setMethod("initialize", "genlight", function(.Object, ..., parallel=require("parallel"), n.cores=1) {
     if(parallel && !require(parallel)) stop("parallel package requested but not installed")
     if(parallel && is.null(n.cores)){
         n.cores <- parallel::detectCores()
