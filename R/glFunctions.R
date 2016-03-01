@@ -172,7 +172,7 @@ glVar <- function(x, alleleAsUnit=TRUE){
 ## between centred/scaled vectors
 ## of SNPs
 glDotProd <- function(x, center=FALSE, scale=FALSE, alleleAsUnit=FALSE,
-                      parallel=require("parallel"), n.cores=NULL){
+                      parallel=FALSE, n.cores=NULL){
     if(!inherits(x, "genlight")) stop("x is not a genlight object")
 
     ## SOME CHECKS ##
@@ -277,7 +277,7 @@ glDotProd <- function(x, center=FALSE, scale=FALSE, alleleAsUnit=FALSE,
 ## PCA for genlight objects
 ##
 glPca <- function(x, center=TRUE, scale=FALSE, nf=NULL, loadings=TRUE, alleleAsUnit=FALSE,
-                  useC=TRUE, parallel=require("parallel"), n.cores=NULL,
+                  useC=TRUE, parallel=FALSE, n.cores=NULL,
                   returnDotProd=FALSE, matDotProd=NULL){
     if(!inherits(x, "genlight")) stop("x is not a genlight object")
 
