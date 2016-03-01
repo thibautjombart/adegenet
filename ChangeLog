@@ -1,3 +1,8 @@
+			CHANGES IN ADEGENET VERSION 2.0.2
+BUG FIXES
+	o df2genind will now replace "." in alleles with "_" (or "p" if sep = "_")
+	see https://github.com/thibautjombart/adegenet/issues/132 for details
+
 			CHANGES IN ADEGENET VERSION 2.0.1
 NEW FEATURES
 	o Hs is now much faster and will scale better for large number of
