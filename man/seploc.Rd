@@ -20,7 +20,7 @@
 \S4method{seploc}{genind}(x,truenames=TRUE,res.type=c("genind","matrix"))
 \S4method{seploc}{genpop}(x,truenames=TRUE,res.type=c("genpop","matrix"))
 \S4method{seploc}{genlight}(x, n.block=NULL, block.size=NULL, random=FALSE,
-       parallel=require(parallel), n.cores=NULL)
+       parallel=FALSE, n.cores=NULL)
 }
 \arguments{
     \item{x}{a \linkS4class{genind} or a \linkS4class{genpop} object.}

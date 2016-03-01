@@ -1073,7 +1073,7 @@ import2genind <- function(file, quiet=FALSE, ...){
 #' @export read.snp
 #'
 read.snp <- function(file, quiet=FALSE, chunkSize=1000,
-                     parallel=require("parallel"), n.cores=NULL, ...){
+                     parallel=FALSE, n.cores=NULL, ...){
     ext <- .readExt(file)
     ext <- toupper(ext)
     if(ext != "SNP") warning("wrong file extension - '.snp' expected")
@@ -1152,7 +1152,7 @@ read.snp <- function(file, quiet=FALSE, chunkSize=1000,
         temp <- strsplit(txt[ID.INDIV+1], "")
         temp <- lapply(temp, function(e) suppressWarnings(as.integer(e)))
         if(parallel){
-            res <- c(res, mclapply(temp, function(e) new("SNPbin", e),
+            res <- c(res, parallel::mclapply(temp, function(e) new("SNPbin", e),
                                    mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE) )
         } else {
             res <- c(res, lapply(temp, function(e) new("SNPbin", e)) )
@@ -1413,7 +1413,7 @@ read.PLINK <- function(file, map.file=NULL, quiet=FALSE, chunkSize=1000,
         txt <- lapply(txt, function(e) suppressWarnings(as.integer(e[-(1:6)])))
 
         if(parallel){
-            res <- c(res, mclapply(txt, function(e) new("SNPbin", snp=e, ploidy=2L),
+            res <- c(res, parallel::mclapply(txt, function(e) new("SNPbin", snp=e, ploidy=2L),
                                    mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE) )
         } else {
             res <- c(res, lapply(txt, function(e) new("SNPbin", snp=e, ploidy=2L)) )
@@ -1524,7 +1524,7 @@ fasta2genlight <- function(file, quiet=FALSE, chunkSize=1000, saveNbAlleles=FALS
         IND.LAB <- c(IND.LAB, sub(">","",txt[grep("^>", txt)])) # find individuals' labels
         txt <- split(txt, rep(1:nb.ind, each=LINES.PER.IND)) # split per individuals
         if(parallel){
-            txt <- mclapply(txt, function(e) strsplit(paste(e[-1], collapse=""), split=""),
+            txt <- parallel::mclapply(txt, function(e) strsplit(paste(e[-1], collapse=""), split=""),
                             mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE) # each genome -> one vector
         } else {
             txt <- lapply(txt, function(e) strsplit(paste(e[-1], collapse=""), split="")) # each genome -> one vector
@@ -1582,7 +1582,7 @@ fasta2genlight <- function(file, quiet=FALSE, chunkSize=1000, saveNbAlleles=FALS
         nb.ind <- length(grep("^>", txt))
         txt <- split(txt, rep(1:nb.ind, each=LINES.PER.IND)) # split per individuals
         if(parallel){
-            txt <- mclapply(txt, function(e) strsplit(paste(e[-1], collapse=""), split="")[[1]][snp.posi],
+            txt <- parallel::mclapply(txt, function(e) strsplit(paste(e[-1], collapse=""), split="")[[1]][snp.posi],
                                         mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE) # each genome -> one SNP vector
         } else {
             txt <- lapply(txt, function(e) strsplit(paste(e[-1], collapse=""), split="")[[1]][snp.posi]) # each genome -> one SNP vector

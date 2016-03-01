@@ -4,8 +4,8 @@
 \alias{read.snp}
 \title{Reading Single Nucleotide Polymorphism data}
 \usage{
-read.snp(file, quiet = FALSE, chunkSize = 1000,
-  parallel = require("parallel"), n.cores = NULL, ...)
+read.snp(file, quiet = FALSE, chunkSize = 1000, parallel = FALSE,
+  n.cores = NULL, ...)
 }
 \arguments{
 \item{file}{a character string giving the path to the file to convert, with
