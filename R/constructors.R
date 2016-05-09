@@ -151,8 +151,12 @@ setMethod("initialize", "genind", function(.Object, tab, pop=NULL, prevcall=NULL
     ## beware, keep levels of pop sorted in
     ## there order of appearance
     if(!is.null(pop)) {
-        # convert pop to a factor if it is not
-        if(!is.factor(pop)) {pop <- factor(pop)}
+        ## convert pop to a factor if it is not; for consistentcy with the accessor 'pop', we need
+        ## to make sure that levels will be sorted by their order of appearance
+        if(!is.factor(pop)) {
+            pop <- as.character(pop)
+            pop <- factor(pop, levels=unique(pop))
+        }
         out@pop <- pop
     }
 

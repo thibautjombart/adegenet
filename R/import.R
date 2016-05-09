@@ -19,9 +19,9 @@
 ## Function df2genind
 ######################
 #' Convert a data.frame of allele data to a genind object.
-#' 
-#' The function \code{df2genind} converts a data.frame (or a matrix) into a 
-#' \linkS4class{genind} object. The data.frame must meet the following 
+#'
+#' The function \code{df2genind} converts a data.frame (or a matrix) into a
+#' \linkS4class{genind} object. The data.frame must meet the following
 #' requirements:
 #' \itemize{
 #' \item genotypes are in row (one row per genotype)
@@ -30,70 +30,70 @@
 #' separated by a character string (argument \code{sep}); if no separator is
 #' used, the number of characters coding alleles must be indicated (argument
 #' \code{ncode}).}
-#' 
+#'
 #' See \code{\link{genind2df}} to convert \linkS4class{genind} objects back to
 #' such a data.frame.
-#' 
-#' === Details for the \code{sep} argument ===\cr this character is directly 
+#'
+#' === Details for the \code{sep} argument ===\cr this character is directly
 #' used in reguar expressions like \code{gsub}, and thus require some characters
 #' to be preceeded by double backslashes. For instance, "/" works but "|" must
 #' be coded as "\\|".
-#' 
+#'
 #' @aliases df2genind
-#' @param X a matrix or a data.frame containing allelle data only (see 
+#' @param X a matrix or a data.frame containing allelle data only (see
 #'   decription)
 #' @param sep a character string separating alleles. See details.
-#' @param ncode an optional integer giving the number of characters used for 
-#'   coding one genotype at one locus. If not provided, this is determined from 
+#' @param ncode an optional integer giving the number of characters used for
+#'   coding one genotype at one locus. If not provided, this is determined from
 #'   data.
 #' @param ind.names optinal, a vector giving the individuals names; if NULL,
 #'   taken from rownames of X. If factor or numeric, vector is converted to
 #'   character.
-#' @param loc.names an optional character vector giving the markers names; if 
+#' @param loc.names an optional character vector giving the markers names; if
 #'   NULL, taken from colnames of X.
 #' @param pop an optional factor giving the population of each individual.
 #' @param NA.char a character string corresponding to missing allele (to be
 #'   treated as NA)
 #' @param ploidy an integer indicating the degree of ploidy of the genotypes.
-#' @param type a character string indicating the type of marker: 'codom' stands 
-#'   for 'codominant' (e.g. microstallites, allozymes); 'PA' stands for 
+#' @param type a character string indicating the type of marker: 'codom' stands
+#'   for 'codominant' (e.g. microstallites, allozymes); 'PA' stands for
 #'   'presence/absence' markers (e.g. AFLP, RAPD).
-#' @param strata an optional data frame that defines population stratifications 
-#'   for your samples. This is especially useful if you have a hierarchical or 
+#' @param strata an optional data frame that defines population stratifications
+#'   for your samples. This is especially useful if you have a hierarchical or
 #'   factorial sampling design.
 #' @param hierarchy a hierarchical formula that explicitely defines hierarchical
 #'   levels in your strata. see \code{\link{hierarchy}} for details.
-#'   
-#' @return an object of the class \linkS4class{genind} for \code{df2genind}; a 
+#'
+#' @return an object of the class \linkS4class{genind} for \code{df2genind}; a
 #'   matrix of biallelic genotypes for \code{genind2df}
-#'   
-#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}, Zhian N. Kamvar 
+#'
+#' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}, Zhian N. Kamvar
 #'   \email{kamvarz@@science.oregonstate.edu}
-#'   
-#' @seealso \code{\link{genind2df}}, \code{\link{import2genind}}, 
-#'   \code{\link{read.genetix}}, \code{\link{read.fstat}}, 
+#'
+#' @seealso \code{\link{genind2df}}, \code{\link{import2genind}},
+#'   \code{\link{read.genetix}}, \code{\link{read.fstat}},
 #'   \code{\link{read.structure}}
-#'   
+#'
 #' @keywords manip
 #' @examples
-#' 
+#'
 #' ## simple example
 #' df <- data.frame(locusA=c("11","11","12","32"),
 #' locusB=c(NA,"34","55","15"),locusC=c("22","22","21","22"))
 #' row.names(df) <- .genlab("genotype",4)
 #' df
-#' 
+#'
 #' obj <- df2genind(df, ploidy=2, ncode=1)
 #' obj
 #' tab(obj)
-#' 
-#' 
+#'
+#'
 #' ## converting a genind as data.frame
 #' genind2df(obj)
 #' genind2df(obj, sep="/")
-#' 
+#'
 #' @export
-#' 
+#'
 df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
                       pop=NULL, NA.char="", ploidy=2, type=c("codom","PA"),
                       strata = NULL, hierarchy = NULL){
@@ -161,12 +161,6 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     colnames(X) <- loc.names
 
 
-    ## pop argument
-    if(!is.null(pop)){
-        if(length(pop)!= n) stop("length of factor pop differs from nrow(X)")
-        pop <- as.factor(pop)
-    }
-    
     ## check alleles for periods
     if (length(grep("[.]", X)) > 0L){
       if (is.null(sep) || sep != "_"){
@@ -307,9 +301,9 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     dimnames(out) <- list(rownames(out), colnames(out))
 
     ## restore NAs
-    ## 
+    ##
     ## Thanks to Klaus Schliep for the proposed speedup:
-    ## 
+    ##
     # if (length(NA.posi) > 0) {
     #     out.colnames <- colnames(out)
     #     NA.row <- match(NA.ind, rownames(out))
@@ -318,8 +312,8 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     #     loc.list <- lapply(uloc, grep, out.colnames)
     #     NA.col <- match(loc, uloc)
     #     out[cbind(rep(NA.row, unlist(lapply(loc.list, length))[NA.col]), unlist(loc.list[NA.col]))] <- NA
-    #  }  
-    ## This one is modified from above to make everything more explicit. 
+    #  }
+    ## This one is modified from above to make everything more explicit.
     if (length(NA.posi) > 0) {
       out.colnames <- colnames(out)
       NA.row <- match(NA.ind, rownames(out))
@@ -327,17 +321,17 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
       uloc <- unique(loc)
       loc.list <- lapply(uloc, grep, out.colnames)
       NA.col <- match(loc, uloc)
-      
+
       # Coordinates for missing rows
       missing.ind <- vapply(loc.list, length, integer(1))[NA.col]
       missing.ind <- rep(NA.row, missing.ind)
       # Coordinates for missing columns
       missing.loc <- unlist(loc.list[NA.col], use.names = FALSE)
-      
+
       missing_coordinates <- matrix(0L, nrow = length(missing.ind), ncol = 2L)
       missing_coordinates[, 1] <- missing.ind
       missing_coordinates[, 2] <- missing.loc
-      
+
       out[missing_coordinates] <- NA
     }
 
@@ -445,8 +439,9 @@ read.genetix <- function(file=NULL,quiet=FALSE) {
 
     colnames(X) <- loc.names
 
-    ## make a factor "pop" if there is more than one population
-    pop <- factor(rep(pop.names,pop.nind))
+    ## pop is kept as character; treatment and conversion to a factor belongs to the constructor
+    ## (otherwise there is potential for inconsistencies across different import functions
+    pop <- as.character(rep(pop.names,pop.nind))
 
     ## pass X to df2genind
     res <- df2genind(X=X, ncode=3, pop=pop, ploidy=2, NA.char="000")
@@ -518,8 +513,8 @@ read.fstat <- function(file, quiet=FALSE){
     txt <- .rmspaces(txt)
     txt <- sapply(1:length(txt),function(i) unlist(strsplit(txt[i],"([[:space:]]+)|([[:blank:]]+)")) )
     X <- t(txt)
-    pop <- factor(X[,1])
-    if(length(levels(pop)) == 1 ) pop <- NULL
+    pop <- as.character(X[,1])
+    if(length(unique(pop)) == 1 ) pop <- NULL
     X <- X[,-1]
 
     colnames(X) <- loc.names
@@ -530,7 +525,7 @@ read.fstat <- function(file, quiet=FALSE){
     X[X %in% allNAs] <- NA.char
 
     ## call df2genind
-    res <- df2genind(X=X,pop=pop, ploidy=2, ncode=ncode, NA.char=NA.char)
+    res <- df2genind(X=X, pop=pop, ploidy=2, ncode=ncode, NA.char=NA.char)
     res@call <- call
 
     if(!quiet) cat("\n...done.\n\n")
@@ -671,7 +666,7 @@ read.genepop <- function(file, ncode=2L, quiet=FALSE){
     if(!all(unique(nchar(X))==(ncode*2))) stop(paste("some alleles are not encoded with", ncode,
                                                      "characters\nCheck 'ncode' argument"))
 
-    res <- df2genind(X=X,pop=pop, ploidy=2, ncode=ncode, NA.char=NA.char)
+    res <- df2genind(X=X, pop=as.character(pop), ploidy=2, ncode=ncode, NA.char=NA.char)
     res@call <- prevcall
 
     if(!quiet) cat("\n...done.\n\n")
@@ -853,7 +848,7 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL,
 
     ## population factor
     if(col.pop !=0) {
-        pop <- factor(mat[, col.pop])
+        pop <- as.character(mat[, col.pop])
     } else {
         pop <- NULL
     }
@@ -897,7 +892,7 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL,
     rownames(X) <- ind.names
     colnames(X) <- loc.names
 
-    res <- df2genind(X=X,pop=pop, ploidy=2,sep=sep,ncode=ncode)
+    res <- df2genind(X=X, pop=pop, ploidy=2, sep=sep, ncode=ncode)
 
     res@call <- match.call()
 
