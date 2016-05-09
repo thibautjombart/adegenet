@@ -102,5 +102,5 @@ test_that("missing data is properly subset with a character vector", {
 
 test_that("genlight objects do not take a mixture of positive and negative subscripts", {
   skip_on_cran()
-  expect_error(xx[, c(2, -1)], "subscripts.")
+  expect_error(xx[, c(2, -1)], ".* may be mixed with negative subscript")
 })
