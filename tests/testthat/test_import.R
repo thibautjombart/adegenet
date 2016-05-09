@@ -2,13 +2,13 @@ context("Import Tests")
 
 test_that("df2genind works with haploids", {
   skip_on_cran()
-  x <- matrix(sample(20), nrow = 10, ncol = 2)
+  x <- matrix(as.character(sample(20)), nrow = 10, ncol = 2)
   res <- df2genind(x, ploidy = 1)
   expect_that(sum(res@loc.n.all), equals(20))
   expect_that(nInd(res), equals(10))
   expect_that(nLoc(res), equals(2))
   resdf <- genind2df(res)
-  expect_that(as.matrix(resdf), is_equivalent_to(x))
+  all.equal(unlist(resdf, use.names=FALSE), as.vector(x))
 })
 
 test_that("df2genind makes sense for given example", {
