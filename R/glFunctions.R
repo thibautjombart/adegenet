@@ -172,7 +172,7 @@ glVar <- function(x, alleleAsUnit=TRUE){
 ## between centred/scaled vectors
 ## of SNPs
 glDotProd <- function(x, center=FALSE, scale=FALSE, alleleAsUnit=FALSE,
-                      parallel=require("parallel"), n.cores=NULL){
+                      parallel=FALSE, n.cores=NULL){
     if(!inherits(x, "genlight")) stop("x is not a genlight object")
 
     ## SOME CHECKS ##
@@ -277,7 +277,7 @@ glDotProd <- function(x, center=FALSE, scale=FALSE, alleleAsUnit=FALSE,
 ## PCA for genlight objects
 ##
 glPca <- function(x, center=TRUE, scale=FALSE, nf=NULL, loadings=TRUE, alleleAsUnit=FALSE,
-                  useC=TRUE, parallel=require("parallel"), n.cores=NULL,
+                  useC=TRUE, parallel=FALSE, n.cores=NULL,
                   returnDotProd=FALSE, matDotProd=NULL){
     if(!inherits(x, "genlight")) stop("x is not a genlight object")
 
@@ -359,7 +359,7 @@ glPca <- function(x, center=TRUE, scale=FALSE, nf=NULL, loadings=TRUE, alleleAsU
             ## COMPUTE ALL POSSIBLE DOT PRODUCTS (XX^T / n) ##
             allComb <- combn(1:nInd(x), 2)
             if(parallel){
-                allProd <- unlist(mclapply(1:ncol(allComb), function(i) dotProd(x@gen[[allComb[1,i]]], x@gen[[allComb[2,i]]], myPloidy[allComb[1,i]], myPloidy[allComb[2,i]]),
+                allProd <- unlist(parallel::mclapply(1:ncol(allComb), function(i) dotProd(x@gen[[allComb[1,i]]], x@gen[[allComb[2,i]]], myPloidy[allComb[1,i]], myPloidy[allComb[2,i]]),
                                            mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE))
             } else {
                 allProd <- unlist(lapply(1:ncol(allComb), function(i) dotProd(x@gen[[allComb[1,i]]], x@gen[[allComb[2,i]]], myPloidy[allComb[1,i]], myPloidy[allComb[2,i]]) ))
@@ -375,7 +375,7 @@ glPca <- function(x, center=TRUE, scale=FALSE, nf=NULL, loadings=TRUE, alleleAsU
 
             ## compute the diagonal
             if(parallel){
-                temp <- unlist(mclapply(1:nInd(x), function(i) dotProd(x@gen[[i]], x@gen[[i]], myPloidy[i], myPloidy[i]),
+                temp <- unlist(parallel::mclapply(1:nInd(x), function(i) dotProd(x@gen[[i]], x@gen[[i]], myPloidy[i], myPloidy[i]),
                                         mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE))/nInd(x)
             } else {
                 temp <- unlist(lapply(1:nInd(x), function(i) dotProd(x@gen[[i]], x@gen[[i]], myPloidy[i], myPloidy[i]) ))/nInd(x)

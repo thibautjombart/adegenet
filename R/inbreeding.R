@@ -10,20 +10,20 @@ inbreeding <- function(x, pop=NULL, truenames=TRUE, res.type=c("sample","functio
 
     ## if(x$ploidy != 2) stop("this inbreeding coefficient is designed for diploid genotypes only")
     PLO <- ploidy(x)
+    LOC <- locFac(x)
 
     if(!is.null(pop)) pop(x) <- pop
-    if(is.null(x@pop) && is.null(pop)) {
+    if(is.null(pop(x)) && is.null(pop)) {
         pop(x) <- factor(rep(1, nInd(x)))
     }
 
-      ## COMPUTATIONS ##
+    ## COMPUTATIONS ##
 
     ## get allele frequencies and \sum p_i^2 by pop and loc ##
     ## (generalized to any ploidy) ##
-    ## tabfreq2 <- (makefreq(x = genind2genpop(x, quiet = TRUE), quiet=TRUE, truenames=truenames)$tab) ^2
     ## For genpop objects, a constant ploidy is assumed/needed. This kludge will do for now.
     tabfreq2 <- tab(genind2genpop(x, quiet = TRUE), freq=TRUE) ^ PLO[1]
-    sumpi2 <- t(apply(tabfreq2, 1, tapply, x$loc.fac, sum))
+    sumpi2   <- t(apply(tabfreq2, 1, tapply, LOC, sum))
 
     ## function to check a 1-locus genotype for homozigosity
     ## returns 1 if homoz, 0 otherwise
@@ -36,22 +36,11 @@ inbreeding <- function(x, pop=NULL, truenames=TRUE, res.type=c("sample","functio
     }
 
     ## get the table of binary hetero/homo data
-    if (truenames) {
-        X <- tab(x)
-    } else
-    X <- tab(x)
-
-    homotab <- t(apply(X, 1, tapply, x@loc.fac, f1))
-
-
+    X       <- tab(x)
+    homotab <- t(apply(X, 1, tapply, LOC, f1))
+    
     ## get pi2 for the appropriate pop
-    if(truenames){
-        popx <- pop(x)
-    } else {
-        popx <- x$pop
-    }
-
-    popx <- as.character(popx)
+    popx   <- as.character(pop(x))
     tabpi2 <- sumpi2[popx, , drop=FALSE]
 
 
@@ -63,13 +52,13 @@ inbreeding <- function(x, pop=NULL, truenames=TRUE, res.type=c("sample","functio
         myEnv <- new.env()
         assign("x", x, envir=myEnv)
         assign("sumpi2", sumpi2, envir=myEnv)
-        res <- function(F) {
+        res <- function(Fest) { # F estimate
             ## cat("\nx used:\n") # debugging
             ## print(x)
             ## cat("\nsumpi2 used:\n") # debugging
             ## print(sumpi2)
-
-            return(exp(sum(log(   x*(F+(1-F)*sumpi2) + (1-x)*(1-(F+(1-F)*sumpi2)) ) ,na.rm=TRUE)))
+            phom <- Fest + (1-Fest)*sumpi2
+            return(exp(sum(log(x*phom + (1-x)*(1-phom)), na.rm=TRUE)))
         }
         environment(res) <- myEnv
 
@@ -79,23 +68,17 @@ inbreeding <- function(x, pop=NULL, truenames=TRUE, res.type=c("sample","functio
 
     ## get likelihood functions for all individuals
     res <- lapply(1:nrow(homotab), function(i) LIK(homotab[i,], tabpi2[i,]) )
-    res <- lapply(res, Vectorize)
-
-    ## name output
-    if(truenames) {
-        names(res) <- indNames(x)
-    } else {
-        names(res) <- names(x$tab)
-    }
+    res <- setNames(lapply(res, Vectorize), indNames(x))
 
 
     ## IF WE RETURN FUNCTIONS ##
-    if(res.type=="function"){
-          return(res)
+    if (res.type=="function"){
+      return(res)
     }
 
+    ## IF WE RETURN MLE ##
     if (res.type == "estimate"){
-      opfun <- function(x, ...) optimize(x, ...)[[1]]
+      opfun  <- function(x, ...) optimize(x, ...)[[1]]
       funval <- numeric(1)
       res <- vapply(res, FUN = opfun , FUN.VALUE = funval, interval = c(0, 1),
                     maximum = TRUE, tol = .Machine$double.eps^0.75)

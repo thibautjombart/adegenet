@@ -129,3 +129,30 @@ C45, 0205 0909 0202 0000      0405
   expect_identical(indNames(gp), .genlab("", nInd(gp)))
   
 })
+
+
+
+test_that("df2genind can handle periods in input", {
+  skip_on_cran()
+  dat <-
+    data.frame(
+      pop = c(1, 1, 2, 2),
+      loc1 = c("1/1", "1/2", "1.1/2", "2/2"),
+      loc2 = c("1/1", "1/2", "1/2", "2/2")
+    )
+  expect_warning(datgi <- df2genind(dat[, -1], sep = "/", pop = dat[, 1]))
+  expect_equivalent(alleles(datgi)$loc1, c("1", "2", "1_1"))
+})
+
+test_that("df2genind can handle periods in input with underscore separator", {
+  skip_on_cran()
+  dat <-
+    data.frame(
+      pop = c(1, 1, 2, 2),
+      loc1 = c("1/1", "1/2", "1.1/2", "2/2"),
+      loc2 = c("1/1", "1/2", "1/2", "2/2")
+    )
+  dat <- apply(dat, 2, function(i) gsub("/", "_", i))
+  expect_warning(datgi <- df2genind(dat[, -1], sep = "_", pop = dat[, 1]))
+  expect_equivalent(alleles(datgi)$loc1, c("1", "2", "1p1"))
+})

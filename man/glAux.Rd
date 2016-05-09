@@ -32,7 +32,7 @@ glNA(x, alleleAsUnit = TRUE)
 glMean(x, alleleAsUnit = TRUE)
 glVar(x, alleleAsUnit = TRUE)
 glDotProd(x, center = FALSE, scale = FALSE, alleleAsUnit = FALSE,
-                parallel = require("parallel"), n.cores = NULL)
+                parallel = FALSE, n.cores = NULL)
 }
 \arguments{
   \item{x}{a \linkS4class{genlight} object}

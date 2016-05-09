@@ -27,7 +27,7 @@
 }
 \usage{
 glPca(x, center = TRUE, scale = FALSE, nf = NULL, loadings = TRUE, 
-    alleleAsUnit = FALSE, useC = TRUE, parallel = require("parallel"),
+    alleleAsUnit = FALSE, useC = TRUE, parallel = FALSE,
   n.cores = NULL, returnDotProd=FALSE, matDotProd=NULL)
 
 \method{print}{glPca}(x, \dots)

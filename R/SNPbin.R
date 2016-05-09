@@ -165,7 +165,7 @@ setMethod("initialize", "SNPbin", function(.Object, ...) {
 ########################
 ## genlight constructor
 ########################
-setMethod("initialize", "genlight", function(.Object, ..., parallel=require("parallel"), n.cores=NULL) {
+setMethod("initialize", "genlight", function(.Object, ..., parallel=FALSE, n.cores=NULL) {
     if(parallel && !require(parallel)) stop("parallel package requested but not installed")
     if(parallel && is.null(n.cores)){
         n.cores <- parallel::detectCores()
@@ -212,7 +212,7 @@ setMethod("initialize", "genlight", function(.Object, ..., parallel=require("par
             }
             ##input$gen <- lapply(1:nrow(input$gen), function(i) as.integer(input$gen[i,]))
             if(parallel){
-                x@gen <- mclapply(1:nrow(input$gen), function(i) new("SNPbin", as.integer(input$gen[i,])),
+                x@gen <- parallel::mclapply(1:nrow(input$gen), function(i) new("SNPbin", as.integer(input$gen[i,])),
                                   mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE)
             } else {
                 x@gen <- lapply(1:nrow(input$gen), function(i) new("SNPbin", as.integer(input$gen[i,])) )
@@ -240,7 +240,7 @@ setMethod("initialize", "genlight", function(.Object, ..., parallel=require("par
 
             ## create SNPbin list
             if(parallel){
-                x@gen <- mclapply(input$gen, function(e) new("SNPbin",e), mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE)
+                x@gen <- parallel::mclapply(input$gen, function(e) new("SNPbin",e), mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE)
             } else {
                 x@gen <- lapply(input$gen, function(e) new("SNPbin",e))
             }
@@ -267,7 +267,7 @@ setMethod("initialize", "genlight", function(.Object, ..., parallel=require("par
 
                 ## create SNPbin list
                 if(parallel){
-                    x@gen <- mclapply(1:nrow(input$gen), function(i) f1(input$gen[i,]), mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE)
+                    x@gen <- parallel::mclapply(1:nrow(input$gen), function(i) f1(input$gen[i,]), mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE)
                 } else {
                     x@gen <- lapply(1:nrow(input$gen), function(i) f1(input$gen[i,]))
                 }

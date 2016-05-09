@@ -375,7 +375,7 @@ setMethod("seppop", signature(x="genlight"), function(x, pop=NULL, treatOther=TR
 ## seploc
 ##########
 setMethod("seploc", signature(x="genlight"), function(x, n.block=NULL, block.size=NULL, random=FALSE,
-                               parallel=require(parallel), n.cores=NULL){
+                               parallel=FALSE, n.cores=NULL){
     ## CHECKS ##
     if(is.null(n.block) & is.null(block.size)) stop("n.block and block.size are both missing.")
     if(!is.null(n.block) & !is.null(block.size)) stop("n.block and block.size are both provided.")
@@ -414,10 +414,10 @@ setMethod("seploc", signature(x="genlight"), function(x, n.block=NULL, block.siz
 
     if(parallel){
         if(random){
-            res <- mclapply(levels(fac.block), function(lev) x[, sample(which(fac.block==lev))],
+            res <- parallel::mclapply(levels(fac.block), function(lev) x[, sample(which(fac.block==lev))],
                         mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE)
         } else {
-            res <- mclapply(levels(fac.block), function(lev) x[, which(fac.block==lev)],
+            res <- parallel::mclapply(levels(fac.block), function(lev) x[, which(fac.block==lev)],
                         mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE)
         }
     } else {
