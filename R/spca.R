@@ -15,6 +15,124 @@
 ################
 # spca genind
 ################
+
+#' Spatial principal component analysis
+#' 
+#' These functions are designed to perform a spatial principal component analysis and to display the results. They call upon 
+#' \code{\link[ade4]{multispati}}.
+#' 
+#' @param obj A \code{genind} or \code{data.frame} object.
+#' @param xy A matrix or data.frame with two columns for x and y coordinates. Seeked from \code{obj\$other\$xy}
+#'           if it exists when xy is not provided. Can be NULL if a nb object is provided in \code{cn}. 
+#'           Longitude/latitude coordinates should be converted first by a given projection (see 'See Also' section).
+#' @param cn A connection network of the class 'nb' (package \code{spdep}). Can be NULL if xy is provided. Can be easily obtained 
+#'           using the function \code{chooseCN} (see details).
+#'           
+#' @param matWeight A square matrix of spatial weights, indicating the spatial proximities between entities. If provided, 
+#'                  this argument prevails over \code{cn} (see details).
+#' @param scale A logical indicating whether alleles should be scaled to unit variance (\code{TRUE}) or not (\code{FALSE}, default).
+#' @param scannf A logical stating whether eigenvalues should be chosen interactively (\code{TRUE}, default) or not (\code{FALSE}).
+#' @param nfposi An integer giving the number of positive eigenvalues retained ('global structures').
+#' @param nfnega An integer giving the number of negative eigenvalues retained ('local structures').
+#' @param type An integer giving the type of graph (see details in \code{chooseCN} help page). If provided, ask is set to \code{FALSE}.
+#' @param ask A logical stating whether graph should be chosen interactively (\code{TRUE}, default) or not (\code{FALSE}).
+#' @param plot.nb A logical stating whether the resulting graph should be plotted (\code{TRUE}, default) or not (\code{FALSE}).
+#' @param edit.nb A logical stating whether the resulting graph should be edited manually for corrections (\code{TRUE}) 
+#'                or not (\code{FALSE}, default).
+#' @param truenames A logical stating whether true names should be used for \code{obj} (\code{TRUE}, default) instead of 
+#'                  generic labels (\code{FALSE}).
+#' @param d1 The minimum distance between any two neighbours. Used if \code{type = 5}.
+#' @param d2 The maximum distance between any two neighbours. Used if \code{type = 5}.
+#' @param The number of neighbours per point. Used if \code{type = 6}.
+#' @param a The exponent of the inverse distance matrix. Used if \code{type = 7}.
+#' @param dmin The minimum distance between any two distinct points. Used to avoid infinite spatial proximities (defined as the
+#'             inversed spatial distances). Used if \code{type = 7}.
+#' @param x An \code{spca} object.
+#' @param object An \code{spca} object.
+#' @param printres A logical stating whether results should be printed on the screen (\code{TRUE}, default) or not (\code{FALSE}).
+#' @param axis An integer between 1 and (\code{nfposi + nfnega}) indicating which axis should be plotted.
+#' @param main A title for the screeplot. If \code{NULL}, a default one is used.
+#' @param ... Further arguments passed to other methods.
+#' @param axes The index of the columns of X to be represented. Up to three axes can be chosen.
+#' @param uselag A logical stating whether the lagged components (x\$ls) should be used instead of the components (x\$li).
+#' 
+#' @details
+#' The spatial principal component analysis (sPCA) is designed to
+#' investigate spatial patterns in the genetic variability. Given
+#' multilocus genotypes (individual level) or allelic frequency
+#' (population level) and spatial coordinates, it finds individuals 
+#' (or population) scores maximizing the product of variance and spatial
+#' autocorrelation (Moran's I). Large positive and negative eigenvalues
+#' correspond to global and local structures.
+#' 
+#' Spatial weights can be obtained in several ways, depending how the
+#' arguments \code{xy}, \code{cn}, and \code{matWeight} are set.
+#' When several acceptable ways are used at the same time, priority is as
+#' follows:
+#' 
+#' \code{matWeight} >  \code{cn} > \code{xy}
+#' 
+#' @return
+#' The class \code{spca} are given to lists with the following components:
+#' \item{eig}{a numeric vector of eigenvalues.}
+#' \item{nfposi}{an integer giving the number of global structures retained.}
+#' \item{nfnega}{an integer giving the number of local structures retained.}
+#' \item{c1}{a data.frame of alleles loadings for each axis.}
+#' \item{li}{a data.frame of row (individuals or populations) coordinates onto the sPCA axes.}
+#' \item{ls}{a data.frame of lag vectors of the row coordinates; useful to clarify maps of global scores .}
+#' \item{as}{a data.frame giving the coordinates of the PCA axes onto the sPCA axes.}
+#' \item{call}{the matched call.}
+#' \item{xy}{a matrix of spatial coordinates.}
+#' \item{lw}{a list of spatial weights of class \code{listw}.
+#' 
+#' Other functions have different outputs:
+#' 
+#' \item{\code{summary.spca} returns a list with 3 components: \code{Istat}
+#' giving the null, minimum and maximum Moran's I values; \code{pca}
+#'   gives variance and I statistics for the principal component analysis.}
+#' \item{\code{spca} gives variance and I statistics for the sPCA.}
+#' \item{\code{plot.spca} returns the matched call.}
+#' \item{\code{screeplot.spca} returns the matched call.  }
+#' 
+#' @seealso 
+#' - \code{print.spca}: prints the spca content
+#' - \code{summary.spca}: gives variance and autocorrelation
+#' - \code{plot.spca}: usefull graphics (connection network, 3 different representations of map of scores, eigenvalues barplot 
+#'         and decomposition)
+#' - \code{screeplot.spca}: decomposes spca eigenvalues into variance and autocorrelation
+#'
+#' - \code{colorplot.spca}: represents principal components of sPCA in space using the RGB system.
+#'
+#' A tutorial describes how to perform a sPCA: see [http://adegenet.r-forge.r-project.org/files/tutorial-spca.pdf]
+#' (http://adegenet.r-forge.r-project.org/files/tutorial-spca.pdf) or type \code{adegenetTutorial(which="spca")}.
+#' 
+#' @references 
+#' Jombart, T., Devillard, S., Dufour, A.-B. and Pontier, D. Revealing cryptic spatial patterns in genetic variability by a new
+#' multivariate method. \emph{Heredity}, \bold{101}, 92--103.
+#' 
+#' Wartenberg, D. E. (1985) Multivariate spatial correlation: a method for exploratory geographical analysis. 
+#' \emph{Geographical Analysis}, \bold{17}, 263--283.
+#' 
+#' Moran, P.A.P. (1948) The interpretation of statistical maps. \emph{Journal of the Royal Statistical Society, B}
+#' \bold{10}, 243--251.
+#' 
+#' Moran, P.A.P. (1950) Notes on continuous stochastic phenomena. \emph{Biometrika}, \bold{37}, 17--23.
+#' 
+#' de Jong, P. and Sprenger, C. and van Veen, F. (1984) On extreme values of Moran's I and Geary's c. \emph{Geographical Analysis},
+#' \bold{16}, 17--24.
+#' 
+#' @examples
+#' ## data(spcaIllus) illustrates the sPCA
+#' ## see ?spcaIllus
+#' ##
+#' \dontrun{
+#'   example(spcaIllus)
+#'   example(rupica)
+#' }
+#'
+#' @keywords spatial multivariate
+
+#' @export
 spca <- function(obj, xy=NULL, cn=NULL, matWeight=NULL,
                  scale=FALSE,
                  scannf=TRUE, nfposi=1, nfnega=1,
