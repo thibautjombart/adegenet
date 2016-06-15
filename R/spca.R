@@ -141,7 +141,7 @@ spca <- function(obj, xy=NULL, cn=NULL, matWeight=NULL,
 
     ## first checks
     if(!any(inherits(obj,c("genind","genpop")))) stop("obj must be a genind or genpop object.")
-    invisible(validObject(obj))
+    # invisible(validObject(obj))
     ## checkType(obj)
 
 
@@ -149,8 +149,8 @@ spca <- function(obj, xy=NULL, cn=NULL, matWeight=NULL,
     if(is.null(xy) & (inherits(cn,"nb") & !inherits(cn,"listw")) ){
                      xy <- attr(cn,"xy")  # xy can be retrieved from a nb object (not from listw)
                  }
-    if(is.null(xy) & !is.null(obj$other$xy)) {
-        xy <- obj$other$xy # xy from @other$xy if it exists
+    if(is.null(xy) & !is.null(other(obj)$xy)) {
+        xy <- other(obj)$xy # xy from @other$xy if it exists
     }
     if(is.null(xy)) stop("xy coordinates are not provided")
     if(is.data.frame(xy)) {
@@ -171,7 +171,7 @@ spca <- function(obj, xy=NULL, cn=NULL, matWeight=NULL,
         if(!is.matrix(matWeight)) stop("matWeight is not a matrix")
         if(!is.numeric(matWeight)) stop("matWeight is not numeric")
         if(nrow(matWeight) != ncol(matWeight)) stop("matWeight is not square")
-        if(nrow(matWeight) != nrow(obj@tab)) stop("dimension of datWeight does not match genetic data")
+        if(nrow(matWeight) != nrow(tab(obj))) stop("dimension of datWeight does not match genetic data")
         diag(matWeight) <- 0
         matWeight <- prop.table(matWeight, 1)
         resCN <- mat2listw(matWeight)
@@ -200,7 +200,7 @@ spca <- function(obj, xy=NULL, cn=NULL, matWeight=NULL,
 
 
     ## handle NAs warning
-    if(any(is.na(obj@tab))){
+    if(any(is.na(tab(obj)))) {
         warning("NAs in data are automatically replaced (to mean allele frequency)")
     }
 
