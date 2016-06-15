@@ -121,3 +121,26 @@ setMethod("scaleGen", "genpop", function(x, center=TRUE, scale=TRUE,
     return(out)
 })
 
+#' @rdname scaleGen
+#' @export
+setMethod("scaleGen", "data.frame", function(x, center = TRUE, scale = TRUE, NA.method = c("asis", "mean", "zero"),
+                                             truenames = TRUE) {
+  THRES <- 1e-10
+  
+  ## get table of frequencies
+  out <- tab(x, NA.method=NA.method, freq=TRUE, quiet=TRUE)
+  
+  ## scale output
+  out <- scale(out, center=center, scale=scale)
+  
+  ## issue a warning if some variances are null
+  temp <- attr(out,"scaled:scale") < THRES
+  if(any(temp)) {
+    warning("Some scaling values are null.\n Corresponding alleles are removed.")
+    out <- out[, !temp]
+    attr(out,"scaled:center") <- attr(out,"scaled:center")[!temp]
+    attr(out,"scaled:scale") <- attr(out,"scaled:scale")[!temp]
+  }
+  
+  return(out)
+})
