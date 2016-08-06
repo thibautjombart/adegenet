@@ -350,7 +350,7 @@ glPca <- function(x, center=TRUE, scale=FALSE, nf=NULL, loadings=TRUE, alleleAsU
                     a <- as.integer(a) / ploid.a
                     a[is.na(a)] <- vecMeans[is.na(a)]
                     b <- as.integer(b) / ploid.b
-                    a[is.na(a)] <- vecMeans[is.na(a)]
+                    b[is.na(b)] <- vecMeans[is.na(b)]
                     return( sum( ((a-vecMeans)*(b-vecMeans))/vecVar, na.rm=TRUE ) )
                 }
             }
