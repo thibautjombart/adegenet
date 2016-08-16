@@ -22,18 +22,18 @@
 }
 \usage{
 \method{scatter}{dapc}(x, xax=1, yax=2, grp=x$grp, col=seasun(length(levels(grp))),
-                       pch=20, bg="white", solid=.7, scree.da=TRUE,
-                       scree.pca=FALSE, posi.da="bottomright",
-                       posi.pca="bottomleft", bg.inset="white", ratio.da=.25,
-                       ratio.pca=.25, inset.da=0.02, inset.pca=0.02,
-                       inset.solid=.5, onedim.filled=TRUE, mstree=FALSE, lwd=1,
-                       lty=1, segcol="black", legend=FALSE, posi.leg="topright",
-                       cleg=1, txt.leg=levels(grp), cstar = 1, cellipse = 1.5,
-                       axesell = FALSE, label = levels(grp), clabel = 1, xlim =
-                       NULL, ylim = NULL, grid = FALSE, addaxes = TRUE, origin =
-                       c(0,0), include.origin = TRUE, sub = "", csub = 1, possub =
-                       "bottomleft", cgrid = 1, pixmap = NULL, contour = NULL, area
-                       = NULL, label.inds = NULL, \ldots)
+      pch=20, bg="white", solid=.7, scree.da=TRUE,
+      scree.pca=FALSE, posi.da="bottomright",
+      posi.pca="bottomleft", bg.inset="white", ratio.da=.25,
+      ratio.pca=.25, inset.da=0.02, inset.pca=0.02,
+      inset.solid=.5, onedim.filled=TRUE, mstree=FALSE, lwd=1,
+      lty=1, segcol="black", legend=FALSE, posi.leg="topright",
+      cleg=1, txt.leg=levels(grp), cstar = 1, cellipse = 1.5,
+      axesell = FALSE, label = levels(grp), clabel = 1, xlim =
+      NULL, ylim = NULL, grid = FALSE, addaxes = TRUE, origin =
+      c(0,0), include.origin = TRUE, sub = "", csub = 1, possub =
+      "bottomleft", cgrid = 1, pixmap = NULL, contour = NULL, area
+      = NULL, label.inds = NULL, \ldots)
 
 assignplot(x, only.grp=NULL, subset=NULL, new.pred=NULL, cex.lab=.75,pch=3)
 
