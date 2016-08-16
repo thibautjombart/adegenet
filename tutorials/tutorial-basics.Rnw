@@ -272,7 +272,7 @@ Others include:
 \item \textit{R-help}: general questions about R.\\
   \url{https://stat.ethz.ch/mailman/listinfo/r-help}
 \item \textit{stackoverflow.com}: general questions about R.\\
-  \url{http://stackoverflow.com/questions/tagged/r}  
+  \url{http://stackoverflow.com/questions/tagged/r}
 \end{itemize}
 
 Please avoid double-posting (it is often considered to be rude).
@@ -1055,10 +1055,10 @@ names(toto)
 
 par(mfrow=c(2,2))
 
-plot(toto$pop.eff, toto$pop.nall, xlab="Colonies sample size",
+plot(toto$n.by.pop, toto$pop.n.all, xlab="Colonies sample size",
      ylab="Number of alleles",main="Alleles numbers and sample sizes",
      type="n")
-text(toto$pop.eff,toto$pop.nall,lab=names(toto$pop.eff))
+text(toto$n.by.pop,toto$pop.n.all,lab=names(toto$n.by.pop))
 
 barplot(toto$loc.n.all, ylab="Number of alleles",
         main="Number of alleles per locus")
@@ -1066,7 +1066,7 @@ barplot(toto$loc.n.all, ylab="Number of alleles",
 barplot(toto$Hexp-toto$Hobs, main="Heterozygosity: expected-observed",
         ylab="Hexp - Hobs")
 
-barplot(toto$pop.eff, main="Sample sizes per population",
+barplot(toto$n.by.pop, main="Sample sizes per population",
         ylab="Number of genotypes",las=3)
 @
 
