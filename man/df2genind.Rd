@@ -9,20 +9,20 @@ df2genind(X, sep = NULL, ncode = NULL, ind.names = NULL,
   type = c("codom", "PA"), strata = NULL, hierarchy = NULL)
 }
 \arguments{
-\item{X}{a matrix or a data.frame containing allelle data only (see 
+\item{X}{a matrix or a data.frame containing allelle data only (see
 decription)}
 
 \item{sep}{a character string separating alleles. See details.}
 
-\item{ncode}{an optional integer giving the number of characters used for 
-coding one genotype at one locus. If not provided, this is determined from 
+\item{ncode}{an optional integer giving the number of characters used for
+coding one genotype at one locus. If not provided, this is determined from
 data.}
 
 \item{ind.names}{optinal, a vector giving the individuals names; if NULL,
 taken from rownames of X. If factor or numeric, vector is converted to
 character.}
 
-\item{loc.names}{an optional character vector giving the markers names; if 
+\item{loc.names}{an optional character vector giving the markers names; if
 NULL, taken from colnames of X.}
 
 \item{pop}{an optional factor giving the population of each individual.}
@@ -32,24 +32,24 @@ treated as NA)}
 
 \item{ploidy}{an integer indicating the degree of ploidy of the genotypes.}
 
-\item{type}{a character string indicating the type of marker: 'codom' stands 
-for 'codominant' (e.g. microstallites, allozymes); 'PA' stands for 
+\item{type}{a character string indicating the type of marker: 'codom' stands
+for 'codominant' (e.g. microstallites, allozymes); 'PA' stands for
 'presence/absence' markers (e.g. AFLP, RAPD).}
 
-\item{strata}{an optional data frame that defines population stratifications 
-for your samples. This is especially useful if you have a hierarchical or 
+\item{strata}{an optional data frame that defines population stratifications
+for your samples. This is especially useful if you have a hierarchical or
 factorial sampling design.}
 
 \item{hierarchy}{a hierarchical formula that explicitely defines hierarchical
 levels in your strata. see \code{\link{hierarchy}} for details.}
 }
 \value{
-an object of the class \linkS4class{genind} for \code{df2genind}; a 
+an object of the class \linkS4class{genind} for \code{df2genind}; a
   matrix of biallelic genotypes for \code{genind2df}
 }
 \description{
-The function \code{df2genind} converts a data.frame (or a matrix) into a 
-\linkS4class{genind} object. The data.frame must meet the following 
+The function \code{df2genind} converts a data.frame (or a matrix) into a
+\linkS4class{genind} object. The data.frame must meet the following
 requirements:
 \itemize{
 \item genotypes are in row (one row per genotype)
@@ -63,7 +63,7 @@ used, the number of characters coding alleles must be indicated (argument
 See \code{\link{genind2df}} to convert \linkS4class{genind} objects back to
 such a data.frame.
 
-=== Details for the \code{sep} argument ===\cr this character is directly 
+=== Details for the \code{sep} argument ===\cr this character is directly
 used in reguar expressions like \code{gsub}, and thus require some characters
 to be preceeded by double backslashes. For instance, "/" works but "|" must
 be coded as "\\|".
@@ -87,12 +87,12 @@ genind2df(obj, sep="/")
 
 }
 \author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}, Zhian N. Kamvar 
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}, Zhian N. Kamvar
   \email{kamvarz@science.oregonstate.edu}
 }
 \seealso{
-\code{\link{genind2df}}, \code{\link{import2genind}}, 
-  \code{\link{read.genetix}}, \code{\link{read.fstat}}, 
+\code{\link{genind2df}}, \code{\link{import2genind}},
+  \code{\link{read.genetix}}, \code{\link{read.fstat}},
   \code{\link{read.structure}}
 }
 \keyword{manip}
