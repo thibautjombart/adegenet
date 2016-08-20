@@ -83,11 +83,8 @@ snpposi.plot.integer <- function(x, genome.size, smooth=0.1, col="royalblue", al
     ## IF WE REPRESENT DENSITY PER CODON POSITION ##
     if(codon){
         ## define base positions (1/2/3) ##
-        fac <- rep(1:3, length=genome.size)
-        if(start.at==2) fac <- c(2:3,fac)[1:genome.size]
-        if(start.at==3) fac <- c(3,fac)[1:genome.size]
-        fac <- factor(fac, levels=1:3)
-        fac <- fac[x]
+        codon.posi <- ((2 + x) %% 3) + 1
+        fac <- factor(codon.posi, levels=1:3)
 
         ## make ggplot output ##
         out <- ggplot(data.frame(x=x, codon=fac), aes(x=x)) + xlim(0, genome.size)
