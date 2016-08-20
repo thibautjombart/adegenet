@@ -12,7 +12,6 @@ Suggests:
     akima,
     maps,
     splancs,
-    adehabitat,
     tripack,
     testthat
 Depends:
