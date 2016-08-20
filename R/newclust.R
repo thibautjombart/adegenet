@@ -9,8 +9,14 @@
 #' @param x a \linkS4class{genind} object
 #' @param k the number of clusters to look for
 #' @param pop.ini an optional factor defining the initial cluster configuration
+#' @param max.iter the maximum number of iteration of the EM algorithm
 #'
-newclust <- function(x, k, pop.ini=NULL) {
+#' @examples
+#' data(sim2pop)
+#' x <- sim2pop
+#' pop(x) <- sample(pop(x))
+#'
+newclust <- function(x, k, pop.ini=NULL, max.iter=100) {
     ## This function uses the EM algorithm to find ML group assignment of a set of genotypes stored
     ## in a genind object into 'k' clusters. We need an initial cluster definition to start with. The rest of the algorithm consists of:
 
@@ -20,13 +26,9 @@ newclust <- function(x, k, pop.ini=NULL) {
     ## iv) go back to i) until convergence
 
 
-    ## Set initial conditions: if initial pop is NULL, we use the pop available in 'x'; if 'x' has
-    ## no pop, we create a random group definition (each clusters have same probability)
+    ## Set initial conditions: if initial pop is NULL, we create a random group definition (each
+    ## clusters have same probability)
     if (is.null(pop.ini)) {
-        if(!is.null(pop(x))) {
-            pop.ini <- pop(x)
-        }
-    } else {
         pop.ini <- sample(seq_len(k), nInd(x), replace=TRUE)
     }
 
@@ -36,17 +38,42 @@ newclust <- function(x, k, pop.ini=NULL) {
         stop("pop.ini does not have k clusters")
     }
 
-    group <- pop.ini
+    ## initialisation
+    group <- factor(as.integer(pop.ini)) # levels are 1:k
     genotypes <- tab(x)
     n.loc <- nLoc(x)
+    counter <- 1L
+    converged <- FALSE
 
-    ## while(!converged) {
-    ## get table of allele frequencies (columns) by population (rows)
-    pop.freq <- tab(genind2genpop(x, pop=group, quiet=TRUE), freq=TRUE)
+    while(!converged && counter<=max.iter) {
 
-    ## get likelihoods of genotypes in every pop
-    ll <- apply(genotypes, 1, ll.genotype, pop.freq, n.loc)
-    ## }
+        ## get table of allele frequencies (columns) by population (rows)
+        pop.freq <- tab(genind2genpop(x, pop=group, quiet=TRUE), freq=TRUE)
+
+        ## get likelihoods of genotypes in every pop
+        ll <- apply(genotypes, 1, ll.genotype, pop.freq, n.loc)
+
+        ## assign individuals to most likely cluster
+        previous.group <- group
+        group <- apply(ll, 2, which.max)
+
+        ## check convergence
+        converged <- all(group == previous.group)
+        counter <- counter + 1L
+
+    }
+
+    ## shape output and return
+    proba <- round(prop.table(t(exp(ll)), 1), 2) # group membership proba
+
+    sum.ll <- global.ll(group, ll) # loglike of model
+
+    out <- list(group = group,
+                proba = proba,
+                ll = sum.ll,
+                converged = converged,
+                n.iter = counter)
+    return(out)
 }
 
 
@@ -58,9 +85,8 @@ newclust <- function(x, k, pop.ini=NULL) {
 ## of group allele frequencies, with groups in rows and alleles in columns.
 
 ## TODO: extend this to various ploidy levels, possibly optimizing procedures for haploids.
-ll.genotype <- function(x, pop.freq, n.loc){
-    pop.freq <- t(pop.freq)
 
+ll.genotype <- function(x, pop.freq, n.loc){
     ## homozygote (diploid)
     ## p(AA) = f(A)^2 for each locus
     ll.homoz <- apply(pop.freq, 1, function(f) sum(log(f[x==2L])) * 2)
@@ -72,4 +98,15 @@ ll.genotype <- function(x, pop.freq, n.loc){
     return(ll.homoz + ll.heteroz)
 }
 
+
+
+
+
+
+## Non-exported function computing the total log-likelihood of the model given a vector of group
+## assignments and a table of ll of genotypes in each group
+
+global.ll <- function(group, ll){
+    sum(t(ll)[cbind(seq_along(group), as.integer(group))])
+}
 
