@@ -98,6 +98,7 @@ Collate:
     snpposi.R
     snpzip.R
     pairDist.R
+    newclust.R
     servers.R
     zzz.R
 License: GPL (>=2)
