@@ -21,7 +21,7 @@
 #'
 #' ## try function using true clusters as initial state
 #'  genclust.em(x, 2, pop.ini = pop(sim2pop), detailed = FALSE)
-genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, detailed = TRUE) {
+genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detailed = TRUE) {
     ## This function uses the EM algorithm to find ML group assignment of a set of genotypes stored
     ## in a genind object into 'k' clusters. We need an initial cluster definition to start with. The rest of the algorithm consists of:
 
@@ -31,51 +31,76 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, detailed = TRUE) {
     ## iv) go back to i) until convergence
 
 
-    ## Set initial conditions: if initial pop is NULL, we create a random group definition (each
-    ## clusters have same probability)
-    if (is.null(pop.ini)) {
-        pop.ini <- sample(seq_len(k), nInd(x), replace=TRUE)
+    ## Disable multiple starts if the initial condition is not random
+    use.random.start <- is.null(pop.ini)
+    if (!use.random.start) {
+        n.start <- 1L
     }
 
-    ## make sure k and pop.ini are compatible
-    pop.ini <- factor(pop.ini)
-    if (length(levels(pop.ini)) != k) {
-        stop("pop.ini does not have k clusters")
+    if (use.random.start && n.start < 1L) {
+        warning(sprintf("n.start is less than 1 (%d); using n.start=1", n.start))
+        n.start <- 1L
     }
 
-    ## initialisation
-    group <- factor(as.integer(pop.ini)) # levels are 1:k
-    genotypes <- tab(x)
-    n.loc <- nLoc(x)
-    counter <- 1L
-    converged <- FALSE
+    ## There is one run of the EM algo for each of the n.start random initial conditions.
+    ll <- -Inf # this will be the total loglike
 
-    while(!converged && counter<=max.iter) {
+    for (i in seq_len(n.start)) {
 
-        ## get table of allele frequencies (columns) by population (rows)
-        pop.freq <- tab(genind2genpop(x, pop=group, quiet=TRUE), freq=TRUE)
+        ## Set initial conditions: if initial pop is NULL, we create a random group definition (each
+        ## clusters have same probability)
+        if (use.random.start) {
+            pop.ini <- sample(seq_len(k), nInd(x), replace=TRUE)
+        }
 
-        ## get likelihoods of genotypes in every pop
-        ll <- apply(genotypes, 1, ll.genotype, pop.freq, n.loc)
+        ## make sure k and pop.ini are compatible
+        pop.ini <- factor(pop.ini)
+        if (length(levels(pop.ini)) != k) {
+            stop("pop.ini does not have k clusters")
+        }
 
-        ## assign individuals to most likely cluster
-        previous.group <- group
-        group <- apply(ll, 2, which.max)
+        ## initialisation
+        group <- factor(as.integer(pop.ini)) # levels are 1:k
+        genotypes <- tab(x)
+        n.loc <- nLoc(x)
+        counter <- 1L
+        converged <- FALSE
 
-        ## check convergence
-        converged <- all(group == previous.group)
-        counter <- counter + 1L
+        while(!converged && counter<=max.iter) {
 
-    }
+            ## get table of allele frequencies (columns) by population (rows)
+            pop.freq <- tab(genind2genpop(x, pop=group, quiet=TRUE), freq=TRUE)
 
-    ## shape output and return
-    out <- list(group = group, ll = global.ll(group, ll))
+            ## get likelihoods of genotypes in every pop
+            ll.mat <- apply(genotypes, 1, ll.genotype, pop.freq, n.loc)
 
-    if (detailed) {
-        out$proba <- round(prop.table(t(exp(ll)), 1), 2) # group membership proba
-        out$converged <- converged
-        out$n.iter <- counter
-    }
+            ## assign individuals to most likely cluster
+            previous.group <- group
+            group <- apply(ll.mat, 2, which.max)
+
+            ## check convergence
+            converged <- all(group == previous.group)
+            counter <- counter + 1L
+
+        }
+
+        ## store the best run so far
+        new.ll <- global.ll(group, ll.mat)
+
+        if (new.ll > ll) {
+            ## store results
+            ll <- new.ll
+            out <- list(group = group, ll = ll)
+
+            if (detailed) {
+                out$proba <- round(prop.table(t(exp(ll.mat)), 1), 2) # group membership proba
+                out$converged <- converged
+                out$n.iter <- counter
+            }
+
+        }
+    } # end of the for loop
+
 
     return(out)
 }
