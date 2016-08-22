@@ -125,11 +125,17 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
 #' @param sample.every the frequency of sampling from the MCMC
 #' @param max.em.iter the maximum number of iterations for the EM algorithm
 #' @param prop.move the proportion of individuals moved across groups at each MCMC iteration
+#'
+#' @examples
+#' data(sim2pop)
+#' hyb <- hybridize(sim2pop[pop=1], sim2pop[pop=2], n=10)
+#' x <- repool(sim2pop, hyb)
+#'
 
 ## This algorithm relies on using EM within steps of a MCMC based on the likelihood (no prior) or
 ## observed genotypes given their group memberships and the group allele frequencies.
 genclust.emmcmc <- function(x, k, n.iter = 100, sample.every = 10, pop.ini = NULL,
-                            max.em.iter = 20, prop.move = 0.2, detailed) {
+                            max.em.iter = 20, prop.move = 0.1, detailed) {
 
     ## initialize the algorithm
     mcmc <- vector(length = floor(n.iter / sample.every) + 1, mode="list")
@@ -140,6 +146,7 @@ genclust.emmcmc <- function(x, k, n.iter = 100, sample.every = 10, pop.ini = NUL
                              detailed = FALSE)
     mcmc[[1]]$step <- 1L
     counter <- 1L
+    n.accept <- 0
 
     group.lev <- seq_len(k)
 
@@ -155,6 +162,7 @@ genclust.emmcmc <- function(x, k, n.iter = 100, sample.every = 10, pop.ini = NUL
         ## accept/reject (Metropolis algorithm)
         if(log(runif(1)) <= (new.state$ll - current.state$ll)) { ## accept
             current.state <- new.state
+            n.accept <- n.accept + 1
         } # reject is implicitly: do nothing
 
         ## save result if needed
@@ -171,6 +179,7 @@ genclust.emmcmc <- function(x, k, n.iter = 100, sample.every = 10, pop.ini = NUL
     out.groups <- t(sapply(mcmc, function(e) e$group))
     out <- cbind.data.frame(out, out.groups)
 
+    ## print(sprintf("\nProportion of movements accepted: %f (%d out of %d)", n.accept/n.iter, n.accept, n.iter))
     class(out) <- c("emmcmc", "data.frame")
     return(out)
 
