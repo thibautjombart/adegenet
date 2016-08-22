@@ -117,22 +117,6 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
 
 
 
-
-#' @rdname genclust.em
-#' @export
-#' @param col.pal a color palette to be used for the groups; defaults to \code{funky}
-compoplot.genclust.em <- function(x, col.pal = funky, show.lab=TRUE, ...) {
-    if (!show.lab) {
-        lab <- rep("", nrow(x$proba))
-    } else {
-        lab <- NULL
-    }
-    barplot(t(x$proba), col=col.pal(ncol(x$proba)), border=NA, las=3,
-            names.arg = lab, ylab = "Group assignment probability", ...)
-}
-
-
-
 #' EM-MCMC algorithm for genetic clustering
 #'
 #' Do not use.

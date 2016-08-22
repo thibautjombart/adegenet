@@ -76,26 +76,13 @@ compoplot.matrix <- function(x, col.pal = funky, show.lab = FALSE,
 
 
 #' @rdname compoplot
+#' @aliases compoplot.dapc
 #' @export
 compoplot.dapc <- function(x, only.grp=NULL, subset=NULL, new.pred=NULL, col=NULL, lab=NULL,
                       legend=TRUE, txt.leg=NULL, ncol=4, posi=NULL, cleg=.8, bg=transp("white"), ...){
 
     ## HANDLE ARGUMENTS ##
     ngrp <- length(levels(x$grp))
-
-    ## lab
-    if(is.null(lab)){
-        lab <- rownames(x$tab)
-    } else {
-        ## recycle labels
-       lab <- rep(lab, le=nrow(x$tab))
-    }
-
-
-    ## txt.leg
-    if(is.null(txt.leg)){
-        txt.leg <- levels(x$grp)
-    }
 
     ## HANDLE DATA FROM PREDICT.DAPC ##
     if(!is.null(new.pred)){
