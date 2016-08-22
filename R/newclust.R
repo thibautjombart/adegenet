@@ -118,8 +118,58 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
 #' @author Thibaut Jombart \email{thibautjombart@@gmail.com}
 #' @export
 #'
-genclust.emmcmc <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detailed = TRUE) {
-##    genclust.em(x=x, k=k, pop.ini=pop.ini, )
+#' @inheritParams genclust.em
+#' @param n.iter the number of iterations of the MCMC
+#' @param sample.every the frequency of sampling from the MCMC
+#' @param max.em.iter the maximum number of iterations for the EM algorithm
+#' @param prop.move the proportion of individuals moved across groups at each MCMC iteration
+
+## This algorithm relies on using EM within steps of a MCMC based on the likelihood (no prior) or
+## observed genotypes given their group memberships and the group allele frequencies.
+genclust.emmcmc <- function(x, k, n.iter = 100, sample.every = 10, pop.ini = NULL,
+                            max.em.iter = 20, prop.move = 0.2) {
+
+    ## initialize the algorithm
+    mcmc <- vector(length = floor(n.iter / sample.every) + 1, mode="list")
+
+    ## the object handled is a list with a $group (group membership) and a $ll (total loglike)
+    mcmc[[1]] <- current.state <- genclust.em(x = x, k = k, pop.ini = pop.ini,
+                             max.iter = max.em.iter, n.start = 10,
+                             detailed = FALSE)
+    mcmc[[1]]$step <- 1L
+    counter <- 1L
+
+    group.lev <- seq_len(k)
+
+    ## proceed to the MCMC
+    for (i in seq_len(n.iter)) {
+        ## move groups
+        new.groups <- move.groups(current.state$group, group.lev, prop.move = prop.move)
+
+        ## compute loglike difference
+        new.state <- genclust.em(x = x, k = k, pop.ini = new.groups,
+                             max.iter = max.em.iter, detailed = FALSE)
+
+        ## accept/reject (Metropolis algorithm)
+        if(log(runif(1)) <= (new.state$ll - current.state$ll)) { ## accept
+            current.state <- new.state
+        } # reject is implicitly: do nothing
+
+        ## save result if needed
+        if (i %% sample.every == 0) {
+            counter <- counter + 1
+            mcmc[[counter]] <- current.state
+            mcmc[[counter]]$step <- i
+        }
+    } # end of MCMC
+
+    ## shape result and return output
+    out <- data.frame(step = sapply(mcmc, function(e) e$step),
+                      ll = sapply(mcmc, function(e) e$ll))
+    out.groups <- t(sapply(mcmc, function(e) e$group))
+    out <- cbind.data.frame(out, out.groups)
+    return(out)
+
 }
 
 
