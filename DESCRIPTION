@@ -81,6 +81,7 @@ Collate:
     old2new.R
     spca.rtests.R
     dapc.R
+    compoplot.R
     xvalDapc.R
     haploPop.R
     PCtest.R

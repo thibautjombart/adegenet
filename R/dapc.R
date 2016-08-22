@@ -561,17 +561,17 @@ scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=seasun(length(levels(gr
             stopifnot(is.list(x), is.list(val))
             xnames <- names(x)
             for (v in names(val)) {
-              x[[v]] <- if (v %in% xnames && is.list(x[[v]]) && is.list(val[[v]])) 
+              x[[v]] <- if (v %in% xnames && is.list(x[[v]]) && is.list(val[[v]]))
                 appendList(x[[v]], val[[v]])
               else c(x[[v]], val[[v]])
             }
             x
           }
-          
-          do.call("orditorp", c(appendList(list(x = x$ind.coord[, c(xax, yax)], display = "species"), 
+
+          do.call("orditorp", c(appendList(list(x = x$ind.coord[, c(xax, yax)], display = "species"),
                                            label.inds)))
         }
-        
+
         ## add minimum spanning tree if needed
         if(mstree){
             meanposi <- apply(x$tab,2, tapply, grp, mean)
@@ -716,83 +716,6 @@ assignplot <- function(x, only.grp=NULL, subset=NULL, new.pred=NULL, cex.lab=.75
     return(invisible(match.call()))
 } # end assignplot
 
-
-
-
-
-############
-## compoplot
-############
-compoplot <- function(x, only.grp=NULL, subset=NULL, new.pred=NULL, col=NULL, lab=NULL,
-                      legend=TRUE, txt.leg=NULL, ncol=4, posi=NULL, cleg=.8, bg=transp("white"), ...){
-    if(!inherits(x, "dapc")) stop("x is not a dapc object")
-
-
-    ## HANDLE ARGUMENTS ##
-    ngrp <- length(levels(x$grp))
-
-    ## col
-    if(is.null(col)){
-        col <- rainbow(ngrp)
-    }
-
-    ## lab
-    if(is.null(lab)){
-        lab <- rownames(x$tab)
-    } else {
-        ## recycle labels
-       lab <- rep(lab, le=nrow(x$tab))
-    }
-
-    ## posi
-    if(is.null(posi)){
-        posi <- list(x=0, y=-.01)
-    }
-
-    ## txt.leg
-    if(is.null(txt.leg)){
-        txt.leg <- levels(x$grp)
-    }
-
-    ## HANDLE DATA FROM PREDICT.DAPC ##
-    if(!is.null(new.pred)){
-        n.new <- length(new.pred$assign)
-        x$grp <- c(as.character(x$grp), rep("unknown", n.new))
-        x$assign <- c(as.character(x$assign), as.character(new.pred$assign))
-        x$posterior <- rbind(x$posterior, new.pred$posterior)
-        lab <- c(lab, rownames(new.pred$posterior))
-    }
-
-
-    ## TREAT OTHER ARGUMENTS ##
-    if(!is.null(only.grp)){
-        only.grp <- as.character(only.grp)
-        ori.grp <- as.character(x$grp)
-        x$grp <- x$grp[only.grp==ori.grp]
-        x$assign <- x$assign[only.grp==ori.grp]
-        x$posterior <- x$posterior[only.grp==ori.grp, , drop=FALSE]
-        lab <- lab[only.grp==ori.grp]
-    } else if(!is.null(subset)){
-        x$grp <- x$grp[subset]
-        x$assign <- x$assign[subset]
-        x$posterior <- x$posterior[subset, , drop=FALSE]
-        lab <- lab[subset]
-    }
-
-
-    ## MAKE THE PLOT ##
-    Z <- t(x$posterior)
-    barplot(Z, border=NA, col=col, ylab="membership probability", names=lab, las=3, ...)
-
-    if(legend){
-        oxpd <- par("xpd")
-        par(xpd=TRUE)
-        legend(posi, fill=col, leg=txt.leg, cex=cleg, ncol=ncol, bg=bg)
-        on.exit(par(xpd=oxpd))
-    }
-
-    return(invisible(match.call()))
-} # end compoplot
 
 
 

@@ -6,6 +6,8 @@
 #'
 #' @export
 #'
+#' @rdname genclust.em
+#'
 #' @param x a \linkS4class{genind} object
 #' @param k the number of clusters to look for
 #' @param pop.ini an optional factor defining the initial cluster configuration
@@ -17,12 +19,18 @@
 #' iterations used before convergence
 #'
 #' @examples
-#' data(sim2pop)
-#' x <- sim2pop
-#' pop(x) <- sample(pop(x))
+#' data(microbov)
 #'
-#' ## try function using true clusters as initial state
-#'  genclust.em(x, 2, pop.ini = pop(sim2pop), detailed = FALSE)
+#' ## try function using k-means initialization
+#' grp.ini <- find.clusters(microbov, n.clust=15, n.pca=150)
+#'
+#' ## run EM algo
+#' res <- genclust.em(microbov, 15, pop.ini = grp.ini$grp, detailed = TRUE)
+#' names(res)
+#' res$converged
+#' res$n.iter
+#'
+#'
 genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detailed = TRUE) {
     ## This function uses the EM algorithm to find ML group assignment of a set of genotypes stored
     ## in a genind object into 'k' clusters. We need an initial cluster definition to start with. The rest of the algorithm consists of:
@@ -69,7 +77,6 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
         converged <- FALSE
 
         while(!converged && counter<=max.iter) {
-
             ## get table of allele frequencies (columns) by population (rows)
             pop.freq <- tab(genind2genpop(x, pop=group, quiet=TRUE), freq=TRUE)
 
@@ -103,11 +110,26 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
         }
     } # end of the for loop
 
-
+    class(out) <- c("genclust.em", "list")
     return(out)
 }
 
 
+
+
+
+#' @rdname genclust.em
+#' @export
+#' @param col.pal a color palette to be used for the groups; defaults to \code{funky}
+compoplot.genclust.em <- function(x, col.pal = funky, show.lab=TRUE, ...) {
+    if (!show.lab) {
+        lab <- rep("", nrow(x$proba))
+    } else {
+        lab <- NULL
+    }
+    barplot(t(x$proba), col=col.pal(ncol(x$proba)), border=NA, las=3,
+            names.arg = lab, ylab = "Group assignment probability", ...)
+}
 
 
 
@@ -127,10 +149,24 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
 #' @param prop.move the proportion of individuals moved across groups at each MCMC iteration
 #'
 #' @examples
+#' \dontrun{
 #' data(sim2pop)
 #' hyb <- hybridize(sim2pop[pop=1], sim2pop[pop=2], n=10)
 #' x <- repool(sim2pop, hyb)
+#' res <- genclust.emmcmc(x, k=2)
+#' plot(res) # show it hasn't converged
+#' plot(res, type="group") # show groups
 #'
+#' ## extract group summary and plot it
+#' summary(res)
+#' barplot(summary(res), col=spectral(2), border=NA)
+#'
+#'
+#' ## same analysis, initialized with k-means
+#' res <- genclust.emmcmc(x, k=2, pop.ini=find.clusters(x, n.clust=2, n.pca=20)$grp)
+#' plot(res) # it has converged
+#' plot(res, type="group") # show groups
+#' }
 
 ## This algorithm relies on using EM within steps of a MCMC based on the likelihood (no prior) or
 ## observed genotypes given their group memberships and the group allele frequencies.
@@ -180,18 +216,29 @@ genclust.emmcmc <- function(x, k, n.iter = 100, sample.every = 10, pop.ini = NUL
     out <- cbind.data.frame(out, out.groups)
 
     ## print(sprintf("\nProportion of movements accepted: %f (%d out of %d)", n.accept/n.iter, n.accept, n.iter))
-    class(out) <- c("emmcmc", "data.frame")
+    class(out) <- c("genclust.emmcmc", "data.frame")
     return(out)
 
 }
 
 
 
+#' @rdname emmcmc
+#' @export
+#'
+summary.genclust.emmcmc <- function(object, ...) {
+    groups <- object[,-(1:2)]
+    n.lev <- length(unique(unlist(groups)))
+    out <- apply(groups, 2, function(e) sapply(seq_len(n.lev), function(i) mean(e==i)))
+    return(out)
+}
+
+
 
 #' @rdname emmcmc
 #' @export
 #'
-plot.emmcmc <- function(x, y = "ll", type = c("trace", "hist", "density", "groups"), burnin = 0){
+plot.genclust.emmcmc <- function(x, y = "ll", type = c("trace", "hist", "density", "groups"), burnin = 0, ...){
     ## CHECKS ##
     type <- match.arg(type)
     if (!y %in% names(x)) {
@@ -238,6 +285,11 @@ plot.emmcmc <- function(x, y = "ll", type = c("trace", "hist", "density", "group
 }
 
 
+
+
+
+
+
 ## Non-exported function which computes the log-likelihood of a genotype in every population. For
 ## now only works for diploid individuals. 'x' is a vector of allele counts; 'pop.freq' is a matrix
 ## of group allele frequencies, with groups in rows and alleles in columns.
@@ -247,11 +299,11 @@ plot.emmcmc <- function(x, y = "ll", type = c("trace", "hist", "density", "group
 ll.genotype <- function(x, pop.freq, n.loc){
     ## homozygote (diploid)
     ## p(AA) = f(A)^2 for each locus
-    ll.homoz <- apply(pop.freq, 1, function(f) sum(log(f[x==2L])) * 2)
+    ll.homoz <- apply(pop.freq, 1, function(f) sum(log(f[x == 2L]), na.rm = TRUE) * 2)
 
     ## heterozygote (diploid, expl with 2 loci)
     ## p(Aa)p(Bb) = 2^n.loc * f(A)f(a) f(B)f(b)
-    ll.heteroz <- apply(pop.freq, 1, function(f) sum(log(f[x==1L])) + n.loc * log(2))
+    ll.heteroz <- apply(pop.freq, 1, function(f) sum(log(f[x == 1L]), na.rm = TRUE) + n.loc * log(2))
 
     return(ll.homoz + ll.heteroz)
 }
@@ -265,7 +317,7 @@ ll.genotype <- function(x, pop.freq, n.loc){
 ## assignments and a table of ll of genotypes in each group
 
 global.ll <- function(group, ll){
-    sum(t(ll)[cbind(seq_along(group), as.integer(group))])
+    sum(t(ll)[cbind(seq_along(group), as.integer(group))], na.rm=TRUE)
 }
 
 
