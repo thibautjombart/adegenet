@@ -4,25 +4,29 @@
 \alias{newclust}
 \title{Maximum-likelihood genetic clustering}
 \usage{
-newclust(x, k, pop.ini = NULL, max.iter = 100)
+newclust(x, k, ini.group = NULL, max.shake.iter = 10, max.em.iter = 100)
 }
 \arguments{
 \item{x}{a \linkS4class{genind} object}
 
 \item{k}{the number of clusters to look for}
 
-\item{pop.ini}{an optional factor defining the initial cluster configuration}
+\item{ini.group}{an optional factor defining the initial cluster configuration}
 
-\item{max.iter}{the maximum number of iteration of the EM algorithm}
+\item{max.em.iter}{the maximum number of iteration of the EM algorithm}
 }
 \description{
-Do not use. We work on that stuff. Contact us if interested.
+Do not use. We work on that stuff. Contact us if interested.  Current approach relies on
+iterative EM algo for LL maximization and random group movements.
 }
 \examples{
 data(sim2pop)
 x <- sim2pop
 pop(x) <- sample(pop(x))
 
+## check clustering when initial group is true one
+clust <- newclust(sim2pop, 2, pop.ini=pop(sim2pop))
+mean(clust$group==as.integer(pop(sim2pop)))
 }
 \author{
 Thibaut Jombart \email{thibautjombart@gmail.com} and Marie-Pauline Beugin
