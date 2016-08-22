@@ -111,6 +111,20 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
 
 
 
+#' EM-MCMC algorithm for genetic clustering
+#'
+#' Do not use.
+#'
+#' @author Thibaut Jombart \email{thibautjombart@@gmail.com}
+#' @export
+#'
+genclust.emmcmc <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detailed = TRUE) {
+##    genclust.em(x=x, k=k, pop.ini=pop.ini, )
+}
+
+
+
+
 ## Non-exported function which computes the log-likelihood of a genotype in every population. For
 ## now only works for diploid individuals. 'x' is a vector of allele counts; 'pop.freq' is a matrix
 ## of group allele frequencies, with groups in rows and alleles in columns.
@@ -141,3 +155,15 @@ global.ll <- function(group, ll){
     sum(t(ll)[cbind(seq_along(group), as.integer(group))])
 }
 
+
+
+## Non-exported function randomly moving group memberships for some individuals.
+## -'x': a vector of group membership
+## - 'pool': a vector of integer 1:K where K is the number of groups
+## - 'prop.move': the proportion of individuals to move
+move.groups <- function(x, pool, prop.move = 0.2) {
+    n.to.move <- max(1, round(prop.move * length(x)))
+    new.groups <- sample(pool, n.to.move, replace = TRUE)
+    x[sample(seq_along(x), n.to.move, replace = FALSE)] <- new.groups
+    return(x)
+}
