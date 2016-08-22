@@ -1,4 +1,4 @@
-#' Maximum-likelihood genetic clustering
+#' Maximum-likelihood genetic clustering using EM algorithm
 #'
 #' Do not use. We work on that stuff. Contact us if interested.
 #'
@@ -10,13 +10,18 @@
 #' @param k the number of clusters to look for
 #' @param pop.ini an optional factor defining the initial cluster configuration
 #' @param max.iter the maximum number of iteration of the EM algorithm
+#' @param detailed a logical stating whether extra details should be incorporated into the output;
+#' these include group membership probability, indication of convergence, and the number of
+#' iterations used before convergence
 #'
 #' @examples
 #' data(sim2pop)
 #' x <- sim2pop
 #' pop(x) <- sample(pop(x))
 #'
-newclust <- function(x, k, pop.ini=NULL, max.iter=100) {
+#' ## try function using true clusters as initial state
+#'  genclust.em(x, 2, pop.ini = pop(sim2pop), detailed = FALSE)
+genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, detailed = TRUE) {
     ## This function uses the EM algorithm to find ML group assignment of a set of genotypes stored
     ## in a genind object into 'k' clusters. We need an initial cluster definition to start with. The rest of the algorithm consists of:
 
@@ -64,15 +69,14 @@ newclust <- function(x, k, pop.ini=NULL, max.iter=100) {
     }
 
     ## shape output and return
-    proba <- round(prop.table(t(exp(ll)), 1), 2) # group membership proba
+    out <- list(group = group, ll = global.ll(group, ll))
 
-    sum.ll <- global.ll(group, ll) # loglike of model
+    if (detailed) {
+        out$proba <- round(prop.table(t(exp(ll)), 1), 2) # group membership proba
+        out$converged <- converged
+        out$n.iter <- counter
+    }
 
-    out <- list(group = group,
-                proba = proba,
-                ll = sum.ll,
-                converged = converged,
-                n.iter = counter)
     return(out)
 }
 
