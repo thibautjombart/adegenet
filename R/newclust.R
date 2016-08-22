@@ -118,6 +118,8 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
 #' @author Thibaut Jombart \email{thibautjombart@@gmail.com}
 #' @export
 #'
+#' @rdname emmcmc
+#'
 #' @inheritParams genclust.em
 #' @param n.iter the number of iterations of the MCMC
 #' @param sample.every the frequency of sampling from the MCMC
@@ -127,7 +129,7 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
 ## This algorithm relies on using EM within steps of a MCMC based on the likelihood (no prior) or
 ## observed genotypes given their group memberships and the group allele frequencies.
 genclust.emmcmc <- function(x, k, n.iter = 100, sample.every = 10, pop.ini = NULL,
-                            max.em.iter = 20, prop.move = 0.2) {
+                            max.em.iter = 20, prop.move = 0.2, detailed) {
 
     ## initialize the algorithm
     mcmc <- vector(length = floor(n.iter / sample.every) + 1, mode="list")
@@ -168,11 +170,63 @@ genclust.emmcmc <- function(x, k, n.iter = 100, sample.every = 10, pop.ini = NUL
                       ll = sapply(mcmc, function(e) e$ll))
     out.groups <- t(sapply(mcmc, function(e) e$group))
     out <- cbind.data.frame(out, out.groups)
+
+    class(out) <- c("emmcmc", "data.frame")
     return(out)
 
 }
 
 
+
+
+#' @rdname emmcmc
+#' @export
+#'
+plot.emmcmc <- function(x, y = "ll", type = c("trace", "hist", "density", "groups"), burnin = 0){
+    ## CHECKS ##
+    type <- match.arg(type)
+    if (!y %in% names(x)) {
+        stop(paste(y,"is not a column of x"))
+    }
+
+    ## GET DATA TO PLOT ##
+    if (burnin > max(x$step)) {
+        stop("burnin exceeds the number of steps in x")
+    }
+    x <- x[x$step>burnin,,drop=FALSE]
+
+    ## MAKE PLOT ##
+    if (type == "trace") {
+        out <- ggplot(x) + geom_line(aes_string(x="step", y=y)) +
+            labs(x="Iteration", y=y, title=paste("trace:",y))
+    }
+    if (type=="hist") {
+        out <- ggplot(x) + geom_histogram(aes_string(x=y)) +
+            geom_point(aes_string(x=y, y=0), shape="|", alpha=0.5, size=3) +
+                labs(x=y, title=paste("histogram:",y))
+    }
+
+    if (type=="density") {
+        out <- ggplot(x) + geom_density(aes_string(x=y)) +
+            geom_point(aes_string(x=y, y=0), shape="|", alpha=0.5, size=3) +
+                labs(x=y, title=paste("density:",y))
+    }
+
+    if (type=="groups") {
+        groups <- x[, -c(1,2), drop=FALSE]
+        out.dat <- data.frame(individual = as.vector(col(groups)),
+                              group = factor(unlist(groups)))
+
+        ## horrible kludge to standardize ylab
+        out.expr <- paste("ggplot(out.dat, aes(x=individual))",
+                          sprintf("geom_bar(aes(fill=group, y = (..count..)/%s))", nrow(x)),
+                          "labs(y = 'assignement probability')",
+                          sep=" + ")
+        out <- eval(parse(text = out.expr))
+    }
+
+    return(out)
+}
 
 
 ## Non-exported function which computes the log-likelihood of a genotype in every population. For
