@@ -10,6 +10,8 @@
 #' @param k the number of clusters to look for
 #' @param pop.ini an optional factor defining the initial cluster configuration
 #' @param max.iter the maximum number of iteration of the EM algorithm
+#' @param n.start the number of times the EM algorithm is run, each time with different random
+#' starting conditions
 #' @param detailed a logical stating whether extra details should be incorporated into the output;
 #' these include group membership probability, indication of convergence, and the number of
 #' iterations used before convergence

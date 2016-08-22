@@ -4,7 +4,8 @@
 \alias{genclust.em}
 \title{Maximum-likelihood genetic clustering using EM algorithm}
 \usage{
-genclust.em(x, k, pop.ini = NULL, max.iter = 100, detailed = TRUE)
+genclust.em(x, k, pop.ini = NULL, max.iter = 100, n.start = 10,
+  detailed = TRUE)
 }
 \arguments{
 \item{x}{a \linkS4class{genind} object}
@@ -14,6 +15,9 @@ genclust.em(x, k, pop.ini = NULL, max.iter = 100, detailed = TRUE)
 \item{pop.ini}{an optional factor defining the initial cluster configuration}
 
 \item{max.iter}{the maximum number of iteration of the EM algorithm}
+
+\item{n.start}{the number of times the EM algorithm is run, each time with different random
+starting conditions}
 
 \item{detailed}{a logical stating whether extra details should be incorporated into the output;
 these include group membership probability, indication of convergence, and the number of
