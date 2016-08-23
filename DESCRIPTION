@@ -101,6 +101,7 @@ Collate:
     pairDist.R
     newclust.R
     servers.R
+    showmekittens.R
     zzz.R
 License: GPL (>=2)
 LazyLoad: yes
