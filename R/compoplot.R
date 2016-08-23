@@ -126,7 +126,7 @@ compoplot.dapc <- function(x, only.grp=NULL, ...){
 
 
 
-#' @rdname genclust.em
+#' @rdname compoplot
 #' @export
 compoplot.genclust.em <- function(x, ...) {
     compoplot(x$proba, ...)

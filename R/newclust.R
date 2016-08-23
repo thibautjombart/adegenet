@@ -89,7 +89,7 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
             pop.freq <- tab(genind2genpop(x, pop=group, quiet=TRUE), freq=TRUE)
 
             ## get likelihoods of genotypes in every pop
-            ll.mat <- apply(genotypes, 1, ll.genotype, pop.freq, n.loc)
+            ll.mat <- apply(genotypes, 1, .ll.genotype, pop.freq, n.loc)
 
             ## assign individuals to most likely cluster
             previous.group <- group
@@ -102,7 +102,7 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
         }
 
         ## store the best run so far
-        new.ll <- global.ll(group, ll.mat)
+        new.ll <- .global.ll(group, ll.mat)
 
         if (new.ll > ll) {
             ## store results
@@ -184,7 +184,7 @@ genclust.emmcmc <- function(x, k, n.iter = 100, sample.every = 10, pop.ini = NUL
     ## proceed to the MCMC
     for (i in seq_len(n.iter)) {
         ## move groups
-        new.groups <- move.groups(current.state$group, group.lev, prop.move = prop.move)
+        new.groups <- .move.groups(current.state$group, group.lev, prop.move = prop.move)
 
         ## compute loglike difference
         new.state <- genclust.em(x = x, k = k, pop.ini = new.groups,
@@ -220,7 +220,7 @@ genclust.emmcmc <- function(x, k, n.iter = 100, sample.every = 10, pop.ini = NUL
 
 #' @rdname emmcmc
 #' @export
-#'
+#' @param object a 'emmcmc' object
 summary.genclust.emmcmc <- function(object, ...) {
     groups <- object[,-(1:2)]
     n.lev <- length(unique(unlist(groups)))
@@ -232,6 +232,10 @@ summary.genclust.emmcmc <- function(object, ...) {
 
 #' @rdname emmcmc
 #' @export
+#' @param y the data to plot
+#' @param type a character string indicating the type of graph to produce: the trace ('trace'), a histogram ('hist'), a density plot ('density') or a plot of group composition ('groups')
+#' @param burnin the number of iterations of the MCMC to discard
+#' @param ... further arguments passed to other methods
 #'
 plot.genclust.emmcmc <- function(x, y = "ll", type = c("trace", "hist", "density", "groups"), burnin = 0, ...){
     ## CHECKS ##
@@ -248,19 +252,19 @@ plot.genclust.emmcmc <- function(x, y = "ll", type = c("trace", "hist", "density
 
     ## MAKE PLOT ##
     if (type == "trace") {
-        out <- ggplot(x) + geom_line(aes_string(x="step", y=y)) +
-            labs(x="Iteration", y=y, title=paste("trace:",y))
+        out <- ggplot2::ggplot(x) + ggplot2::geom_line(ggplot2::aes_string(x="step", y=y)) +
+            ggplot2::labs(x="Iteration", y=y, title=paste("trace:",y))
     }
     if (type=="hist") {
-        out <- ggplot(x) + geom_histogram(aes_string(x=y)) +
-            geom_point(aes_string(x=y, y=0), shape="|", alpha=0.5, size=3) +
-                labs(x=y, title=paste("histogram:",y))
+        out <- ggplot2::ggplot(x) + ggplot2::geom_histogram(ggplot2::aes_string(x=y)) +
+            ggplot2::geom_point(ggplot2::aes_string(x=y, y=0), shape="|", alpha=0.5, size=3) +
+                ggplot2::labs(x=y, title=paste("histogram:",y))
     }
 
     if (type=="density") {
-        out <- ggplot(x) + geom_density(aes_string(x=y)) +
-            geom_point(aes_string(x=y, y=0), shape="|", alpha=0.5, size=3) +
-                labs(x=y, title=paste("density:",y))
+        out <- ggplot2::ggplot(x) + ggplot2::geom_density(ggplot2::aes_string(x=y)) +
+            ggplot2::geom_point(ggplot2::aes_string(x=y, y=0), shape="|", alpha=0.5, size=3) +
+                ggplot2::labs(x=y, title=paste("density:",y))
     }
 
     if (type=="groups") {
@@ -291,7 +295,7 @@ plot.genclust.emmcmc <- function(x, y = "ll", type = c("trace", "hist", "density
 
 ## TODO: extend this to various ploidy levels, possibly optimizing procedures for haploids.
 
-ll.genotype <- function(x, pop.freq, n.loc){
+.ll.genotype <- function(x, pop.freq, n.loc){
     ## homozygote (diploid)
     ## p(AA) = f(A)^2 for each locus
     ll.homoz <- apply(pop.freq, 1, function(f) sum(log(f[x == 2L]), na.rm = TRUE) * 2)
@@ -311,7 +315,7 @@ ll.genotype <- function(x, pop.freq, n.loc){
 ## Non-exported function computing the total log-likelihood of the model given a vector of group
 ## assignments and a table of ll of genotypes in each group
 
-global.ll <- function(group, ll){
+.global.ll <- function(group, ll){
     sum(t(ll)[cbind(seq_along(group), as.integer(group))], na.rm=TRUE)
 }
 
@@ -321,7 +325,7 @@ global.ll <- function(group, ll){
 ## -'x': a vector of group membership
 ## - 'pool': a vector of integer 1:K where K is the number of groups
 ## - 'prop.move': the proportion of individuals to move
-move.groups <- function(x, pool, prop.move = 0.2) {
+.move.groups <- function(x, pool, prop.move = 0.2) {
     n.to.move <- max(1, round(prop.move * length(x)))
     new.groups <- sample(pool, n.to.move, replace = TRUE)
     x[sample(seq_along(x), n.to.move, replace = FALSE)] <- new.groups

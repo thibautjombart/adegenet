@@ -3,6 +3,7 @@
 \name{compoplot}
 \alias{compoplot}
 \alias{compoplot.dapc}
+\alias{compoplot.genclust.em}
 \alias{compoplot.matrix}
 \title{Genotype composition plot}
 \usage{
@@ -14,6 +15,8 @@ compoplot(x, ...)
   bg = transp("white"), ...)
 
 \method{compoplot}{dapc}(x, only.grp = NULL, ...)
+
+\method{compoplot}{genclust.em}(x, ...)
 }
 \arguments{
 \item{x}{an object to be used for plotting (see description)}

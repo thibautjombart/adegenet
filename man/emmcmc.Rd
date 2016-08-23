@@ -32,6 +32,16 @@ plot.genclust.emmcmc(x, y = "ll", type = c("trace", "hist", "density",
 \item{detailed}{a logical stating whether extra details should be incorporated into the output;
 these include group membership probability, indication of convergence, and the number of
 iterations used before convergence}
+
+\item{object}{a 'emmcmc' object}
+
+\item{...}{further arguments passed to other methods}
+
+\item{y}{the data to plot}
+
+\item{type}{a character string indicating the type of graph to produce: the trace ('trace'), a histogram ('hist'), a density plot ('density') or a plot of group composition ('groups')}
+
+\item{burnin}{the number of iterations of the MCMC to discard}
 }
 \description{
 Do not use.
