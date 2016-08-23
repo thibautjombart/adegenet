@@ -41,6 +41,13 @@ names(res)
 res$converged
 res$n.iter
 
+## plot result
+compoplot(res)
+
+## flag potential hybrids
+to.flag <- apply(res$proba,1,max)<.9
+compoplot(res, subset=to.flag, show.lab=TRUE,
+                 posi="bottomleft", bg="white")
 
 }
 \author{

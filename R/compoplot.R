@@ -37,10 +37,11 @@ compoplot <- function(x, ...){
 #' @param posi the position of the legend
 #' @param cleg a size factor for the legend
 #' @param bg the background to be used for the legend
+#' @param subset a subset of individuals to retain
 #'
-compoplot.matrix <- function(x, col.pal = funky, show.lab = FALSE,
-                             lab = rownames(x), legend = TRUE,
-                             txt.leg = colnames(x), n.col = 4,
+compoplot.matrix <- function(x, col.pal = funky, subset=NULL,
+                             show.lab = FALSE, lab = rownames(x),
+                             legend = TRUE, txt.leg = colnames(x), n.col = 4,
                              posi = NULL, cleg = .8, bg = transp("white"),
                              ...) {
 
@@ -50,6 +51,13 @@ compoplot.matrix <- function(x, col.pal = funky, show.lab = FALSE,
     ## individual labels
     if (!show.lab) {
         lab <- rep("", nrow(x))
+    }
+
+    ## handle subset
+    if (!is.null(subset)) {
+        names(lab) <- rownames(x)
+        x <- x[subset, , drop=FALSE]
+        lab <- lab[rownames(x)]
     }
 
     ## group labels
@@ -86,25 +94,13 @@ compoplot.matrix <- function(x, col.pal = funky, show.lab = FALSE,
 #' @aliases compoplot.dapc
 #' @export
 #' @param only.grp a subset of groups to retain
-#' @param subset a subset of individuals to retain
 
 ## The compoplot for DAPC is basically a compoplot.matrix on the predicted group membership
 ## probabilities. Only extra features related to keeping a subset of groups or individuals.
 
-compoplot.dapc <- function(x, only.grp=NULL, subset=NULL,
-                           col.pal = funky, show.lab = FALSE,
-                           lab = rownames(x), legend = TRUE,
-                           txt.leg = NULL, n.col = 4,
-                           posi = NULL, cleg = .8, bg = transp("white"),
-                           ...){
+compoplot.dapc <- function(x, only.grp=NULL, ...){
     ## get predictions and subset if needed
     pred <- predict(x)$posterior
-
-    ## handle subset
-    if (!is.null(subset)) {
-        pred <- pred[subset, , drop=FALSE]
-        lab <- lab[subset]
-    }
 
     ## handle group subsetting
     if (!is.null(only.grp)) {
@@ -117,7 +113,7 @@ compoplot.dapc <- function(x, only.grp=NULL, subset=NULL,
     }
 
     ## call matrix method
-    compoplot(pred, col.pal, show.lab, lab, legend, txt.leg, n.col, posi, cleg, bg, ...)
+    compoplot(pred, ...)
 
     return(invisible(pred))
 } # end compoplot

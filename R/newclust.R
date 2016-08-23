@@ -30,6 +30,13 @@
 #' res$converged
 #' res$n.iter
 #'
+#' ## plot result
+#' compoplot(res)
+#'
+#' ## flag potential hybrids
+#' to.flag <- apply(res$proba,1,max)<.9
+#' compoplot(res, subset=to.flag, show.lab=TRUE,
+#'                  posi="bottomleft", bg="white")
 #'
 genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detailed = TRUE) {
     ## This function uses the EM algorithm to find ML group assignment of a set of genotypes stored
@@ -65,6 +72,7 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
 
         ## make sure k and pop.ini are compatible
         pop.ini <- factor(pop.ini)
+        lev.ini <- levels(pop.ini)
         if (length(levels(pop.ini)) != k) {
             stop("pop.ini does not have k clusters")
         }
@@ -110,6 +118,9 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
         }
     } # end of the for loop
 
+    ## restore labels of groups
+    out$group <- factor(out$group)
+    colnames(out$proba) <- levels(out$group) <- lev.ini
     class(out) <- c("genclust.em", "list")
     return(out)
 }
