@@ -132,12 +132,6 @@ compoplot.dapc <- function(x, only.grp=NULL, subset=NULL,
 
 #' @rdname genclust.em
 #' @export
-compoplot.genclust.em <- function(x, col.pal = funky, show.lab=TRUE, ...) {
-    if (!show.lab) {
-        lab <- rep("", nrow(x$proba))
-    } else {
-        lab <- NULL
-    }
-    barplot(t(x$proba), col=col.pal(ncol(x$proba)), border=NA, las=3,
-            names.arg = lab, ylab = "Group assignment probability", ...)
+compoplot.genclust.em <- function(x, ...) {
+    compoplot(x$proba, ...)
 }

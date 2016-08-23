@@ -2,14 +2,17 @@
 % Please edit documentation in R/newclust.R
 \name{genclust.emmcmc}
 \alias{genclust.emmcmc}
-\alias{plot.emmcmc}
+\alias{plot.genclust.emmcmc}
+\alias{summary.genclust.emmcmc}
 \title{EM-MCMC algorithm for genetic clustering}
 \usage{
 genclust.emmcmc(x, k, n.iter = 100, sample.every = 10, pop.ini = NULL,
-  max.em.iter = 20, prop.move = 0.2, detailed)
+  max.em.iter = 20, prop.move = 0.1, detailed)
 
-plot.emmcmc(x, y = "ll", type = c("trace", "hist", "density", "groups"),
-  burnin = 0)
+summary.genclust.emmcmc(object, ...)
+
+plot.genclust.emmcmc(x, y = "ll", type = c("trace", "hist", "density",
+  "groups"), burnin = 0, ...)
 }
 \arguments{
 \item{x}{a \linkS4class{genind} object}
@@ -32,6 +35,26 @@ iterations used before convergence}
 }
 \description{
 Do not use.
+}
+\examples{
+\dontrun{
+data(sim2pop)
+hyb <- hybridize(sim2pop[pop=1], sim2pop[pop=2], n=10)
+x <- repool(sim2pop, hyb)
+res <- genclust.emmcmc(x, k=2)
+plot(res) # show it hasn't converged
+plot(res, type="group") # show groups
+
+## extract group summary and plot it
+summary(res)
+barplot(summary(res), col=spectral(2), border=NA)
+
+
+## same analysis, initialized with k-means
+res <- genclust.emmcmc(x, k=2, pop.ini=find.clusters(x, n.clust=2, n.pca=20)$grp)
+plot(res) # it has converged
+plot(res, type="group") # show groups
+}
 }
 \author{
 Thibaut Jombart \email{thibautjombart@gmail.com}
