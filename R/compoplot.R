@@ -33,14 +33,14 @@ compoplot <- function(x, ...){
 #' @param lab a vector of individual labels; if NULL, row.names of the matrix are used
 #' @param legend a logical indicating whether a legend should be provided for the colors
 #' @param txt.leg a character vector to be used for the legend
-#' @param ncol the number of columns to be used for the legend
+#' @param n.col the number of columns to be used for the legend
 #' @param posi the position of the legend
 #' @param cleg a size factor for the legend
 #' @param bg the background to be used for the legend
 #'
 compoplot.matrix <- function(x, col.pal = funky, show.lab = FALSE,
                              lab = rownames(x), legend = TRUE,
-                             txt.leg = colnames(x), ncol = 4,
+                             txt.leg = colnames(x), n.col = 4,
                              posi = NULL, cleg = .8, bg = transp("white"),
                              ...) {
 
@@ -52,19 +52,26 @@ compoplot.matrix <- function(x, col.pal = funky, show.lab = FALSE,
         lab <- rep("", nrow(x))
     }
 
+    ## group labels
+    if (is.null(txt.leg)) {
+        txt.leg <- colnames(x)
+    }
+
     ## position of the legend
     if (is.null(posi)) {
         posi <- list(x=0, y=-.01)
     }
 
-    ## make the plot ##
-    barplot(t(x), border = NA, col = col, ylab = "membership probability",
-            names.arg = lab, las = 3, ...)
+    ## make the plot: we need to suppress warnings because '...' could contain arguments from other
+    ## methods not meant to be used by 'barplot'
+
+    suppressWarnings(barplot(t(x), border = NA, col = col, ylab = "membership probability",
+            names.arg = lab, las = 3, ...) )
 
     if (legend) {
         oxpd <- par("xpd")
         par(xpd=TRUE)
-        legend(posi, fill=col, legend = txt.leg, cex=cleg, ncol=ncol, bg=bg)
+        legend(posi, fill=col, legend = txt.leg, cex=cleg, ncol=n.col, bg=bg)
         on.exit(par(xpd=oxpd))
     }
 
@@ -78,41 +85,41 @@ compoplot.matrix <- function(x, col.pal = funky, show.lab = FALSE,
 #' @rdname compoplot
 #' @aliases compoplot.dapc
 #' @export
-compoplot.dapc <- function(x, only.grp=NULL, subset=NULL, new.pred=NULL, col=NULL, lab=NULL,
-                      legend=TRUE, txt.leg=NULL, ncol=4, posi=NULL, cleg=.8, bg=transp("white"), ...){
+#' @param only.grp a subset of groups to retain
+#' @param subset a subset of individuals to retain
 
-    ## HANDLE ARGUMENTS ##
-    ngrp <- length(levels(x$grp))
+## The compoplot for DAPC is basically a compoplot.matrix on the predicted group membership
+## probabilities. Only extra features related to keeping a subset of groups or individuals.
 
-    ## HANDLE DATA FROM PREDICT.DAPC ##
-    if(!is.null(new.pred)){
-        n.new <- length(new.pred$assign)
-        x$grp <- c(as.character(x$grp), rep("unknown", n.new))
-        x$assign <- c(as.character(x$assign), as.character(new.pred$assign))
-        x$posterior <- rbind(x$posterior, new.pred$posterior)
-        lab <- c(lab, rownames(new.pred$posterior))
-    }
+compoplot.dapc <- function(x, only.grp=NULL, subset=NULL,
+                           col.pal = funky, show.lab = FALSE,
+                           lab = rownames(x), legend = TRUE,
+                           txt.leg = NULL, n.col = 4,
+                           posi = NULL, cleg = .8, bg = transp("white"),
+                           ...){
+    ## get predictions and subset if needed
+    pred <- predict(x)$posterior
 
-
-    ## TREAT OTHER ARGUMENTS ##
-    if(!is.null(only.grp)){
-        only.grp <- as.character(only.grp)
-        ori.grp <- as.character(x$grp)
-        x$grp <- x$grp[only.grp==ori.grp]
-        x$assign <- x$assign[only.grp==ori.grp]
-        x$posterior <- x$posterior[only.grp==ori.grp, , drop=FALSE]
-        lab <- lab[only.grp==ori.grp]
-    } else if(!is.null(subset)){
-        x$grp <- x$grp[subset]
-        x$assign <- x$assign[subset]
-        x$posterior <- x$posterior[subset, , drop=FALSE]
+    ## handle subset
+    if (!is.null(subset)) {
+        pred <- pred[subset, , drop=FALSE]
         lab <- lab[subset]
     }
 
-    ## call matrix method
-    compoplot(t(x$posterior))
+    ## handle group subsetting
+    if (!is.null(only.grp)) {
+        if(is.numeric(only.grp) || is.logical(only.grp)) {
+            only.grp <- levels(x$grp)[only.grp]
+        }
+        to.keep <- as.character(x$grp) %in% only.grp
+        pred <- pred[to.keep, , drop=FALSE]
+        lab <- lab[to.keep]
+    }
 
-    return(invisible(match.call()))
+    ## call matrix method
+    compoplot(pred, col.pal, show.lab, lab, legend, txt.leg, n.col, posi, cleg, bg, ...)
+
+    return(invisible(pred))
 } # end compoplot
 
 
