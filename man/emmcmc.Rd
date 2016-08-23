@@ -9,7 +9,7 @@
 genclust.emmcmc(x, k, n.iter = 100, sample.every = 10, pop.ini = NULL,
   max.em.iter = 20, prop.move = 0.1, detailed)
 
-summary.genclust.emmcmc(object, ...)
+summary.genclust.emmcmc(object, burnin = 0, ...)
 
 plot.genclust.emmcmc(x, y = "ll", type = c("trace", "hist", "density",
   "groups"), burnin = 0, ...)
@@ -35,33 +35,53 @@ iterations used before convergence}
 
 \item{object}{a 'emmcmc' object}
 
+\item{burnin}{the number of iterations of the MCMC to discard}
+
 \item{...}{further arguments passed to other methods}
 
 \item{y}{the data to plot}
 
 \item{type}{a character string indicating the type of graph to produce: the trace ('trace'), a histogram ('hist'), a density plot ('density') or a plot of group composition ('groups')}
-
-\item{burnin}{the number of iterations of the MCMC to discard}
 }
 \description{
 Do not use.
 }
 \examples{
 \dontrun{
+## run analysis
 data(sim2pop)
-hyb <- hybridize(sim2pop[pop=1], sim2pop[pop=2], n=10)
-x <- repool(sim2pop, hyb)
-res <- genclust.emmcmc(x, k=2)
-plot(res) # show it hasn't converged
-plot(res, type="group") # show groups
+res <- genclust.emmcmc(sim2pop, k=2, n.iter=1e3, sample.every=50)
+plot(res)
 
-## extract group summary and plot it
-summary(res)
-barplot(summary(res), col=spectral(2), border=NA)
+## get summary
+smry <- summary(res, burn=250)
+compoplot(t(smry$proba))
+table(smry$group, pop(sim2pop))
 
+## other example, generating hybrids
+p1 <- hybridize(sim2pop[pop=1], sim2pop[pop=1], n=50, pop="p1")
+p2 <- hybridize(sim2pop[pop=2], sim2pop[pop=2], n=50, pop="p2")
+hyb <- hybridize(p1, p2, n=50)
+x <- repool(p1, p2, hyb)
+
+## make a pca
+pca1 <- dudi.pca(tab(x), scale=FALSE, scannf=FALSE)
+s.class(pca1$li, pop(x))
+
+## run MCMC
+res <- genclust.emmcmc(x, k=2, n.iter=1e3, sample.every=50)
+plot(res)
+
+## get summary
+smry <- summary(res, burn=250)
+compoplot(t(smry$proba), col.pal=spectral,
+n.col=2, txt.leg=paste("group", 1:2))
+
+table(smry$group, pop(x))
 
 ## same analysis, initialized with k-means
-res <- genclust.emmcmc(x, k=2, pop.ini=find.clusters(x, n.clust=2, n.pca=20)$grp)
+clust.ini <- find.clusters(x, n.clust=2, n.pca=20)$grp
+res <- genclust.emmcmc(x, k=2, pop.ini=clust.ini)
 plot(res) # it has converged
 plot(res, type="group") # show groups
 }

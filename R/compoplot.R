@@ -64,6 +64,9 @@ compoplot.matrix <- function(x, col.pal = funky, subset=NULL,
     if (is.null(txt.leg)) {
         txt.leg <- colnames(x)
     }
+    if (is.null(txt.leg)) {
+        txt.leg <- seq_len(ncol(x))
+    }
 
     ## position of the legend
     if (is.null(posi)) {
