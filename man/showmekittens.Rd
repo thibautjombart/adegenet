@@ -17,11 +17,10 @@ Sometimes, a mere break will not cut it.
 Sometimes, you need a kitten.
 }
 \details{
-\author Thibaut Jombart \email{thibautjombart@gmail.com}
-
-
-
 Please send us more! Either pull request or submit an issue with a URL (use
 \code{adegenetIssues()}).
+}
+\author{
+Thibaut Jombart \email{thibautjombart@gmail.com}
 }
 

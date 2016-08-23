@@ -4,7 +4,7 @@
 #' Sometimes, a mere break will not cut it.
 #' Sometimes, you need a kitten.
 #'
-#' \author Thibaut Jombart \email{thibautjombart@@gmail.com}
+#' @author Thibaut Jombart \email{thibautjombart@@gmail.com}
 #'
 #' @export
 #'
