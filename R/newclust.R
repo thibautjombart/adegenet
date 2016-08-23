@@ -120,7 +120,10 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
 
     ## restore labels of groups
     out$group <- factor(out$group)
-    colnames(out$proba) <- levels(out$group) <- lev.ini
+    levels(out$group) <- lev.ini
+    if (detailed) {
+        colnames(out$proba) <- lev.ini
+    }
     class(out) <- c("genclust.em", "list")
     return(out)
 }
@@ -154,7 +157,7 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
 #'
 #' ## extract group summary and plot it
 #' summary(res)
-#' barplot(summary(res), col=spectral(2), border=NA)
+#' barplot(summary(res)$proba, col=spectral(2), border=NA)
 #'
 #'
 #' ## same analysis, initialized with k-means
@@ -221,10 +224,15 @@ genclust.emmcmc <- function(x, k, n.iter = 100, sample.every = 10, pop.ini = NUL
 #' @rdname emmcmc
 #' @export
 #' @param object a 'emmcmc' object
-summary.genclust.emmcmc <- function(object, ...) {
-    groups <- object[,-(1:2)]
+summary.genclust.emmcmc <- function(object, burnin = 0, ...) {
+    if (burnin > max(object$step)) {
+        stop(sprintf("Burnin (%d) exceeds the number of MCMC steps in 'object' (%d)", burnin, max(object$step)))
+    }
+    groups <- object[object$step > burnin , -(1:2)]
     n.lev <- length(unique(unlist(groups)))
-    out <- apply(groups, 2, function(e) sapply(seq_len(n.lev), function(i) mean(e==i)))
+    out <- list()
+    out$proba <- apply(groups, 2, function(e) sapply(seq_len(n.lev), function(i) mean(e==i)))
+    out$group <- apply(out$proba, 2, which.max)
     return(out)
 }
 
@@ -273,8 +281,8 @@ plot.genclust.emmcmc <- function(x, y = "ll", type = c("trace", "hist", "density
                               group = factor(unlist(groups)))
 
         ## horrible kludge to standardize ylab
-        out.expr <- paste("ggplot(out.dat, aes(x=individual))",
-                          sprintf("geom_bar(aes(fill=group, y = (..count..)/%s))", nrow(x)),
+        out.expr <- paste("ggplot2::ggplot(out.dat, aes(x=individual))",
+                          sprintf("ggplot2::geom_bar(ggplot2::aes(fill=group, y = (..count..)/%s))", nrow(x)),
                           "labs(y = 'assignement probability')",
                           sep=" + ")
         out <- eval(parse(text = out.expr))
