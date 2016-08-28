@@ -14,11 +14,14 @@
 #' @param max.iter the maximum number of iteration of the EM algorithm
 #' @param n.start the number of times the EM algorithm is run, each time with different random
 #' starting conditions
+#' @param hybrids a logical indicating if hybrids should be modelled explicitely; this is currently
+#' implemented for 2 groups only.
 #' @param detailed a logical stating whether extra details should be incorporated into the output;
 #' these include group membership probability, indication of convergence, and the number of
 #' iterations used before convergence
 #'
 #' @examples
+#' \dontrun{
 #' data(microbov)
 #'
 #' ## try function using k-means initialization
@@ -38,7 +41,10 @@
 #' compoplot(res, subset=to.flag, show.lab=TRUE,
 #'                  posi="bottomleft", bg="white")
 #'
-genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detailed = TRUE) {
+#' }
+
+genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10,
+                        hybrids = FALSE, detailed = TRUE) {
     ## This function uses the EM algorithm to find ML group assignment of a set of genotypes stored
     ## in a genind object into 'k' clusters. We need an initial cluster definition to start with. The rest of the algorithm consists of:
 
@@ -59,6 +65,11 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
         n.start <- 1L
     }
 
+    if (hybrids && k > 2) {
+        warning(sprintf("modelling of hybrids is implemented only for k=2 (requested k is %d)", k))
+        k <- 2
+    }
+
     ## There is one run of the EM algo for each of the n.start random initial conditions.
     ll <- -Inf # this will be the total loglike
 
@@ -72,8 +83,8 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
 
         ## make sure k and pop.ini are compatible
         pop.ini <- factor(pop.ini)
-        lev.ini <- levels(pop.ini)
-        if (length(levels(pop.ini)) != k) {
+        lev.ini <- levels(pop.ini)[1:k] # need to exclude potential 'hybrids'
+        if (! (length(levels(pop.ini)) %in% c(k, k+hybrids)) ) {
             stop("pop.ini does not have k clusters")
         }
 
@@ -81,12 +92,20 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
         group <- factor(as.integer(pop.ini)) # levels are 1:k
         genotypes <- tab(x)
         n.loc <- nLoc(x)
-        counter <- 1L
+        counter <- 0L
         converged <- FALSE
 
         while(!converged && counter<=max.iter) {
             ## get table of allele frequencies (columns) by population (rows)
-            pop.freq <- tab(genind2genpop(x, pop=group, quiet=TRUE), freq=TRUE)
+            if (hybrids) {
+                pop(x) <- group
+                x.parents <- x[pop=1:2]
+                pop.freq <- tab(genind2genpop(x.parents, quiet=TRUE), freq=TRUE)
+                pop.freq <- rbind(pop.freq,
+                                  apply(pop.freq, 2, mean))
+            } else {
+                pop.freq <- tab(genind2genpop(x, pop=group, quiet=TRUE), freq=TRUE)
+            }
 
             ## get likelihoods of genotypes in every pop
             ll.mat <- apply(genotypes, 1, .ll.genotype, pop.freq, n.loc)
@@ -104,7 +123,7 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
         ## store the best run so far
         new.ll <- .global.ll(group, ll.mat)
 
-        if (new.ll > ll) {
+        if (new.ll > ll || i == 1L) {
             ## store results
             ll <- new.ll
             out <- list(group = group, ll = ll)
@@ -120,6 +139,9 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
 
     ## restore labels of groups
     out$group <- factor(out$group)
+    if (hybrids) {
+        lev.ini <- c(lev.ini, "hybrid")
+    }
     levels(out$group) <- lev.ini
     if (detailed) {
         colnames(out$proba) <- lev.ini
@@ -145,6 +167,8 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
 #' @param sample.every the frequency of sampling from the MCMC
 #' @param max.em.iter the maximum number of iterations for the EM algorithm
 #' @param prop.move the proportion of individuals moved across groups at each MCMC iteration
+#' @param hybrids a logical indicating if hybrids should be modelled explicitely; this is currently
+#' implemented for 2 groups only.
 #'
 #' @examples
 #' \dontrun{
@@ -169,7 +193,7 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
 #' s.class(pca1$li, pop(x))
 #'
 #' ## run MCMC
-#' res <- genclust.emmcmc(x, k=2, n.iter=1e3, sample.every=50)
+#' res <- genclust.emmcmc(x, k=2, n.iter=1e3, sample.every=50, hybrids=TRUE)
 #' plot(res)
 #'
 #' ## get summary
@@ -189,15 +213,16 @@ genclust.em <- function(x, k, pop.ini = NULL, max.iter = 100, n.start=10, detail
 ## This algorithm relies on using EM within steps of a MCMC based on the likelihood (no prior) or
 ## observed genotypes given their group memberships and the group allele frequencies.
 genclust.emmcmc <- function(x, k, n.iter = 100, sample.every = 10, pop.ini = NULL,
-                            max.em.iter = 20, prop.move = 0.1, detailed) {
+                            max.em.iter = 20, prop.move = 0.1, hybrids = FALSE,
+                            detailed = FALSE) {
 
     ## initialize the algorithm
     mcmc <- vector(length = floor(n.iter / sample.every) + 1, mode="list")
 
     ## the object handled is a list with a $group (group membership) and a $ll (total loglike)
     mcmc[[1]] <- current.state <- genclust.em(x = x, k = k, pop.ini = pop.ini,
-                             max.iter = max.em.iter, n.start = 10,
-                             detailed = FALSE)
+                                              max.iter = max.em.iter, n.start = 10,
+                                              hybrids = hybrids, detailed = FALSE)
     mcmc[[1]]$step <- 1L
     counter <- 1L
     n.accept <- 0
@@ -211,7 +236,7 @@ genclust.emmcmc <- function(x, k, n.iter = 100, sample.every = 10, pop.ini = NUL
 
         ## compute loglike difference
         new.state <- genclust.em(x = x, k = k, pop.ini = new.groups,
-                             max.iter = max.em.iter, detailed = FALSE)
+                                 max.iter = max.em.iter, hybrids = hybrids, detailed = FALSE)
 
         ## accept/reject (Metropolis algorithm)
         if(log(runif(1)) <= (new.state$ll - current.state$ll)) { ## accept
