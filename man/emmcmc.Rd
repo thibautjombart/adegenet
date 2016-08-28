@@ -7,7 +7,7 @@
 \title{EM-MCMC algorithm for genetic clustering}
 \usage{
 genclust.emmcmc(x, k, n.iter = 100, sample.every = 10, pop.ini = NULL,
-  max.em.iter = 20, prop.move = 0.1, detailed)
+  max.em.iter = 20, prop.move = 0.1, hybrids = FALSE, detailed = FALSE)
 
 summary.genclust.emmcmc(object, burnin = 0, ...)
 
@@ -28,6 +28,9 @@ plot.genclust.emmcmc(x, y = "ll", type = c("trace", "hist", "density",
 \item{max.em.iter}{the maximum number of iterations for the EM algorithm}
 
 \item{prop.move}{the proportion of individuals moved across groups at each MCMC iteration}
+
+\item{hybrids}{a logical indicating if hybrids should be modelled explicitely; this is currently
+implemented for 2 groups only.}
 
 \item{detailed}{a logical stating whether extra details should be incorporated into the output;
 these include group membership probability, indication of convergence, and the number of
@@ -69,7 +72,7 @@ pca1 <- dudi.pca(tab(x), scale=FALSE, scannf=FALSE)
 s.class(pca1$li, pop(x))
 
 ## run MCMC
-res <- genclust.emmcmc(x, k=2, n.iter=1e3, sample.every=50)
+res <- genclust.emmcmc(x, k=2, n.iter=1e3, sample.every=50, hybrids=TRUE)
 plot(res)
 
 ## get summary

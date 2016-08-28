@@ -5,7 +5,7 @@
 \title{Maximum-likelihood genetic clustering using EM algorithm}
 \usage{
 genclust.em(x, k, pop.ini = NULL, max.iter = 100, n.start = 10,
-  detailed = TRUE)
+  hybrids = FALSE, detailed = TRUE)
 }
 \arguments{
 \item{x}{a \linkS4class{genind} object}
@@ -19,6 +19,9 @@ genclust.em(x, k, pop.ini = NULL, max.iter = 100, n.start = 10,
 \item{n.start}{the number of times the EM algorithm is run, each time with different random
 starting conditions}
 
+\item{hybrids}{a logical indicating if hybrids should be modelled explicitely; this is currently
+implemented for 2 groups only.}
+
 \item{detailed}{a logical stating whether extra details should be incorporated into the output;
 these include group membership probability, indication of convergence, and the number of
 iterations used before convergence}
@@ -27,6 +30,7 @@ iterations used before convergence}
 Do not use. We work on that stuff. Contact us if interested.
 }
 \examples{
+\dontrun{
 data(microbov)
 
 ## try function using k-means initialization
@@ -46,6 +50,7 @@ to.flag <- apply(res$proba,1,max)<.9
 compoplot(res, subset=to.flag, show.lab=TRUE,
                  posi="bottomleft", bg="white")
 
+}
 }
 \author{
 Thibaut Jombart \email{thibautjombart@gmail.com} and Marie-Pauline Beugin
