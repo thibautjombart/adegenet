@@ -555,14 +555,14 @@ We can plot information of all individuals to have a global picture of the clust
 <<fig.width=10,out.width="\\textwidth">>=
 compoplot(dapc1, posi="bottomright",
           txt.leg=paste("Cluster", 1:6), lab="",
-          ncol=1, xlab="individuals", col=funky(6))
+          ncol=1, xlab="individuals")
 @
 
 \noindent We can also have a closer look at a subset of individuals; for instance, for the first 50 individuals:
 <<>>=
 compoplot(dapc1, subset=1:50, posi="bottomright",
           txt.leg=paste("Cluster", 1:6), lab="",
-          ncol=2, xlab="individuals", col=funky(6))
+          ncol=2, xlab="individuals")
 @
 
 Obviously, we can use the power of R to lead our investigation further. For instance, which are the
@@ -573,7 +573,7 @@ temp <- which(apply(dapc1$posterior,1, function(e) all(e<0.9)))
 temp
 compoplot(dapc1, subset=temp, posi="bottomright",
           txt.leg=paste("Cluster", 1:6),
-          ncol=2, col=funky(6))
+          ncol=2)
 @
 
 
@@ -699,7 +699,7 @@ dimension-reduction step.
 We perform the analysis with 20 PCs retained, and then map the membership probabilities as before:
 <<>>=
 dapc3 <- dapc(microbov, n.da=100, n.pca=20)
-myCol <- rainbow(15)
+myCol <- funky(15)
 @
 <<fig.width=10,out.width="\\textwidth">>=
 par(mar=c(5.1,4.1,1.1,1.1), xpd=TRUE)
@@ -839,7 +839,7 @@ functions; \texttt{posterior} contains the posterior membership probabilities.
 We can visualize the information by different ways.
 First, we can represent the new individuals using a scatterplot:
 <<>>=
-col <- rainbow(length(levels(pop(x))))
+col <- funky(length(levels(pop(x))))
 col.points <- transp(col[as.integer(pop(x))],.2)
 scatter(dapc4, col=col, bg="white", scree.da=0, pch="",
         cstar=0, clab=0, xlim=c(-10,10), legend=TRUE)
