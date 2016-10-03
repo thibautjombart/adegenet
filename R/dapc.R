@@ -170,10 +170,10 @@ dapc.genind <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
 
 
     ## SOME GENERAL VARIABLES
-    N <- nrow(x@tab)
+    N <- nInd(x)
 
     ## PERFORM PCA ##
-    maxRank <- min(dim(x@tab))
+    maxRank <- min(tab(x))
 
     X <- scaleGen(x, center = TRUE, scale = scale,
                   NA.method = "mean")
@@ -898,7 +898,17 @@ predict.dapc <- function(object, newdata, prior = object$prior, dimen,
     if(!missing(newdata)){
         ## make a few checks
         if(is.null(object$pca.loadings)) stop("DAPC object does not contain loadings of original variables. \nPlease re-run DAPC using 'pca.loadings=TRUE'.")
-        newdata <- as.matrix(newdata) # to force conversion, notably from genlight objects
+        ## We need to convert the data as they were converted during the analysis. Behaviour is:
+        ## - genind: allele frequencies, missing data = mean
+        ## - genlight: allele frequencies, missing data = mean
+
+        if (is.genind(newdata)) { # genind object
+            newdata <- tab(newdata, freq = TRUE, NA.method = "mean")
+        } else if (inherits(newdata, "genlight")) { # genlight object
+               newdata <- as.matrix(newdata) / ploidy(newdata)
+           } else { # any other type of object
+                newdata <- as.matrix(newdata)
+            }
         if(ncol(newdata) != nrow(object$pca.loadings)) stop("Number of variables in newdata does not match original data.")
 
         ## centre/scale data
