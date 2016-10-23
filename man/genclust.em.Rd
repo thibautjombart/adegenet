@@ -50,6 +50,20 @@ to.flag <- apply(res$proba,1,max)<.9
 compoplot(res, subset=to.flag, show.lab=TRUE,
                  posi="bottomleft", bg="white")
 
+
+## Try with simulated hybrids
+zebu <- microbov[pop="Zebu"]
+salers <- microbov[pop="Salers"]
+hyb <- hybridize(zebu, salers, n=30)
+x <- repool(zebu, salers, hyb)
+
+## try without hybrids
+pop.ini <- find.clusters(x, n.clust=2, n.pca=100)$grp
+res.no.hyb <- genclust.em(x, k=2, pop.ini=pop.ini, hybrids=FALSE)
+compoplot(res.no.hyb, col.pal=spectral, n.col=2)
+
+res.hyb <- genclust.em(x, k=2, pop.ini=pop(x), hybrids=TRUE)
+compoplot(res.hyb, col.pal=spectral, n.col=2)
 }
 }
 \author{
