@@ -6,7 +6,7 @@
 \usage{
 chooseCN(xy, ask = TRUE, type = NULL, result.type = "nb", d1 = NULL,
   d2 = NULL, k = NULL, a = NULL, dmin = NULL, plot.nb = TRUE,
-  edit.nb = FALSE)
+  edit.nb = FALSE, check.duplicates = TRUE)
 }
 \arguments{
 \item{xy}{an matrix or data.frame with two columns for x and y coordinates.}
@@ -41,6 +41,8 @@ plotted (TRUE, default) or not (FALSE).}
 
 \item{edit.nb}{a logical stating whether the resulting graph should be
 edited manually for corrections (TRUE) or not (FALSE, default).}
+
+\item{check.duplicates}{a logical indicating if duplicate coordinates should be detected; this can be an issue for some graphs; TRUE by default.}
 }
 \value{
 Returns a connection network having the class \code{nb} or

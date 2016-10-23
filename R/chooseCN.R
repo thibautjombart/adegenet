@@ -49,10 +49,14 @@
 #' plotted (TRUE, default) or not (FALSE).
 #' @param edit.nb a logical stating whether the resulting graph should be
 #' edited manually for corrections (TRUE) or not (FALSE, default).
+#' @param check.duplicates a logical indicating if duplicate coordinates should be detected; this can be an issue for some graphs; TRUE by default.
+#'
 #' @return Returns a connection network having the class \code{nb} or
 #' \code{listw}. The xy coordinates are passed as attribute to the created
 #' object.
+#'
 #' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#'
 #' @seealso \code{\link{spca}}
 #' @keywords spatial utilities
 #' @examples
@@ -72,8 +76,10 @@
 #' @importFrom spdep "tri2nb" "gabrielneigh" "graph2nb" "relativeneigh" "dnearneigh" "knearneigh" "knn2nb" "nb2listw" "mat2listw" "listw2mat" "lag.listw" "card"
 #' @import ade4
 #'
-chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL, k=NULL,
-                     a=NULL, dmin=NULL, plot.nb=TRUE, edit.nb=FALSE){
+chooseCN <- function(xy, ask = TRUE, type = NULL, result.type = "nb",
+                     d1 = NULL, d2 = NULL, k = NULL, a = NULL,
+                     dmin = NULL, plot.nb = TRUE, edit.nb = FALSE,
+                     check.duplicates = TRUE){
 
   if(is.data.frame(xy)) xy <- as.matrix(xy)
   if(ncol(xy) != 2) stop("xy does not have two columns.")
@@ -110,7 +116,7 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
   }
 
   ## check for uniqueness of coordinates
-  if(any(xyTable(xy)$number>1)){ # if duplicate coords
+  if(check.duplicates && any(xyTable(xy)$number>1)){ # if duplicate coords
       DUPLICATE.XY <- TRUE
   } else {
       DUPLICATE.XY <- FALSE
