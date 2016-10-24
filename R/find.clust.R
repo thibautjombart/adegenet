@@ -145,7 +145,7 @@ find.clusters.data.frame <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, st
                 n.clust <- min( which(myStat < temp))-1
             }
             if(criterion=="diffNgroup") {
-                temp <- cutree(hclust(dist(diff(myStat)), method="ward"), k=2)
+                temp <- cutree(hclust(dist(diff(myStat)), method="ward.D"), k=2)
                 goodgrp <- which.min(tapply(diff(myStat), temp, mean))
                 n.clust <- max(which(temp==goodgrp))+1
             }
