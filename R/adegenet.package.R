@@ -266,9 +266,7 @@
 #' @S3method summary spca
 #' @S3method print genindSummary
 #' @S3method print genpopSummary
-#' @S3method plot genclust.emmcmc
-#' @S3method summary genclust.emmcmc
-#' 
+#'
 #'
 #' @import methods
 #'

@@ -99,7 +99,8 @@ Collate:
     snpposi.R
     snpzip.R
     pairDist.R
-    newclust.R
+    genclust.em.R
+    genclust.emmcmc.R
     servers.R
     showmekittens.R
     zzz.R
