@@ -60,7 +60,7 @@
 #'                  posi="bottomleft", bg="white")
 #'
 #'
-#' ## Simulate hybrids
+#' ## Simulate hybrids F1
 #' zebu <- microbov[pop="Zebu"]
 #' salers <- microbov[pop="Salers"]
 #' hyb <- hybridize(zebu, salers, n=30)
@@ -73,10 +73,28 @@
 #' ## method with hybrids
 #' res.hyb <- genclust.em(x, k=2, hybrids=TRUE)
 #' compoplot(res.hyb, col.pal=spectral, n.col=2)
+#'
+#'
+#' ## Simulate hybrids backcross (F1 / parental)
+#' f1.zebu <- hybridize(hyb, zebu, 20, pop = "f1.zebu")
+#' f1.salers <- hybridize(hyb, salers, 25, pop = "f1.salers")
+#' y <- repool(x, f1.zebu, f1.salers)
+#'
+#' ## method without hybrids
+#' res2.no.hyb <- genclust.em(y, k = 2, hybrids = FALSE)
+#' compoplot(res2.no.hyb, col.pal=spectral, n.col=2)
+#'
+#' ## method with hybrids F1 only
+#' res2.hyb <- genclust.em(y, k = 2, hybrids = TRUE)
+#' compoplot(res2.hyb, col.pal=spectral, n.col=2)
+#'
+#' ## method with back-cross
+#' res2.back <- genclust.em(y, k=2, hybrids = TRUE, hybrid.coef = c(.25,.5))
 #' }
 
 genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
-                        hybrids = FALSE, detailed = TRUE, dim.ini = 100, ...) {
+                        hybrids = FALSE, detailed = TRUE, dim.ini = 100,
+                        hybrid.coef = NULL,...) {
     ## This function uses the EM algorithm to find ML group assignment of a set
     ## of genotypes stored in a genind object into 'k' clusters. We need an
     ## initial cluster definition to start with. The rest of the algorithm
@@ -108,6 +126,21 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
             "forcing k=2 for hybrid mode (requested k is %d)", k))
         k <- 2
     }
+
+
+    ## Handle hybrid coefficients; these values reflect the contribution of the
+    ## first parental population to the allele frequencies of the hybrid
+    ## group. For instance, a value of 0.75 indicates that 'a' contributes to
+    ## 75%, and 'b' 25% of the allele frequencies of the hybrid - a typical
+    ## backcross F1 / a.
+
+    if (hybrids) {
+        if (is.null(hybrid.coef)) {
+            hybrid.coef <- 0.5
+        }
+        hybrid.coef <- .tidy.hybrid.coef(hybrid.coef)
+    }
+
 
     ## Initialisation using 'find.clusters'
     if (!is.null(pop.ini) &&
@@ -155,7 +188,7 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
                 pop.freq <- tab(genind2genpop(x.parents, quiet=TRUE),
                                 freq=TRUE)
                 pop.freq <- rbind(pop.freq, # parents
-                                  apply(pop.freq, 2, mean)) # hybrids
+                                  .find.freq.hyb(pop.freq, hybrid.coef)) # hybrids
             } else {
                 pop.freq <- tab(genind2genpop(x, pop=group, quiet=TRUE),
                                 freq=TRUE)
@@ -195,7 +228,9 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
     ## restore labels of groups
     out$group <- factor(out$group)
     if (hybrids) {
-        lev.ini <- c(lev.ini, "hybrid")
+        hybrid.labels <- paste(hybrid.coef, lev.ini[1], "-",
+                               1 - hybrid.coef, lev.ini[2])
+        lev.ini <- c(lev.ini, hybrid.labels)
     }
     levels(out$group) <- lev.ini
     if (detailed) {
@@ -259,6 +294,27 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
 
 
 
+## Non-exported function making a tidy vector of weights for allele frequencies
+## of parental populations. It ensures that given any input vector of weights
+## 'w' defining the types of hybrids, the output has the following properties:
+
+## - strictly on ]0,1[
+
+## - symmetric around 0.5, e.g. c(.25, .5) gives c(.25, .5, .75)
+
+## - sorted by decreasing values (i.e. hybrid types are sorted by decreasing
+## proximity to the first parental population.
+
+.tidy.hybrid.coef <- function(w) {
+    w <- w[w > 0 & w < 1]
+    w <- sort(unique(round(c(w, 1-w), 4)), decreasing = TRUE)
+    w
+}
+
+
+
+
+
 ## Non-exported function determining vectors of allele frequencies in hybrids
 ## from 2 parental populations. Different types of hybrids are determined by
 ## weights given to the allele frequencies of the parental populations. Only one
@@ -280,10 +336,7 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
 ## alleles in columns.
 
 .find.freq.hyb <- function(x, w) {
-    w <- w[w > 0 & w < 1]
-    w <- sort(unique(round(c(w, 1-w), 4)))
     out <- cbind(w, 1-w) %*% x
     rownames(out) <- w
     out
 }
-
