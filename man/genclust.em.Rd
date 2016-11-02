@@ -4,15 +4,19 @@
 \alias{genclust.em}
 \title{Maximum-likelihood genetic clustering using EM algorithm}
 \usage{
-genclust.em(x, k, pop.ini = NULL, max.iter = 100, n.start = 10,
-  hybrids = FALSE, detailed = TRUE)
+genclust.em(x, k, pop.ini = "kmeans", max.iter = 100, n.start = 10,
+  hybrids = FALSE, detailed = TRUE, dim.ini = 100, ...)
 }
 \arguments{
 \item{x}{a \linkS4class{genind} object}
 
 \item{k}{the number of clusters to look for}
 
-\item{pop.ini}{an optional factor defining the initial cluster configuration}
+\item{pop.ini}{parameter indicating how the initial group membership should
+be found. If \code{NULL}, groups are chosen at random, and the algorithm will
+be run \code{n.start times}. If "kmeans", then the function
+\code{find.clusters} is used to define initial groups. Alternatively, a
+factor defining the initial cluster configuration can be provided.}
 
 \item{max.iter}{the maximum number of iteration of the EM algorithm}
 
@@ -26,6 +30,12 @@ explicitely; this is currently implemented for 2 groups only.}
 incorporated into the output; these include group membership probability,
 indication of convergence, and the number of iterations used before
 convergence}
+
+\item{dim.ini}{the number of PCA axes to retain in the dimension reduction
+step for \code{\link{find.clusters}}, if this method is used to define
+initial group memberships (see argument \code{pop.ini}).}
+
+\item{...}{further arguments passed on to \code{\link{find.clusters}}}
 }
 \description{
 Do not use. We work on that stuff. Contact us if interested.
@@ -52,19 +62,18 @@ compoplot(res, subset=to.flag, show.lab=TRUE,
                  posi="bottomleft", bg="white")
 
 
-## Try with simulated hybrids
+## Simulate hybrids
 zebu <- microbov[pop="Zebu"]
 salers <- microbov[pop="Salers"]
 hyb <- hybridize(zebu, salers, n=30)
 x <- repool(zebu, salers, hyb)
 
-## try without hybrids
-pop.ini <- find.clusters(x, n.clust=2, n.pca=100)$grp
-res.no.hyb <- genclust.em(x, k=2, pop.ini=pop.ini, hybrids=FALSE)
+## method without hybrids
+res.no.hyb <- genclust.em(x, k=2, hybrids=FALSE)
 compoplot(res.no.hyb, col.pal=spectral, n.col=2)
 
-## try with hybrids
-res.hyb <- genclust.em(x, k=2, pop.ini=pop(x), hybrids=TRUE)
+## method with hybrids
+res.hyb <- genclust.em(x, k=2, hybrids=TRUE)
 compoplot(res.hyb, col.pal=spectral, n.col=2)
 }
 }
