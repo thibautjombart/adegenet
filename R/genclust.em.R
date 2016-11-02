@@ -144,6 +144,9 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
         counter <- 0L
         converged <- FALSE
 
+
+        ## This is the actual EM algorithm
+
         while(!converged && counter<=max.iter) {
             ## get table of allele frequencies (columns) by population (rows)
             if (hybrids) {
@@ -251,3 +254,36 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
 .global.ll <- function(group, ll){
     sum(t(ll)[cbind(seq_along(group), as.integer(group))], na.rm=TRUE)
 }
+
+
+
+
+
+## Non-exported function determining vectors of allele frequencies in hybrids
+## from 2 parental populations. Different types of hybrids are determined by
+## weights given to the allele frequencies of the parental populations. Only one
+## such value is provided and taken to be the weight of the 1st parental
+## population; the complementary frequency is derived for the second parental
+## population.
+
+## Parameters are:
+
+## - x: matrix of allele frequencies for population 'a' (first row) and 'b'
+## (second row), where allele are in columns.
+
+
+## - w: a vector of weights for 'a' and 'b', each value determining a type of
+## hybrid. For instance, 0.5 is for F1, 0.25 for backcrosses F1/parental, 0.125
+## for 2nd backcross F1/parental, etc.
+
+## The output is a matrix of allele frequencies with hybrid types in rows and
+## alleles in columns.
+
+.find.freq.hyb <- function(x, w) {
+    w <- w[w > 0 & w < 1]
+    w <- sort(unique(round(c(w, 1-w), 4)))
+    out <- cbind(w, 1-w) %*% x
+    rownames(out) <- w
+    out
+}
+
