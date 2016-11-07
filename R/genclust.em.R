@@ -406,7 +406,7 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
         (a + f) / sum(a + f)
     }
 
-    out <- matrix(unlist(apply(pop.freq, 1, tapply, locFac(x), g),
+    out <- matrix(unlist(apply(pop.freq, 1, tapply, loc.fac, g),
                           use.names = FALSE),
                   byrow=TRUE, nrow=nrow(pop.freq))
     dimnames(out) <- dimnames(pop.freq)

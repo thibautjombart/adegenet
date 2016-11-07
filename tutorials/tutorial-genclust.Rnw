@@ -1,0 +1,329 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{color}
+\definecolor{blue1}{RGB}{0,102,204}
+%% \usepackage[colorlinks=true,linkcolor=blue1,citecolor=blue1,urlcolor=blue1]{hyperref}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{array}
+\usepackage[english]{babel}
+\usepackage{amsfonts}
+\usepackage{url}
+\usepackage{bm}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[affil-it]{authblk}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\beq}{\begin{equation}}
+\newcommand{\eeq}{\end{equation}}
+\newcommand{\m}[1]{\mathbf{#1}}
+\newcommand{\Rlogo}{\includegraphics[width=0.05\textwidth]{figs/Rlogo.pdf}}
+
+\title{Genetic clustering and hybrid detection using \textit{adegenet}}
+
+\author{Thibaut Jombart
+  \thanks{\texttt{thibautjombart@gmail.com}}
+}
+\affil{{\footnotesize Imperial College London \\MRC Centre for Outbreak Analysis and Modelling}}
+
+%% \date{\today}
+\date{\today}
+
+\sloppy
+\hyphenpenalty 10000
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\selectlanguage{english}
+
+<<include=FALSE>>=
+opts_chunk$set(fig.path='figs/genclust-', fig.keep='high', dev='pdf',
+               fig.width=7, fig.height=7, tidy=FALSE, warning=FALSE,
+               fig.show="asis", fig.align='center', out.width=".8\\textwidth")
+@
+
+
+\color{black}
+
+\maketitle
+
+\begin{abstract}
+  This tutorial presents an overview of likelihood-based genetic clustering in
+  \textit{adegenet}, as implemented by the function \texttt{genclust.em}. After
+  a brief presentation of the rationale of the method, we illustrate its use in
+  two situations: for identifying genetic clusters, and then for detecting
+  hybrids.
+\end{abstract}
+
+
+\newpage
+\tableofcontents
+
+
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The method, in a nutshell}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Model formulation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% % % % % % % % % % % % % % % % % % % % % % % %
+\subsubsection{General likelihood}
+% % % % % % % % % % % % % % % % % % % % % % % %
+Likelihood-based genetic clustering in \textit{adegenet} is implemented by the
+function \texttt{genclust.em}. This approach uses Hardy-Weinberg's equilibrium
+to define the probabilities of observing given genotypes under known allele
+frequencies. Let $x_{i,j}$ be the distribution of allele counts at a given locus $j$ for
+individual $i$. For now, we assume the group to which $i$ belongs is known
+(noted $g_i$), and has known allele frequencies $f_{j,g}$. For any level of ploidy $\pi$ and any codominant
+marker, the likelihood of $x_{i,j}$ is defined as:
+\beq
+p(x_{i,j} | f_{j,g_i}, \pi) = \mathcal{M} (x_{i,j}, f_{j,g_i}, \pi)
+\eeq
+where $\mathcal{M}$ is refers to the multinomial probability mass function.
+
+Assuming independence between loci ($j = 1, \ldots, J$), the likelihood of
+individual $i$ across all loci is:
+\beq
+p(x_{i} | f_{1,g_i}, \ldots, f_{J,g_i}, \pi) = \prod_j p(x_{i,j} | f_{j,g_i}, \pi)
+\eeq
+
+Assuming further independence between individuals, conditional on their group
+membership $g = g_1, \ldots, g_I$ and all allele frequencies in all groups $f$ the total likelihood is defined as:
+\beq
+p(x | f, g, \pi) = \prod_i p(x_{i} | f_{1,g_i}, \ldots, f_{J,g_i}, \pi)
+\eeq
+
+
+
+
+% % % % % % % % % % % % % % % % % % % % % % % %
+\subsubsection{Useful particular cases}
+% % % % % % % % % % % % % % % % % % % % % % % %
+
+As particular case, the likelihood of all possible diploid genotypes with
+alleles $A$ and $B$ is defined, noting $f_{g_i}$ the vector of allele frequencies in
+a given group $g_i$ as:
+\begin{eqnarray}
+p(AA | f_{g_i}, 2) = f_A ^ 2 \\
+p(B | f_{g_i}, 2) = f_B ^ 2 \\
+p(AB | f_{g_i}, 2) = 2 f_A f_B
+\end{eqnarray}
+
+
+Note that for haploid data, this is even simpler:
+\begin{eqnarray}
+p(A | f_{g_i}, 1) = f_A\\
+p(B | f_{g_i}, 1) = f_B
+\end{eqnarray}
+
+
+
+
+
+% % % % % % % % % % % % % % % % % % % % % % % %
+\subsubsection{Group membership probabilities}
+% % % % % % % % % % % % % % % % % % % % % % % %
+
+Assuming any individual $i$ comes from one of the sampled groups
+$1, \ldots, G$, the probability that $i$ belongs to group $g$ is defined as the
+ratio of the likelihood:
+\beq
+p(g_i = g) = \frac{p(x_i | g_i=g, f_g, \pi)}{\prod_g p(x_i | g_i=g, f_g, \pi)}
+\eeq
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Estimation using the EM algorithm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The model formulation above supposes that both the groups $g$, and the allele
+frequencies in these groups $f_g$, are known. In practice, though, these need to
+be estimated. This is achieved using the expectation-maximization algorithm,
+which we apply as follow:
+\begin{enumerate}
+  \item define initial groups for invididuals, $g$
+  \item (expectation) compute allele frequencies $f_g$ and then $p(g_i = g)$ for
+    all $i$ and $g$
+  \item (maximization) assign individuals to their most likely group
+  \item return to 2) until convergence
+\end{enumerate}
+
+Here, we consider that the algorithm converged if the change in the global
+log-likelihood is less than 1e-14. The advantage of this algorithm is that it
+converges very fast, typically in less than 10 iterations. The first step can be
+done at random, in which case several runs of the EM algorithm can be useful to
+ensure that the best solution (with highest log-likelihood) is
+attained. Alternatively, clusters can be defined by another fast clustering
+method, such as the $k$-means implemented in \texttt{find.clusters}.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Identifying hybrids}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The allele frequency $f_h$ in a hybrid population $h_w$ is modelled as weighted
+averages of the allele frequencies in the parental populations
+$g_1$ and $g_2$:
+\beq
+f_{h_w} = w f_{g_1} + (1-w) f_{g_2}
+\eeq
+where $w$ has value between 0 and 1. Typical values of $w$ are 0.5 for F1
+hybrids, 0.75 for backcrosses F1/1, 0.25 for backcrosses F1/2, etc.
+\\
+
+The EM algorithm described above can be extended to account for various hybrids using:
+\begin{enumerate}
+  \item define initial groups for invididuals, $g$
+  \item (expectation) compute allele frequencies for parental populations
+    $f_{g_1}$ and $f_{g_2}$ and subsequently for all hybrid populations $h_w$, and
+    then $p(g_i = g)$ and $p(g_i = h_w)$ for all $i$, $g$ and $h_w$
+  \item (maximization) assign individuals to their most likely group
+  \item return to 2) until convergence
+\end{enumerate}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Example using simulated data}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{In the absence of hybrids: DAPC data revisited}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+<<include=FALSE>>=
+opts_chunk$set(fig.width=10, fig.height=6, out.width="\\textwidth")
+@
+
+<<>>=
+library(adegenet)
+data(dapcIllus)
+sapply(dapcIllus, nPop)
+
+a.clust <- genclust.em(dapcIllus$a, k = 6)
+table(pop(dapcIllus$a), a.clust$group)
+compoplot(a.clust)
+@
+
+<<>>=
+b.clust <- genclust.em(dapcIllus$b, k = 6)
+table(pop(dapcIllus$b), b.clust$group)
+compoplot(b.clust)
+@
+
+
+<<>>=
+c.clust <- genclust.em(dapcIllus$c, k = 12)
+table(pop(dapcIllus$c), c.clust$group)
+compoplot(c.clust)
+@
+
+
+<<>>=
+d.clust <- genclust.em(dapcIllus$d, k = 24)
+table(pop(dapcIllus$d), d.clust$group)
+compoplot(d.clust, n.col=8)
+@
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Looking for hybrids}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% % % % % % % % % % % % % % % % % % % % % % % %
+\subsubsection{Simulating hybrids using \texttt{hybridize}}
+% % % % % % % % % % % % % % % % % % % % % % % %
+
+
+Simulate hybrids F1
+<<>>=
+set.seed(1)
+data(microbov)
+
+zebu <- microbov[pop="Zebu"]
+salers <- microbov[pop="Salers"]
+hyb <- hybridize(zebu, salers, n=30)
+x <- repool(zebu, salers, hyb)
+@
+
+
+Simulate hybrids backcross (F1 / parental)
+<<>>=
+f1.zebu <- hybridize(hyb, zebu, 20, pop = "f1.zebu")
+f1.salers <- hybridize(hyb, salers, 25, pop = "f1.salers")
+y <- repool(x, f1.zebu, f1.salers)
+@
+
+
+
+% % % % % % % % % % % % % % % % % % % % % % % %
+\subsubsection{Looking for F1 hybrids}
+% % % % % % % % % % % % % % % % % % % % % % % %
+
+PCA:
+<<>>=
+x.pca <- dudi.pca(tab(x, NA.method="mean"), scannf = FALSE, scale = FALSE)
+s.class(x.pca$li, pop(x), col=funky(3))
+@
+
+
+method without hybrids
+<<>>=
+res.no.hyb <- genclust.em(x, k=2, hybrids=FALSE)
+compoplot(res.no.hyb, n.col=2)
+
+@
+
+
+ method with hybrids
+<<>>=
+res.hyb <- genclust.em(x, k=2, hybrids=TRUE)
+compoplot(res.hyb, n.col=2)
+@
+
+
+
+% % % % % % % % % % % % % % % % % % % % % % % %
+\subsubsection{Looking for F1 and back-crosses}
+% % % % % % % % % % % % % % % % % % % % % % % %
+
+PCA:
+<<>>=
+y.pca <- dudi.pca(tab(y, NA.method = "mean"), scannf = FALSE, scale = FALSE)
+s.class(y.pca$li, pop(y), col=funky(5))
+@
+
+method with hybrids F1 only
+<<>>=
+res2.hyb <- genclust.em(y, k = 2, hybrids = TRUE)
+compoplot(res2.hyb, n.col=2)
+@
+
+
+ method with back-cross
+<<>>=
+res2.back <- genclust.em(y, k=2, hybrids = TRUE, hybrid.coef = c(.25,.5))
+compoplot(res2.back)
+@
+
+\end{document}
+
