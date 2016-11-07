@@ -166,7 +166,7 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
         lev.ini <- levels(pop.ini)[1:k] # k+1 would be hybrids
 
         ## ensure 'pop.ini' matches 'k'
-        if (! (length(levels(pop.ini)) %in% c(k, k+hybrids)) ) {
+        if (! (length(levels(pop.ini)) %in% c(k, k + length(hybrid.coef))) ) {
             stop("pop.ini does not have k clusters")
         }
 
@@ -181,7 +181,11 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
         ## This is the actual EM algorithm
 
         while(!converged && counter<=max.iter) {
-            ## get table of allele frequencies (columns) by population (rows)
+
+            ## get table of allele frequencies (columns) by population (rows);
+            ## these are stored as 'pop.freq'; note that it will include extra
+            ## rows for different types of hybrids too.
+
             if (hybrids) {
                 pop(x) <- group
                 x.parents <- x[pop=1:2]
@@ -202,7 +206,14 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
             group <- apply(ll.mat, 2, which.max)
 
             ## check convergence
-            converged <- all(group == previous.group)
+            ## converged <- all(group == previous.group)
+            old.ll <- .global.ll(previous.group, ll.mat)
+            new.ll <- .global.ll(group, ll.mat)
+            if (!is.finite(new.ll)) {
+                stop(sprintf("log-likelihood at iteration %d is not finite (%f)",
+                             counter, new.ll))
+            }
+            converged <- abs(old.ll - new.ll) < 1e-14
             counter <- counter + 1L
 
         }
@@ -217,7 +228,7 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
 
             if (detailed) {
                 ## group membership probability
-                out$proba <- round(prop.table(t(exp(ll.mat)), 1), 2)
+                out$proba <- prop.table(t(exp(ll.mat)), 1)
                 out$converged <- converged
                 out$n.iter <- counter
             }
