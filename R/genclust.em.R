@@ -188,7 +188,8 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
 
             if (hybrids) {
                 pop(x) <- group
-                x.parents <- x[pop=1:2]
+                id.parents <- .find.parents(x)
+                x.parents <- x[id.parents]
                 pop.freq <- tab(genind2genpop(x.parents, quiet=TRUE),
                                 freq=TRUE)
                 pop.freq <- rbind(pop.freq, # parents
@@ -197,6 +198,9 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
                 pop.freq <- tab(genind2genpop(x, pop=group, quiet=TRUE),
                                 freq=TRUE)
             }
+
+            ## ensures no allele frequency is exactly zero
+            pop.freq <- .tidy.pop.freq(pop.freq, locFac(x))
 
             ## get likelihoods of genotypes in every pop
             ll.mat <- apply(genotypes, 1, .ll.genotype, pop.freq, n.loc)
@@ -210,16 +214,16 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
             old.ll <- .global.ll(previous.group, ll.mat)
             new.ll <- .global.ll(group, ll.mat)
             if (!is.finite(new.ll)) {
-                stop(sprintf("log-likelihood at iteration %d is not finite (%f)",
-                             counter, new.ll))
+                ## stop(sprintf("log-likelihood at iteration %d is not finite (%f)",
+                ##              counter, new.ll))
             }
             converged <- abs(old.ll - new.ll) < 1e-14
             counter <- counter + 1L
 
         }
 
-        ## store the best run so far
-        new.ll <- .global.ll(group, ll.mat)
+        ## ## store the best run so far
+        ## new.ll <- .global.ll(group, ll.mat)
 
         if (new.ll > ll || i == 1L) {
             ## store results
@@ -361,10 +365,50 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
 ## of hybrids. The output is a vector of indices identifying the individuals
 ## from the parental populations.
 
-.find.parents <- function(x){
+.find.parents <- function(x) {
     ## matrix of pairwise distances between clusters, using Nei's distance
-    D <- as.matrix(dist.genpop(genind2genpop(x, quiet=TRUE), method=1))
+    D <- as.matrix(dist.genpop(genind2genpop(x, quiet = TRUE), method = 1))
     parents <- which(abs(max(D)-D) < 1e-14, TRUE)[1,]
     out <- which(as.integer(pop(x)) %in% parents)
     out
+}
+
+
+
+
+
+## Non-exported function enforcing a minimum allele frequency in a table of
+## allele frequency. As we are not accounting for the uncertainty in allele
+## frequencies, we need to allow for genotypes to be generated from a population
+## which does not have the genotype's allele represented, even if this is at a
+## low probability. The transformation is ad-hoc, and has the form:
+##
+## g(f_i) = (a + f_i /  \sum(a + f_i))
+
+## where f_i is the i-th frequency in a given locus. However, this ensures that
+## the output has two important properties:
+
+## - it sums to 1
+## - it contains no zero
+
+## By default, we set 'a' to 0.01.
+
+## Function inputs are:
+
+## - 'pop.freq': matrix of allele frequencies, with groups in rows and alleles in
+## columns
+
+## - 'loc.fac': a factor indicating which alleles belong to which locus, as
+## returned by 'locFac([a genind])'
+
+.tidy.pop.freq <- function(pop.freq, loc.fac) {
+    g <- function(f, a = .01) {
+        (a + f) / sum(a + f)
+    }
+
+    out <- matrix(unlist(apply(pop.freq, 1, tapply, locFac(x), g),
+                          use.names = FALSE),
+                  byrow=TRUE, nrow=nrow(pop.freq))
+    dimnames(out) <- dimnames(pop.freq)
+    return(out)
 }
