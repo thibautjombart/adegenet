@@ -351,3 +351,20 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
     rownames(out) <- w
     out
 }
+
+
+
+
+## Non-exported function trying to find the two parental populations in a genind
+## object containing 'k' clusters. The parental populations are defined as the
+## two most distant clusters. The other clusters are deemed to be various types
+## of hybrids. The output is a vector of indices identifying the individuals
+## from the parental populations.
+
+.find.parents <- function(x){
+    ## matrix of pairwise distances between clusters, using Nei's distance
+    D <- as.matrix(dist.genpop(genind2genpop(x, quiet=TRUE), method=1))
+    parents <- which(abs(max(D)-D) < 1e-14, TRUE)[1,]
+    out <- which(as.integer(pop(x)) %in% parents)
+    out
+}

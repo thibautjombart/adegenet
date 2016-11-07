@@ -5,7 +5,8 @@
 \title{Maximum-likelihood genetic clustering using EM algorithm}
 \usage{
 genclust.em(x, k, pop.ini = "kmeans", max.iter = 100, n.start = 10,
-  hybrids = FALSE, detailed = TRUE, dim.ini = 100, ...)
+  hybrids = FALSE, detailed = TRUE, dim.ini = 100, hybrid.coef = NULL,
+  ...)
 }
 \arguments{
 \item{x}{a \linkS4class{genind} object}
@@ -62,7 +63,7 @@ compoplot(res, subset=to.flag, show.lab=TRUE,
                  posi="bottomleft", bg="white")
 
 
-## Simulate hybrids
+## Simulate hybrids F1
 zebu <- microbov[pop="Zebu"]
 salers <- microbov[pop="Salers"]
 hyb <- hybridize(zebu, salers, n=30)
@@ -75,6 +76,23 @@ compoplot(res.no.hyb, col.pal=spectral, n.col=2)
 ## method with hybrids
 res.hyb <- genclust.em(x, k=2, hybrids=TRUE)
 compoplot(res.hyb, col.pal=spectral, n.col=2)
+
+
+## Simulate hybrids backcross (F1 / parental)
+f1.zebu <- hybridize(hyb, zebu, 20, pop = "f1.zebu")
+f1.salers <- hybridize(hyb, salers, 25, pop = "f1.salers")
+y <- repool(x, f1.zebu, f1.salers)
+
+## method without hybrids
+res2.no.hyb <- genclust.em(y, k = 2, hybrids = FALSE)
+compoplot(res2.no.hyb, col.pal=spectral, n.col=2)
+
+## method with hybrids F1 only
+res2.hyb <- genclust.em(y, k = 2, hybrids = TRUE)
+compoplot(res2.hyb, col.pal=spectral, n.col=2)
+
+## method with back-cross
+res2.back <- genclust.em(y, k=2, hybrids = TRUE, hybrid.coef = c(.25,.5))
 }
 }
 \author{
