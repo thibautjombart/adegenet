@@ -353,7 +353,7 @@ compoplot(d.clust, n.col=8)
 
 However, note that this lack of distinction in some demes merely comes from a
 weak genetic differentiation:
-<<d_dapc>>=
+<<d_dapc, fig.width=7, fig.height=7>>=
 d.dapc <- dapc(dapcIllus$d, n.pca=20, n.da=2)
 scatter(d.dapc, clab=0.85, col=deepseasun(24),
         posi.da="topleft", posi.pca="bottomleft", scree.pca=TRUE)
