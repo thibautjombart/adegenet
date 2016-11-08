@@ -371,8 +371,6 @@ scatter(d.dapc, clab=0.85, col=deepseasun(24),
 \subsubsection{Simulating hybrids using \texttt{hybridize}}
 % % % % % % % % % % % % % % % % % % % % % % % %
 
-By default, \texttt{genclust.em} looks for
-
 Simulate hybrids F1
 <<>>=
 set.seed(1)
@@ -397,6 +395,11 @@ y <- repool(x, f1.zebu, f1.salers)
 % % % % % % % % % % % % % % % % % % % % % % % %
 \subsubsection{Looking for F1 hybrids}
 % % % % % % % % % % % % % % % % % % % % % % % %
+
+
+\texttt{genclust.em} can also be used in the presence of hybridization. In this
+case, it will attempt to classify individuals into parental populations, or
+various types of hybrids defined by the user.
 
 PCA:
 <<>>=
