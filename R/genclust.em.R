@@ -36,6 +36,11 @@
 #' step for \code{\link{find.clusters}}, if this method is used to define
 #' initial group memberships (see argument \code{pop.ini}).
 #'
+#' @param hybrid.coef a vector of hybridization coefficients, defining the
+#' proportion of hybrid gene pool coming from the first parental population;
+#' this is symmetrized around 0.5, so that e.g. c(0.25, 0.5) will be converted
+#' to c(0.25, 0.5, 0.75)
+#'
 #' @param ... further arguments passed on to \code{\link{find.clusters}}
 #'
 #' @examples
