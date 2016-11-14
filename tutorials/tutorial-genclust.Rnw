@@ -308,7 +308,7 @@ a.clust$n.iter
 The inferred groups can be compared to the original ones using \texttt{table},
 which builds a contingency table putting the original groups in rows, and the
 newly inferred groups in columns; results are visualised using \texttt{table.value}
-<<>>=
+<<fig.width=7, fig.height=7>>=
 a.tab <- table(pop(dapcIllus$a), a.clust$group)
 a.tab
 table.value(a.tab, col.labels=1:6)
@@ -326,31 +326,36 @@ Here, assignment of individuals to their actual groups is essentially perfect;
 the few 'misclassified' individuals are effectively migrants.
 In fact, results remain very good in other models as well.
 Results are near perfect for the hierarchical island mode:
-<<>>=
+<<fig.width=7, fig.height=7>>=
 b.clust <- genclust.em(dapcIllus$b, k = 6)
 b.tab <- table(pop(dapcIllus$b), b.clust$group)
 table.value(b.tab, col.labels=1:6)
+@
+<<>>=
 compoplot(b.clust)
 @
 
 and for the stepping stone model:
-<<>>=
+<<fig.width=7, fig.height=7>>=
 c.clust <- genclust.em(dapcIllus$c, k = 12)
 c.tab <- table(pop(dapcIllus$c), c.clust$group)
 table.value(c.tab, col.labels=1:12)
+@
+<<>>=
 compoplot(c.clust)
 @
 
 In the larger stepping stone model with a boundary, results remain very good but
 some neighbouring demes are harder to distinguish (especially 1-2, 3-4, 13-14
 and 18-19).
-<<>>=
+<<fig.width=7, fig.height=7>>=
 d.clust <- genclust.em(dapcIllus$d, k = 24)
 d.tab <- table(pop(dapcIllus$d), d.clust$group)
 table.value(d.tab, col.labels=1:24)
+@
+<<>>=
 compoplot(d.clust, n.col=8)
 @
-
 However, note that this lack of distinction in some demes merely comes from a
 weak genetic differentiation:
 <<d_dapc, fig.width=7, fig.height=7>>=
