@@ -43,6 +43,33 @@
 #'
 #' @param ... further arguments passed on to \code{\link{find.clusters}}
 #'
+#' @return
+#'
+#' The function \code{genclust.em} returns a list with the following
+#' components:
+#' \itemize{
+#'
+#' \item \code{$group} a factor indicating the maximum-likelihood assignment of
+#' individuals to groups; if identified, hybrids are labelled after
+#' hybridization coefficients, e.g. 0.5_A - 0.5_B for F1, 0.75_A - 0.25_B for
+#' backcross F1 / A, etc.
+#'
+#' \item \code{$ll}: the log-likelihood of the model
+#'
+#' \item \code{$proba}: a matrix of group membership probabilities, with
+#' individuals in rows and groups in columns; each value correspond to the
+#' probability that a given individual genotype was generated under a given
+#' group, under Hardy-Weinberg hypotheses.
+#'
+#' \item \code{$converged} a logical indicating if the algorithm converged; if
+#' FALSE, it is doubtful that the result is an actual Maximum Likelihood
+#' estimate.
+#'
+#' \item \code{$n.iter} an integer indicating the number of iterations the EM
+#' algorithm was run for.
+#'
+#' }
+#'
 #' @examples
 #' \dontrun{
 #' data(microbov)
