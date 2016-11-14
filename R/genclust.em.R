@@ -27,11 +27,6 @@
 #' @param hybrids a logical indicating if hybrids should be modelled
 #' explicitely; this is currently implemented for 2 groups only.
 #'
-#' @param detailed a logical stating whether extra details should be
-#' incorporated into the output; these include group membership probability,
-#' indication of convergence, and the number of iterations used before
-#' convergence
-#'
 #' @param dim.ini the number of PCA axes to retain in the dimension reduction
 #' step for \code{\link{find.clusters}}, if this method is used to define
 #' initial group memberships (see argument \code{pop.ini}).
@@ -78,7 +73,7 @@
 #' grp.ini <- find.clusters(microbov, n.clust=15, n.pca=150)
 #'
 #' ## run EM algo
-#' res <- genclust.em(microbov, 15, pop.ini = grp.ini$grp, detailed = TRUE)
+#' res <- genclust.em(microbov, 15, pop.ini = grp.ini$grp)
 #' names(res)
 #' res$converged
 #' res$n.iter
@@ -104,7 +99,8 @@
 #'
 #' ## method with hybrids
 #' res.hyb <- genclust.em(x, k=2, hybrids=TRUE)
-#' compoplot(res.hyb, col.pal=spectral, n.col=2)
+#' compoplot(res.hyb, col.pal =
+#'           hybridpal(col.pal = spectral), n.col = 2)
 #'
 #'
 #' ## Simulate hybrids backcross (F1 / parental)
@@ -114,14 +110,16 @@
 #'
 #' ## method without hybrids
 #' res2.no.hyb <- genclust.em(y, k = 2, hybrids = FALSE)
-#' compoplot(res2.no.hyb, col.pal=spectral, n.col=2)
+#' compoplot(res2.no.hyb, col.pal = hybridpal(), n.col = 2)
 #'
 #' ## method with hybrids F1 only
 #' res2.hyb <- genclust.em(y, k = 2, hybrids = TRUE)
-#' compoplot(res2.hyb, col.pal=spectral, n.col=2)
+#' compoplot(res2.hyb, col.pal = hybridpal(), n.col = 2)
 #'
 #' ## method with back-cross
-#' res2.back <- genclust.em(y, k=2, hybrids = TRUE, hybrid.coef = c(.25,.5))
+#' res2.back <- genclust.em(y, k = 2, hybrids = TRUE, hybrid.coef = c(.25,.5))
+#'  compoplot(res2.hyb, col.pal = hybridpal(), n.col = 2)
+#'
 #' }
 
 genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
@@ -262,21 +260,18 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
             ll <- new.ll
             out <- list(group = group, ll = ll)
 
-            if (detailed) {
-                ## group membership probability
-                out$proba <- prop.table(t(exp(ll.mat)), 1)
-                out$converged <- converged
-                out$n.iter <- counter
-            }
-
+            ## group membership probability
+            out$proba <- prop.table(t(exp(ll.mat)), 1)
+            out$converged <- converged
+            out$n.iter <- counter
         }
     } # end of the for loop
 
     ## restore labels of groups
     out$group <- factor(out$group)
     if (hybrids) {
-        hybrid.labels <- paste(hybrid.coef, lev.ini[1], "-",
-                               1 - hybrid.coef, lev.ini[2])
+        hybrid.labels <- paste0(hybrid.coef, "_", lev.ini[1], "-",
+                               1 - hybrid.coef, "_", lev.ini[2])
         lev.ini <- c(lev.ini, hybrid.labels)
     }
     levels(out$group) <- lev.ini

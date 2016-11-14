@@ -384,3 +384,21 @@ funky <- colorRampPalette(c("#A6CEE3","#1F78B4","#B2DF8A",
                             "#33A02C","#FB9A99","#E31A1C",
                             "#FDBF6F","#FF7F00","#CAB2D6",
                             "#6A3D9A","#FFFF99","#B15928"))
+
+
+
+## viridis
+virid <- colorRampPalette(c("#440154FF", "#482173FF", "#433E85FF", "#38598CFF",
+                            "#2D708EFF", "#25858EFF", "#1E9B8AFF", "#2BB07FFF",
+                            "#51C56AFF", "#85D54AFF", "#C2DF23FF", "#FDE725FF"))
+
+
+## reorder colors for hybrids
+hybridpal <- function(col.pal = virid) {
+    if (n < 3) {
+        return(col.pal)
+    }
+    function(n) {
+        col.pal(n)[c(1, n, 2:(n-1))]
+    }
+}

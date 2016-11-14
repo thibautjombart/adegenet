@@ -22,6 +22,8 @@
 \alias{spectral}
 \alias{wasp}
 \alias{funky}
+\alias{virid}
+\alias{hybridpal}
 
 \title{ Auxiliary functions for adegenet}
 \description{
@@ -64,10 +66,19 @@
     \item \code{spectral}: red -> yellow -> blue (RColorBrewer variant)
     \item \code{wasp}: gold -> brown -> black
     \item \code{funky}: many colors
+    \item \code{virid}: adaptation of the \code{viridis} palette, from
+    the \code{viridis} package.
+    \item \code{hybridpal}: reorder a color palette (\code{virid} by
+  default) to display sharp contrast between the first two colors, and
+  interpolated colors after; ideal for datasets where two parental
+  populations are provided first, followed by various degrees of
+  hybrids.
+
   }
 }
 \seealso{
-  The R package RColorBrewer, proposing a nice selection of color palettes.
+  The R package RColorBrewer, proposing a nice selection of color
+  palettes. The \code{viridis} package, with many excellent palettes.
 }
 \usage{
 .genlab(base, n)
@@ -78,6 +89,7 @@ num2col(x, col.pal=heat.colors, reverse=FALSE,
 fac2col(x, col.pal=funky, na.col="transparent", seed=NULL)
 any2col(x, col.pal=seasun, na.col="transparent")
 transp(col, alpha=.5)
+hybridpal(col.pal = virid)
 }
 \arguments{
   \item{base}{a character string forming the base of the labels}
@@ -127,6 +139,7 @@ plot(1:100, col=num2col(1:100, col.pal=flame), pch=20, cex=4)
 plot(1:100, col=num2col(1:100, col.pal=wasp), pch=20, cex=4)
 plot(1:100, col=num2col(1:100, col.pal=azur,rev=TRUE), pch=20, cex=4)
 plot(1:100, col=num2col(1:100, col.pal=spectral), pch=20, cex=4)
+plot(1:100, col=num2col(1:100, col.pal=virid), pch=20, cex=4)
 
 ## factor as colors using fac2col
 dat <- cbind(c(rnorm(50,8), rnorm(100), rnorm(150,3),
