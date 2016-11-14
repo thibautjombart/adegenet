@@ -36,6 +36,10 @@
 #' this is symmetrized around 0.5, so that e.g. c(0.25, 0.5) will be converted
 #' to c(0.25, 0.5, 0.75)
 #'
+#' @param parent.lab a vector of 2 character strings used to label the two
+#' parental populations; only used if hybrids are detected (see argument
+#' \code{hybrids})
+#'
 #' @param ... further arguments passed on to \code{\link{find.clusters}}
 #'
 #' @return
@@ -124,7 +128,7 @@
 
 genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
                         hybrids = FALSE, dim.ini = 100,
-                        hybrid.coef = NULL,...) {
+                        hybrid.coef = NULL, parent.lab = c('A', 'B'), ...) {
     ## This function uses the EM algorithm to find ML group assignment of a set
     ## of genotypes stored in a genind object into 'k' clusters. We need an
     ## initial cluster definition to start with. The rest of the algorithm
@@ -270,6 +274,9 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
     ## restore labels of groups
     out$group <- factor(out$group)
     if (hybrids) {
+        if (!is.null(parent.lab)) {
+            lev.ini <- parent.lab
+        }
         hybrid.labels <- paste0(hybrid.coef, "_", lev.ini[1], "-",
                                1 - hybrid.coef, "_", lev.ini[2])
         lev.ini <- c(lev.ini, hybrid.labels)

@@ -428,7 +428,7 @@ We first use a Principal Component Analysis (PCA) to visualise the simulated
 hybrid data:
 <<fig.width=7, fig.height=7, out.width=".6\\textwidth">>=
 x.pca <- dudi.pca(tab(x, NA.method = "mean"), scannf = FALSE, scale = FALSE)
-s.class(x.pca$li, pop(x), col = hybridpal(3))
+s.class(x.pca$li, pop(x), col = hybridpal()(3))
 @
 
 
@@ -450,13 +450,18 @@ criteria.
 This can be illustrated by analysing the parental population (first 100
 individuals) and predicting the group membership of the hybrids as supplementary individuals:
 <<dapc>>=
-x.dapc <- dapc(x[1:100], n.pca=20, n.da=2)
+x.dapc <- dapc(x[1:100], n.pca=80, n.da=2)
 x.pred <- predict(x.dapc)$posterior
 hyb.pred <- predict(x.dapc, newdata = x[-(1:100)])$posterior
-compoplot(rbind(x.pred, hyb.pred), col.pal=virid, main = "DAPC prediction")
+compoplot(rbind(x.pred, hyb.pred), col.pal = virid, main = "DAPC prediction")
 @
 
- method with hybrids
+
+The problem of the above is that hybrids are seen as effectively outliers from
+the parental populations, so that their classification is inherently very unstable.
+To be formally identified, hybrids need to be modelled as a separate population,
+whose allele frequency distribution is somewhere between the parental populations.
+This is exactly the approach taken by \texttt{genclust.em}
 <<>>=
 res.hyb <- genclust.em(x, k = 2, hybrids = TRUE)
 compoplot(res.hyb, n.col = 2, col.pal = hybridpal())
@@ -471,7 +476,7 @@ compoplot(res.hyb, n.col = 2, col.pal = hybridpal())
 PCA:
 <<fig.width=7, fig.height=7, out.width=".8\\textwidth">>=
 y.pca <- dudi.pca(tab(y, NA.method = "mean"), scannf = FALSE, scale = FALSE)
-s.class(y.pca$li, pop(y), col = hybridpal(5))
+s.class(y.pca$li, pop(y), col = hybridpal()(5))
 @
 
 method with hybrids F1 only

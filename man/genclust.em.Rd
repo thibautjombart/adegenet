@@ -5,8 +5,8 @@
 \title{Maximum-likelihood genetic clustering using EM algorithm}
 \usage{
 genclust.em(x, k, pop.ini = "kmeans", max.iter = 100, n.start = 10,
-  hybrids = FALSE, detailed = TRUE, dim.ini = 100, hybrid.coef = NULL,
-  ...)
+  hybrids = FALSE, dim.ini = 100, hybrid.coef = NULL,
+  parent.lab = c("A", "B"), ...)
 }
 \arguments{
 \item{x}{a \linkS4class{genind} object}
@@ -35,6 +35,10 @@ initial group memberships (see argument \code{pop.ini}).}
 proportion of hybrid gene pool coming from the first parental population;
 this is symmetrized around 0.5, so that e.g. c(0.25, 0.5) will be converted
 to c(0.25, 0.5, 0.75)}
+
+\item{parent.lab}{a vector of 2 character strings used to label the two
+parental populations; only used if hybrids are detected (see argument
+\code{hybrids})}
 
 \item{...}{further arguments passed on to \code{\link{find.clusters}}}
 }
