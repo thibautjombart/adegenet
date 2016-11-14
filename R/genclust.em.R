@@ -282,9 +282,7 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
         lev.ini <- c(lev.ini, hybrid.labels)
     }
     levels(out$group) <- lev.ini
-    if (detailed) {
         colnames(out$proba) <- lev.ini
-    }
     class(out) <- c("genclust.em", "list")
     return(out)
 }
