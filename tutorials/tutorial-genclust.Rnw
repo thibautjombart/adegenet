@@ -369,7 +369,7 @@ scatter(d.dapc, clab = 0.85, col = deepseasun(24),
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Looking for hybrids}
+\subsection{Identifying hybrids}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % % % % % % % % % % % % % % % % % % % % % % % %
@@ -398,33 +398,68 @@ y <- repool(x, f1.zebu, f1.salers)
 
 
 % % % % % % % % % % % % % % % % % % % % % % % %
-\subsubsection{Looking for F1 hybrids}
+\subsubsection{Looking for hybrid using \texttt{genclust.em}}
 % % % % % % % % % % % % % % % % % % % % % % % %
 
 
 \texttt{genclust.em} can also be used in the presence of hybridization. In this
-case, it will attempt to classify individuals into parental populations, or
+case, it will attempt to classify individuals into parental populations (later
+noted $A$ and $B$), or
 various types of hybrids defined by the user.
+To activate the detection of hybrids, simply specify \texttt{hybrids = TRUE},
+which will by default look for F1, i.e. 50\% of genes coming from each parental population.
+Other types of hybrids can be specified through the argument
+\texttt{hybrid.coef}, which is a vector of \textit{parental coefficients}. Each value in
+this vector defines a given type of hybrid, by the proportion of its
+gene pool contributed by the first parental population.
+Complementary coefficients will be added automatically for the second parental
+population. For instance, \texttt{hybrid.coef = c(0.25, 0.5)} will be converted
+into \texttt{hybrid.coef = c(0.75, 0.5, 0.25)}, respectively corresponding to
+backcross with $A$, F1, and backcross with $B$.
 
-PCA:
+
+
+
+% % % % % % % % % % % % % % % % % % % % % % % %
+\subsubsection{Looking for first-generation hybrids (F1)}
+% % % % % % % % % % % % % % % % % % % % % % % %
+
+We first use a Principal Component Analysis (PCA) to visualise the simulated
+hybrid data:
 <<fig.width=7, fig.height=7, out.width=".6\\textwidth">>=
 x.pca <- dudi.pca(tab(x, NA.method = "mean"), scannf = FALSE, scale = FALSE)
-s.class(x.pca$li, pop(x), col = funky(3))
+s.class(x.pca$li, pop(x), col = hybridpal(3))
 @
 
 
-method without hybrids
+The method applied without hybrid detection correctly identifies the parental
+populations, but fails to classify hybrids:
 <<>>=
 res.no.hyb <- genclust.em(x, k = 2, hybrids = FALSE)
-compoplot(res.no.hyb, n.col = 2)
-
+compoplot(res.no.hyb, n.col = 2, col.pal = hybridpal())
 @
 
+One may expect that hybrids would appear as individuals with group membership
+probabilities around 50\% for each parental population. Interestingly, this is
+almost never the case, irrespective of the type of clustering method. The detail
+of likelihood contribution (results not shown) suggest that individuals slightly
+closer to either parental population are simply much more likely to belong to
+this population. The same can be observed in the Discriminant Analysis of
+Principal Components (DAPC), which does not use likelihood but a geometric
+criteria.
+This can be illustrated by analysing the parental population (first 100
+individuals) and predicting the group membership of the hybrids as supplementary individuals:
+<<dapc>>=
+x.dapc <- dapc(x[1:100], n.pca=20, n.da=2)
+x.pred <- predict(x.dapc)$posterior
+hyb.pred <- predict(x.dapc, newdata = x[-(1:100)])$posterior
+compoplot(rbind(x.pred, hyb.pred), col.pal=virid, main = "DAPC prediction")
+@
 
  method with hybrids
 <<>>=
-res.hyb <- genclust.em(x, k=2, hybrids=TRUE)
-compoplot(res.hyb, n.col=2)
+res.hyb <- genclust.em(x, k = 2, hybrids = TRUE)
+compoplot(res.hyb, n.col = 2, col.pal = hybridpal())
 @
 
 
@@ -436,20 +471,20 @@ compoplot(res.hyb, n.col=2)
 PCA:
 <<fig.width=7, fig.height=7, out.width=".8\\textwidth">>=
 y.pca <- dudi.pca(tab(y, NA.method = "mean"), scannf = FALSE, scale = FALSE)
-s.class(y.pca$li, pop(y), col = funky(5))
+s.class(y.pca$li, pop(y), col = hybridpal(5))
 @
 
 method with hybrids F1 only
 <<>>=
 res2.hyb <- genclust.em(y, k = 2, hybrids = TRUE)
-compoplot(res2.hyb, n.col=2)
+compoplot(res2.hyb, n.col = 2, col.pal = hybridpal())
 @
 
 
  method with back-cross
 <<>>=
 res2.back <- genclust.em(y, k=2, hybrids = TRUE, hybrid.coef = c(.25,.5))
-compoplot(res2.back)
+compoplot(res2.back, col.pal = hybridpal())
 @
 
 \end{document}

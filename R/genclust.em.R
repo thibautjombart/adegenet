@@ -123,7 +123,7 @@
 #' }
 
 genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
-                        hybrids = FALSE, detailed = TRUE, dim.ini = 100,
+                        hybrids = FALSE, dim.ini = 100,
                         hybrid.coef = NULL,...) {
     ## This function uses the EM algorithm to find ML group assignment of a set
     ## of genotypes stored in a genind object into 'k' clusters. We need an
