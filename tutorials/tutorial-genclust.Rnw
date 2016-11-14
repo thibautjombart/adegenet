@@ -360,7 +360,7 @@ However, note that this lack of distinction in some demes merely comes from a
 weak genetic differentiation:
 <<d_dapc, fig.width=7, fig.height=7, out.width=".6\\textwidth">>=
 d.dapc <- dapc(dapcIllus$d, n.pca = 20, n.da = 2)
-scatter(d.dapc, clab = 0.85, col = deepseasun(24),
+scatter(d.dapc, clab = 0.85, col = funky(24),
         posi.da="topleft", posi.pca = "bottomleft", scree.pca = TRUE)
 @
 
@@ -436,7 +436,8 @@ The method applied without hybrid detection correctly identifies the parental
 populations, but fails to classify hybrids:
 <<>>=
 res.no.hyb <- genclust.em(x, k = 2, hybrids = FALSE)
-compoplot(res.no.hyb, n.col = 2, col.pal = hybridpal())
+compoplot(res.no.hyb, n.col = 2, col.pal = hybridpal(),
+          main = "genclust.em without hybrids")
 @
 
 One may expect that hybrids would appear as individuals with group membership
@@ -453,7 +454,8 @@ individuals) and predicting the group membership of the hybrids as supplementary
 x.dapc <- dapc(x[1:100], n.pca=80, n.da=2)
 x.pred <- predict(x.dapc)$posterior
 hyb.pred <- predict(x.dapc, newdata = x[-(1:100)])$posterior
-compoplot(rbind(x.pred, hyb.pred), col.pal = virid, main = "DAPC prediction")
+compoplot(rbind(x.pred, hyb.pred), col.pal = virid,
+          main = "DAPC prediction")
 @
 
 
@@ -461,11 +463,14 @@ The problem of the above is that hybrids are seen as effectively outliers from
 the parental populations, so that their classification is inherently very unstable.
 To be formally identified, hybrids need to be modelled as a separate population,
 whose allele frequency distribution is somewhere between the parental populations.
-This is exactly the approach taken by \texttt{genclust.em}
+This is exactly the approach taken by \texttt{genclust.em}:
 <<>>=
 res.hyb <- genclust.em(x, k = 2, hybrids = TRUE)
 compoplot(res.hyb, n.col = 2, col.pal = hybridpal())
 @
+
+As we can see, the hybrids are all very well identified.
+
 
 
 
@@ -473,23 +478,52 @@ compoplot(res.hyb, n.col = 2, col.pal = hybridpal())
 \subsubsection{Looking for F1 and back-crosses}
 % % % % % % % % % % % % % % % % % % % % % % % %
 
-PCA:
+We repeat similar analyses on the dataset \texttt{y}, which includes all the
+individuals from \texttt{x} with additional backcrosses.
+First, a PCA shows the basic structure of the data:
 <<fig.width=7, fig.height=7, out.width=".8\\textwidth">>=
 y.pca <- dudi.pca(tab(y, NA.method = "mean"), scannf = FALSE, scale = FALSE)
-s.class(y.pca$li, pop(y), col = hybridpal()(5))
+s.class(y.pca$li, pop(y), col = virid(5)[c(1,5,3,2,4)])
 @
 
-method with hybrids F1 only
+Looking for F1 hybrids only in \texttt{y} shows the expected misclassifications
+of backcrosses into either hybrids or the closest parental population:
 <<>>=
 res2.hyb <- genclust.em(y, k = 2, hybrids = TRUE)
-compoplot(res2.hyb, n.col = 2, col.pal = hybridpal())
+compoplot(res2.hyb, n.col = 2, col.pal = hybridpal(),
+          main = "genclust.em with hybrids")
+@
+
+Note that the differentiation between the groups drops very fast, despite a
+substantial initial $F_{st}$ between the parental populations:
+<<fst, warning = FALSE>>=
+hierfstat::pairwise.fst(y)
 @
 
 
- method with back-cross
+Despite really low differentiation, we still get decent results at identifying backcrosses:
 <<>>=
-res2.back <- genclust.em(y, k=2, hybrids = TRUE, hybrid.coef = c(.25,.5))
-compoplot(res2.back, col.pal = hybridpal())
+res2.back <- genclust.em(y, k=2, hybrids = TRUE, hybrid.coef = c(.25, .5))
+compoplot(res2.back, col.pal = hybridpal(),
+          main = "genclust.em with F1 and backcrosses")
+@
+
+A number of individuals are mis-classified, but this is merely a reflection of
+the low differentiation between the backcrosses and the other populations. Let
+us see the extent of these mis-classifications, using \textit{ggplot2} for an
+alternative way of displaying this information:
+<<final, fig.width=8, fig.height=5, out.width="\\textwidth">>=
+library(ggplot2)
+tab <- table(pop(y), res2.back$group)
+df <- data.frame(tab)
+colnames(df) <- c("Original", "Inferred", "Frequency")
+p <- ggplot(df, aes(x = Original, y = Inferred)) +
+    geom_point(aes(size = Frequency), col="navy", alpha=.7) +
+    scale_size_continuous("Number of individuals",
+                          breaks = c(1, 5, 10, 25, 50),
+                          range = c(0,10))
+print(p)
+tab
 @
 
 \end{document}

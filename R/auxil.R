@@ -98,8 +98,14 @@ adegenetWeb <- function(){
 
 #' @rdname web
 #' @export
-adegenetTutorial <- function(which=c("basics","spca","dapc","genomics","strata")){
-    which <- match.arg(which)
+adegenetTutorial <- function(which = c("basics","spca","dapc","genomics","strata")){
+
+    ## which <- match.arg(which)
+    which <- which[1]
+    choices <- c("basics","spca","dapc","genomics","strata","genclust")
+    if (!which %in% choices) {
+        stop("Unknown tutorial")
+    }
     if(which=="basics"){
         url <- "https://github.com/thibautjombart/adegenet/raw/master/tutorials/tutorial-basics.pdf"
         cat("\n")
@@ -132,6 +138,13 @@ adegenetTutorial <- function(which=c("basics","spca","dapc","genomics","strata")
         url <- "https://github.com/thibautjombart/adegenet/raw/master/tutorials/tutorial-strata.pdf"
         cat("\n")
         cat("  >> Opening the strata tutorial.\n")
+        cat("  >> Seeking url: ",url,"\n ", sep="")
+        cat("\n")
+    }
+    if(which=="genclust"){
+        url <- "https://github.com/thibautjombart/adegenet/raw/master/tutorials/tutorial-genclust.pdf"
+        cat("\n")
+        cat("  >> Opening the genclust tutorial.\n")
         cat("  >> Seeking url: ",url,"\n ", sep="")
         cat("\n")
     }
