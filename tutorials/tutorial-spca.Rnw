@@ -695,10 +695,10 @@ loadingplot(rupica.pca1$c1^2)
 
 \noindent We can go back to the genotypes for the concerned markers (e.g.,
 Bm203) to check whether the highlighted genotypes are uncommon.
-\texttt{truenames} extracts the table of allele frequencies from a
+\texttt{tab} extracts the table of allele frequencies from a
 \texttt{genind} object (restoring original labels for markers, alleles, and individuals):
 <<echo=TRUE>>=
-X <- truenames(rupica)
+X <- tab(rupica)
 class(X)
 dim(X)
 bm203.221 <- X[,"Bm203.221"]
@@ -708,7 +708,7 @@ Only 4 genotypes possess one copy of the allele 221 of marker bm203 (the second 
 corresponds to a replaced missing data).
 Which individuals are they?
 <<>>=
-rownames(X)[bm203.221==0.5]
+rownames(X)[bm203.221 > 0.5]
 @
 These are indeed our outliers.
 From the point of view of PCA, this would be the only structure in the data.
