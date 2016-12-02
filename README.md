@@ -1,5 +1,9 @@
 [![Travis-CI Build Status](https://travis-ci.org/thibautjombart/adegenet.png?branch=master)](https://travis-ci.org/thibautjombart/adegenet)
 
+[![CRAN Status Badge](http://www.r-pkg.org/badges/version/adegenet)](https://cran.r-project.org/package=adegenet)
+
+[![CRAN Downloads](https://cranlogs.r-pkg.org/badges/adegenet)](https://cran.r-project.org/package=adegenet)
+
 adegenet
 ========
 *adegenet*: a R Package for the Multivariate Analysis of Genetic Markers
