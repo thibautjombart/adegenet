@@ -315,24 +315,39 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     #  }
     ## This one is modified from above to make everything more explicit.
     if (length(NA.posi) > 0) {
+      # browser()
       out.colnames <- colnames(out)
       NA.row <- match(NA.ind, rownames(out))
-      loc <- paste0(NA.locus, "\\.")
-      uloc <- unique(loc)
-      loc.list <- lapply(uloc, grep, out.colnames)
-      NA.col <- match(loc, uloc)
+      loc <- paste0(NA.locus, "\\.") # "X1_25\\."    "X1_25\\."    "X1378_53\\."
+      uloc <- unique(loc) # "X1_25\\."    "X1378_53\\."
+      #loc.list <- lapply(uloc, grep, out.colnames) # 2 elementa, 1 in 13,14
+      loc.list <- lapply(uloc, FUN = function(x, y) {
+        grep(pattern = paste("^", x, sep = ""), x = out.colnames, perl = TRUE)
+      }, y = out.colnames)
+      NA.col <- match(loc, uloc) # 1 1 2
 
       # Coordinates for missing rows
-      missing.ind <- vapply(loc.list, length, integer(1))[NA.col]
-      missing.ind <- rep(NA.row, missing.ind)
+      missing.ind <- vapply(loc.list, length, integer(1))[NA.col] # 1 1 2
+      missing.ind <- rep(NA.row, missing.ind) # 2 3 4 4
       # Coordinates for missing columns
       missing.loc <- unlist(loc.list[NA.col], use.names = FALSE)
 
       missing_coordinates <- matrix(0L, nrow = length(missing.ind), ncol = 2L)
       missing_coordinates[, 1] <- missing.ind
       missing_coordinates[, 2] <- missing.loc
+      #      [,1] [,2]
+      # [1,]    2    1
+      # [2,]    3    1
+      # [3,]    4   13
+      # [4,]    4   14
 
       out[missing_coordinates] <- NA
+      
+      #          X1401_25.33
+      # A_KH1584           1
+      # C_KH1059           1
+      # M_KH1834           1
+      # M_KH1837           1
     }
 
 

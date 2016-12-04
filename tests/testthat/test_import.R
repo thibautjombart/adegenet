@@ -177,3 +177,57 @@ test_that("different imports sort populations in the same way", {
     identical(table(pop(x.gen)), table(pop(x.dat)))
     identical(table(pop(x.gen)), table(pop(x.gtx)))
 })
+
+
+test_that("ensure importing structure files with numbers for locus names imports correectly", {
+  skip_on_cran()
+  
+  # Column names should have no extra characters in front of them. Your IDE
+  # may be adding them, so watch out!
+  cat(print("		1_25	8_54	1358_15	1363_12	1368_57	1369_41	1372_14	1373_9	1377_42	1378_53	1379_10	1382_37	1386_27	1398_46	1400_9	1401_25	1403_13	1404_17	1409_42	1416_48	1419_11	1421_14	1423_5	1424_74	1426_55	1429_46	1432_23	1435_30	1436_7	1438_9	1443_37
+A_KH1584	A	1	4	4	1	1	3	2	4	4	2	3	3	2	4	1	3	1	1	2	3	1	4	4	3	2	2	3	4	4	4	2
+A_KH1584	A	1	4	4	1	1	3	2	4	4	4	3	3	4	4	1	3	1	3	2	3	3	4	4	3	4	2	3	4	4	4	2
+C_KH1059	C	0	4	4	1	1	3	2	4	4	2	1	3	2	4	1	3	1	3	2	3	3	2	4	3	2	2	3	2	4	4	2
+C_KH1059	C	0	4	4	1	1	3	2	4	4	4	3	3	2	4	1	3	1	3	2	3	3	4	4	3	2	2	3	4	4	4	2
+M_KH1834	M	0	2	2	1	1	3	2	4	4	2	3	3	2	4	1	3	1	1	2	3	3	4	4	3	2	2	3	2	4	4	2
+M_KH1834	M	0	4	4	1	3	3	2	4	4	2	3	3	2	4	1	3	1	3	2	3	3	4	4	3	2	4	3	4	4	4	2
+M_KH1837	M	1	4	4	1	1	3	2	4	4	0	3	3	2	2	1	3	1	1	2	3	3	4	4	3	4	2	3	4	4	4	2
+M_KH1837	M	1	4	4	1	3	3	2	4	4	0	3	3	4	4	1	3	1	3	2	3	3	4	4	3	4	2	3	4	4	4	2"), 
+      file = "elizabeth_starts_with_number.stru")
+  
+  xy1 <- read.structure("elizabeth_starts_with_number.stru", NA.char="0",
+                        n.ind = 4, n.loc = 31, onerowperind = FALSE,
+                        col.lab = 1, col.pop = 2, row.marknames = 1,
+                        sep = "\t", col.others = 0)
+  
+  unlink("elizabeth_starts_with_number.stru")
+  
+  x1 <- tab(xy1)
+  # should return all 1, incorrect is NA
+  expect_true(all(x1[, grepl("1401_25", colnames(x1)), drop = FALSE] == 1))
+
+  # Column names should have no extra characters in front of them. Your IDE
+  # may be adding them, so watch out!
+  cat(print("		X1_25	X8_54	X1358_15	X1363_12	X1368_57	X1369_41	X1372_14	X1373_9	X1377_42	X1378_53	X1379_10	X1382_37	X1386_27	X1398_46	X1400_9	X1401_25	X1403_13	X1404_17	X1409_42	X1416_48	X1419_11	X1421_14	X1423_5	X1424_74	X1426_55	X1429_46	X1432_23	X1435_30	X1436_7	X1438_9	X1443_37
+A_KH1584	A	1	4	4	1	1	3	2	4	4	2	3	3	2	4	1	3	1	1	2	3	1	4	4	3	2	2	3	4	4	4	2
+A_KH1584	A	1	4	4	1	1	3	2	4	4	4	3	3	4	4	1	3	1	3	2	3	3	4	4	3	4	2	3	4	4	4	2
+C_KH1059	C	0	4	4	1	1	3	2	4	4	2	1	3	2	4	1	3	1	3	2	3	3	2	4	3	2	2	3	2	4	4	2
+C_KH1059	C	0	4	4	1	1	3	2	4	4	4	3	3	2	4	1	3	1	3	2	3	3	4	4	3	2	2	3	4	4	4	2
+M_KH1834	M	0	2	2	1	1	3	2	4	4	2	3	3	2	4	1	3	1	1	2	3	3	4	4	3	2	2	3	2	4	4	2
+M_KH1834	M	0	4	4	1	3	3	2	4	4	2	3	3	2	4	1	3	1	3	2	3	3	4	4	3	2	4	3	4	4	4	2
+M_KH1837	M	1	4	4	1	1	3	2	4	4	0	3	3	2	2	1	3	1	1	2	3	3	4	4	3	4	2	3	4	4	4	2
+M_KH1837	M	1	4	4	1	3	3	2	4	4	0	3	3	4	4	1	3	1	3	2	3	3	4	4	3	4	2	3	4	4	4	2"), 
+      file = "elizabeth_starts_with_letter.stru")
+  
+  xy2 <- read.structure("elizabeth_starts_with_letter.stru", NA.char="0",
+                        n.ind = 4, n.loc = 31, onerowperind = FALSE,
+                        col.lab = 1, col.pop = 2, row.marknames = 1,
+                        sep = "\t", col.others = 0)
+  
+  unlink("elizabeth_starts_with_letter.stru")
+  x2 <- tab(xy2)
+  
+  # should return all 1
+  expect_true(all(x2[, grepl("1401_25", colnames(x2)), drop = FALSE] == 1))
+  
+})
