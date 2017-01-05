@@ -7,130 +7,161 @@
 \alias{find.clusters.genlight}
 \alias{.find.sub.clusters}
 \title{find.cluster: cluster identification using successive K-means}
+
 \description{
-   These functions implement the clustering procedure used in
-  Discriminant Analysis of Principal Components (DAPC, Jombart et
-  al. 2010). This procedure consists in running successive K-means with
-  an increasing number of clusters (\code{k}), after transforming data
-  using a principal component analysis (PCA). For each model, a
-  statistical measure of goodness of fit (by default, BIC) is computed,
-  which allows to choose the optimal \code{k}. See \code{details} for a
-  description of how to select the optimal \code{k} and
-  \code{vignette("adegenet-dapc")} for a tutorial.
 
-  Optionally, hierarchical clustering can be sought by providing a prior
-  clustering of individuals (argument \code{clust}). In such case, clusters will
-  be sought within each prior group.
+These functions implement the clustering procedure used in Discriminant Analysis
+of Principal Components (DAPC, Jombart et al. 2010). This procedure consists in
+running successive K-means with an increasing number of clusters (\code{k}),
+after transforming data using a principal component analysis (PCA). For each
+model, a statistical measure of goodness of fit (by default, BIC) is computed,
+which allows to choose the optimal \code{k}. See \code{details} for a
+description of how to select the optimal \code{k} and
+\code{vignette("adegenet-dapc")} for a tutorial.
 
-  The K-means procedure used in \code{find.clusters} is \code{\link[stats]{kmeans}} function
-  from the \code{stats} package. The PCA function is \code{\link[ade4]{dudi.pca}} from the
-  \code{ade4} package, except for \linkS4class{genlight} objects which
-  use the \code{\link{glPca}} procedure from adegenet.
+Optionally, hierarchical clustering can be sought by providing a prior
+clustering of individuals (argument \code{clust}). In such case, clusters will
+be sought within each prior group.
 
-  \code{find.clusters} is a generic function with methods for the
+The K-means procedure used in \code{find.clusters} is
+\code{\link[stats]{kmeans}} function from the \code{stats} package. The PCA
+function is \code{\link[ade4]{dudi.pca}} from the \code{ade4} package, except
+for \linkS4class{genlight} objects which use the \code{\link{glPca}} procedure
+from adegenet.
+
+\code{find.clusters} is a generic function with methods for the
  following types of objects:\cr
- - \code{data.frame} (only numeric data)\cr
- - \code{matrix} (only numeric data)\cr
- - \code{\linkS4class{genind}} objects (genetic markers)\cr
- - \code{\linkS4class{genlight}} objects (genome-wide SNPs)
- 
+ \itemize{
+ \item \code{data.frame} (only numeric data)\cr
+ \item \code{matrix} (only numeric data)\cr
+ \item \code{\linkS4class{genind}} objects (genetic markers)\cr
+ \item \code{\linkS4class{genlight}} objects (genome-wide SNPs)
+ }
 }
 \usage{
-\method{find.clusters}{data.frame}(x, clust=NULL, n.pca=NULL,
-              n.clust=NULL, stat=c("BIC","AIC", "WSS"),
-              choose.n.clust=TRUE,criterion=c("diffNgroup",
-              "min","goesup", "smoothNgoesup", "goodfit"),
-              max.n.clust=round(nrow(x)/10), n.iter=1e5, n.start=10,
-              center=TRUE, scale=TRUE, pca.select=c("nbEig","percVar"),
-              perc.pca=NULL, \ldots, dudi=NULL)
+
+\method{find.clusters}{data.frame}(x, clust = NULL, n.pca = NULL, n.clust =
+              NULL, method = c("kmeans", "ward"), stat = c("BIC","AIC", "WSS"),
+              choose.n.clust = TRUE, criterion = c("diffNgroup", "min","goesup",
+              "smoothNgoesup", "goodfit"), max.n.clust = round(nrow(x)/10),
+              n.iter = 1e5, n.start = 10, center = TRUE, scale = TRUE,
+              pca.select = c("nbEig","percVar"), perc.pca = NULL, \ldots, dudi =
+              NULL)
 
 \method{find.clusters}{matrix}(x, \ldots)
 
-\method{find.clusters}{genind}(x, clust=NULL, n.pca=NULL, n.clust=NULL,
-              stat=c("BIC","AIC", "WSS"), choose.n.clust=TRUE,
-              criterion=c("diffNgroup", "min","goesup", "smoothNgoesup",
-              "goodfit"), max.n.clust=round(nrow(x@tab)/10), n.iter=1e5,
-              n.start=10, scale=FALSE, truenames=TRUE, \ldots)
+\method{find.clusters}{genind}(x, clust = NULL, n.pca = NULL, n.clust = NULL,
+              method = c("kmeans", "ward"), stat = c("BIC","AIC", "WSS"),
+              choose.n.clust = TRUE, criterion = c("diffNgroup", "min","goesup",
+              "smoothNgoesup", "goodfit"), max.n.clust = round(nrow(x@tab)/10),
+              n.iter = 1e5, n.start = 10, scale = FALSE, truenames = TRUE,
+              \ldots)
 
-\method{find.clusters}{genlight}(x, clust=NULL, n.pca=NULL,
-              n.clust=NULL, stat=c("BIC", "AIC",
-              "WSS"),choose.n.clust=TRUE, criterion=c("diffNgroup",
-              "min","goesup","smoothNgoesup", "goodfit"),
-              max.n.clust=round(nInd(x)/10), n.iter=1e5,n.start=10,
-              scale=FALSE, pca.select=c("nbEig","percVar"),
-              perc.pca=NULL,glPca=NULL, \ldots)
-}
+\method{find.clusters}{genlight}(x, clust = NULL, n.pca = NULL, n.clust = NULL,
+              method = c("kmeans", "ward"), stat = c("BIC", "AIC", "WSS"),
+              choose.n.clust = TRUE, criterion = c("diffNgroup",
+              "min","goesup","smoothNgoesup", "goodfit"), max.n.clust =
+              round(nInd(x)/10), n.iter = 1e5,n.start = 10, scale = FALSE,
+              pca.select = c("nbEig","percVar"), perc.pca = NULL,glPca=NULL,
+              \ldots) }
+
 \arguments{
+
   \item{x}{\code{a data.frame}, \code{matrix}, or \code{\linkS4class{genind}}
     object. For the \code{data.frame} and \code{matrix} arguments, only
     quantitative variables should be provided.}
-  \item{clust}{an optional \code{factor} indicating a prior group membership of
+
+\item{clust}{an optional \code{factor} indicating a prior group membership of
     individuals. If provided, sub-clusters will be sought within each prior
     group.}
-  \item{n.pca}{an \code{integer} indicating the number of axes retained in the
-    Principal Component Analysis (PCA) step. If \code{NULL}, interactive selection
-    is triggered.}
-  \item{n.clust}{ an optinal \code{integer} indicating the number of clusters to
+
+\item{n.pca}{an \code{integer} indicating the number of axes retained in the
+    Principal Component Analysis (PCA) step. If \code{NULL}, interactive
+    selection is triggered.}
+
+\item{n.clust}{ an optinal \code{integer} indicating the number of clusters to
     be sought. If provided, the function will only run K-means once, for this
     number of clusters. If left as \code{NULL}, several K-means are run for a
     range of k (number of clusters) values.}
+    
+  \item{method}{a \code{character} string indicating the type of clustering
+  method to be used; "kmeans" (default) uses K-means clustering, and is the
+  original implementation of \code{find.clusters}; "ward" is an alternative
+  which uses Ward's hierarchical clustering; this latter method seems to be more
+  reliable on some simulated datasets, but will be less computer-efficient for
+  large numbers (thousands) of individuals.}
+  
   \item{stat}{ a \code{character} string matching 'BIC', 'AIC', or 'WSS', which
-    indicates the statistic to be computed for each model (i.e., for each value of
-    \code{k}). BIC: Bayesian Information Criterion. AIC: Aikaike's Information
-    Criterion. WSS: within-groups sum of squares, that is, residual variance.}
-  \item{choose.n.clust}{ a \code{logical} indicating whether the number of
+    indicates the statistic to be computed for each model (i.e., for each value
+    of \code{k}). BIC: Bayesian Information Criterion. AIC: Aikaike's
+    Information Criterion. WSS: within-groups sum of squares, that is, residual
+    variance.}
+
+\item{choose.n.clust}{ a \code{logical} indicating whether the number of
     clusters should be chosen by the user (TRUE, default), or automatically,
     based on a given criterion (argument \code{criterion}). It is HIGHLY
-    RECOMMENDED to choose the number of clusters INTERACTIVELY, since
-    i) the decrease of the summary statistics (BIC by default) is
-    informative, and ii) no criteria for automatic selection is
-    appropriate to all cases (see details).}
-  \item{criterion}{ a \code{character} string matching "diffNgroup",
-    "min","goesup", "smoothNgoesup", or "goodfit", indicating the criterion for automatic
-    selection of the optimal number of clusters. See \code{details} for
-    an explanation of these procedures.}
-  \item{max.n.clust}{ an \code{integer} indicating the maximum number of
-    clusters to be tried. Values of 'k' will be picked up between 1 and \code{max.n.clust}}
-  \item{n.iter}{ an \code{integer} indicating the number of iterations to be used
+    RECOMMENDED to choose the number of clusters INTERACTIVELY, since i) the
+    decrease of the summary statistics (BIC by default) is informative, and ii)
+    no criteria for automatic selection is appropriate to all cases (see
+    details).}
+
+\item{criterion}{ a \code{character} string matching "diffNgroup",
+    "min","goesup", "smoothNgoesup", or "goodfit", indicating the criterion for
+    automatic selection of the optimal number of clusters. See \code{details}
+    for an explanation of these procedures.}
+
+\item{max.n.clust}{ an \code{integer} indicating the maximum number of clusters
+    to be tried. Values of 'k' will be picked up between 1 and
+    \code{max.n.clust}}
+
+\item{n.iter}{ an \code{integer} indicating the number of iterations to be used
     in each run of K-means algorithm. Corresponds to \code{iter.max} of
     \code{kmeans} function.}
-  \item{n.start}{ an \code{integer} indicating the number of randomly
-    chosen starting centroids to be used in each run of the K-means
-    algorithm. Using more starting points ensures convergence of the
-    algorithm. Corresponds to \code{nstart} of \code{kmeans} function.}
-  \item{center}{a \code{logical} indicating whether variables should be centred to
+
+\item{n.start}{ an \code{integer} indicating the number of randomly chosen
+    starting centroids to be used in each run of the K-means algorithm. Using
+    more starting points ensures convergence of the algorithm. Corresponds to
+    \code{nstart} of \code{kmeans} function.}
+
+\item{center}{a \code{logical} indicating whether variables should be centred to
     mean 0 (TRUE, default) or not (FALSE). Always TRUE for \linkS4class{genind}
     objects.}
-  \item{scale}{a \code{logical} indicating whether variables should be
-    scaled (TRUE) or not (FALSE, default). Scaling consists in dividing
-    variables by their (estimated) standard deviation to account for
-    trivial differences in variances. In allele frequencies, it comes with
-    the risk of giving uninformative alleles more importance while
-    downweighting informative alleles. Further scaling options are
-    available for \linkS4class{genind} objects (see argument
-    \code{scale.method}).}
-  \item{pca.select}{a \code{character} indicating the mode of selection of PCA
-    axes, matching either "nbEig" or "percVar". For "nbEig", the user
-    has to specify the number of axes retained (interactively, or via
+
+\item{scale}{a \code{logical} indicating whether variables should be scaled
+    (TRUE) or not (FALSE, default). Scaling consists in dividing variables by
+    their (estimated) standard deviation to account for trivial differences in
+    variances. In allele frequencies, it comes with the risk of giving
+    uninformative alleles more importance while downweighting informative
+    alleles. Further scaling options are available for \linkS4class{genind}
+    objects (see argument \code{scale.method}).}
+
+\item{pca.select}{a \code{character} indicating the mode of selection of PCA
+    axes, matching either "nbEig" or "percVar". For "nbEig", the user has to
+    specify the number of axes retained (interactively, or via
     \code{n.pca}). For "percVar", the user has to specify the minimum amount of
     the total variance to be preserved by the retained axes, expressed as a
     percentage (interactively, or via \code{perc.pca}).  }
-  \item{perc.pca}{a \code{numeric} value between 0 and 100 indicating the
-    minimal percentage of the total variance of the data to be expressed by the
-    retained axes of PCA.} 
-  \item{truenames}{a \code{logical} indicating whether true (i.e., user-specified)
-    labels should be used in object outputs (TRUE, default) or not
-    (FALSE), in which case generic labels are used.}
-  \item{\ldots}{further arguments to be passed to other functions. For
+
+\item{perc.pca}{a \code{numeric} value between 0 and 100 indicating the minimal
+    percentage of the total variance of the data to be expressed by the retained
+    axes of PCA.}
+
+\item{truenames}{a \code{logical} indicating whether true (i.e., user-specified)
+    labels should be used in object outputs (TRUE, default) or not (FALSE), in
+    which case generic labels are used.}
+
+\item{\ldots}{further arguments to be passed to other functions. For
     \code{find.clusters.matrix}, arguments are to match those of the
     \code{data.frame} method.}
-  \item{dudi}{optionally, a multivariate analysis with the class
-    \code{dudi} (from the ade4 package). If provided, prior PCA will be
-    ignored, and this object will be used as a prior step for variable
-    orthogonalisation.}
-  \item{glPca}{an optional \code{\link{glPca}} object; if provided,
-    dimension reduction is not performed (saving computational time) but
-    taken directly from this object.}
+
+\item{dudi}{optionally, a multivariate analysis with the class \code{dudi} (from
+    the ade4 package). If provided, prior PCA will be ignored, and this object
+    will be used as a prior step for variable orthogonalisation.}
+
+\item{glPca}{an optional \code{\link{glPca}} object; if provided, dimension
+    reduction is not performed (saving computational time) but taken directly
+    from this object.}
+    
 }
 \details{
   === ON THE SELECTION OF K ===\cr
@@ -272,9 +303,10 @@ mtext(3, tex="'X' indicates the actual number of clusters")
 x <- glSim(100,500,500)
 x
 plot(x)
-grp <- find.clusters(x, n.pca=100, choose=FALSE, stat="BIC")
-plot(grp$Kstat, type="o", xlab="number of clusters (K)",
-ylab="BIC",main="find.clusters on a genlight object\n(two groups)")
+grp <- find.clusters(x, n.pca = 100, choose = FALSE, stat = "BIC")
+plot(grp$Kstat, type = "o", xlab = "number of clusters (K)",
+     ylab = "BIC",
+     main = "find.clusters on a genlight object\n(two groups)")
 }
 }
 \keyword{multivariate}

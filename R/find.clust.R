@@ -7,8 +7,8 @@ find.clusters <- function (x, ...) UseMethod("find.clusters")
 ## find.clusters.data.frame
 ############################
 find.clusters.data.frame <- function(x, clust = NULL, n.pca = NULL, n.clust = NULL,
-                                     stat = c("BIC", "AIC", "WSS"), choose.n.clust = TRUE,
                                      method = c("kmeans", "ward"),
+                                     stat = c("BIC", "AIC", "WSS"), choose.n.clust = TRUE,
                                      criterion = c("diffNgroup", "min", "goesup",
                                                    "smoothNgoesup", "goodfit"),
                                      max.n.clust = round(nrow(x)/10), n.iter = 1e5,
@@ -150,7 +150,8 @@ find.clusters.data.frame <- function(x, clust = NULL, n.pca = NULL, n.clust = NU
         }
 
         if(choose.n.clust){
-            plot(c(1,nbClust), myStat, xlab="Number of clusters", ylab=myLab, main=myTitle, type="o", col="blue")
+            plot(c(1,nbClust), myStat, xlab = "Number of clusters",
+                 ylab = myLab, main = myTitle, type = "o", col = "blue")
             abline(h=0, lty=2, col="red")
             cat("Choose the number of clusters (>=2: ")
             n.clust <- NA
@@ -177,7 +178,8 @@ find.clusters.data.frame <- function(x, clust = NULL, n.pca = NULL, n.clust = NU
             }
             if(criterion=="smoothNgoesup") {
                 temp <- myStat
-                temp[2:(length(myStat)-1)] <- sapply(1:(length(myStat)-2), function(i) mean(myStat[c(i,i+1,i+2)]))
+                temp[2:(length(myStat)-1)] <- sapply(1:(length(myStat)-2),
+                                                     function(i) mean(myStat[c(i,i+1,i+2)]))
                 n.clust <- min(which(diff(temp)>0))
             }
 
@@ -221,11 +223,13 @@ find.clusters.data.frame <- function(x, clust = NULL, n.pca = NULL, n.clust = NU
 ########################
 ## find.clusters.genind
 ########################
-find.clusters.genind <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, stat=c("BIC", "AIC", "WSS"),
-                                 choose.n.clust=TRUE, method = c("kmeans", "ward"),
-                                 criterion=c("diffNgroup", "min","goesup", "smoothNgoesup", "goodfit"),
-                                 max.n.clust=round(nrow(x@tab)/10), n.iter=1e5, n.start=10,
-                                 scale=FALSE, truenames=TRUE, ...){
+find.clusters.genind <- function(x, clust = NULL, n.pca = NULL, n.clust = NULL, 
+                                 method = c("kmeans", "ward"),
+                                 stat = c("BIC", "AIC", "WSS"),
+                                 choose.n.clust=TRUE, 
+                                 criterion = c("diffNgroup", "min","goesup", "smoothNgoesup", "goodfit"),
+                                 max.n.clust = round(nrow(x@tab)/10), n.iter = 1e5, n.start = 10,
+                                 scale = FALSE, truenames = TRUE, ...){
 
     ## CHECKS ##
     if(!is.genind(x)) stop("x must be a genind object.")
@@ -271,11 +275,14 @@ find.clusters.matrix <- function(x, ...){
 ##########################
 ## find.clusters.genlight
 ##########################
-find.clusters.genlight <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, stat=c("BIC", "AIC", "WSS"),
-                                   choose.n.clust=TRUE, method = c("kmeans", "ward"),
-                                   criterion=c("diffNgroup", "min","goesup", "smoothNgoesup", "goodfit"),
-                                   max.n.clust=round(nInd(x)/10), n.iter=1e5, n.start=10,
-                                   scale=FALSE, pca.select=c("nbEig","percVar"), perc.pca=NULL, glPca=NULL, ...){
+find.clusters.genlight <- function(x, clust = NULL, n.pca = NULL, n.clust = NULL,
+                                   method = c("kmeans", "ward"),
+                                   stat = c("BIC", "AIC", "WSS"),
+                                   choose.n.clust = TRUE, 
+                                   criterion = c("diffNgroup", "min","goesup", "smoothNgoesup", "goodfit"),
+                                   max.n.clust = round(nInd(x)/10), n.iter = 1e5, n.start = 10,
+                                   scale = FALSE, pca.select = c("nbEig","percVar"),
+                                   perc.pca = NULL, glPca = NULL, ...){
 
     ## CHECKS ##
     if(!inherits(x, "genlight")) stop("x is not a genlight object.")
