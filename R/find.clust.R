@@ -6,10 +6,15 @@ find.clusters <- function (x, ...) UseMethod("find.clusters")
 ############################
 ## find.clusters.data.frame
 ############################
-find.clusters.data.frame <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, stat=c("BIC", "AIC", "WSS"), choose.n.clust=TRUE,
-                                     criterion=c("diffNgroup", "min","goesup", "smoothNgoesup", "goodfit"),
-                                     max.n.clust=round(nrow(x)/10), n.iter=1e5, n.start=10, center=TRUE, scale=TRUE,
-                                     pca.select=c("nbEig","percVar"), perc.pca=NULL,..., dudi=NULL){
+find.clusters.data.frame <- function(x, clust = NULL, n.pca = NULL, n.clust = NULL,
+                                     stat = c("BIC", "AIC", "WSS"), choose.n.clust = TRUE,
+                                     method = c("kmeans", "ward"),
+                                     criterion = c("diffNgroup", "min", "goesup",
+                                                   "smoothNgoesup", "goodfit"),
+                                     max.n.clust = round(nrow(x)/10), n.iter = 1e5,
+                                     n.start = 10, center = TRUE, scale = TRUE,
+                                     pca.select = c("nbEig","percVar"),
+                                     perc.pca = NULL, ..., dudi = NULL){
 
     ## CHECKS ##
     stat <- match.arg(stat)
@@ -17,7 +22,8 @@ find.clusters.data.frame <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, st
     criterion <- match.arg(criterion)
     min.n.clust <- 2
     max.n.clust <- max(max.n.clust, 2)
-
+    method <- match.arg(method)
+    
     ## KEEP TRACK OF SOME ORIGINAL PARAMETERS
     ## n.pca.ori <- n.pca
     ##n.clust.ori <- n.clust
@@ -25,8 +31,14 @@ find.clusters.data.frame <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, st
 
     ## ESCAPE IF SUB-CLUST ARE SEEKED ##
     if(!is.null(clust)){
-        res <- .find.sub.clusters(x=x, clust=clust, n.pca=n.pca, n.clust=n.clust, stat=stat, max.n.clust=max.n.clust, n.iter=n.iter, n.start=n.start,
-                                  choose.n.clust=choose.n.clust, criterion=criterion, center=center, scale=scale)
+        res <- .find.sub.clusters(x = x, clust = clust, n.pca = n.pca,
+                                  n.clust = n.clust, stat = stat,
+                                  max.n.clust = max.n.clust,
+                                  n.iter = n.iter, n.start = n.start,
+                                  choose.n.clust = choose.n.clust,
+                                  criterion = criterion,
+                                  method = method,
+                                  center = center, scale = scale)
         return(res)
     }
     ## END SUB-CLUST
@@ -52,14 +64,20 @@ find.clusters.data.frame <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, st
     }
 
     ## select the number of retained PC for PCA
-    if(is.null(n.pca) & pca.select=="nbEig"){
-        plot(cumVar, xlab="Number of retained PCs", ylab="Cumulative variance (%)", main="Variance explained by PCA", col=myCol)
-        cat("Choose the number PCs to retain (>=1): ")
+    if(is.null(n.pca) & pca.select == "nbEig"){
+        plot(cumVar, xlab = "Number of retained PCs",
+             ylab = "Cumulative variance (%)",
+             main = "Variance explained by PCA",
+             col = myCol)
+        cat("Choose the number PCs to retain (>= 1): ")
         n.pca <- as.integer(readLines(n = 1))
     }
 
-    if(is.null(perc.pca) & pca.select=="percVar"){
-        plot(cumVar, xlab="Number of retained PCs", ylab="Cumulative variance (%)", main="Variance explained by PCA", col=myCol)
+    if(is.null(perc.pca) & pca.select == "percVar"){
+        plot(cumVar, xlab = "Number of retained PCs",
+             ylab = "Cumulative variance (%)",
+             main = "Variance explained by PCA",
+             col = myCol)
         cat("Choose the percentage of variance to retain (0-100): ")
         nperc.pca <- as.numeric(readLines(n = 1))
     }
@@ -86,9 +104,17 @@ find.clusters.data.frame <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, st
         WSS <- numeric(0)
 
         for(i in 1:length(nbClust)){
-            ## temp <- kmeans(XU, centers=nbClust[i], iter.max=min(n.iter, 100), nstart=min(n.start, 1e3))
-            temp <- kmeans(XU, centers=nbClust[i], iter.max=n.iter, nstart=n.start)
-            WSS[i] <- sum(temp$withinss)
+            if (method == "kmeans") {
+                ## kmeans clustering (original method)
+                temp <- kmeans(XU, centers = nbClust[i], iter.max = n.iter, nstart = n.start)
+                ##WSS[i] <- sum(temp$withinss)
+            } else {
+                ## ward clustering
+                temp <- list()
+                temp$cluster <- cutree(hclust(dist(XU)^2, method = "ward.D2"), k = nbClust[i])
+            }
+                WSS[i] <- .compute.wss(XU, temp$cluster)
+            
         }
 
 
@@ -162,7 +188,16 @@ find.clusters.data.frame <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, st
 
     ## get final groups
     if(n.clust >1){
-        best <-  kmeans(XU, centers=n.clust, iter.max=n.iter, nstart=n.start)
+        if (method == "kmeans") {
+            best <-  kmeans(XU, centers = n.clust, iter.max = n.iter,
+                            nstart = n.start)
+        } else {
+            best <- list()
+            best$cluster <- cutree(hclust(dist(XU)^2, method = "ward.D2"),
+                               k = n.clust)
+            best$size <- table(best$cluster)
+        }
+         
     } else {
         best <- list(cluster=factor(rep(1,N)), size=N)
     }
@@ -186,7 +221,8 @@ find.clusters.data.frame <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, st
 ########################
 ## find.clusters.genind
 ########################
-find.clusters.genind <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, stat=c("BIC", "AIC", "WSS"), choose.n.clust=TRUE,
+find.clusters.genind <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, stat=c("BIC", "AIC", "WSS"),
+                                 choose.n.clust=TRUE, method = c("kmeans", "ward"),
                                  criterion=c("diffNgroup", "min","goesup", "smoothNgoesup", "goodfit"),
                                  max.n.clust=round(nrow(x@tab)/10), n.iter=1e5, n.start=10,
                                  scale=FALSE, truenames=TRUE, ...){
@@ -207,8 +243,10 @@ find.clusters.genind <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, stat=c
                   NA.method = "mean")
 
     ## CALL DATA.FRAME METHOD
-    res <- find.clusters(X, clust=clust, n.pca=n.pca, n.clust=n.clust, stat=stat, max.n.clust=max.n.clust, n.iter=n.iter, n.start=n.start,
-                         choose.n.clust=choose.n.clust, criterion=criterion, center=FALSE, scale=FALSE,...)
+    res <- find.clusters(X, clust=clust, n.pca=n.pca, n.clust=n.clust, stat=stat,
+                         max.n.clust=max.n.clust, n.iter=n.iter, n.start=n.start,
+                         choose.n.clust=choose.n.clust, method = method,
+                         criterion=criterion, center=FALSE, scale=FALSE,...)
     return(res)
 } # end find.clusters.genind
 
@@ -233,7 +271,8 @@ find.clusters.matrix <- function(x, ...){
 ##########################
 ## find.clusters.genlight
 ##########################
-find.clusters.genlight <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, stat=c("BIC", "AIC", "WSS"), choose.n.clust=TRUE,
+find.clusters.genlight <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, stat=c("BIC", "AIC", "WSS"),
+                                   choose.n.clust=TRUE, method = c("kmeans", "ward"),
                                    criterion=c("diffNgroup", "min","goesup", "smoothNgoesup", "goodfit"),
                                    max.n.clust=round(nInd(x)/10), n.iter=1e5, n.start=10,
                                    scale=FALSE, pca.select=c("nbEig","percVar"), perc.pca=NULL, glPca=NULL, ...){
@@ -302,8 +341,10 @@ find.clusters.genlight <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, stat
 
 
     ## CALL DATA.FRAME METHOD
-    res <- find.clusters(pcaX$li, clust=clust, n.pca=n.pca, n.clust=n.clust, stat=stat, max.n.clust=max.n.clust, n.iter=n.iter, n.start=n.start,
-                         choose.n.clust=choose.n.clust, criterion=criterion, center=FALSE, scale=FALSE, dudi=pcaX)
+    res <- find.clusters(pcaX$li, clust=clust, n.pca=n.pca, n.clust=n.clust,
+                         stat=stat, max.n.clust=max.n.clust, n.iter=n.iter, n.start=n.start,
+                         choose.n.clust=choose.n.clust, method = method,
+                         criterion=criterion, center=FALSE, scale=FALSE, dudi=pcaX)
     return(res)
 } # end find.clusters.genlight
 
@@ -355,3 +396,10 @@ find.clusters.genlight <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, stat
 
 
 
+
+
+## Compute within sum of squares from a matrix 'x' and a factor 'f'
+.compute.wss <- function(x, f) {
+    x.group.mean <- apply(x, 2, tapply, f, mean)
+    sum((x - x.group.mean[as.character(f),])^2)
+}

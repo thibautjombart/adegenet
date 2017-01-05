@@ -5,8 +5,8 @@
 \title{Maximum-likelihood genetic clustering using EM algorithm}
 \usage{
 genclust.em(x, k, pop.ini = "kmeans", max.iter = 100, n.start = 10,
-  hybrids = FALSE, dim.ini = 100, hybrid.coef = NULL,
-  parent.lab = c("A", "B"), ...)
+  n.start.kmeans = 50, hybrids = FALSE, dim.ini = 100,
+  hybrid.coef = NULL, parent.lab = c("A", "B"), ...)
 }
 \arguments{
 \item{x}{a \linkS4class{genind} object}
@@ -14,14 +14,20 @@ genclust.em(x, k, pop.ini = "kmeans", max.iter = 100, n.start = 10,
 \item{k}{the number of clusters to look for}
 
 \item{pop.ini}{parameter indicating how the initial group membership should
-be found. If \code{NULL}, groups are chosen at random, and the algorithm will
-be run \code{n.start times}. If "kmeans", then the function
-\code{find.clusters} is used to define initial groups. Alternatively, a
-factor defining the initial cluster configuration can be provided.}
+be found. If \code{NULL}, groups are chosen at random, and the algorithm
+will be run \code{n.start times}. If "kmeans", then the function
+\code{find.clusters} is used to define initial groups using the K-means
+algorithm. If "ward", then the function \code{find.clusters} is used to
+define initial groups using the Ward algorithm. Alternatively, a factor
+defining the initial cluster configuration can be provided.}
 
 \item{max.iter}{the maximum number of iteration of the EM algorithm}
 
 \item{n.start}{the number of times the EM algorithm is run, each time with
+different random starting conditions}
+
+\item{n.start.kmeans}{the number of times the K-means algorithm is run to
+define the starting point of the ML-EM algorithm, each time with
 different random starting conditions}
 
 \item{hybrids}{a logical indicating if hybrids should be modelled
@@ -33,8 +39,8 @@ initial group memberships (see argument \code{pop.ini}).}
 
 \item{hybrid.coef}{a vector of hybridization coefficients, defining the
 proportion of hybrid gene pool coming from the first parental population;
-this is symmetrized around 0.5, so that e.g. c(0.25, 0.5) will be converted
-to c(0.25, 0.5, 0.75)}
+this is symmetrized around 0.5, so that e.g. c(0.25, 0.5) will be
+converted to c(0.25, 0.5, 0.75)}
 
 \item{parent.lab}{a vector of 2 character strings used to label the two
 parental populations; only used if hybrids are detected (see argument

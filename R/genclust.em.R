@@ -14,31 +14,37 @@
 #' @param k the number of clusters to look for
 #'
 #' @param pop.ini parameter indicating how the initial group membership should
-#' be found. If \code{NULL}, groups are chosen at random, and the algorithm will
-#' be run \code{n.start times}. If "kmeans", then the function
-#' \code{find.clusters} is used to define initial groups. Alternatively, a
-#' factor defining the initial cluster configuration can be provided.
+#'     be found. If \code{NULL}, groups are chosen at random, and the algorithm
+#'     will be run \code{n.start times}. If "kmeans", then the function
+#'     \code{find.clusters} is used to define initial groups using the K-means
+#'     algorithm. If "ward", then the function \code{find.clusters} is used to
+#'     define initial groups using the Ward algorithm. Alternatively, a factor
+#'     defining the initial cluster configuration can be provided.
 #'
 #' @param max.iter the maximum number of iteration of the EM algorithm
 #'
 #' @param n.start the number of times the EM algorithm is run, each time with
 #' different random starting conditions
 #'
+#' @param n.start.kmeans the number of times the K-means algorithm is run to
+#'     define the starting point of the ML-EM algorithm, each time with
+#'     different random starting conditions
+#'
 #' @param hybrids a logical indicating if hybrids should be modelled
-#' explicitely; this is currently implemented for 2 groups only.
+#'     explicitely; this is currently implemented for 2 groups only.
 #'
 #' @param dim.ini the number of PCA axes to retain in the dimension reduction
-#' step for \code{\link{find.clusters}}, if this method is used to define
-#' initial group memberships (see argument \code{pop.ini}).
+#'     step for \code{\link{find.clusters}}, if this method is used to define
+#'     initial group memberships (see argument \code{pop.ini}).
 #'
 #' @param hybrid.coef a vector of hybridization coefficients, defining the
-#' proportion of hybrid gene pool coming from the first parental population;
-#' this is symmetrized around 0.5, so that e.g. c(0.25, 0.5) will be converted
-#' to c(0.25, 0.5, 0.75)
+#'     proportion of hybrid gene pool coming from the first parental population;
+#'     this is symmetrized around 0.5, so that e.g. c(0.25, 0.5) will be
+#'     converted to c(0.25, 0.5, 0.75)
 #'
 #' @param parent.lab a vector of 2 character strings used to label the two
-#' parental populations; only used if hybrids are detected (see argument
-#' \code{hybrids})
+#'     parental populations; only used if hybrids are detected (see argument
+#'     \code{hybrids})
 #'
 #' @param ... further arguments passed on to \code{\link{find.clusters}}
 #'
@@ -126,7 +132,8 @@
 #'
 #' }
 
-genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
+genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start = 10,
+                        n.start.kmeans = 50,
                         hybrids = FALSE, dim.ini = 100,
                         hybrid.coef = NULL, parent.lab = c('A', 'B'), ...) {
     ## This function uses the EM algorithm to find ML group assignment of a set
@@ -177,10 +184,15 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start=10,
 
 
     ## Initialisation using 'find.clusters'
-    if (!is.null(pop.ini) &&
-        tolower(pop.ini)[1] %in% c("kmeans", "k-means", "find.clusters")
-        ) {
-        pop.ini <- find.clusters(x, n.clust = k, n.pca = dim.ini, ...)$grp
+    if (!is.null(pop.ini)) {
+        if (tolower(pop.ini)[1] %in% c("kmeans", "k-means")) {
+            pop.ini <- find.clusters(x, n.clust = k, n.pca = dim.ini,
+                                     n.start = n.start.kmeans,
+                                     method = "kmeans", ...)$grp
+        } else if (tolower(pop.ini)[1] %in% c("ward")) {
+            pop.ini <- find.clusters(x, n.clust = k, n.pca = dim.ini,
+                                     method = "ward", ...)$grp
+        }
     }
 
     ## There is one run of the EM algo for each of the n.start random initial
