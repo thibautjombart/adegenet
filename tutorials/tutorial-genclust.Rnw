@@ -526,5 +526,74 @@ print(p)
 tab
 @
 
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Looking for the optimal number of clusters}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The function \texttt{genclust.em.choose.k} permits to run \texttt{genclust.em}
+for various values of $k$, and outputs the corresponding AIC or BIC values. Its
+use is similar to that of \texttt{find.clusters}: ideally, the lowest AIC/BIC
+corresponds to the best model, but in practice sharp decreases in AIC/BIC will
+reflect substantial improvement of fit. We illustrate it using the
+\texttt{dapcIllus\$a} and \texttt{dapcIllus\$c} datasets, which have 6 and 12
+populations, respectively. We first compare the AIC and BIC on
+\texttt{dapcIllus\$a}. We indicate the true 'k' by a dashed line, and represent
+in blue the 'optimal k':
+
+<<select_k_a>>=
+data(dapcIllus)
+table(pop(dapcIllus$a))
+
+## look for k = 1:20
+a.aic <- genclust.em.choose.k(20, dapcIllus$a)
+plot(a.aic, type = "b", cex = 2, xlab = "k", ylab = "AIC")
+points(which.min(a.aic), min(a.aic), col = "blue", pch = 20, cex = 2)
+abline(v = 6, lty = 2, col = "red")
+
+## same data, using BIC
+a.bic <- genclust.em.choose.k(20, dapcIllus$a, IC = BIC)
+plot(a.bic, type = "b", cex = 2, xlab = "k", ylab = "BIC")
+points(which.min(a.bic), min(b.aic), col = "blue", pch = 20, cex = 2)
+abline(v = 6, lty = 2, col = "red")
+
+@ 
+
+In both cases, the true number of groups (6) is well identified, albeit more
+clearly by the BIC. Note that this is not systematically the case, and AIC may
+work better on other data. In practice, it is probably useful to compare both
+approaches.
+
+We repeat these analyses on the second dataset, which was simulated as a 1-dimensional stepping stone with 12 demes:
+
+
+<<select_k_c>>=
+data(dapcIllus)
+table(pop(dapcIllus$c))
+
+## look for k = 1:30
+c.aic <- genclust.em.choose.k(30, dapcIllus$c)
+plot(c.aic, type = "b", cex = 2, xlab = "k", ylab = "AIC")
+points(which.min(c.aic), min(c.aic), col = "blue", pch = 20, cex = 2)
+abline(v = 12, lty = 2, col = "red")
+
+## same data, using BIC
+c.bic <- genclust.em.choose.k(30, dapcIllus$c, IC = BIC)
+plot(c.bic, type = "b", cex = 2, xlab = "k", ylab = "BIC")
+points(which.min(c.bic), min(c.bic), col = "blue", pch = 20, cex = 2)
+abline(v = 12, lty = 2, col = "red")
+
+@ 
+
+
+
+
+
 \end{document}
 
