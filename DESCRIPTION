@@ -101,6 +101,9 @@ Collate:
     pairDist.R
     genclust.em.R
     genclust.emmcmc.R
+    AIC.genclust.em.R
+    BIC.genclust.em.R
+    genclust.em.choose.k.R
     servers.R
     showmekittens.R
     zzz.R
