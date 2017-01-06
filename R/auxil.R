@@ -410,7 +410,7 @@ virid <- colorRampPalette(c("#440154FF", "#482173FF", "#433E85FF", "#38598CFF",
 hybridpal <- function(col.pal = virid) {
     function(n) {
         if (n < 3) {
-            return(col.pal)
+            return(col.pal(n))
         }
         col.pal(n)[c(1, n, 2:(n-1))]
     }
