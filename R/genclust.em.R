@@ -198,7 +198,7 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start = 10,
     ## There is one run of the EM algo for each of the n.start random initial
     ## conditions.
     ll <- -Inf # this will be the total loglike
-
+    
     for (i in seq_len(n.start)) {
 
         ## Set initial conditions: if initial pop is NULL, we create a random
@@ -294,7 +294,14 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start = 10,
         lev.ini <- c(lev.ini, hybrid.labels)
     }
     levels(out$group) <- lev.ini
-        colnames(out$proba) <- lev.ini
+    colnames(out$proba) <- lev.ini
+
+    
+    ## compute the number of parameters; it is defined as the number of 'free'
+    ## allele frequencies, multiplied by the number of groups
+
+    out$n.param <- (ncol(genotypes) - n.loc) * length(lev.ini)
+    
     class(out) <- c("genclust.em", "list")
     return(out)
 }
