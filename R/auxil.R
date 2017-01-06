@@ -408,10 +408,10 @@ virid <- colorRampPalette(c("#440154FF", "#482173FF", "#433E85FF", "#38598CFF",
 
 ## reorder colors for hybrids
 hybridpal <- function(col.pal = virid) {
-    if (n < 3) {
-        return(col.pal)
-    }
     function(n) {
+        if (n < 3) {
+            return(col.pal)
+        }
         col.pal(n)[c(1, n, 2:(n-1))]
     }
 }

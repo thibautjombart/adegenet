@@ -10,15 +10,31 @@
 #'     solutions, and \code{\link{BIC.genclust.em}} for computing BIC for
 #'     \code{genclust.em} objects.
 #'
-#' @param k.values A vector of integers representing the different number of
-#'     clusters to try.
+#' @param max An integer indicating the maximum number of clusters to seek;
+#'     \code{\link{genclust.em}} will be run for all k from 2 to max.
 #'
-#' @param bic.only A logical indicating if BIC values only should be returned;
-#'     if \code{FALSE}, full \code{genclust.em} objects are returned.
+#' @param IC A function computing the information criterion for
+#'     \code{\link{BIC.genclust.em}} objects. Available statistics are
+#'     \code{AIC} (default) and \code{BIC}.
+#' 
+#' @param IC.only A logical (TRUE by default) indicating if IC values only
+#'     should be returned; if \code{FALSE}, full \code{genclust.em} objects are
+#'     returned.
 #'
 #' @param ... Arguments passed to \code{\link{genclust.em}}.
+#'
+#' @seealso \code{\link{genclust.em} to generate clustering solutions,
+#'     \code{\link{AIC.genclust.em}} for Akaike's criterion, and
+#'     \code{\link{BIC.genclust.em}} for the Bayesian information criterion.
 #' 
 genclust.em.choose.k <- function(max, ..., IC = AIC, IC.only = TRUE) {
+
+    ## This function is a glorified for loop which runs genclust.em for several
+    ## values of 'k', from 2 to 'max'. It returns information criterion (AIC or
+    ## BIC), and can also return the full genclust.em objects if needed. For
+    ## k=1, AIC and BIC are computed via an internal (i.e. non-exported)
+    ## procedure.
+    
     max <- as.integer(max)
     if (any(!is.finite(max))) {
         stop("Values of k need to be finite.")

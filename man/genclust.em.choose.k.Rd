@@ -7,13 +7,18 @@
 genclust.em.choose.k(max, ..., IC = AIC, IC.only = TRUE)
 }
 \arguments{
+\item{max}{An integer indicating the maximum number of clusters to seek;
+\code{\link{genclust.em}} will be run for all k from 2 to max.}
+
 \item{...}{Arguments passed to \code{\link{genclust.em}}.}
 
-\item{k.values}{A vector of integers representing the different number of
-clusters to try.}
+\item{IC}{A function computing the information criterion for
+\code{\link{BIC.genclust.em}} objects. Available statistics are
+\code{AIC} (default) and \code{BIC}.}
 
-\item{bic.only}{A logical indicating if BIC values only should be returned;
-if \code{FALSE}, full \code{genclust.em} objects are returned.}
+\item{IC.only}{A logical (TRUE by default) indicating if IC values only
+should be returned; if \code{FALSE}, full \code{genclust.em} objects are
+returned.}
 }
 \description{
 Do not use. We work on that stuff. Contact us if interested.
