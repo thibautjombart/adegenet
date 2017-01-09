@@ -121,7 +121,7 @@ setMethod("tab", signature(x="genpop"), function(x, freq=FALSE, NA.method=c("asi
         ## compute frequencies
         fac <- x@loc.fac
         if (is.null(fac)) fac <- rep(1, nLoc(x))
-        out <- apply(x@tab, 1, tapply, fac, f1)
+        out <- apply(x@tab, 1, tapply, fac, f1, simplify = FALSE)
         if (ncol(x@tab) > 1){
           ## reshape into matrix
           col.names <- do.call(c,lapply(out[[1]],names))
