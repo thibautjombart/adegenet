@@ -23,7 +23,11 @@ fasta2DNAbin(file, quiet=FALSE, chunkSize=10, snpOnly=FALSE)
 }
 \arguments{
   \item{file}{ a character string giving the path to the file to
-    convert, with the extension ".fa", ".fas", or ".fasta".}
+    convert, with the extension ".fa", ".fas", or ".fasta".
+
+    Can also be a \link{connection} (which will be opened for reading if
+    necessary, and if so \code{\link{close}}d (and hence destroyed) at the
+    end of the function call).}
   \item{quiet}{a logical stating whether a conversion messages should be
     printed (FALSE, default) or not (TRUE).}
   \item{chunkSize}{an integer indicating the number of genomes to be
