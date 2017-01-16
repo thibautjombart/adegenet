@@ -1651,9 +1651,11 @@ fasta2genlight <- function(file, quiet=FALSE, chunkSize=1000, saveNbAlleles=FALS
 fasta2DNAbin <- function(file, quiet=FALSE, chunkSize=10, snpOnly=FALSE){
 
     ## HANDLE ARGUMENTS ##
-    ext <- .readExt(file)
-    ext <- toupper(ext)
-    if(!ext %in% c("FASTA", "FA", "FAS")) warning("wrong file extension - '.fasta', '.fa' or '.fas' expected")
+    if (!is(file, "connection")) {
+        ext <- .readExt(file)
+        ext <- toupper(ext)
+        if(!ext %in% c("FASTA", "FA", "FAS")) warning("wrong file extension - '.fasta', '.fa' or '.fas' expected")
+    }
     if(!quiet) cat("\n Converting FASTA alignment into a DNAbin object... \n\n")
 
 
