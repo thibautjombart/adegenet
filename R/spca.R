@@ -37,7 +37,7 @@ spca.matrix <- function(x, xy = NULL, cn = NULL, matWeight = NULL,
                         plot.nb = TRUE, edit.nb = FALSE,
                         truenames = TRUE,
                         d1 = NULL, d2 = NULL, k = NULL,
-                        a = NULL, dmin = NULL) {
+                        a = NULL, dmin = NULL, ...) {
 
   ## check type of x: only numeric values are acceptable
 
@@ -117,9 +117,9 @@ spca.matrix <- function(x, xy = NULL, cn = NULL, matWeight = NULL,
 
   ## perform the analyses: basic PCA followed by multispati
 
-  pcaX <- ade4::dudi.pca(X, center = center, scale = scale, scannf = FALSE)
+  x_pca <- ade4::dudi.pca(x, center = center, scale = scale, scannf = FALSE)
 
-  out <- ade4::multispati(dudi = pcaX, listw = resCN, scannf = scannf,
+  out <- ade4::multispati(dudi = x_pca, listw = resCN, scannf = scannf,
                           nfposi = nfposi, nfnega = nfnega)
 
   nfposi <- out$nfposi
@@ -131,7 +131,12 @@ spca.matrix <- function(x, xy = NULL, cn = NULL, matWeight = NULL,
 
   out$lw <- resCN
 
-  out$call <- appel
+  dots <- list(...)
+  if (!is.null(dots$call)) {
+    out$call <- dots$call
+  } else {
+    out$call <- match.call()
+  }
 
   posaxes <- if(nfposi>0) {1:nfposi} else NULL
   negaxes <- if(nfnega>0) {(length(out$eig)-nfnega+1):length(out$eig)} else NULL
@@ -141,7 +146,7 @@ spca.matrix <- function(x, xy = NULL, cn = NULL, matWeight = NULL,
   colnames(out$c1) <- paste("Axis",keptaxes)
   colnames(out$li) <- paste("Axis",keptaxes)
   colnames(out$ls) <- paste("Axis",keptaxes)
-  row.names(out$c1) <- colnames(X)
+  row.names(out$c1) <- colnames(x)
   colnames(out$as) <- colnames(out$c1)
   temp <- row.names(out$as)
   row.names(out$as) <- paste("PCA",temp)
@@ -168,12 +173,15 @@ spca.data.frame <- function(x, xy = NULL, cn = NULL, matWeight = NULL,
                             plot.nb = TRUE, edit.nb = FALSE,
                             truenames = TRUE,
                             d1 = NULL, d2 = NULL, k = NULL,
-                            a = NULL, dmin = NULL) {
+                            a = NULL, dmin = NULL, ...) {
+
+  call <- match.call()
 
   spca(as.matrix(x), xy = xy, cn = cn, matWeight = matWeight, center = center,
        cale = scale, scannf = scannf, nfposi = nfposi, nfnega = nfnega,
        type = type, ask = ask, plot.nb = plot.nb, edit.nb = edit.nb,
-       truenames = truenames, d1 = d1, d2 = d2, k = k, a = a, dmin = dmin)
+       truenames = truenames, d1 = d1, d2 = d2, k = k, a = a, dmin = dmin,
+       call = call, ...)
 }
 
 
@@ -192,7 +200,7 @@ spca.genind <- function(obj, xy = NULL, cn = NULL, matWeight = NULL,
                         plot.nb = TRUE, edit.nb = FALSE,
                         truenames = TRUE,
                         d1 = NULL, d2 = NULL, k = NULL,
-                        a = NULL, dmin = NULL){
+                        a = NULL, dmin = NULL, ...){
 
   ## first checks
 
@@ -204,8 +212,6 @@ spca.genind <- function(obj, xy = NULL, cn = NULL, matWeight = NULL,
     xy <- obj$other$xy # xy from @other$xy if it exists
   }
 
-
-  appel <- match.call()
 
 
   ## == spatial weights are done ==
@@ -219,6 +225,8 @@ spca.genind <- function(obj, xy = NULL, cn = NULL, matWeight = NULL,
   ## handle NAs, centring and scaling
   X <- tab(obj, freq = TRUE, NA.method = "mean")
 
+  call <- match.call()
+
   spca(X, xy = xy, cn = cn, matWeight = matWeight,
        center = TRUE, scale = scale, scannf = scannf,
        nfposi = nfposi, nfnega = nfnega,
@@ -226,7 +234,8 @@ spca.genind <- function(obj, xy = NULL, cn = NULL, matWeight = NULL,
        plot.nb = plot.nb, edit.nb = edit.nb,
        truenames = truenames,
        d1 = d1, d2 = d2, k = k,
-       a = a, dmin = dmin)
+       a = a, dmin = dmin,
+       call = call, ...)
 
 } # end spca.genind
 
@@ -246,7 +255,7 @@ spca.genpop <- function(obj, xy = NULL, cn = NULL, matWeight = NULL,
                         plot.nb = TRUE, edit.nb = FALSE,
                         truenames = TRUE,
                         d1 = NULL, d2 = NULL, k = NULL,
-                        a = NULL, dmin = NULL){
+                        a = NULL, dmin = NULL, ...){
 
   ## first checks
 
@@ -259,12 +268,6 @@ spca.genpop <- function(obj, xy = NULL, cn = NULL, matWeight = NULL,
   }
 
 
-  appel <- match.call()
-
-
-  ## == spatial weights are done ==
-
-
   ## handle NAs warning
   if(any(is.na(obj@tab))){
     warning("NAs in data are automatically replaced (to mean allele frequency)")
@@ -273,6 +276,8 @@ spca.genpop <- function(obj, xy = NULL, cn = NULL, matWeight = NULL,
   ## handle NAs, centring and scaling
   X <- tab(obj, freq = TRUE, NA.method = "mean")
 
+  call <- match.call()
+
   spca(X, xy = xy, cn = cn, matWeight = matWeight,
        center = TRUE, scale = scale, scannf = scannf,
        nfposi = nfposi, nfnega = nfnega,
@@ -280,7 +285,8 @@ spca.genpop <- function(obj, xy = NULL, cn = NULL, matWeight = NULL,
        plot.nb = plot.nb, edit.nb = edit.nb,
        truenames = truenames,
        d1 = d1, d2 = d2, k = k,
-       a = a, dmin = dmin)
+       a = a, dmin = dmin,
+       call = call, ...)
 
 } # end spca.genpop
 
