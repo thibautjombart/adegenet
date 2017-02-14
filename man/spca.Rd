@@ -54,40 +54,40 @@ spca(...)
 \method{spca}{default}(x, ...)
 
 \method{spca}{matrix}(x, xy = NULL, cn = NULL, matWeight = NULL,
-                            center = TRUE, scale = FALSE, scannf = TRUE,
-                            nfposi = 1, nfnega = 1,
-                            type = NULL, ask = TRUE,
-                            plot.nb = TRUE, edit.nb = FALSE,
-                            truenames = TRUE,
-                            d1 = NULL, d2 = NULL, k = NULL,
-                            a = NULL, dmin = NULL, ...)
+            center = TRUE, scale = FALSE, scannf = TRUE,
+            nfposi = 1, nfnega = 1,
+            type = NULL, ask = TRUE,
+            plot.nb = TRUE, edit.nb = FALSE,
+            truenames = TRUE,
+            d1 = NULL, d2 = NULL, k = NULL,
+            a = NULL, dmin = NULL, ...)
 
 \method{spca}{data.frame}(x, xy = NULL, cn = NULL, matWeight = NULL,
-                            center = TRUE, scale = FALSE, scannf = TRUE,
-                            nfposi = 1, nfnega = 1,
-                            type = NULL, ask = TRUE,
-                            plot.nb = TRUE, edit.nb = FALSE,
-                            truenames = TRUE,
-                            d1 = NULL, d2 = NULL, k = NULL,
-                            a = NULL, dmin = NULL, ...)
+            center = TRUE, scale = FALSE, scannf = TRUE,
+            nfposi = 1, nfnega = 1,
+            type = NULL, ask = TRUE,
+            plot.nb = TRUE, edit.nb = FALSE,
+            truenames = TRUE,
+            d1 = NULL, d2 = NULL, k = NULL,
+            a = NULL, dmin = NULL, ...)
 
 \method{spca}{genind}(obj, xy = NULL, cn = NULL, matWeight = NULL,
-                        scale = FALSE, scannf = TRUE,
-                        nfposi = 1, nfnega = 1,
-                        type = NULL, ask = TRUE,
-                        plot.nb = TRUE, edit.nb = FALSE,
-                        truenames = TRUE,
-                        d1 = NULL, d2 = NULL, k = NULL,
-                        a = NULL, dmin = NULL, ...)
+            scale = FALSE, scannf = TRUE,
+            nfposi = 1, nfnega = 1,
+            type = NULL, ask = TRUE,
+            plot.nb = TRUE, edit.nb = FALSE,
+            truenames = TRUE,
+            d1 = NULL, d2 = NULL, k = NULL,
+            a = NULL, dmin = NULL, ...)
 
 \method{spca}{genpop}(obj, xy = NULL, cn = NULL, matWeight = NULL,
-                        scale = FALSE, scannf = TRUE,
-                        nfposi = 1, nfnega = 1,
-                        type = NULL, ask = TRUE,
-                        plot.nb = TRUE, edit.nb = FALSE,
-                        truenames = TRUE,
-                        d1 = NULL, d2 = NULL, k = NULL,
-                        a = NULL, dmin = NULL, ...)
+            scale = FALSE, scannf = TRUE,
+            nfposi = 1, nfnega = 1,
+            type = NULL, ask = TRUE,
+            plot.nb = TRUE, edit.nb = FALSE,
+            truenames = TRUE,
+            d1 = NULL, d2 = NULL, k = NULL,
+            a = NULL, dmin = NULL, ...)
 
 
 \method{print}{spca}(x, \dots)
@@ -104,7 +104,8 @@ spca(...)
 
   \item{x}{a \code{matrix} or a \code{data.frame} of numeric values,
     with individuals in rows and variables in columns; categorical
-    variables with a binary coding are acceptable too}
+    variables with a binary coding are acceptable too; for \code{print}
+    and plotting functions, a spca object.}
 
   \item{obj}{a \code{genind} or \code{genpop} object.}
 
@@ -122,7 +123,11 @@ spca(...)
     spatial proximities between entities. If provided, this argument
     prevails over \code{cn} (see details).}
 
-  \item{scale}{a logical indicating whether alleles should be scaled to
+  \item{center}{a logical indicating whether data should be centred to
+    a mean of zero; used implicitely for \linkS4class{genind} or
+    \linkS4class{genpop} objects.}
+
+  \item{scale}{a logical indicating whether data should be scaled to
     unit variance (TRUE) or not (FALSE, default).}
 
   \item{scannf}{a logical stating whether eigenvalues should be chosen
@@ -164,8 +169,6 @@ spca(...)
   \item{dmin}{the minimum distance between any two distinct points. Used
     to avoid infinite spatial proximities (defined as the inversed
     spatial distances). Used if \code{type=7}.}
-
-  \item{x}{a \code{spca} object.}
 
   \item{object}{a \code{spca} object.}
 
