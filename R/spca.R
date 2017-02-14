@@ -1,136 +1,298 @@
+###############################################
+##
+## spatial Principal Components Analysis
+##
+## require ade4, spdep and eventually tripack
+##
+## generic functions were derived from
+## those of multispati class (ade4)
+##
+## T. Jombart (t.jombart@imperial.ac.uk)
+## 31 may 2007
 ##############################################
-#
-# spatial Principal Components Analysis
-#
-# require ade4, spdep and eventually tripack
-#
-# generic functions were derived from
-# those of multispati class (ade4)
-#
-# T. Jombart (t.jombart@imperial.ac.uk)
-# 31 may 2007
-##############################################
+
+spca <- function (...) UseMethod("spca")
+
 
 
 ################
-# spca genind
+## spca.default
 ################
-spca <- function(obj, xy=NULL, cn=NULL, matWeight=NULL,
-                 scale=FALSE,
-                 scannf=TRUE, nfposi=1, nfnega=1,
-                 type=NULL, ask=TRUE, plot.nb=TRUE, edit.nb=FALSE,
-                 truenames=TRUE, d1=NULL, d2=NULL, k=NULL, a=NULL, dmin=NULL){
-
-    ## first checks
-    if(!any(inherits(obj,c("genind","genpop")))) stop("obj must be a genind or genpop object.")
-    invisible(validObject(obj))
-    ## checkType(obj)
+spca.default <- function(x, ...) {
+  stop(sptrinf("No spca method for object of class %s",
+               paste(class(x), collapse = " ")))
+}
 
 
-    ## handle xy coordinates
-    if(is.null(xy) & (inherits(cn,"nb") & !inherits(cn,"listw")) ){
-                     xy <- attr(cn,"xy")  # xy can be retrieved from a nb object (not from listw)
-                 }
-    if(is.null(xy) & !is.null(obj$other$xy)) {
-        xy <- obj$other$xy # xy from @other$xy if it exists
+
+
+
+###############
+## spca.matrix
+###############
+spca.matrix <- function(x, xy = NULL, cn = NULL, matWeight = NULL,
+                        center = TRUE, scale = FALSE, scannf = TRUE,
+                        nfposi = 1, nfnega = 1,
+                        type = NULL, ask = TRUE,
+                        plot.nb = TRUE, edit.nb = FALSE,
+                        truenames = TRUE,
+                        d1 = NULL, d2 = NULL, k = NULL,
+                        a = NULL, dmin = NULL) {
+
+  ## check type of x: only numeric values are acceptable
+
+  if (!is.numeric(x)) {
+    stop("Only matrices of numeric values are accepted.")
+  }
+
+
+  ## check and handle xy coordinates
+
+  if(is.null(xy) & (inherits(cn,"nb") & !inherits(cn,"listw")) ){
+    xy <- attr(cn,"xy")  # xy can be retrieved from a nb object (not from listw)
+  }
+  if(is.null(xy)) {
+    stop("xy coordinates are not provided")
+  }
+  if(is.data.frame(xy)) {
+    xy <- as.matrix(xy)
+  }
+  if(!is.matrix(xy)) {
+    stop("provided 'xy' cannot be converted to matrix")
+  }
+  if(ncol(xy) != 2) {
+    stop("xy does not have two columns.")
+  }
+  if(nrow(xy) != nrow(x)) {
+    stop("x and xy must have the same row numbers.")
+  }
+
+
+  ## find the spatial weights
+
+  resCN <- NULL
+
+  ## connection network from matWeight
+
+  if (!is.null(matWeight)) {
+    if (!is.matrix(matWeight)) {
+      stop("matWeight is not a matrix")
     }
-    if(is.null(xy)) stop("xy coordinates are not provided")
-    if(is.data.frame(xy)) {
-        xy <- as.matrix(xy)
+    if (!is.numeric(matWeight)) {
+      stop("matWeight is not numeric")
     }
-    if(!is.matrix(xy)) stop("wrong 'xy' provided")
-    if(ncol(xy) != 2) stop("xy does not have two columns.")
-    if(nrow(xy) != nrow(obj@tab)) stop("obj@tab and xy must have the same row numbers.")
-
-
-    appel <- match.call()
-
-    ## == To find the spatial weights ==
-    resCN <- NULL
-
-    ## connection network from matWeight
-    if(!is.null(matWeight)){
-        if(!is.matrix(matWeight)) stop("matWeight is not a matrix")
-        if(!is.numeric(matWeight)) stop("matWeight is not numeric")
-        if(nrow(matWeight) != ncol(matWeight)) stop("matWeight is not square")
-        if(nrow(matWeight) != nrow(obj@tab)) stop("dimension of datWeight does not match genetic data")
-        diag(matWeight) <- 0
-        matWeight <- prop.table(matWeight, 1)
-        resCN <- mat2listw(matWeight)
-        resCN$style <- "W"
-
+    if (nrow(matWeight) != ncol(matWeight)) {
+      stop("matWeight is not square")
     }
-
-    ## connection network from cn argument
-    if(is.null(resCN) & !is.null(cn)) {
-        if(inherits(cn,"nb")) {
-            if(!inherits(cn,"listw")){ # cn is a 'pure' nb object (i.e., nb but not listw)
-                cn <- nb2listw(cn, style="W", zero.policy=TRUE)
-            }
-            resCN <- cn
-        } else stop("cn does not have a recognized class")
+    if (nrow(matWeight) != nrow(x)) {
+      stop("dimension of datWeight does not match data")
     }
+    diag(matWeight) <- 0
+    matWeight <- prop.table(matWeight, 1)
+    resCN <- mat2listw(matWeight)
+    resCN$style <- "W"
 
+  }
 
-    ## connection network from xy coordinates
-    if(is.null(resCN)) {
-        resCN <- chooseCN(xy=xy, ask=ask, type=type, plot.nb=plot.nb, edit.nb=edit.nb,
-                          result.type="listw", d1=d1, d2=d2, k=k, a=a, dmin=dmin)
+  ## connection network from cn argument
+
+  if(is.null(resCN) & !is.null(cn)) {
+    if(inherits(cn,"nb")) {
+      if(!inherits(cn,"listw")){ # cn is a 'pure' nb object (i.e., nb but not listw)
+        cn <- nb2listw(cn, style="W", zero.policy=TRUE)
+      }
+      resCN <- cn
+    } else {
+      stop("cn does not have a recognized class")
     }
+  }
 
-    ## == spatial weights are done ==
+
+  ## connection network from xy coordinates
+  if(is.null(resCN)) {
+    resCN <- chooseCN(xy=xy, ask=ask, type=type, plot.nb=plot.nb, edit.nb=edit.nb,
+                      result.type="listw", d1=d1, d2=d2, k=k, a=a, dmin=dmin)
+  }
 
 
-    ## handle NAs warning
-    if(any(is.na(obj@tab))){
-        warning("NAs in data are automatically replaced (to mean allele frequency)")
-    }
+  ## perform the analyses: basic PCA followed by multispati
 
-    ## handle NAs, centring and scaling
-    X <- scaleGen(obj, center=TRUE, scale=scale, NA.method="mean")
+  pcaX <- ade4::dudi.pca(X, center = center, scale = scale, scannf = FALSE)
 
-    ## perform analyses
-    pcaX <- dudi.pca(X, center=FALSE, scale=FALSE, scannf=FALSE)
+  out <- ade4::multispati(dudi = pcaX, listw = resCN, scannf = scannf,
+                          nfposi = nfposi, nfnega = nfnega)
 
-    spcaX <- multispati(dudi=pcaX, listw=resCN, scannf=scannf, nfposi=nfposi, nfnega=nfnega)
+  nfposi <- out$nfposi
+  nfnega <- out$nfnega
 
-    nfposi <- spcaX$nfposi
-    nfnega <- spcaX$nfnega
+  out$xy <- xy
+  rownames(out$xy) <- rownames(out$li)
+  colnames(out$xy) <- c("x","y")
 
-    spcaX$xy <- xy
-    rownames(spcaX$xy) <- rownames(spcaX$li)
-    colnames(spcaX$xy) <- c("x","y")
+  out$lw <- resCN
 
-    spcaX$lw <- resCN
+  out$call <- appel
 
-    spcaX$call <- appel
+  posaxes <- if(nfposi>0) {1:nfposi} else NULL
+  negaxes <- if(nfnega>0) {(length(out$eig)-nfnega+1):length(out$eig)} else NULL
+  keptaxes <- c(posaxes,negaxes)
 
-    posaxes <- if(nfposi>0) {1:nfposi} else NULL
-    negaxes <- if(nfnega>0) {(length(spcaX$eig)-nfnega+1):length(spcaX$eig)} else NULL
-    keptaxes <- c(posaxes,negaxes)
+  ## set names of different components
+  colnames(out$c1) <- paste("Axis",keptaxes)
+  colnames(out$li) <- paste("Axis",keptaxes)
+  colnames(out$ls) <- paste("Axis",keptaxes)
+  row.names(out$c1) <- colnames(X)
+  colnames(out$as) <- colnames(out$c1)
+  temp <- row.names(out$as)
+  row.names(out$as) <- paste("PCA",temp)
 
-    ## set names of different components
-    colnames(spcaX$c1) <- paste("Axis",keptaxes)
-    colnames(spcaX$li) <- paste("Axis",keptaxes)
-    colnames(spcaX$ls) <- paste("Axis",keptaxes)
-    row.names(spcaX$c1) <- colnames(X)
-    colnames(spcaX$as) <- colnames(spcaX$c1)
-    temp <- row.names(spcaX$as)
-    row.names(spcaX$as) <- paste("PCA",temp)
+  class(out) <- "spca"
 
-    class(spcaX) <- "spca"
+  return(out)
 
-    return(spcaX)
+}
 
-} # end spca
+
+
+
+
+
+###################
+## spca.data.frame
+###################
+
+spca.data.frame <- function(x, xy = NULL, cn = NULL, matWeight = NULL,
+                            center = TRUE, scale = FALSE, scannf = TRUE,
+                            nfposi = 1, nfnega = 1,
+                            type = NULL, ask = TRUE,
+                            plot.nb = TRUE, edit.nb = FALSE,
+                            truenames = TRUE,
+                            d1 = NULL, d2 = NULL, k = NULL,
+                            a = NULL, dmin = NULL) {
+
+  spca(as.matrix(x), xy = xy, cn = cn, matWeight = matWeight, center = center,
+       cale = scale, scannf = scannf, nfposi = nfposi, nfnega = nfnega,
+       type = type, ask = ask, plot.nb = plot.nb, edit.nb = edit.nb,
+       truenames = truenames, d1 = d1, d2 = d2, k = k, a = a, dmin = dmin)
+}
+
+
+
+
+
+
+################
+## spca genind
+################
+
+spca.genind <- function(obj, xy = NULL, cn = NULL, matWeight = NULL,
+                        scale = FALSE, scannf = TRUE,
+                        nfposi = 1, nfnega = 1,
+                        type = NULL, ask = TRUE,
+                        plot.nb = TRUE, edit.nb = FALSE,
+                        truenames = TRUE,
+                        d1 = NULL, d2 = NULL, k = NULL,
+                        a = NULL, dmin = NULL){
+
+  ## first checks
+
+  invisible(validObject(obj))
+
+
+  ## handle xy coordinates
+  if(is.null(xy) & !is.null(obj$other$xy)) {
+    xy <- obj$other$xy # xy from @other$xy if it exists
+  }
+
+
+  appel <- match.call()
+
+
+  ## == spatial weights are done ==
+
+
+  ## handle NAs warning
+  if(any(is.na(obj@tab))){
+    warning("NAs in data are automatically replaced (to mean allele frequency)")
+  }
+
+  ## handle NAs, centring and scaling
+  X <- tab(obj, freq = TRUE, NA.method = "mean")
+
+  spca(X, xy = xy, cn = cn, matWeight = matWeight,
+       center = TRUE, scale = scale, scannf = scannf,
+       nfposi = nfposi, nfnega = nfnega,
+       type = type, ask = ask,
+       plot.nb = plot.nb, edit.nb = edit.nb,
+       truenames = truenames,
+       d1 = d1, d2 = d2, k = k,
+       a = a, dmin = dmin)
+
+} # end spca.genind
+
+
+
+
+
+
+################
+## spca genpop
+################
+
+spca.genpop <- function(obj, xy = NULL, cn = NULL, matWeight = NULL,
+                        scale = FALSE, scannf = TRUE,
+                        nfposi = 1, nfnega = 1,
+                        type = NULL, ask = TRUE,
+                        plot.nb = TRUE, edit.nb = FALSE,
+                        truenames = TRUE,
+                        d1 = NULL, d2 = NULL, k = NULL,
+                        a = NULL, dmin = NULL){
+
+  ## first checks
+
+  invisible(validObject(obj))
+
+
+  ## handle xy coordinates
+  if(is.null(xy) & !is.null(obj$other$xy)) {
+    xy <- obj$other$xy # xy from @other$xy if it exists
+  }
+
+
+  appel <- match.call()
+
+
+  ## == spatial weights are done ==
+
+
+  ## handle NAs warning
+  if(any(is.na(obj@tab))){
+    warning("NAs in data are automatically replaced (to mean allele frequency)")
+  }
+
+  ## handle NAs, centring and scaling
+  X <- tab(obj, freq = TRUE, NA.method = "mean")
+
+  spca(X, xy = xy, cn = cn, matWeight = matWeight,
+       center = TRUE, scale = scale, scannf = scannf,
+       nfposi = nfposi, nfnega = nfnega,
+       type = type, ask = ask,
+       plot.nb = plot.nb, edit.nb = edit.nb,
+       truenames = truenames,
+       d1 = d1, d2 = d2, k = k,
+       a = a, dmin = dmin)
+
+} # end spca.genpop
+
 
 
 
 
 
 ######################
-# Function print.spca
+## Function print.spca
 ######################
+
 print.spca <- function(x, ...){
   cat("\t########################################\n")
   cat("\t# spatial Principal Component Analysis #\n")
@@ -184,7 +346,7 @@ print.spca <- function(x, ...){
 
 
 ########################
-# Function summary.spca
+## Function summary.spca
 ########################
 summary.spca <- function (object, ..., printres=TRUE) {
   if (!inherits(object, "spca"))stop("to be used with 'spca' object")
@@ -278,7 +440,7 @@ summary.spca <- function (object, ..., printres=TRUE) {
   nfnegamax <- sum(eig < 0)
 
   ms <- multispati(dudi=dudi, listw=lw, scannf=FALSE,
-                     nfposi=nfposimax, nfnega=nfnegamax)
+                   nfposi=nfposimax, nfnega=nfnegamax)
 
   ndim <- dudi$rank
   nf <- nfposi + nfnega
@@ -301,86 +463,86 @@ summary.spca <- function (object, ..., printres=TRUE) {
 
 
 #####################
-# Function plot.spca
+## Function plot.spca
 #####################
 plot.spca <- function (x, axis = 1, useLag=FALSE, ...){
-    if (!inherits(x, "spca")) stop("Use only with 'spca' objects.")
+  if (!inherits(x, "spca")) stop("Use only with 'spca' objects.")
 
-    if(axis>ncol(x$li)) stop("wrong axis required.")
+  if(axis>ncol(x$li)) stop("wrong axis required.")
 
-    opar <- par(no.readonly = TRUE)
-    on.exit(par(opar))
-    par(mar = rep(.1,4), mfrow=c(3,2))
+  opar <- par(no.readonly = TRUE)
+  on.exit(par(opar))
+  par(mar = rep(.1,4), mfrow=c(3,2))
 
-    n <- nrow(x$li)
-    xy <- x$xy
+  n <- nrow(x$li)
+  xy <- x$xy
 
-    ## handle useLag argument
-    if(useLag){
-        z <- x$ls[,axis]
-    } else {
-        z <- x$li[,axis]
-    } # end if useLag
-    nfposi <- x$nfposi
-    nfnega <- x$nfnega
-    ## handle neig parameter - hide cn if nore than 100 links
-    nLinks <- sum(card(x$lw$neighbours))
-    if(nLinks < 500) {
-        neig <- nb2neig(x$lw$neighbours)
-    } else {
-        neig <- NULL
-    }
+  ## handle useLag argument
+  if(useLag){
+    z <- x$ls[,axis]
+  } else {
+    z <- x$li[,axis]
+  } # end if useLag
+  nfposi <- x$nfposi
+  nfnega <- x$nfnega
+  ## handle neig parameter - hide cn if nore than 100 links
+  nLinks <- sum(card(x$lw$neighbours))
+  if(nLinks < 500) {
+    neig <- nb2neig(x$lw$neighbours)
+  } else {
+    neig <- NULL
+  }
 
-    sub <- paste("Score",axis)
-    csub <- 2
+  sub <- paste("Score",axis)
+  csub <- 2
 
-    # 1
-    if(n<30) clab <- 1 else clab <- 0
-    s.label(xy, clabel=clab, include.origin=FALSE, addaxes=FALSE, neig=neig,
-            cneig=1, sub="Connection network", csub=2)
+  # 1
+  if(n<30) clab <- 1 else clab <- 0
+  s.label(xy, clabel=clab, include.origin=FALSE, addaxes=FALSE, neig=neig,
+          cneig=1, sub="Connection network", csub=2)
 
-    # 2
-    s.image(xy,z, include.origin=FALSE, grid=TRUE, kgrid=10, cgrid=1,
-            sub=sub, csub=csub, possub="bottomleft")
-    box()
+  # 2
+  s.image(xy,z, include.origin=FALSE, grid=TRUE, kgrid=10, cgrid=1,
+          sub=sub, csub=csub, possub="bottomleft")
+  box()
 
-    # 3
-    if(n<30) {neig <- nb2neig(x$lw$neighbours)} else {neig <- NULL}
-    s.value(xy,z, include.origin=FALSE, addaxes=FALSE, clegend=0, csize=.6,
-            neig=neig, sub=sub, csub=csub, possub="bottomleft")
+  # 3
+  if(n<30) {neig <- nb2neig(x$lw$neighbours)} else {neig <- NULL}
+  s.value(xy,z, include.origin=FALSE, addaxes=FALSE, clegend=0, csize=.6,
+          neig=neig, sub=sub, csub=csub, possub="bottomleft")
 
-    # 4
-    s.value(xy,z, include.origin=FALSE, addaxes=FALSE, clegend=0, csize=.6,
-            method="greylevel", neig=neig, sub=sub, csub=csub, possub="bottomleft")
+  # 4
+  s.value(xy,z, include.origin=FALSE, addaxes=FALSE, clegend=0, csize=.6,
+          method="greylevel", neig=neig, sub=sub, csub=csub, possub="bottomleft")
 
-    # 5
-    omar <- par("mar")
-    par(mar = c(0.8, 2.8, 0.8, 0.8))
-    m <- length(x$eig)
-    col.w <- rep("white", m) # elles sont toutes blanches
-    col.w[1:nfposi] <- "grey"
-    if (nfnega>0) {col.w[m:(m-nfnega+1)] <- "grey"}
-    j <- axis
-    if (j>nfposi) {j <- j-nfposi +m -nfnega}
-    col.w[j] <- "black"
-    barplot(x$eig, col = col.w)
-    scatterutil.sub(cha ="Eigenvalues", csub = 2.5, possub = "topright")
-    par(mar=rep(.1,4))
-    box()
-    par(mar=omar)
+  # 5
+  omar <- par("mar")
+  par(mar = c(0.8, 2.8, 0.8, 0.8))
+  m <- length(x$eig)
+  col.w <- rep("white", m) # elles sont toutes blanches
+  col.w[1:nfposi] <- "grey"
+  if (nfnega>0) {col.w[m:(m-nfnega+1)] <- "grey"}
+  j <- axis
+  if (j>nfposi) {j <- j-nfposi +m -nfnega}
+  col.w[j] <- "black"
+  barplot(x$eig, col = col.w)
+  scatterutil.sub(cha ="Eigenvalues", csub = 2.5, possub = "topright")
+  par(mar=rep(.1,4))
+  box()
+  par(mar=omar)
 
-    # 6
-    par(mar=c(4,4,2,1))
-    screeplot(x,main="Eigenvalues decomposition")
-    par(mar=rep(.1,4))
-    box()
-    return(invisible(match.call()))
+  # 6
+  par(mar=c(4,4,2,1))
+  screeplot(x,main="Eigenvalues decomposition")
+  par(mar=rep(.1,4))
+  box()
+  return(invisible(match.call()))
 }
 
 
 
 ##########################
-# Function screeplot.spca
+## Function screeplot.spca
 ##########################
 screeplot.spca <- function(x,...,main=NULL){
 
@@ -421,22 +583,22 @@ screeplot.spca <- function(x,...,main=NULL){
 
 
 ###################
-# colorplot method
+## colorplot method
 ###################
 colorplot.spca <- function(x, axes=1:ncol(x$li), useLag=FALSE, ...){
-    ## some checks
-    if(!any(inherits(x,"spca"))) stop("x in not a spca object.")
+  ## some checks
+  if(!any(inherits(x,"spca"))) stop("x in not a spca object.")
 
-    ## get args to be passed to colorplot
-    xy <- x$xy
+  ## get args to be passed to colorplot
+  xy <- x$xy
 
-    if(useLag) {
-        X <- as.matrix(x$ls)
-    } else {
-        X <- as.matrix(x$li)
-    }
+  if(useLag) {
+    X <- as.matrix(x$ls)
+  } else {
+    X <- as.matrix(x$li)
+  }
 
-    ## call to colorplot
-    colorplot(xy, X, axes, ...)
+  ## call to colorplot
+  colorplot(xy, X, axes, ...)
 
 } # end colorplot.spca
