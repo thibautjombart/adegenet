@@ -53,13 +53,12 @@ legend("topright",leg=c("Pop A", "Pop B"),pch=c(17,19))
 }
 
 }
-\author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}
-}
 \references{
 Balloux F (2001) Easypop (version 1.7): a computer program for
 oppulation genetics simulations \emph{Journal of Heredity}, \bold{92}:
 301-302
 }
+\author{
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}
+}
 \keyword{datasets}
-

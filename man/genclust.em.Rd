@@ -138,4 +138,3 @@ res2.back <- genclust.em(y, k = 2, hybrids = TRUE, hybrid.coef = c(.25,.5))
 Thibaut Jombart \email{thibautjombart@gmail.com} and Marie-Pauline
 Beugin
 }
-

@@ -28,10 +28,9 @@ m.freq
 }
 
 }
-\author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}
-}
 \seealso{
 \code{\link{isPoly}}
 }
-
+\author{
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}
+}

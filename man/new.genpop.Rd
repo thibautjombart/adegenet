@@ -2,10 +2,10 @@
 % Please edit documentation in R/constructors.R
 \docType{methods}
 \name{initialize,genpop-method}
-\alias{as.genpop}
-\alias{genpop}
 \alias{initialize,genpop-method}
 \alias{initialize,genpop-methods}
+\alias{genpop}
+\alias{as.genpop}
 \title{genpop constructor}
 \usage{
 \S4method{initialize}{genpop}(.Object, tab, prevcall = NULL, ploidy = 2L,
@@ -42,4 +42,3 @@ Most users do not need using the constructor, but merely to convert raw allele d
 \seealso{
 the description of the \linkS4class{genpop} class; \code{\link{df2genind}} and related functions for reading raw allele data
 }
-

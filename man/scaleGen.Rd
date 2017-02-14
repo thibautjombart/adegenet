@@ -3,9 +3,11 @@
 \docType{methods}
 \name{scaleGen}
 \alias{scaleGen}
+\alias{scaleGen-methods}
 \alias{scaleGen,genind-method}
 \alias{scaleGen,genpop-method}
-\alias{scaleGen-methods}
+\alias{scaleGen,genind-method}
+\alias{scaleGen,genpop-method}
 \title{Compute scaled allele frequencies}
 \usage{
 scaleGen(x, ...)
@@ -90,4 +92,3 @@ Thibaut Jombart \email{t.jombart@imperial.ac.uk}
 }
 \keyword{manip}
 \keyword{methods}
-

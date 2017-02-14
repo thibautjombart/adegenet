@@ -3,10 +3,10 @@
 \docType{data}
 \name{H3N2}
 \alias{H3N2}
-\alias{USflu}
-\alias{USflu.fasta}
 \alias{usflu}
 \alias{usflu.fasta}
+\alias{USflu}
+\alias{USflu.fasta}
 \title{Seasonal influenza (H3N2) HA segment data}
 \format{\code{H3N2} is a genind object with several data frame as
 supplementary components (\code{H3N2@other) slort}, which contains the
@@ -85,4 +85,3 @@ of principal components: a new method for the analysis of genetically
 structured populations. Submitted to \emph{BMC genetics}.
 }
 \keyword{datasets}
-

@@ -3,8 +3,8 @@
 \docType{package}
 \encoding{utf-8}
 \name{adegenet.package}
-\alias{adegenet}
 \alias{adegenet.package}
+\alias{adegenet}
 \alias{adegenet.package-package}
 \title{The adegenet package}
 \description{
@@ -162,16 +162,6 @@ Tutorials are available via the command \code{adegenetTutorial}.\cr
 To cite adegenet, please use the reference given by
 \code{citation("adegenet")} (or see references below).
 }
-\author{
-Thibaut Jombart <t.jombart@imperial.ac.uk>\cr
-Developers: Zhian N. Kamvar <zkamvar@gmail.com>,
-Caitlin Collins <caitiecollins17@gmail.com>,
-Ismail Ahmed <ismail.ahmed@inserm.fr>,
-Federico Calboli, Tobias Erik Reiners, Peter
-Solymos, Anne Cori, \cr Contributed datasets from: Katayoun
-Moazami-Goudarzi, Denis Laloë, Dominique Pontier, Daniel Maillard, Francois
-Balloux.
-}
 \references{
 Jombart T. (2008) adegenet: a R package for the multivariate
 analysis of genetic markers \emph{Bioinformatics} 24: 1403-1405. doi:
@@ -205,6 +195,15 @@ genetics tools\cr - \code{ape} for phylogenetics and DNA data handling\cr -
 \code{seqinr} for handling nucleic and proteic sequences\cr - \code{shiny}
 for R-based web interfaces\cr
 }
+\author{
+Thibaut Jombart <t.jombart@imperial.ac.uk>\cr
+Developers: Zhian N. Kamvar <zkamvar@gmail.com>,
+Caitlin Collins <caitiecollins17@gmail.com>,
+Ismail Ahmed <ismail.ahmed@inserm.fr>,
+Federico Calboli, Tobias Erik Reiners, Peter
+Solymos, Anne Cori, \cr Contributed datasets from: Katayoun
+Moazami-Goudarzi, Denis Laloë, Dominique Pontier, Daniel Maillard, Francois
+Balloux.
+}
 \keyword{manip}
 \keyword{multivariate}
-

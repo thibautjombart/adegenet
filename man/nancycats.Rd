@@ -56,4 +56,3 @@ habitat using: not all colonies are equal. submitted to \emph{Molecular
 Ecology}
 }
 \keyword{datasets}
-

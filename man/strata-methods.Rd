@@ -2,12 +2,12 @@
 % Please edit documentation in R/strataMethods.R
 \docType{methods}
 \name{strata}
-\alias{addStrata}
-\alias{addStrata,genind-method}
-\alias{addStrata,genlight-method}
-\alias{addStrata<-}
-\alias{addStrata<-,genind-method}
-\alias{addStrata<-,genlight-method}
+\alias{strata}
+\alias{strata,genind-method}
+\alias{strata,genlight-method}
+\alias{strata<-}
+\alias{strata<-,genind-method}
+\alias{strata<-,genlight-method}
 \alias{nameStrata}
 \alias{nameStrata,genind-method}
 \alias{nameStrata,genlight-method}
@@ -20,12 +20,12 @@
 \alias{splitStrata<-}
 \alias{splitStrata<-,genind-method}
 \alias{splitStrata<-,genlight-method}
-\alias{strata}
-\alias{strata,genind-method}
-\alias{strata,genlight-method}
-\alias{strata<-}
-\alias{strata<-,genind-method}
-\alias{strata<-,genlight-method}
+\alias{addStrata}
+\alias{addStrata,genind-method}
+\alias{addStrata,genlight-method}
+\alias{addStrata<-}
+\alias{addStrata<-,genind-method}
+\alias{addStrata<-,genlight-method}
 \title{Access and manipulate the population strata for genind or genlight objects.}
 \usage{
 strata(x, formula = NULL, combine = TRUE, value)
@@ -159,11 +159,10 @@ microbov # Now we have all of our strata named and split
 head(strata(microbov)) # all strata are appropriately named and split.
 }
 }
-\author{
-Zhian N. Kamvar
-}
 \seealso{
 \code{\link{setPop}} \code{\link{genind}}
   \code{\link{as.genind}}
 }
-
+\author{
+Zhian N. Kamvar
+}

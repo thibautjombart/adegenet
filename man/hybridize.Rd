@@ -95,10 +95,9 @@ add.scatter.eig(coa1$eig,2,1,2)
 
 
 }
-\author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}
-}
 \seealso{
 \code{\link{seploc}}, \code{\link{seppop}}, \code{\link{repool}}
 }
-
+\author{
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}
+}

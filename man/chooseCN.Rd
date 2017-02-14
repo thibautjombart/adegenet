@@ -87,12 +87,11 @@ par(mfrow=c(1,1))
 }
 
 }
-\author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}
-}
 \seealso{
 \code{\link{spca}}
 }
+\author{
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}
+}
 \keyword{spatial}
 \keyword{utilities}
-

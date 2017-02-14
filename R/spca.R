@@ -19,7 +19,7 @@ spca <- function (...) UseMethod("spca")
 ## spca.default
 ################
 spca.default <- function(x, ...) {
-  stop(sptrinf("No spca method for object of class %s",
+  stop(sprintf("No spca method for object of class %s",
                paste(class(x), collapse = " ")))
 }
 

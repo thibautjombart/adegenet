@@ -23,4 +23,3 @@ Please send us more! Either pull request or submit an issue with a URL (use
 \author{
 Thibaut Jombart \email{thibautjombart@gmail.com}
 }
-

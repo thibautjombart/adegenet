@@ -32,9 +32,6 @@ obj <- read.genetix(system.file("files/nancycats.gtx",package="adegenet"))
 obj
 
 }
-\author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}
-}
 \references{
 Belkhir K., Borsa P., Chikhi L., Raufaste N. & Bonhomme F.
 (1996-2004) GENETIX 4.05, logiciel sous Windows TM pour la genetique des
@@ -46,5 +43,7 @@ Universite de Montpellier II, Montpellier (France). \cr
 \code{\link{read.fstat}}, \code{\link{read.structure}},
 \code{\link{read.genepop}}
 }
+\author{
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}
+}
 \keyword{manip}
-

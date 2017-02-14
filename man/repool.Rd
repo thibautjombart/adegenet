@@ -38,10 +38,9 @@ nastyCattle
 }
 
 }
-\author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}
-}
 \seealso{
 \code{\link{seploc}}, \code{\link{seppop}}
 }
-
+\author{
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}
+}

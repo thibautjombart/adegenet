@@ -23,12 +23,11 @@ returned.}
 \description{
 Do not use. We work on that stuff. Contact us if interested.
 }
-\author{
-Thibaut Jombart \email{thibautjombart@gmail.com}
-}
 \seealso{
 \code{\link{genclust.em}} to generate individual clustering
     solutions, and \code{\link{BIC.genclust.em}} for computing BIC for
     \code{genclust.em} objects.
 }
-
+\author{
+Thibaut Jombart \email{thibautjombart@gmail.com}
+}

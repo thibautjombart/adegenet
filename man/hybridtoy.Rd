@@ -40,4 +40,3 @@ table(res$group, pop(x))
 \author{
 Data simulated by  Marie-Pauline Beugin. Example by Thibaut Jombart.
 }
-

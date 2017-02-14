@@ -51,7 +51,7 @@
 \usage{
 spca(...)
 
-spca.default(x, ...)
+\method{spca}{default}(x, ...)
 
 \method{spca}{matrix}(x, xy = NULL, cn = NULL, matWeight = NULL,
                             center = TRUE, scale = FALSE, scannf = TRUE,

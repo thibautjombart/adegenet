@@ -45,12 +45,11 @@ genind2df(obj)
 genind2df(obj, sep="/")
 
 }
-\author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}
-}
 \seealso{
 \code{\link{df2genind}}, \code{\link{import2genind}}, \code{\link{read.genetix}},
 \code{\link{read.fstat}}, \code{\link{read.structure}}
 }
+\author{
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}
+}
 \keyword{manip}
-

@@ -32,9 +32,6 @@ obj <- read.fstat(system.file("files/nancycats.dat",package="adegenet"))
 obj
 
 }
-\author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}
-}
 \references{
 Fstat (version 2.9.3). Software by Jerome Goudet.
 http://www2.unil.ch/popgen/softwares/fstat.htm\cr
@@ -44,5 +41,7 @@ http://www2.unil.ch/popgen/softwares/fstat.htm\cr
 \code{\link{read.genetix}}, \code{\link{read.structure}},
 \code{\link{read.genepop}}
 }
+\author{
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}
+}
 \keyword{manip}
-

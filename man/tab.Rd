@@ -44,4 +44,3 @@ head(tab(microbov,freq=TRUE))
 
 
 }
-
