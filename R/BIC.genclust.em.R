@@ -10,16 +10,16 @@
 #'
 #' @param ... Further arguments for compatibility with the \code{BIC} generic
 #'     (currently not used).
-#' 
+#'
 #' @seealso  \code{\link{genclust.em}} to generate clustering solutions.
 #'
-#' 
+#'
 BIC.genclust.em <- function(object, ...) {
 
-    ## The number of parameters is defined as:
-    ## (number of independent allele frequencies) x (nb clusters). 
-    
-    n <- length(object$group)
-    
-    -2 * object$ll + log(n) * object$n.param
+  ## The number of parameters is defined as:
+  ## (number of independent allele frequencies) x (nb clusters).
+
+  n <- length(object$group)
+
+  -2 * object$ll + log(n) * object$n.param
 }

@@ -10,16 +10,14 @@
 #'
 #' @param ... Further arguments for compatibility with the \code{AIC} generic
 #'     (currently not used).
-#' 
+#'
 #' @seealso  \code{\link{genclust.em}} to generate clustering solutions.
 #'
-#' 
+#'
 AIC.genclust.em <- function(object, ...) {
 
     ## The number of parameters is defined as:
-    ## (number of independent allele frequencies) x (nb clusters). 
-    
-    n <- length(object$group)
-    
-     -2 * object$ll + 2 * object$n.param
+    ## (number of independent allele frequencies) x (nb clusters).
+
+  -2 * object$ll + 2 * object$n.param
 }
