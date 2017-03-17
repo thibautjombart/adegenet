@@ -42,11 +42,10 @@ plot(test)
 }
 
 }
-\author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}
-}
 \seealso{
 \code{\link{Hs}} to compute Hs for different populations;
 \code{\link[ade4]{as.randtest}} for the class of Monte Carlo tests.
 }
-
+\author{
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}
+}

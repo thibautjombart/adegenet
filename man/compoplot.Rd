@@ -2,9 +2,9 @@
 % Please edit documentation in R/compoplot.R
 \name{compoplot}
 \alias{compoplot}
+\alias{compoplot.matrix}
 \alias{compoplot.dapc}
 \alias{compoplot.genclust.em}
-\alias{compoplot.matrix}
 \title{Genotype composition plot}
 \usage{
 compoplot(x, ...)
@@ -58,4 +58,3 @@ The compoplot uses a barplot to represent the group assignment probability of in
 \author{
 Thibaut Jombart \email{thibautjombart@gmail.com}
 }
-

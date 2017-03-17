@@ -90,13 +90,12 @@ summary(genind2genpop(microbov, ~coun/spe)) # Conversion based on country and sp
 }
 
 }
-\author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}
-}
 \seealso{
 \linkS4class{genind}, \linkS4class{genpop}
+}
+\author{
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}
 }
 \keyword{classes}
 \keyword{manip}
 \keyword{multivariate}
-

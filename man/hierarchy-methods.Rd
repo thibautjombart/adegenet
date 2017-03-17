@@ -70,11 +70,10 @@ hier(microbov) <- ~Species/Breed
 head(hier(microbov, ~Species/Breed))
 
 }
-\author{
-Zhian N. Kamvar
-}
 \seealso{
 \code{\link{strata}} \code{\link{genind}}
   \code{\link{as.genind}}
 }
-
+\author{
+Zhian N. Kamvar
+}

@@ -80,9 +80,6 @@ Data need to be exported from PLINK using the option "--recodeA" (and NOT
 --file data --recodeA}. For more information on this topic, please look at
 this webpage: \url{http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml}
 }
-\author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}
-}
 \seealso{
 - \code{?genlight} for a description of the class
 \code{"\linkS4class{genlight}"}.
@@ -100,5 +97,7 @@ format.
 - another function \code{read.plink} is available in the package
 \code{snpMatrix}.
 }
+\author{
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}
+}
 \keyword{manip}
-

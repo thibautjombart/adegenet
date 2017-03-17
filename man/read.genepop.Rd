@@ -34,9 +34,6 @@ obj <- read.genepop(system.file("files/nancycats.gen",package="adegenet"))
 obj
 
 }
-\author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}
-}
 \references{
 Raymond M. & Rousset F, (1995). GENEPOP (version 1.2):
 population genetics software for exact tests and ecumenicism. \emph{J.
@@ -47,5 +44,7 @@ Heredity}, \bold{86}:248-249 \cr
 \code{\link{read.fstat}}, \code{\link{read.structure}},
 \code{\link{read.genetix}}
 }
+\author{
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}
+}
 \keyword{manip}
-

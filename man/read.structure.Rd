@@ -73,9 +73,6 @@ obj <- read.structure(system.file("files/nancycats.str",package="adegenet"),
 obj
 
 }
-\author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}
-}
 \references{
 Pritchard, J.; Stephens, M. & Donnelly, P. (2000) Inference of
 population structure using multilocus genotype data. \emph{Genetics},
@@ -86,5 +83,7 @@ population structure using multilocus genotype data. \emph{Genetics},
 \code{\link{read.fstat}}, \code{\link{read.genetix}},
 \code{\link{read.genepop}}
 }
+\author{
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}
+}
 \keyword{manip}
-

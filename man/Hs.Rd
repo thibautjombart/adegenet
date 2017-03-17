@@ -36,10 +36,9 @@ Hs(genind2genpop(nancycats))
 }
 
 }
-\author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}
-}
 \seealso{
 \code{\link{Hs.test}} to test differences in Hs between two groups
 }
-
+\author{
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}
+}

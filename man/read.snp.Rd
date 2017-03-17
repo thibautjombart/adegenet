@@ -77,9 +77,6 @@ locNames(obj)
 }
 
 }
-\author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}
-}
 \seealso{
 - \code{?genlight} for a description of the class
 \code{"\linkS4class{genlight}"}.
@@ -95,5 +92,7 @@ format.
 - \code{\link{import2genind}}: read multiallelic markers from various
 software into adegenet.\cr
 }
+\author{
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}
+}
 \keyword{manip}
-

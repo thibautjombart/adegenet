@@ -49,4 +49,3 @@ head(pop(microbov.old))
 \author{
 Zhian N. Kamvar
 }
-

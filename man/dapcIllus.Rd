@@ -69,9 +69,6 @@ detach(dapcIllus)
 }
 
 }
-\author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}
-}
 \references{
 Jombart, T., Devillard, S. and Balloux, F.  Discriminant
 analysis of principal components: a new method for the analysis of
@@ -87,5 +84,7 @@ genetically structured populations. Submitted to \emph{Genetics}.
 
 - \code{\link{find.clusters}}: to identify clusters without prior.
 }
+\author{
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}
+}
 \keyword{datasets}
-

@@ -86,14 +86,13 @@ genind2df(obj)
 genind2df(obj, sep="/")
 
 }
-\author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}, Zhian N. Kamvar
-  \email{kamvarz@science.oregonstate.edu}
-}
 \seealso{
 \code{\link{genind2df}}, \code{\link{import2genind}},
   \code{\link{read.genetix}}, \code{\link{read.fstat}},
   \code{\link{read.structure}}
 }
+\author{
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}, Zhian N. Kamvar
+  \email{kamvarz@science.oregonstate.edu}
+}
 \keyword{manip}
-

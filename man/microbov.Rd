@@ -100,4 +100,3 @@ Multiple Co-Inertia Analysis. \emph{Genetics Selection Evolution}.
 \bold{39}: 545--567.
 }
 \keyword{datasets}
-

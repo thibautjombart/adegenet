@@ -71,12 +71,11 @@ add.scatter.eig(pca1$eig,nf=2,xax=1,yax=2,posi="top")
 }
 
 }
-\author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}
-}
 \seealso{
 \code{\link{genpop}}
 }
+\author{
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}
+}
 \keyword{manip}
 \keyword{multivariate}
-

@@ -53,9 +53,6 @@ import2genind(system.file("files/nancycats.str",
 package="adegenet"), onerowperind=FALSE, n.ind=237, n.loc=9, col.lab=1, col.pop=2, ask=FALSE)
 
 }
-\author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}
-}
 \references{
 Belkhir K., Borsa P., Chikhi L., Raufaste N. & Bonhomme F.
 (1996-2004) GENETIX 4.05, logiciel sous Windows TM pour la genetique des
@@ -81,5 +78,7 @@ data analysis: a survival guide \emph{Nature}, \bold{7}: 745-758
 \code{\link{read.fstat}}, \code{\link{read.structure}},
 \code{\link{read.genepop}}
 }
+\author{
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}
+}
 \keyword{manip}
-

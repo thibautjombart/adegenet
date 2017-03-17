@@ -1,7 +1,6 @@
 Package: adegenet
 Version: 2.1.0
 Encoding: UTF-8
-Date: 2016-06-01
 Title: Exploratory Analysis of Genetic and Genomic Data
 Author: Thibaut Jombart, Zhian N. Kamvar, Caitlin Collins, Roman Lustrik, Marie-
     Pauline Beugin, Brian Knaus, Peter Solymos, Vladimir Mikryukov, Klaus Schliep, Tiago Maié, Libor Morkovsky, Ismail Ahmed, Anne Cori, Federico Calboli, RJ Ewing
@@ -79,7 +78,7 @@ Collate:
     coords.monmonier.R
     haploGen.R
     old2new.R
-    spca.rtests.R
+    global_local_tests.R
     dapc.R
     compoplot.R
     xvalDapc.R
@@ -106,7 +105,8 @@ Collate:
     genclust.em.choose.k.R
     servers.R
     showmekittens.R
+    spca_randtest.R
     zzz.R
 License: GPL (>=2)
 LazyLoad: yes
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

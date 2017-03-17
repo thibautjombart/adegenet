@@ -2,10 +2,10 @@
 % Please edit documentation in R/constructors.R
 \docType{methods}
 \name{initialize,genind-method}
-\alias{as.genind}
-\alias{genind}
 \alias{initialize,genind-method}
 \alias{initialize,genind-methods}
+\alias{genind}
+\alias{as.genind}
 \title{genind constructor}
 \usage{
 \S4method{initialize}{genind}(.Object, tab, pop = NULL, prevcall = NULL,
@@ -59,4 +59,3 @@ Most users do not need using the constructor, but merely to convert raw allele d
 \seealso{
 the description of the \linkS4class{genind} class; \code{\link{df2genind}}
 }
-

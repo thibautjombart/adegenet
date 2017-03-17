@@ -111,9 +111,6 @@ detach(spcaIllus)
 
 
 }
-\author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}
-}
 \references{
 Jombart, T., Devillard, S., Dufour, A.-B. and Pontier, D.
 Revealing cryptic spatial patterns in genetic variability by a new
@@ -125,6 +122,8 @@ genetics simulations \emph{Journal of Heredity}, \bold{92}: 301-302
 \seealso{
 \code{\link{spca}}
 }
+\author{
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}
+}
 \keyword{datasets}
 \keyword{spatial}
-

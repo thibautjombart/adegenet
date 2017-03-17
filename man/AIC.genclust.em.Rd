@@ -15,10 +15,9 @@
 \description{
 Do not use. We work on that stuff. Contact us if interested.
 }
-\author{
-Thibaut Jombart \email{thibautjombart@gmail.com}
-}
 \seealso{
 \code{\link{genclust.em}} to generate clustering solutions.
 }
-
+\author{
+Thibaut Jombart \email{thibautjombart@gmail.com}
+}
