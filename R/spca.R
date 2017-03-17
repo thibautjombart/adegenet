@@ -125,6 +125,7 @@ spca.matrix <- function(x, xy = NULL, cn = NULL, matWeight = NULL,
   nfposi <- out$nfposi
   nfnega <- out$nfnega
 
+  out$tab <- x_pca$tab
   out$xy <- xy
   rownames(out$xy) <- rownames(out$li)
   colnames(out$xy) <- c("x","y")
@@ -138,9 +139,9 @@ spca.matrix <- function(x, xy = NULL, cn = NULL, matWeight = NULL,
     out$call <- match.call()
   }
 
-  posaxes <- if(nfposi>0) {1:nfposi} else NULL
-  negaxes <- if(nfnega>0) {(length(out$eig)-nfnega+1):length(out$eig)} else NULL
-  keptaxes <- c(posaxes,negaxes)
+  posaxes <- if (nfposi > 0) {1:nfposi} else NULL
+  negaxes <- if (nfnega > 0) {(length(out$eig)-nfnega+1):length(out$eig)} else NULL
+  keptaxes <- c(posaxes, negaxes)
 
   ## set names of different components
   colnames(out$c1) <- paste("Axis",keptaxes)
@@ -149,7 +150,7 @@ spca.matrix <- function(x, xy = NULL, cn = NULL, matWeight = NULL,
   row.names(out$c1) <- colnames(x)
   colnames(out$as) <- colnames(out$c1)
   temp <- row.names(out$as)
-  row.names(out$as) <- paste("PCA",temp)
+  row.names(out$as) <- paste("PCA", temp)
 
   class(out) <- "spca"
 
@@ -329,11 +330,18 @@ print.spca <- function(x, ...){
   class(sumry) <- "table"
   print(sumry)
   cat("\n")
-  sumry <- array("", c(4, 4), list(1:4, c("data.frame", "nrow", "ncol", "content")))
-  sumry[1, ] <- c("$c1", nrow(x$c1), ncol(x$c1), "principal axes: scaled vectors of alleles loadings")
-  sumry[2, ] <- c("$li", nrow(x$li), ncol(x$li), "principal components: coordinates of entities ('scores')")
-  sumry[3, ] <- c("$ls", nrow(x$ls), ncol(x$ls), 'lag vector of principal components')
-  sumry[4, ] <- c("$as", nrow(x$as), ncol(x$as), 'pca axes onto spca axes')
+  sumry <- array("", c(5, 4),
+                 list(1:5, c("data.frame", "nrow", "ncol", "content")))
+  sumry[1, ] <- c("$tab", nrow(x$tab), ncol(x$tab),
+                  "transformed data: optionally centred / scaled")
+  sumry[2, ] <- c("$c1", nrow(x$c1), ncol(x$c1),
+                  "principal axes: scaled vectors of alleles loadings")
+  sumry[3, ] <- c("$li", nrow(x$li), ncol(x$li),
+                  "principal components: coordinates of entities ('scores')")
+  sumry[4, ] <- c("$ls", nrow(x$ls), ncol(x$ls),
+                  "lag vector of principal components")
+  sumry[5, ] <- c("$as", nrow(x$as), ncol(x$as),
+                  "pca axes onto spca axes")
 
   class(sumry) <- "table"
   print(sumry)
