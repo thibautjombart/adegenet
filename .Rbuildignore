@@ -5,3 +5,4 @@ tutorials
 ^.*\.Rproj$
 ^\.Rproj\.user$
 .*.tar.gz$
+^appveyor\.yml$

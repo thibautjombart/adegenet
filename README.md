@@ -1,5 +1,7 @@
 [![Travis-CI Build Status](https://travis-ci.org/thibautjombart/adegenet.png?branch=master)](https://travis-ci.org/thibautjombart/adegenet)
 
+[![Build status](https://ci.appveyor.com/api/projects/status/l7a9k1saqnshakk9/branch/master?svg=true)](https://ci.appveyor.com/project/thibautjombart/adegenet/branch/master)
+
 [![CRAN Status Badge](http://www.r-pkg.org/badges/version/adegenet)](https://cran.r-project.org/package=adegenet)
 
 [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/adegenet)](https://cran.r-project.org/package=adegenet)
