@@ -17,7 +17,7 @@
 #' @return
 #'
 #' A list with two objects of the class 'randtest' (see
-#' \code{\link{ade4::as.randtest}}), the first one for 'global' structures
+#' \code{\link[ade4]{as.randtest}}), the first one for 'global' structures
 #' (positivie autocorrelation) and the second for 'local' structures (negative
 #' autocorrelation).
 #'
@@ -33,7 +33,7 @@
 #' plot(spca1)
 #'
 #' ## run tests (use more permutations in practice, e.g. 999)
-#' tests <- spca.randtest(spca1, nperm = 49)
+#' tests <- spca_randtest(spca1, nperm = 49)
 #'
 #' ## check results
 #' tests
