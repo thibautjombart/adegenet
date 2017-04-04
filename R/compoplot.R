@@ -1,11 +1,22 @@
 #' Genotype composition plot
 #'
-#' The compoplot uses a barplot to represent the group assignment probability of individuals to several groups. It is a generic with methods for the following objects:
+#' The compoplot uses a barplot to represent the group assignment probability of
+#' individuals to several groups. It is a generic with methods for the following
+#' objects:
 #'
 #' \itemize{
-#' \item \code{matrix}: a matrix with individuals in row and genetic clusters in column, each entry being an assignment probability of the corresponding individual to the corresponding group
-#' \item \code{dapc}: the output of the \code{dapc} function; in this case, group assignments are based upon geometric criteria in the discriminant space
-#' \item \code{genclust.em}: the output of the \code{genclust.em} function; in this case, group assignments are based upon the likelihood of genotypes belonging to their groups
+#' 
+#' \item \code{matrix}: a matrix with individuals in row and genetic clusters in
+#' column, each entry being an assignment probability of the corresponding
+#' individual to the corresponding group
+#' 
+#' \item \code{dapc}: the output of the \code{dapc} function; in this case,
+#' group assignments are based upon geometric criteria in the discriminant space
+#'
+#' \item \code{genclust.em}: the output of the \code{genclust.em} function; in
+#' this case, group assignments are based upon the likelihood of genotypes
+#' belonging to their groups
+#' 
 #' }
 #'
 #' @author Thibaut Jombart \email{thibautjombart@@gmail.com}
@@ -16,7 +27,9 @@
 #' @aliases compoplot
 #'
 #' @param x an object to be used for plotting (see description)
+#' 
 #' @param ... further arguments to be passed to \code{barplot}
+#' 
 compoplot <- function(x, ...){
     UseMethod("compoplot", x)
 }
@@ -29,21 +42,34 @@ compoplot <- function(x, ...){
 #' @export
 #'
 #' @param col.pal a color palette to be used for the groups; defaults to \code{funky}
+#'
+#' @param border a color for the border of the barplot; use \code{NA} to
+#' indicate no border. 
+#' 
 #' @param show.lab a logical indicating if individual labels should be displayed
+#' 
 #' @param lab a vector of individual labels; if NULL, row.names of the matrix are used
+#' 
 #' @param legend a logical indicating whether a legend should be provided for the colors
+#' 
 #' @param txt.leg a character vector to be used for the legend
+#' 
 #' @param n.col the number of columns to be used for the legend
+#' 
 #' @param posi the position of the legend
+#' 
 #' @param cleg a size factor for the legend
+#' 
 #' @param bg the background to be used for the legend
+#' 
 #' @param subset a subset of individuals to retain
 #'
-compoplot.matrix <- function(x, col.pal = funky, subset=NULL,
-                             show.lab = FALSE, lab = rownames(x),
-                             legend = TRUE, txt.leg = colnames(x), n.col = 4,
-                             posi = NULL, cleg = .8, bg = transp("white"),
-                             ...) {
+compoplot.matrix <- function(x, col.pal = funky, border = NA,
+                             subset = NULL, show.lab = FALSE,
+                             lab = rownames(x), legend = TRUE,
+                             txt.leg = colnames(x), n.col = 4,
+                             posi = NULL, cleg = .8,
+                             bg = transp("white"), ...) {
 
     ## generate colors, process arguments
     col <- col.pal(ncol(x))
@@ -73,20 +99,24 @@ compoplot.matrix <- function(x, col.pal = funky, subset=NULL,
         posi <- list(x=0, y=-.01)
     }
 
-    ## make the plot: we need to suppress warnings because '...' could contain arguments from other
-    ## methods not meant to be used by 'barplot'
+    ## make the plot: we need to suppress warnings because '...' could contain
+    ## arguments from other methods not meant to be used by 'barplot'
 
-    suppressWarnings(barplot(t(x), border = NA, col = col, ylab = "membership probability",
-            names.arg = lab, las = 3, ...) )
+    suppressWarnings(
+        out <- barplot(t(x), col = col,
+                       ylab = "membership probability",
+                       names.arg = lab, las = 3,
+                       border = border, ...) )
 
     if (legend) {
         oxpd <- par("xpd")
         par(xpd=TRUE)
-        legend(posi, fill=col, legend = txt.leg, cex=cleg, ncol=n.col, bg=bg)
+        legend(posi, fill=col, legend = txt.leg,
+               cex = cleg, ncol = n.col, bg = bg)
         on.exit(par(xpd=oxpd))
     }
 
-    return(invisible())
+    return(invisible(out))
 }
 
 
@@ -101,7 +131,7 @@ compoplot.matrix <- function(x, col.pal = funky, subset=NULL,
 ## The compoplot for DAPC is basically a compoplot.matrix on the predicted group membership
 ## probabilities. Only extra features related to keeping a subset of groups or individuals.
 
-compoplot.dapc <- function(x, only.grp=NULL, ...){
+compoplot.dapc <- function(x, only.grp=NULL, border = NA, ...){
     ## get predictions and subset if needed
     pred <- predict(x)$posterior
 
@@ -116,9 +146,8 @@ compoplot.dapc <- function(x, only.grp=NULL, ...){
     }
 
     ## call matrix method
-    compoplot(pred, ...)
+    compoplot(pred, border = border, ...)
 
-    return(invisible(pred))
 } # end compoplot
 
 
@@ -131,6 +160,6 @@ compoplot.dapc <- function(x, only.grp=NULL, ...){
 
 #' @rdname compoplot
 #' @export
-compoplot.genclust.em <- function(x, ...) {
-    compoplot(x$proba, ...)
+compoplot.genclust.em <- function(x, border = NA, ...) {
+    compoplot(x$proba, border = border, ...)
 }
