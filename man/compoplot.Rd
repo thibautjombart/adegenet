@@ -9,14 +9,14 @@
 \usage{
 compoplot(x, ...)
 
-\method{compoplot}{matrix}(x, col.pal = funky, subset = NULL,
+\method{compoplot}{matrix}(x, col.pal = funky, border = NA, subset = NULL,
   show.lab = FALSE, lab = rownames(x), legend = TRUE,
   txt.leg = colnames(x), n.col = 4, posi = NULL, cleg = 0.8,
   bg = transp("white"), ...)
 
-\method{compoplot}{dapc}(x, only.grp = NULL, ...)
+\method{compoplot}{dapc}(x, only.grp = NULL, border = NA, ...)
 
-\method{compoplot}{genclust.em}(x, ...)
+\method{compoplot}{genclust.em}(x, border = NA, ...)
 }
 \arguments{
 \item{x}{an object to be used for plotting (see description)}
@@ -24,6 +24,9 @@ compoplot(x, ...)
 \item{...}{further arguments to be passed to \code{barplot}}
 
 \item{col.pal}{a color palette to be used for the groups; defaults to \code{funky}}
+
+\item{border}{a color for the border of the barplot; use \code{NA} to
+indicate no border.}
 
 \item{subset}{a subset of individuals to retain}
 
@@ -46,13 +49,24 @@ compoplot(x, ...)
 \item{only.grp}{a subset of groups to retain}
 }
 \description{
-The compoplot uses a barplot to represent the group assignment probability of individuals to several groups. It is a generic with methods for the following objects:
+The compoplot uses a barplot to represent the group assignment probability of
+individuals to several groups. It is a generic with methods for the following
+objects:
 }
 \details{
 \itemize{
-\item \code{matrix}: a matrix with individuals in row and genetic clusters in column, each entry being an assignment probability of the corresponding individual to the corresponding group
-\item \code{dapc}: the output of the \code{dapc} function; in this case, group assignments are based upon geometric criteria in the discriminant space
-\item \code{genclust.em}: the output of the \code{genclust.em} function; in this case, group assignments are based upon the likelihood of genotypes belonging to their groups
+
+\item \code{matrix}: a matrix with individuals in row and genetic clusters in
+column, each entry being an assignment probability of the corresponding
+individual to the corresponding group
+
+\item \code{dapc}: the output of the \code{dapc} function; in this case,
+group assignments are based upon geometric criteria in the discriminant space
+
+\item \code{genclust.em}: the output of the \code{genclust.em} function; in
+this case, group assignments are based upon the likelihood of genotypes
+belonging to their groups
+
 }
 }
 \author{
