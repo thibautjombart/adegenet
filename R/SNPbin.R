@@ -917,7 +917,7 @@ setReplaceMethod("other","genlight",function(x,value) {
 
 ## function to code multiple SNPs on a byte
 ## 8 combinations of SNPs can be coded onto a single byte (0->255)
-.bin2raw <- function(vecSnp){
+.bin2raw1 <- function(vecSnp){
     ## handle missing data
     NAposi <- which(is.na(vecSnp))
     if(length(NAposi)>0){
@@ -945,6 +945,34 @@ setReplaceMethod("other","genlight",function(x,value) {
     return(res)
 } # end .bin2raw
 
+.bin2raw <- function(vecSnp){
+    ## handle missing data
+    NAposi <- which(is.na(vecSnp))
+    if(length(NAposi)>0){
+        vecSnp[is.na(vecSnp)] <- 0L
+    }
+
+
+    nbBytes <- length(vecSnp) %/% 8
+    if(length(vecSnp) %% 8 > 0) {nbBytes <- nbBytes +1}
+    ori.length <- length(vecSnp)
+    new.length <- 8*nbBytes
+    vecSnp <- c(vecSnp, rep(0, new.length-ori.length)) # fill the end with 0 of necessary
+
+
+    ## map info to bytes (0:255)
+    vecSnp <- as.integer(vecSnp)
+    ##vecRaw <- integer(nbBytes) # no longer needed - sending raw type directly
+    vecRaw <- raw(nbBytes)
+    vecRaw <- packBits(vecSnp)
+    # vecRaw <- .C("binIntToBytes", vecSnp, length(vecSnp), vecRaw, nbBytes, PACKAGE="adegenet")[[3]]
+    ## vecraw <- sapply(seq(1, by=8, length=nbBytes), function(i) which(apply(SNPCOMB,1, function(e) all(temp[i:(i+7)]==e))) ) # old R version
+
+    ## return result
+    res <- list(snp=vecRaw, n.loc=as.integer(ori.length), NA.posi=as.integer(NAposi))
+    return(res)
+} # end .bin2raw
+
 
 
 
@@ -954,7 +982,7 @@ setReplaceMethod("other","genlight",function(x,value) {
 ## .raw2bin
 ###########
 ## convert vector of raw to 0/1 integers
-.raw2bin <- function(x){
+.raw2bin1 <- function(x){
     if(!is.raw(x)) stop("x is not of class raw")
     ## SNPCOMB <- as.matrix(expand.grid(rep(list(c(0,1)), 8)))
     ## colnames(SNPCOMB) <- NULL
@@ -962,13 +990,17 @@ setReplaceMethod("other","genlight",function(x,value) {
     res <- .C("bytesToBinInt", x, length(x), integer(length(x)*8), PACKAGE="adegenet")[[3]]
     return(res)
 } # end .raw2bin
+.raw2bin <- function(x){
+    if(!is.raw(x)) stop("x is not of class raw")
+    as.integer(rawToBits(x))
+} # end .raw2bin
 
 
 #############
 ## .SNPbin2int
 #############
 ## convert SNPbin to integers (0/1/2...)
-.SNPbin2int <- function(x){
+.SNPbin2int1 <- function(x){
     ##res <- lapply(x@snp, .raw2bin)
     resSize <- length(x@snp[[1]])*8
     res <- .C("bytesToInt", unlist(x@snp), length(x@snp[[1]]), length(x@snp), integer(resSize), as.integer(resSize), PACKAGE="adegenet")[[4]][1:nLoc(x)]
@@ -976,6 +1008,16 @@ setReplaceMethod("other","genlight",function(x,value) {
     ##res <- as.integer(Reduce("+", res))
     if(length(x@NA.posi)>0){
         res[x@NA.posi] <- NA
+    }
+    return(res)
+} # end .SNPbin2int
+.SNPbin2int <- function(x){
+    ##res <- lapply(x@snp, .raw2bin)
+    resSize <- length(x@snp[[1]])*8
+    res     <- vapply(x@snp, function(x) as.integer(rawToBits(x)), integer(resSize))
+    res     <- as.integer(rowSums(res)[1:nLoc(x)])
+    if (length(x@NA.posi)>0){
+        res[x@NA.posi] <- NA_integer_
     }
     return(res)
 } # end .SNPbin2int
