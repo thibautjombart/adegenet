@@ -936,17 +936,31 @@ setReplaceMethod("other","genlight",function(x,value) {
     vecSnp <- as.integer(vecSnp)
     ##vecRaw <- integer(nbBytes) # no longer needed - sending raw type directly
     vecRaw <- raw(nbBytes)
-
-    vecRaw <- .C("binIntToBytes", vecSnp, length(vecSnp), vecRaw, nbBytes, PACKAGE="adegenet")[[3]]
+    # Wed Apr 12 08:26:49 2017 ------------------------------
+    # I changed this from the C function to the base R function `packBits()`
+    # because I was getting an error on solaris sparc. It suffers an increase
+    # of a fraction of a millisecond in processing time, but I think that's
+    # managable.
+    # 
+    # ZNK
+    # 
+    # library(microbenchmark)
+    # set.seed(5000)
+    # dat <- sample(c(0,1,NA), 1e5, prob=c(.495, .495, .01), replace=TRUE)
+    # y <- microbenchmark(C = .bin2raw(dat), base = .bin2raw_original(dat), times = 1000)
+    # print(y, "relative")
+    ## Unit: relative
+    ##  expr      min       lq     mean   median       uq      max neval cld
+    ##     C 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000  1000   a
+    ##  base 1.074409 1.113972 1.103931 1.103837 1.083847 1.183597  1000   a
+    vecRaw <- packBits(vecSnp)
+    # vecRaw <- .C("binIntToBytes", vecSnp, length(vecSnp), vecRaw, nbBytes, PACKAGE="adegenet")[[3]]
     ## vecraw <- sapply(seq(1, by=8, length=nbBytes), function(i) which(apply(SNPCOMB,1, function(e) all(temp[i:(i+7)]==e))) ) # old R version
 
     ## return result
     res <- list(snp=vecRaw, n.loc=as.integer(ori.length), NA.posi=as.integer(NAposi))
     return(res)
 } # end .bin2raw
-
-
-
 
 
 
@@ -960,6 +974,8 @@ setReplaceMethod("other","genlight",function(x,value) {
     ## colnames(SNPCOMB) <- NULL
     ## res <- unlist(lapply(as.integer(x), function(i) SNPCOMB[i+1,]))
     res <- .C("bytesToBinInt", x, length(x), integer(length(x)*8), PACKAGE="adegenet")[[3]]
+    # Below is an equivalent function in base, but it's slowed down 8x
+    # res <- as.integer(rawToBits(x))
     return(res)
 } # end .raw2bin
 
@@ -971,11 +987,26 @@ setReplaceMethod("other","genlight",function(x,value) {
 .SNPbin2int <- function(x){
     ##res <- lapply(x@snp, .raw2bin)
     resSize <- length(x@snp[[1]])*8
+    # Wed Apr 12 08:49:02 2017 ------------------------------
+    # I am leaving this function along as it does not necessarily break solaris,
+    # but I am leaving the code and timings just in case. 
+    # 
+    # ZNK
     res <- .C("bytesToInt", unlist(x@snp), length(x@snp[[1]]), length(x@snp), integer(resSize), as.integer(resSize), PACKAGE="adegenet")[[4]][1:nLoc(x)]
-    ##res <- lapply(res, function(e) e[1:x@n.loc])
-    ##res <- as.integer(Reduce("+", res))
-    if(length(x@NA.posi)>0){
-        res[x@NA.posi] <- NA
+    # library(microbenchmark)
+    # set.seed(5000)
+    # dat <- sample(c(0:2,NA), 1e5, prob=c(rep(.995/5,3), 0.005), replace=TRUE)
+    # x <- new("SNPbin", dat)
+    # y <- microbenchmark(C = .SNPbin2int(x), base = .SNPbin2int1(x), times = 1000)
+    # print(y, "relative")
+    ## Unit: relative
+    ##  expr      min       lq     mean   median      uq       max neval cld
+    ##     C 1.000000 1.000000 1.000000 1.000000 1.00000 1.0000000  1000   a
+    ##  base 2.206831 1.200831 1.019783 1.168149 1.02654 0.1668163  1000   a
+    # res     <- vapply(x@snp, function(x) as.integer(rawToBits(x)), integer(resSize))
+    # res     <- apply(res[1:nLoc(x), ], 1, sum)
+    if (length(x@NA.posi) > 0){
+        res[x@NA.posi] <- NA_integer_
     }
     return(res)
 } # end .SNPbin2int
