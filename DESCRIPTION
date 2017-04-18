@@ -45,6 +45,7 @@ Description: Toolset for the exploration of genetic and genomic data. Adegenet
 Collate:
     adegenet.package.R
     datasets.R
+    dist.genlight.R
     orthobasis.R
     classes.R
     constructors.R
