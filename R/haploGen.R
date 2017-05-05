@@ -36,7 +36,9 @@ haploGen <- function(seq.length=1e4, mu.transi=1e-4, mu.transv=mu.transi/2, t.ma
     NUCL <- as.DNAbin(c("a","t","c","g"))
     TRANSISET <- list('a'=as.DNAbin('g'), 'g'=as.DNAbin('a'), 'c'=as.DNAbin('t'), 't'=as.DNAbin('c'))
     TRANSVSET <- list('a'=as.DNAbin(c('c','t')), 'g'=as.DNAbin(c('c','t')), 'c'=as.DNAbin(c('a','g')), 't'=as.DNAbin(c('a','g')))
-    res <- list(seq=as.matrix(as.DNAbin(character(0))), dates=integer(), ances=character())
+    res <- list(seq = as.matrix(as.DNAbin(matrix(character(0), nrow = 0, ncol = 0))), 
+                dates = integer(), 
+                ances = character())
     toExpand <- logical()
     myGrid <- matrix(1:grid.size^2, ncol=grid.size, nrow=grid.size)
 
