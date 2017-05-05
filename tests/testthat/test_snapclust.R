@@ -1,7 +1,7 @@
-context("Test genclust.em")
+context("Test snapclust")
 
 
-test_that("genclust.em gives decent results for F1 Zebu-Salers", {
+test_that("snapclust gives decent results for F1 Zebu-Salers", {
     skip_on_cran()
 
 
@@ -15,7 +15,7 @@ test_that("genclust.em gives decent results for F1 Zebu-Salers", {
     x <- repool(zebu, salers, hyb)
 
     ## run analysis
-    res.hyb <- genclust.em(x, k=2, hybrids=TRUE)
+    res.hyb <- snapclust(x, k=2, hybrids=TRUE)
 
     ## check results
     expect_true(res.hyb$converged)
@@ -27,7 +27,7 @@ test_that("genclust.em gives decent results for F1 Zebu-Salers", {
 
 
 
-test_that("genclust.em gives decent results for F1 & back-cross Zebu-Salers", {
+test_that("snapclust gives decent results for F1 & back-cross Zebu-Salers", {
     skip_on_cran()
 
     set.seed(1)
@@ -47,7 +47,7 @@ test_that("genclust.em gives decent results for F1 & back-cross Zebu-Salers", {
 
 
     ## method with back-cross
-    res.back <- genclust.em(y, k=2, hybrids = TRUE, hybrid.coef = c(.25,.5))
+    res.back <- snapclust(y, k=2, hybrids = TRUE, hybrid.coef = c(.25,.5))
     tab <- table(pop(y), res.back$group)
 
     ## check results
