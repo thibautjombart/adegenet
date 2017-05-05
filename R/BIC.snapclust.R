@@ -1,4 +1,4 @@
-#' Compute Bayesian Information Criterion (BIC) for genclust.em
+#' Compute Bayesian Information Criterion (BIC) for snapclust
 #'
 #' Do not use. We work on that stuff. Contact us if interested.
 #'
@@ -6,15 +6,15 @@
 #'
 #' @export
 #'
-#' @param object An object returned by the function \code{\link{genclust.em}}.
+#' @param object An object returned by the function \code{\link{snapclust}}.
 #'
 #' @param ... Further arguments for compatibility with the \code{BIC} generic
 #'     (currently not used).
 #'
-#' @seealso  \code{\link{genclust.em}} to generate clustering solutions.
+#' @seealso  \code{\link{snapclust}} to generate clustering solutions.
 #'
 #'
-BIC.genclust.em <- function(object, ...) {
+BIC.snapclust <- function(object, ...) {
 
   ## The number of parameters is defined as:
   ## (number of independent allele frequencies) x (nb clusters).

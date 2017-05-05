@@ -32,7 +32,7 @@ scatter(dapc1, grp=pop(x))
 compoplot(dapc1, col.pal=spectral, n.col=2)
 
 ## ML-EM with hybrids
-res <- genclust.em(x, k=2, hybrids=TRUE, detailed=TRUE)
+res <- snapclust(x, k=2, hybrids=TRUE, detailed=TRUE)
 compoplot(res, n.col=3)
 table(res$group, pop(x))
 

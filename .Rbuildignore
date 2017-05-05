@@ -6,3 +6,4 @@ tutorials
 ^\.Rproj\.user$
 .*.tar.gz$
 ^appveyor\.yml$
+misc/

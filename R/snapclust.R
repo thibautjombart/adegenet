@@ -7,7 +7,7 @@
 #'
 #' @export
 #'
-#' @rdname genclust.em
+#' @rdname snapclust
 #'
 #' @param x a \linkS4class{genind} object
 #'
@@ -50,7 +50,7 @@
 #'
 #' @return
 #'
-#' The function \code{genclust.em} returns a list with the following
+#' The function \code{snapclust} returns a list with the following
 #' components:
 #' \itemize{
 #'
@@ -83,7 +83,7 @@
 #' grp.ini <- find.clusters(microbov, n.clust=15, n.pca=150)
 #'
 #' ## run EM algo
-#' res <- genclust.em(microbov, 15, pop.ini = grp.ini$grp)
+#' res <- snapclust(microbov, 15, pop.ini = grp.ini$grp)
 #' names(res)
 #' res$converged
 #' res$n.iter
@@ -104,11 +104,11 @@
 #' x <- repool(zebu, salers, hyb)
 #'
 #' ## method without hybrids
-#' res.no.hyb <- genclust.em(x, k=2, hybrids=FALSE)
+#' res.no.hyb <- snapclust(x, k=2, hybrids=FALSE)
 #' compoplot(res.no.hyb, col.pal=spectral, n.col=2)
 #'
 #' ## method with hybrids
-#' res.hyb <- genclust.em(x, k=2, hybrids=TRUE)
+#' res.hyb <- snapclust(x, k=2, hybrids=TRUE)
 #' compoplot(res.hyb, col.pal =
 #'           hybridpal(col.pal = spectral), n.col = 2)
 #'
@@ -119,20 +119,20 @@
 #' y <- repool(x, f1.zebu, f1.salers)
 #'
 #' ## method without hybrids
-#' res2.no.hyb <- genclust.em(y, k = 2, hybrids = FALSE)
+#' res2.no.hyb <- snapclust(y, k = 2, hybrids = FALSE)
 #' compoplot(res2.no.hyb, col.pal = hybridpal(), n.col = 2)
 #'
 #' ## method with hybrids F1 only
-#' res2.hyb <- genclust.em(y, k = 2, hybrids = TRUE)
+#' res2.hyb <- snapclust(y, k = 2, hybrids = TRUE)
 #' compoplot(res2.hyb, col.pal = hybridpal(), n.col = 2)
 #'
 #' ## method with back-cross
-#' res2.back <- genclust.em(y, k = 2, hybrids = TRUE, hybrid.coef = c(.25,.5))
+#' res2.back <- snapclust(y, k = 2, hybrids = TRUE, hybrid.coef = c(.25,.5))
 #'  compoplot(res2.hyb, col.pal = hybridpal(), n.col = 2)
 #'
 #' }
 
-genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start = 10,
+snapclust <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start = 10,
                         n.start.kmeans = 50,
                         hybrids = FALSE, dim.ini = 100,
                         hybrid.coef = NULL, parent.lab = c('A', 'B'), ...) {
@@ -302,7 +302,7 @@ genclust.em <- function(x, k, pop.ini = "kmeans", max.iter = 100, n.start = 10,
 
     out$n.param <- (ncol(genotypes) - n.loc) * length(lev.ini)
     
-    class(out) <- c("genclust.em", "list")
+    class(out) <- c("snapclust", "list")
     return(out)
 }
 

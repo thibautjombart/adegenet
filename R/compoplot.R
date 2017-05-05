@@ -13,7 +13,7 @@
 #' \item \code{dapc}: the output of the \code{dapc} function; in this case,
 #' group assignments are based upon geometric criteria in the discriminant space
 #'
-#' \item \code{genclust.em}: the output of the \code{genclust.em} function; in
+#' \item \code{snapclust}: the output of the \code{snapclust} function; in
 #' this case, group assignments are based upon the likelihood of genotypes
 #' belonging to their groups
 #' 
@@ -160,6 +160,6 @@ compoplot.dapc <- function(x, only.grp=NULL, border = NA, ...){
 
 #' @rdname compoplot
 #' @export
-compoplot.genclust.em <- function(x, border = NA, ...) {
+compoplot.snapclust <- function(x, border = NA, ...) {
     compoplot(x$proba, border = border, ...)
 }

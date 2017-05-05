@@ -1,4 +1,4 @@
-#' Choose the number of clusters for genclust.em using BIC
+#' Choose the number of clusters for snapclust using BIC
 #'
 #' Do not use. We work on that stuff. Contact us if interested.
 #'
@@ -6,32 +6,32 @@
 #'
 #' @export
 #'
-#' @seealso \code{\link{genclust.em}} to generate individual clustering
-#'     solutions, and \code{\link{BIC.genclust.em}} for computing BIC for
-#'     \code{genclust.em} objects.
+#' @seealso \code{\link{snapclust}} to generate individual clustering
+#'     solutions, and \code{\link{BIC.snapclust}} for computing BIC for
+#'     \code{snapclust} objects.
 #'
 #' @param max An integer indicating the maximum number of clusters to seek;
-#'     \code{\link{genclust.em}} will be run for all k from 2 to max.
+#'     \code{\link{snapclust}} will be run for all k from 2 to max.
 #'
 #' @param IC A function computing the information criterion for
-#'     \code{\link{BIC.genclust.em}} objects. Available statistics are
+#'     \code{\link{BIC.snapclust}} objects. Available statistics are
 #'     \code{AIC} (default) and \code{BIC}.
 #' 
 #' @param IC.only A logical (TRUE by default) indicating if IC values only
-#'     should be returned; if \code{FALSE}, full \code{genclust.em} objects are
+#'     should be returned; if \code{FALSE}, full \code{snapclust} objects are
 #'     returned.
 #'
-#' @param ... Arguments passed to \code{\link{genclust.em}}.
+#' @param ... Arguments passed to \code{\link{snapclust}}.
 #'
-#' @seealso \code{\link{genclust.em} to generate clustering solutions,
-#'     \code{\link{AIC.genclust.em}} for Akaike's criterion, and
-#'     \code{\link{BIC.genclust.em}} for the Bayesian information criterion.
+#' @seealso \code{\link{snapclust} to generate clustering solutions,
+#'     \code{\link{AIC.snapclust}} for Akaike's criterion, and
+#'     \code{\link{BIC.snapclust}} for the Bayesian information criterion.
 #' 
-genclust.em.choose.k <- function(max, ..., IC = AIC, IC.only = TRUE) {
+snapclust.choose.k <- function(max, ..., IC = AIC, IC.only = TRUE) {
 
-    ## This function is a glorified for loop which runs genclust.em for several
+    ## This function is a glorified for loop which runs snapclust for several
     ## values of 'k', from 2 to 'max'. It returns information criterion (AIC or
-    ## BIC), and can also return the full genclust.em objects if needed. For
+    ## BIC), and can also return the full snapclust objects if needed. For
     ## k=1, AIC and BIC are computed via an internal (i.e. non-exported)
     ## procedure.
     
@@ -58,7 +58,7 @@ genclust.em.choose.k <- function(max, ..., IC = AIC, IC.only = TRUE) {
     for (i in seq_along(k.values)) {
         ## get clustering solution for 'k'
         call.args$k <- k.values[i]
-        out.objects[[i]] <- do.call(genclust.em, call.args)
+        out.objects[[i]] <- do.call(snapclust, call.args)
     }
 
     names(out.objects) <- k.values
@@ -102,10 +102,10 @@ genclust.em.choose.k <- function(max, ..., IC = AIC, IC.only = TRUE) {
     
     ll <- .global.ll(group, ll.mat)
 
-    ## make a fake genclust.em object to get BIC
+    ## make a fake snapclust object to get BIC
     fake <- list(ll = ll,
                  group = group,
                  n.param = ncol(tab(x)) - nLoc(x))
-    class(fake) <- "genclust.em"
+    class(fake) <- "snapclust"
     IC(fake)
 }

@@ -51,7 +51,7 @@ opts_chunk$set(fig.path='figs/genclust-', fig.keep='high', dev='pdf',
 
 \begin{abstract}
   This tutorial presents an overview of likelihood-based genetic clustering in
-  \textit{adegenet}, as implemented by the function \texttt{genclust.em}. After
+  \textit{adegenet}, as implemented by the function \texttt{snapclust}. After
   a brief presentation of the rationale of the method, we illustrate its use in
   two situations: for identifying genetic clusters, and then for detecting
   hybrids.
@@ -103,7 +103,7 @@ The following notations will be used to describe the model.
 \subsubsection{General likelihood}
 % % % % % % % % % % % % % % % % % % % % % % % %
 Likelihood-based genetic clustering in \textit{adegenet} is implemented by the
-function \texttt{genclust.em}. This approach uses Hardy-Weinberg's equilibrium
+function \texttt{snapclust}. This approach uses Hardy-Weinberg's equilibrium
 to define the probabilities of observing given genotypes under known allele
 frequencies. For now, we assume the group to which $i$ belongs is known
 (noted $g_i$), and has known allele frequencies $f_{g_i,j}$. For any level of
@@ -254,7 +254,7 @@ opts_chunk$set(fig.width=10, fig.height=6, out.width="\\textwidth")
 
 
 The method described above is implemented in the function
-\texttt{genclust.em}. To illustrate it, we first re-analyse datasets originally
+\texttt{snapclust}. To illustrate it, we first re-analyse datasets originally
 simulated to illustrate the DAPC (Jombart \textit{et al.} 2010, BCM
 Genetics). The data \texttt{dapcIllus} contains for datasets:
 \begin{itemize}
@@ -272,10 +272,10 @@ data(dapcIllus)
 sapply(dapcIllus, nPop)
 @
 
-For each dataset, we identify clusters using \texttt{genclust.em}, indicating
+For each dataset, we identify clusters using \texttt{snapclust}, indicating
 the right number of clusters, and compare the obtained clusters to the true clusters.
 <<>>=
-a.clust <- genclust.em(dapcIllus$a, k = 6)
+a.clust <- snapclust(dapcIllus$a, k = 6)
 class(a.clust)
 names(a.clust)
 @
@@ -327,7 +327,7 @@ the few 'misclassified' individuals are effectively migrants.
 In fact, results remain very good in other models as well.
 Results are near perfect for the hierarchical island mode:
 <<fig.width=7, fig.height=7, out.width=".6\\textwidth">>=
-b.clust <- genclust.em(dapcIllus$b, k = 6)
+b.clust <- snapclust(dapcIllus$b, k = 6)
 b.tab <- table(pop(dapcIllus$b), b.clust$group)
 table.value(b.tab, col.labels = 1:6)
 @
@@ -337,7 +337,7 @@ compoplot(b.clust)
 
 and for the stepping stone model:
 <<fig.width=7, fig.height=7, out.width=".6\\textwidth">>=
-c.clust <- genclust.em(dapcIllus$c, k = 12)
+c.clust <- snapclust(dapcIllus$c, k = 12)
 c.tab <- table(pop(dapcIllus$c), c.clust$group)
 table.value(c.tab, col.labels = 1:12)
 @
@@ -349,7 +349,7 @@ In the larger stepping stone model with a boundary, results remain very good but
 some neighbouring demes are harder to distinguish (especially 1-2, 3-4, 13-14
 and 18-19).
 <<fig.width=7, fig.height=7, out.width=".6\\textwidth">>=
-d.clust <- genclust.em(dapcIllus$d, k = 24)
+d.clust <- snapclust(dapcIllus$d, k = 24)
 d.tab <- table(pop(dapcIllus$d), d.clust$group)
 table.value(d.tab, col.labels = 1:24, csize = .6)
 @
@@ -398,11 +398,11 @@ y <- repool(x, f1.zebu, f1.salers)
 
 
 % % % % % % % % % % % % % % % % % % % % % % % %
-\subsubsection{Looking for hybrid using \texttt{genclust.em}}
+\subsubsection{Looking for hybrid using \texttt{snapclust}}
 % % % % % % % % % % % % % % % % % % % % % % % %
 
 
-\texttt{genclust.em} can also be used in the presence of hybridization. In this
+\texttt{snapclust} can also be used in the presence of hybridization. In this
 case, it will attempt to classify individuals into parental populations (later
 noted $A$ and $B$), or
 various types of hybrids defined by the user.
@@ -435,9 +435,9 @@ s.class(x.pca$li, pop(x), col = hybridpal()(3))
 The method applied without hybrid detection correctly identifies the parental
 populations, but fails to classify hybrids:
 <<>>=
-res.no.hyb <- genclust.em(x, k = 2, hybrids = FALSE)
+res.no.hyb <- snapclust(x, k = 2, hybrids = FALSE)
 compoplot(res.no.hyb, n.col = 2, col.pal = hybridpal(),
-          main = "genclust.em without hybrids")
+          main = "snapclust without hybrids")
 @
 
 One may expect that hybrids would appear as individuals with group membership
@@ -463,9 +463,9 @@ The problem of the above is that hybrids are seen as effectively outliers from
 the parental populations, so that their classification is inherently very unstable.
 To be formally identified, hybrids need to be modelled as a separate population,
 whose allele frequency distribution is somewhere between the parental populations.
-This is exactly the approach taken by \texttt{genclust.em}:
+This is exactly the approach taken by \texttt{snapclust}:
 <<>>=
-res.hyb <- genclust.em(x, k = 2, hybrids = TRUE)
+res.hyb <- snapclust(x, k = 2, hybrids = TRUE)
 compoplot(res.hyb, n.col = 2, col.pal = hybridpal())
 @
 
@@ -489,9 +489,9 @@ s.class(y.pca$li, pop(y), col = virid(5)[c(1,5,3,2,4)])
 Looking for F1 hybrids only in \texttt{y} shows the expected misclassifications
 of backcrosses into either hybrids or the closest parental population:
 <<>>=
-res2.hyb <- genclust.em(y, k = 2, hybrids = TRUE)
+res2.hyb <- snapclust(y, k = 2, hybrids = TRUE)
 compoplot(res2.hyb, n.col = 2, col.pal = hybridpal(),
-          main = "genclust.em with hybrids")
+          main = "snapclust with hybrids")
 @
 
 Note that the differentiation between the groups drops very fast, despite a
@@ -503,9 +503,9 @@ hierfstat::pairwise.fst(y)
 
 Despite really low differentiation, we still get decent results at identifying backcrosses:
 <<>>=
-res2.back <- genclust.em(y, k=2, hybrids = TRUE, hybrid.coef = c(.25, .5))
+res2.back <- snapclust(y, k=2, hybrids = TRUE, hybrid.coef = c(.25, .5))
 compoplot(res2.back, col.pal = hybridpal(),
-          main = "genclust.em with F1 and backcrosses")
+          main = "snapclust with F1 and backcrosses")
 @
 
 A number of individuals are mis-classified, but this is merely a reflection of
@@ -537,7 +537,7 @@ tab
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The function \texttt{genclust.em.choose.k} permits to run \texttt{genclust.em}
+The function \texttt{snapclust.choose.k} permits to run \texttt{snapclust}
 for various values of $k$, and outputs the corresponding AIC or BIC values. Its
 use is similar to that of \texttt{find.clusters}: ideally, the lowest AIC/BIC
 corresponds to the best model, but in practice sharp decreases in AIC/BIC will
@@ -552,13 +552,13 @@ data(dapcIllus)
 table(pop(dapcIllus$a))
 
 ## look for k = 1:20
-a.aic <- genclust.em.choose.k(20, dapcIllus$a)
+a.aic <- snapclust.choose.k(20, dapcIllus$a)
 plot(a.aic, type = "b", cex = 2, xlab = "k", ylab = "AIC")
 points(which.min(a.aic), min(a.aic), col = "blue", pch = 20, cex = 2)
 abline(v = 6, lty = 2, col = "red")
 
 ## same data, using BIC
-a.bic <- genclust.em.choose.k(20, dapcIllus$a, IC = BIC)
+a.bic <- snapclust.choose.k(20, dapcIllus$a, IC = BIC)
 plot(a.bic, type = "b", cex = 2, xlab = "k", ylab = "BIC")
 points(which.min(a.bic), min(b.aic), col = "blue", pch = 20, cex = 2)
 abline(v = 6, lty = 2, col = "red")
@@ -578,13 +578,13 @@ data(dapcIllus)
 table(pop(dapcIllus$c))
 
 ## look for k = 1:30
-c.aic <- genclust.em.choose.k(30, dapcIllus$c)
+c.aic <- snapclust.choose.k(30, dapcIllus$c)
 plot(c.aic, type = "b", cex = 2, xlab = "k", ylab = "AIC")
 points(which.min(c.aic), min(c.aic), col = "blue", pch = 20, cex = 2)
 abline(v = 12, lty = 2, col = "red")
 
 ## same data, using BIC
-c.bic <- genclust.em.choose.k(30, dapcIllus$c, IC = BIC)
+c.bic <- snapclust.choose.k(30, dapcIllus$c, IC = BIC)
 plot(c.bic, type = "b", cex = 2, xlab = "k", ylab = "BIC")
 points(which.min(c.bic), min(c.bic), col = "blue", pch = 20, cex = 2)
 abline(v = 12, lty = 2, col = "red")

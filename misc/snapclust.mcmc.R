@@ -7,7 +7,7 @@
 ## #'
 ## #' @rdname emmcmc
 ## #'
-## #' @inheritParams genclust.em
+## #' @inheritParams snapclust
 ## #' @param n.iter the number of iterations of the MCMC
 ## #' @param sample.every the frequency of sampling from the MCMC
 ## #' @param max.em.iter the maximum number of iterations for the EM algorithm
@@ -19,7 +19,7 @@
 ## #' \dontrun{
 ## #' ## run analysis
 ## #' data(sim2pop)
-## #' res <- genclust.emmcmc(sim2pop, k=2, n.iter=1e3, sample.every=50)
+## #' res <- snapclustmcmc(sim2pop, k=2, n.iter=1e3, sample.every=50)
 ## #' plot(res)
 ## #'
 ## #' ## get summary
@@ -38,7 +38,7 @@
 ## #' s.class(pca1$li, pop(x))
 ## #'
 ## #' ## run MCMC
-## #' res <- genclust.emmcmc(x, k=2, n.iter=1e3, sample.every=50, hybrids=TRUE)
+## #' res <- snapclustmcmc(x, k=2, n.iter=1e3, sample.every=50, hybrids=TRUE)
 ## #' plot(res)
 ## #'
 ## #' ## get summary
@@ -50,7 +50,7 @@
 ## #'
 ## #' ## same analysis, initialized with k-means
 ## #' clust.ini <- find.clusters(x, n.clust=2, n.pca=20)$grp
-## #' res <- genclust.emmcmc(x, k=2, pop.ini=clust.ini)
+## #' res <- snapclustmcmc(x, k=2, pop.ini=clust.ini)
 ## #' plot(res) # it has converged
 ## #' plot(res, type="group") # show groups
 ## #' }
@@ -59,7 +59,7 @@
 ## ## likelihood (no prior) or observed genotypes given their group memberships and
 ## ## the group allele frequencies.
 
-## genclust.emmcmc <- function(x, k, n.iter = 100, sample.every = 10,
+## snapclustmcmc <- function(x, k, n.iter = 100, sample.every = 10,
 ##                             pop.ini = NULL, max.em.iter = 20, prop.move = 0.1,
 ##                             hybrids = FALSE, detailed = FALSE) {
 
@@ -68,7 +68,7 @@
 
 ##     ## the object handled is a list with a $group (group membership) and a $ll
 ##     ## (total loglike)
-##     mcmc[[1]] <- genclust.em(x = x, k = k, pop.ini = pop.ini,
+##     mcmc[[1]] <- snapclust(x = x, k = k, pop.ini = pop.ini,
 ##                              max.iter = max.em.iter, n.start = 10,
 ##                              hybrids = hybrids, detailed = FALSE)
 
@@ -86,7 +86,7 @@
 ##         new.groups <- .move.groups(current.state$group, prop.move = prop.move)
 
 ##         ## compute loglike difference
-##         new.state <- genclust.em(x = x, k = k, pop.ini = new.groups,
+##         new.state <- snapclust(x = x, k = k, pop.ini = new.groups,
 ##                                  max.iter = max.em.iter,
 ##                                  hybrids = hybrids, detailed = FALSE)
 
@@ -112,7 +112,7 @@
 
 ##     ## print(sprintf("\nProportion of movements accepted: %f (%d out of %d)",
 ##     ## n.accept/n.iter, n.accept, n.iter))
-##     class(out) <- c("genclust.emmcmc", "data.frame")
+##     class(out) <- c("snapclustmcmc", "data.frame")
 ##     return(out)
 
 ## }
@@ -122,7 +122,7 @@
 ## #' @rdname emmcmc
 ## #' @export
 ## #' @param object a 'emmcmc' object
-## summary.genclust.emmcmc <- function(object, burnin = 0, ...) {
+## summary.snapclustmcmc <- function(object, burnin = 0, ...) {
 ##     if (burnin > max(object$step)) {
 ##         stop(sprintf(
 ##             "Burnin (%d) exceeds chain length (%d)", burnin, max(object$step)))
@@ -152,7 +152,7 @@
 ## #'
 ## #' @param ... further arguments passed to other methods
 ## #'
-## plot.genclust.emmcmc <- function(x, y = "ll",
+## plot.snapclustmcmc <- function(x, y = "ll",
 ##                                  type = c("trace", "hist", "density", "groups"),
 ##                                  burnin = 0, ...){
 ##     ## CHECKS ##

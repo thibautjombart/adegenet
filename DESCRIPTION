@@ -99,11 +99,10 @@ Collate:
     snpposi.R
     snpzip.R
     pairDist.R
-    genclust.em.R
-    genclust.emmcmc.R
-    AIC.genclust.em.R
-    BIC.genclust.em.R
-    genclust.em.choose.k.R
+    snapclust.R
+    AIC.snapclust.R
+    BIC.snapclust.R
+    snapclust.choose.k.R
     servers.R
     showmekittens.R
     spca_randtest.R

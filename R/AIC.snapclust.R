@@ -1,4 +1,4 @@
-#' Compute Akaike Information Criterion (AIC) for genclust.em
+#' Compute Akaike Information Criterion (AIC) for snapclust
 #'
 #' Do not use. We work on that stuff. Contact us if interested.
 #'
@@ -6,15 +6,15 @@
 #'
 #' @export
 #'
-#' @param object An object returned by the function \code{\link{genclust.em}}.
+#' @param object An object returned by the function \code{\link{snapclust}}.
 #'
 #' @param ... Further arguments for compatibility with the \code{AIC} generic
 #'     (currently not used).
 #'
-#' @seealso  \code{\link{genclust.em}} to generate clustering solutions.
+#' @seealso  \code{\link{snapclust}} to generate clustering solutions.
 #'
 #'
-AIC.genclust.em <- function(object, ...) {
+AIC.snapclust <- function(object, ...) {
 
     ## The number of parameters is defined as:
     ## (number of independent allele frequencies) x (nb clusters).
