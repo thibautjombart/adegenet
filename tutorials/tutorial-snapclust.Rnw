@@ -39,7 +39,7 @@
 \selectlanguage{english}
 
 <<include=FALSE>>=
-opts_chunk$set(fig.path='figs/genclust-', fig.keep='high', dev='pdf',
+opts_chunk$set(fig.path='figs/snapclust-', fig.keep='high', dev='pdf',
                fig.width=7, fig.height=7, tidy=FALSE, warning=FALSE,
                fig.show="asis", fig.align='center', out.width=".8\\textwidth")
 @
