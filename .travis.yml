@@ -7,6 +7,7 @@ sudo: false
 cran: http://cran.at.r-project.org
 
 cache: packages
+warnings_are_errors: false
 
 # enable when codecov link established
 # r_github_packages:
@@ -22,7 +23,7 @@ before_install:
 notifications:
   email:
     on_success: change
-    on_failure: always
+    on_failure: change
 
 env:
   global:
