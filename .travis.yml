@@ -1,32 +1,35 @@
-# Sample .travis.yml for R projects from https://github.com/craigcitro/r-travis
+language: r
+r:
+  - release
+  - devel
 
-language: c
+sudo: false
+cran: http://cran.at.r-project.org
+
+cache: packages
+warnings_are_errors: false
+
+# enable when codecov link established
+# r_github_packages:
+#   - jimhester/covr
 
 before_install:
-  - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
-  - chmod 755 ./travis-tool.sh
-  - sudo add-apt-repository -y ppa:texlive-backports/ppa # This repository > default debian for R
-  - ./travis-tool.sh bootstrap
-  - sudo apt-get install tcl tk
+  - Rscript -e 'update.packages(ask = FALSE)'
 
-install:
-  - ./travis-tool.sh install_deps
-
-script: ./travis-tool.sh run_tests
-
-after_failure:
-  - ./travis-tool.sh dump_logs
-
-env:
-  global:
-    - R_BUILD_ARGS="--resave-data"
-    - R_CHECK_ARGS="--as-cran"
-    - WARNINGS_ARE_ERRORS=1
-    - _R_CHECK_FORCE_SUGGESTS_="FALSE"
-    - $BOOTSTRAP_LATEX="TRUE"
-    - NOT_CRAN="true"
+# enable when codecov link established
+# after_success:
+#   - Rscript -e 'library(covr);codecov()'
 
 notifications:
   email:
     on_success: change
     on_failure: change
+
+env:
+  global:
+    - NOT_CRAN: true
+    - R_BUILD_ARGS="--resave-data --compact-vignettes=gs+qpdf"
+    - R_CHECK_ARGS="--as-cran --timings"
+    - R_CHECK_TIME="TRUE"
+    - R_CHECK_TESTS="TRUE"
+    - _R_CHECK_TIMINGS_="0"
