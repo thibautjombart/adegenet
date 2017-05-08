@@ -19,7 +19,8 @@ export_to_webapp(x, ...)
 \method{export_to_webapp}{spca}(x, info, ...)
 }
 \arguments{
-\item{x}{The analysis to be exported.}
+\item{x}{The analysis to be exported. Can be a \code{dapc}, \code{spca}, or a
+\code{dudi} object.}
 
 \item{...}{Further arguments to pass to other methods.}
 
@@ -28,7 +29,8 @@ following columns: \code{key} (individual label), \code{latitude}, and
 \code{longitude}.}
 }
 \description{
-Export analysis for webapp visualisation
+These function are used to export results of various analyses to a format
+compatible with the webapp available at: ...
 }
 \examples{
 

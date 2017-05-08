@@ -1,9 +1,13 @@
 #' Export analysis for webapp visualisation
 #'
+#' These function are used to export results of various analyses to a format
+#' compatible with the webapp available at: ...
+#'
 #' @author Thibaut Jombart \email{thibautjombart@@gmail.com}
 #'
 #'
-#' @param x The analysis to be exported.
+#' @param x The analysis to be exported. Can be a \code{dapc}, \code{spca}, or a
+#'   \code{dudi} object.
 #'
 #' @param info A data.frame with additional information containing at least the
 #'   following columns: \code{key} (individual label), \code{latitude}, and
