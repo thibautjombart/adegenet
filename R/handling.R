@@ -64,7 +64,7 @@ setMethod("truenames",signature(x="genpop"), function(x){
 #'
 setGeneric("tab", function(x, ...) standardGeneric("tab"))
 
-.tabGetter <- function(x, freq=FALSE, NA.method=c("asis","mean","zero"), ...){
+.tabGetter <- function(x, freq = FALSE, NA.method = c("asis","mean","zero"), ...){
     ## handle arguments
     NA.method <- match.arg(NA.method)
     # outdim <- dim(x@tab)
@@ -76,9 +76,9 @@ setGeneric("tab", function(x, ...) standardGeneric("tab"))
     }
 
     ## replace NAs if needed
-    if(NA.method=="mean"){
+    if (NA.method == "mean"){
         f1 <- function(vec){
-            m <- mean(vec,na.rm=TRUE)
+            m <- mean(vec, na.rm = TRUE)
             vec[is.na(vec)] <- m
             return(vec)
         }
@@ -86,7 +86,7 @@ setGeneric("tab", function(x, ...) standardGeneric("tab"))
         out <- apply(out, 2, f1)
 
     }
-    if(NA.method=="zero"){
+    if (NA.method == "zero"){
         out[is.na(out)] <- ifelse(freq, 0, 0L)
     }
     # dim(out) <- outdim

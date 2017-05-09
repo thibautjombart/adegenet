@@ -7,6 +7,7 @@
 \alias{[,genlight,ANY,ANY,ANY-method}
 \alias{initialize,genlight-method}
 \alias{show,genlight-method}
+\alias{tab,genlight-method}
 \alias{nLoc,genlight-method}
 \alias{nInd,genlight-method}
 \alias{dim,genlight-method}
@@ -151,6 +152,13 @@
       used to access the content of slots of the object.}
     \item{$<-}{\code{signature(x = "genlight")}: similar to the @ operator;
       used to replace the content of slots of the object.}
+
+    \item{tab}{\code{signature(x = "genlight")}: returns a table of
+    allele counts (see \code{\link{tab}}; additional arguments are
+    \code{freq}, a logical stating if relative frequencies should be
+    returned (use for varying ploidy), and \code{NA.method}, a character
+    indicating if missing values should be replaced by the mean
+    frequency("mean"), or left as is ("asis").}
     
     \item{nInd}{\code{signature(x = "genlight")}: returns the number of
       individuals in the object.}

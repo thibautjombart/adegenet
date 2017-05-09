@@ -107,7 +107,8 @@ setMethod("[", signature(x="SNPbin", i="ANY"), function(x, i) {
 
 
 ## genlight
-setMethod("[", signature(x="genlight", i="ANY", j="ANY", drop="ANY"), function(x, i, j, ..., treatOther=TRUE, quiet=TRUE, drop=FALSE) {
+setMethod("[", signature(x = "genlight", i = "ANY", j = "ANY", drop = "ANY"),
+          function(x, i, j, ..., treatOther = TRUE, quiet = TRUE, drop = FALSE) {
     if (missing(i)) i <- TRUE
     if (missing(j)) j <- TRUE
 

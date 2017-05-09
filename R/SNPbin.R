@@ -1080,12 +1080,12 @@ as.list.genlight <- function(x, ...){
 setGeneric("as.SNPbin", function(x, ...) standardGeneric("as.SNPbin"))
 setGeneric("as.genlight", function(x, ...) standardGeneric("as.genlight"))
 
-setAs("integer", "SNPbin", def=function(from){
+setAs("integer", "SNPbin", def = function(from){
     res <- new("SNPbin", from)
     return(res)
 })
 
-setAs("numeric", "SNPbin", def=function(from){
+setAs("numeric", "SNPbin", def = function(from){
     res <- new("SNPbin", from)
     return(res)
 })
@@ -1124,6 +1124,33 @@ setMethod("as.genlight", "list", function(x, ...) as(x, "genlight"))
 
 
 
+setMethod("tab", "genlight",
+          function(x, freq = FALSE,
+                   NA.method = c("asis", "zero")) {
+              
+              NA.method <- match.arg(NA.method)
+              out <- as.matrix(x)
+
+              if (freq) {
+                  out <- out / ploidy(x)
+              }
+
+              if (NA.method == "mean"){
+                  f1 <- function(vec){
+                      m <- mean(vec, na.rm = TRUE)
+                      vec[is.na(vec)] <- m
+                      return(vec)
+                  }
+
+                  out <- apply(out, 2, f1)
+
+              }
+              if (NA.method == "zero"){
+                  out[is.na(out)] <- ifelse(freq, 0, 0L)
+              }
+
+              return(out)
+          })
 
 
 
