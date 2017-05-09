@@ -52,10 +52,10 @@
     temp.dapc <- suppressWarnings(dapc(train_dat, train_grp, dudi = x$PCA, 
                                        n.pca = n.pca, n.da = n.da))
     temp.pred <- predict.dapc(temp.dapc, newdata = new_dat)
-    if (result=="overall"){
+    if (identical(result, "overall")){
       out <- mean(temp.pred$assign == new_grp)
     }
-    if (result=="groupMean"){
+    if (identical(result, "groupMean")){
       out <- mean(tapply(temp.pred$assign == new_grp, new_grp, mean), na.rm = TRUE)
     }
   }

@@ -63,7 +63,6 @@ dapc.data.frame <- function(x, grp, n.pca=NULL, n.da=NULL,
     X.rank <- sum(pcaX$eig > 1e-14)
     n.pca <- min(X.rank, n.pca)
     if(n.pca >= N) n.pca <- N-1
-    if(n.pca > N/3) warning("number of retained PCs of PCA may be too large (> N /3)\n results may be unstable ")
     n.pca <- round(n.pca)
 
     U <- pcaX$c1[, 1:n.pca, drop=FALSE] # principal axes
@@ -297,7 +296,6 @@ dapc.genlight <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
     X.rank <- sum(pcaX$eig > 1e-14)
     n.pca <- min(X.rank, n.pca)
     if(n.pca >= N) n.pca <- N-1
-    if(n.pca > N/3) warning("number of retained PCs of PCA may be too large (> N /3)\n results may be unstable ")
 
     U <- pcaX$loadings[, 1:n.pca, drop=FALSE] # principal axes
     XU <- pcaX$scores[, 1:n.pca, drop=FALSE] # principal components
@@ -496,14 +494,26 @@ summary.dapc <- function(object, ...){
 ## scatter.dapc
 ##############
 #' @importFrom vegan orditorp
-scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=seasun(length(levels(grp))), pch=20, bg="white", solid=.7,
-                         scree.da=TRUE, scree.pca=FALSE, posi.da="bottomright", posi.pca="bottomleft", bg.inset="white",
-                         ratio.da=.25, ratio.pca=.25, inset.da=0.02, inset.pca=0.02, inset.solid=.5,
-                         onedim.filled=TRUE, mstree=FALSE, lwd=1, lty=1, segcol="black",
-                         legend=FALSE, posi.leg="topright", cleg=1, txt.leg=levels(grp),
-                         cstar = 1, cellipse = 1.5, axesell = FALSE, label = levels(grp), clabel = 1, xlim = NULL, ylim = NULL,
-                         grid = FALSE, addaxes = TRUE, origin = c(0,0), include.origin = TRUE, sub = "", csub = 1, possub = "bottomleft",
-                         cgrid = 1, pixmap = NULL, contour = NULL, area = NULL, label.inds = NULL, ...){
+#' 
+scatter.dapc <- function(x, xax = 1, yax = 2, grp = x$grp,
+                         col = seasun(length(levels(grp))),
+                         pch = 20, bg = "white", solid = .7,
+                         scree.da = TRUE, scree.pca = FALSE,
+                         posi.da = "bottomright",
+                         posi.pca = "bottomleft",
+                         bg.inset = "white",
+                         ratio.da = .25, ratio.pca = .25,
+                         inset.da = 0.02, inset.pca = 0.02, inset.solid = .5,
+                         onedim.filled = TRUE, mstree = FALSE,
+                         lwd = 1, lty = 1, segcol = "black",
+                         legend = FALSE, posi.leg = "topright",
+                         cleg = 1, txt.leg = levels(grp),
+                         cstar = 1, cellipse = 1.5, axesell = FALSE,
+                         label = levels(grp), clabel = 1, xlim = NULL, ylim = NULL,
+                         grid = FALSE, addaxes = TRUE, origin = c(0,0),
+                         include.origin = TRUE, sub = "", csub = 1, possub = "bottomleft",
+                         cgrid = 1, pixmap = NULL, contour = NULL,
+                         area = NULL, label.inds = NULL, ...){
     ONEDIM <- xax==yax | ncol(x$ind.coord)==1
 
 
@@ -534,9 +544,14 @@ scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=seasun(length(levels(gr
         axes <- c(xax,yax)
 
         ## basic empty plot
-        s.class(x$ind.coord[,axes], fac=grp, col=col, cpoint=0, cstar = cstar, cellipse = cellipse, axesell = axesell, label = label,
-                clabel = clabel, xlim = xlim, ylim = ylim, grid = grid, addaxes = addaxes, origin = origin, include.origin = include.origin,
-                sub = sub, csub = csub, possub = possub, cgrid = cgrid, pixmap = pixmap, contour = contour, area = area)
+        s.class(x$ind.coord[,axes], fac = grp, col = col, cpoint = 0,
+                cstar = cstar, cellipse = cellipse, axesell = axesell,
+                label = label, clabel = clabel, xlim = xlim, ylim = ylim,
+                grid = grid, addaxes = addaxes, origin = origin,
+                include.origin = include.origin,
+                sub = sub, csub = csub, possub = possub,
+                cgrid = cgrid, pixmap = pixmap,
+                contour = contour, area = area)
 
         ## add points
         colfac <- pchfac <- grp
@@ -547,29 +562,40 @@ scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=seasun(length(levels(gr
         if(is.numeric(col)) colfac <- as.numeric(colfac)
         if(is.numeric(pch)) pchfac <- as.numeric(pchfac)
 
-        points(x$ind.coord[,xax], x$ind.coord[,yax], col=colfac, pch=pchfac, ...)
-        s.class(x$ind.coord[,axes], fac=grp, col=col, cpoint=0, add.plot=TRUE, cstar = cstar, cellipse = cellipse, axesell = axesell, label = label,
-                clabel = clabel, xlim = xlim, ylim = ylim, grid = grid, addaxes = addaxes, origin = origin, include.origin = include.origin,
-                sub = sub, csub = csub, possub = possub, cgrid = cgrid, pixmap = pixmap, contour = contour, area = area)
+        points(x$ind.coord[,xax],
+               x$ind.coord[,yax],
+               col = colfac, pch = pchfac, ...)
+        s.class(x$ind.coord[,axes], fac = grp, col = col, cpoint = 0,
+                add.plot=TRUE, cstar = cstar, cellipse = cellipse,
+                axesell = axesell, label = label,clabel = clabel,
+                xlim = xlim, ylim = ylim, grid = grid,
+                addaxes = addaxes, origin = origin,
+                include.origin = include.origin,
+                sub = sub, csub = csub, possub = possub,
+                cgrid = cgrid, pixmap = pixmap,
+                contour = contour, area = area)
 
-        # Add labels of individuals if specified. Play around with "air" to get
-        # a satisfactory result.
+        ## Add labels of individuals if specified. Play around with "air" to get
+        ## a satisfactory result.
+
         if (!is.null(label.inds) & is.list(label.inds)) {
-          appendList <- function (x, val) {
-            # recursevly "bind" a list into a longer list,
-            # from http://stackoverflow.com/a/9519964/322912
-            stopifnot(is.list(x), is.list(val))
-            xnames <- names(x)
-            for (v in names(val)) {
-              x[[v]] <- if (v %in% xnames && is.list(x[[v]]) && is.list(val[[v]]))
-                appendList(x[[v]], val[[v]])
-              else c(x[[v]], val[[v]])
+            appendList <- function (x, val) {
+                                        # recursevly "bind" a list into a longer list,
+                                        # from http://stackoverflow.com/a/9519964/322912
+                stopifnot(is.list(x), is.list(val))
+                xnames <- names(x)
+                for (v in names(val)) {
+                    x[[v]] <- if (v %in% xnames && is.list(x[[v]]) && is.list(val[[v]]))
+                        appendList(x[[v]], val[[v]])
+                    else c(x[[v]], val[[v]])
+                }
+                x
             }
-            x
-          }
 
-          do.call("orditorp", c(appendList(list(x = x$ind.coord[, c(xax, yax)], display = "species"),
-                                           label.inds)))
+            do.call("orditorp",
+                    c(appendList(list(x = x$ind.coord[, c(xax, yax)],
+                                      display = "species"),
+                                 label.inds)))
         }
 
         ## add minimum spanning tree if needed
@@ -581,7 +607,7 @@ scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=seasun(length(levels(gr
             y0 <- x$grp.coord[tre[,1], axes[2]]
             x1 <- x$grp.coord[tre[,2], axes[1]]
             y1 <- x$grp.coord[tre[,2], axes[2]]
-            segments(x0, y0, x1, y1, lwd=lwd, lty=lty, col=segcol)
+            segments(x0, y0, x1, y1, lwd = lwd, lty = lty, col = segcol)
         }
 
     } else {
@@ -599,14 +625,20 @@ scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=seasun(length(levels(gr
         allx <- unlist(lapply(ldens, function(e) e$x))
         ally <- unlist(lapply(ldens, function(e) e$y))
         par(bg=bg)
-        plot(allx, ally, type="n", xlab=paste("Discriminant function", pcLab), ylab="Density")
+        plot(allx, ally, type = "n",
+             xlab = paste("Discriminant function", pcLab),
+             ylab = "Density")
         for(i in 1:length(ldens)){
             if(!onedim.filled) {
-                lines(ldens[[i]]$x,ldens[[i]]$y, col=col[i], lwd=2) # add lines
+                lines(ldens[[i]]$x, ldens[[i]]$y, col = col[i], lwd = 2) # add lines
             } else {
-                polygon(c(ldens[[i]]$x,rev(ldens[[i]]$x)),c(ldens[[i]]$y,rep(0,length(ldens[[i]]$x))), col=col[i], lwd=2, border=col[i]) # add lines
+                polygon(c(ldens[[i]]$x, rev(ldens[[i]]$x)),
+                        c(ldens[[i]]$y, rep(0,length(ldens[[i]]$x))),
+                        col = col[i], lwd = 2, border = col[i]) # add lines
             }
-            points(x=x$ind.coord[grp==levels(grp)[i],pcLab], y=rep(0, sum(grp==levels(grp)[i])), pch="|", col=col[i]) # add points for indiv
+            points(x = x$ind.coord[grp==levels(grp)[i], pcLab],
+                   y = rep(0, sum(grp==levels(grp)[i])),
+                   pch = "|", col = col[i]) # add points for indiv
         }
     }
 
@@ -616,10 +648,12 @@ scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=seasun(length(levels(gr
         ## add a legend
         temp <- list(...)$cex
         if(is.null(temp)) temp <- 1
-        if(ONEDIM | temp<0.5 | all(pch=="")) {
-            legend(posi.leg, fill=col, legend=txt.leg, cex=cleg, bg=bg.inset)
+        if(ONEDIM | temp<0.5 | all(pch == "")) {
+            legend(posi.leg, fill = col, legend = txt.leg,
+                   cex = cleg, bg = bg.inset)
         } else {
-            legend(posi.leg, col=col, legend=txt.leg, cex=cleg, bg=bg.inset, pch=pch, pt.cex=temp)
+            legend(posi.leg, col = col, legend = txt.leg, cex = cleg,
+                   bg = bg.inset, pch = pch, pt.cex = temp)
         }
     }
 
@@ -635,8 +669,8 @@ scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=seasun(length(levels(gr
             box()
         }
 
-        add.scatter(inset(), posi=posi.da, ratio=ratio.da, bg.col=bg.inset, inset=inset.da)
-        ##add.scatter.eig(x$eig, ncol(x$loadings), axes[1], axes[2], posi=posi, ratio=ratio, csub=csub) # does not allow for bg
+        add.scatter(inset(), posi = posi.da, ratio = ratio.da,
+                    bg.col = bg.inset, inset = inset.da)
     }
 
     ## eigenvalues PCA
@@ -649,7 +683,8 @@ scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=seasun(length(levels(gr
                  type="h", xaxt="n", yaxt="n", xlab="", ylab="", lwd=2)
             mtext(side=3, "PCA eigenvalues", line=-1.2, adj=.1)
         }
-        add.scatter(inset(), posi=posi.pca, ratio=ratio.pca, bg.col=bg.inset, inset=inset.pca)
+        add.scatter(inset(), posi = posi.pca, ratio = ratio.pca,
+                    bg.col = bg.inset, inset = inset.pca)
     }
 
 
