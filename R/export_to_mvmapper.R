@@ -1,7 +1,11 @@
-#' Export analysis for webapp visualisation
+#' Export analysis for mvmapper visualisation
 #'
-#' These function are used to export results of various analyses to a format
-#' compatible with the webapp available at: ...
+#' \code{mvmapper} is an interactive tool for visualising outputs of a
+#' multivariate analysis on a map from a web browser. The function
+#' \code{export_to_mvmapper} is a generic with methods for several standard
+#' classes of analyses in \code{adegenet} and \code{ade4}. Information on
+#' individual locations, as well as any other relevant data, is passed through
+#' the second argument \code{info}.
 #'
 #' @author Thibaut Jombart \email{thibautjombart@@gmail.com}
 #'
@@ -9,19 +13,54 @@
 #' @param x The analysis to be exported. Can be a \code{dapc}, \code{spca}, or a
 #'   \code{dudi} object.
 #'
-#' @param info A data.frame with additional information containing at least the
-#'   following columns: \code{key} (individual label), \code{latitude}, and
-#'   \code{longitude}.
+#' @param info A \code{data.frame} with additional information containing at
+#' least the following columns: \code{key} (unique individual identifier),
+#' \code{lat} (latitude), and \code{lon} (longitude). Other columns will be
+#' exported as well, but are optional.
 #'
 #' @param ... Further arguments to pass to other methods.
 #'
+#' @return A \code{data.frame} which can serve as input to \code{mvmapper},
+#' containing at least the following columns:
+#'
+#' \itemize{
+#'
+#' \item \code{key}: unique individual identifiers
+#'
+#' \item \code{PC1}: first principal component; further principal components are
+#' optional, but if provided will be numbered and follow \code{PC1}.
+#'
+#' \item \code{lat}: latitude for each individual
+#'
+#' \item \code{lon}: longitude for each individual
+#'
+#' }
+#'
+#' In addition, specific information is added for some analyses:
+#'
+#' \itemize{
+#'
+#' \item \code{spca}: \code{Lag_PC} columns contain the lag-vectors of the
+#' principal components; the lag operator computes, for each individual, the
+#' average score of neighbouring individuals; it is useful for clarifying
+#' patches and clines.
+#'
+#' \item \code{dapc}: \code{grp} is the group used in the analysis;
+#' \code{assigned_grp} is the group assignment based on the discriminant
+#' functions; \code{support} is the statistical support (i.e. assignment
+#' probability) for \code{assigned_grp}.
+#'
+#' }
+#'
+#' 
+#' 
 #' @export
 #'
-#' @rdname export_to_webapp
+#' @rdname export_to_mvmapper
 #'
 
-export_to_webapp <- function(x, ...) {
-  UseMethod("export_to_webapp")
+export_to_mvmapper <- function(x, ...) {
+  UseMethod("export_to_mvmapper")
 }
 
 
@@ -29,9 +68,9 @@ export_to_webapp <- function(x, ...) {
 
 
 #' @export
-#' @rdname export_to_webapp
+#' @rdname export_to_mvmapper
 
-export_to_webapp.default <- function(x, ...) {
+export_to_mvmapper.default <- function(x, ...) {
   msg <- sprintf("No method available for the class %s",
                  paste(class(x), collapse = ", "))
   stop(msg)
@@ -46,7 +85,7 @@ export_to_webapp.default <- function(x, ...) {
 ## containing latitude and longitude, stored in 'info'.
 
 #' @export
-#' @rdname export_to_webapp
+#' @rdname export_to_mvmapper
 #' @examples
 #'
 #' data(sim2pop)
@@ -58,10 +97,10 @@ export_to_webapp.default <- function(x, ...) {
 #'                    lon = other(sim2pop)$xy[,1],
 #'                    Population = pop(sim2pop))
 #'
-#' out <- export_to_webapp(dapc1, info)
+#' out <- export_to_mvmapper(dapc1, info)
 #' head(out)
 
-export_to_webapp.dapc <- function(x, info, ...) {
+export_to_mvmapper.dapc <- function(x, info, ...) {
 
   ## Extract principal components, groups, assigned groups and the corresponding
   ## probability.
@@ -92,9 +131,9 @@ export_to_webapp.dapc <- function(x, info, ...) {
 
 
 #' @export
-#' @rdname export_to_webapp
+#' @rdname export_to_mvmapper
 
-export_to_webapp.dudi <- function(x, info, ...) {
+export_to_mvmapper.dudi <- function(x, info, ...) {
 
   ## Extract principal components, groups, assigned groups and the corresponding
   ## probability.
@@ -118,7 +157,7 @@ export_to_webapp.dudi <- function(x, info, ...) {
 
 
 #' @export
-#' @rdname export_to_webapp
+#' @rdname export_to_mvmapper
 #' @examples
 #'
 #' data(rupica)
@@ -131,11 +170,11 @@ export_to_webapp.dudi <- function(x, info, ...) {
 #'                    lat = rupica$other$xy[,2],
 #'                    lon = rupica$other$xy[,1])
 #'
-#' out <- export_to_webapp(spca1, info)
+#' out <- export_to_mvmapper(spca1, info)
 #' head(out)
 #'
 
-export_to_webapp.spca <- function(x, info, ...) {
+export_to_mvmapper.spca <- function(x, info, ...) {
 
   ## Extract principal components, groups, assigned groups and the corresponding
   ## probability.
