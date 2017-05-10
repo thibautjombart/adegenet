@@ -68,7 +68,11 @@ multivariate analysis on a map from a web browser. The function
 \code{export_to_mvmapper} is a generic with methods for several standard
 classes of analyses in \code{adegenet} and \code{ade4}. Information on
 individual locations, as well as any other relevant data, is passed through
-the second argument \code{info}.
+the second argument \code{info}.\cr
+}
+\details{
+\code{mvmapper} can be found at:
+\url{https://github.com/genomeannotation/mvMapper}
 }
 \examples{
 
@@ -97,6 +101,10 @@ info <- data.frame(key = indNames(rupica),
 out <- export_to_mvmapper(spca1, info)
 head(out)
 
+}
+\seealso{
+\code{mvmapper} is available at:
+\url{https://github.com/genomeannotation/mvMapper}
 }
 \author{
 Thibaut Jombart \email{thibautjombart@gmail.com}

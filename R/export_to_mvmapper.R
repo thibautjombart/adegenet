@@ -5,7 +5,10 @@
 #' \code{export_to_mvmapper} is a generic with methods for several standard
 #' classes of analyses in \code{adegenet} and \code{ade4}. Information on
 #' individual locations, as well as any other relevant data, is passed through
-#' the second argument \code{info}.
+#' the second argument \code{info}.\cr
+#'
+#' \code{mvmapper} can be found at:
+#' \url{https://github.com/genomeannotation/mvMapper}
 #'
 #' @author Thibaut Jombart \email{thibautjombart@@gmail.com}
 #'
@@ -52,12 +55,18 @@
 #'
 #' }
 #'
-#' 
-#' 
+#'
+#'
 #' @export
 #'
 #' @rdname export_to_mvmapper
 #'
+#' @seealso
+#'
+#' \code{mvmapper} is available at:
+#' \url{https://github.com/genomeannotation/mvMapper}
+#'
+
 
 export_to_mvmapper <- function(x, ...) {
   UseMethod("export_to_mvmapper")
