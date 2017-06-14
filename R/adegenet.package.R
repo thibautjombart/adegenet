@@ -306,7 +306,7 @@
 #' "guides" "guide_legend" "geom_boxplot" "geom_violin" "geom_jitter"
 #' "coord_flip"
 #'
-#' @useDynLib adegenet
+#' @useDynLib adegenet, .registration = TRUE
 #'
 
 
