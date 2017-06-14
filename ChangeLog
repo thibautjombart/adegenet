@@ -8,6 +8,9 @@ NEW FEATURES
 	o compoplot is now a generic with methods for different objects,
 	including dapc and snapclust
 
+	o spca is now a generic with methods for genind, data.frame and
+	genlight objects
+
 BUG FIXES
 	o fixed registration of C routines which could cause problems with
 	SNPbin and genlight objects.
