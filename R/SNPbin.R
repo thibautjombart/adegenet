@@ -1126,7 +1126,7 @@ setMethod("as.genlight", "list", function(x, ...) as(x, "genlight"))
 
 setMethod("tab", "genlight",
           function(x, freq = FALSE,
-                   NA.method = c("asis", "zero")) {
+                   NA.method = c("mean", "asis", "zero")) {
               
               NA.method <- match.arg(NA.method)
               out <- as.matrix(x)
