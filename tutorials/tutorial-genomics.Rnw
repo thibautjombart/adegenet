@@ -969,6 +969,40 @@ glMean(x, alleleAsUnit=FALSE)
 
 
 
+% % % % % % % % % %
+\subsubsection{Replacing missing data}
+% % % % % % % % % %
+
+Replacing missing data in \texttt{genlight} objects works like in other object
+classes in \textit{adegenet}, but setting missing alleles at the allele
+frequency of that allele. As of version 2.1.0, the accessor \texttt{tab} is
+implemented for \texttt{genlight} objects and can be used to extract allele
+counts or frequencies, and replace missing data. 
+
+We illustrate this process with a toy example, with diploid data:
+
+<<>>=
+set.seed(1)
+toy <- lapply(1:10, function(i) 
+              sample(c(1:2, NA), 10, 
+                     prob = c(.45, .45, .1), 
+                     replace = TRUE))
+toy
+
+x <- new("genlight", toy, ploidy = 2)
+x
+
+## allele counts
+as.matrix(x)
+
+## allele frequencies, replacing NAs
+tab(x)
+
+@
+
+
+
+
 
 %%%%%%%%%%%%%%%%
 \subsection{Principal Component Analysis (PCA)}
@@ -1040,13 +1074,13 @@ clearer in PCA.
 %%%%%%%%%%%%%%%%
 \subsection{Discriminant Analysis of Principal Components (DAPC)}
 %%%%%%%%%%%%%%%%
-Discriminant analysis of Principal Components (DAPC) is implemented for \texttt{genlight} objects by
-an appropriate method for the \texttt{find.clusters} and \texttt{dapc} generics.
-To put it simply, you can run \texttt{find.clusters} and \texttt{dapc} on \texttt{genlight} objects and the appropriate
-functions will be used.
-As in \texttt{glPca}, these methods never require more than a couple of genomes to be translated into
-allele frequencies at a time, thereby minimizing RAM requirements.
-\\
+Discriminant analysis of Principal Components (DAPC) is implemented for
+\texttt{genlight} objects by an appropriate method for the
+\texttt{find.clusters} and \texttt{dapc} generics.  To put it simply, you can
+run \texttt{find.clusters} and \texttt{dapc} on \texttt{genlight} objects and
+the appropriate functions will be used.  As in \texttt{glPca}, these methods
+never require more than a couple of genomes to be translated into allele
+frequencies at a time, thereby minimizing RAM requirements.  \\
 
 Below, we illustrate DAPC on a \texttt{genlight} with 100 individuals, including only 50 structured SNPs out of 10,000
 non-structured SNPs:
@@ -1058,10 +1092,19 @@ dapc1 <- dapc(x, n.pca=10, n.da=1)
 <<echo=FALSE>>=
 load("Robjects/x.dapc1.RData")
 @
+<<>>=
+dapc1
+@
 
-For the last 10 structured SNPs (located at the end of the alignment), the two groups of individuals have different (random) distribution of
-allele frequencies, while they share the same distributions in other loci.
-DAPC can still make some decent discrimination:
+\noindent Note that for cross-validation (\texttt{xvalDapc}) you will need to extract the
+table of allele frequencies first using \texttt{tab}.
+
+
+For the last 10 structured SNPs (located at the end of the alignment), the two
+groups of individuals have different (random) distribution of allele
+frequencies, while they share the same distributions in other loci.  DAPC can
+still make some decent discrimination:
+
 <<tidy=FALSE>>=
 scatter(dapc1,scree.da=FALSE, bg="white", posi.pca="topright", legend=TRUE,
         txt.leg=paste("group", 1:2), col=c("red","blue"))
