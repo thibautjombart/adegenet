@@ -741,7 +741,7 @@ computationally intensive). Here is an example using the \texttt{nancycats} data
 <<eval=FALSE>>=
 data(nancycats)
 x <- nancycats
-mat <- as.matrix(na.replace(x, method="mean"))
+mat <- tab(x, NA.method="mean")
 grp <- pop(x)
 
 xval <- xvalDapc(mat, grp, n.pca.max = 300, training.set = 0.9,
