@@ -1271,7 +1271,7 @@ and \textit{adegenet}.
 
 Useful functions include:
 \begin{itemize}
-  \item \texttt{scaleGen} (\textit{adegenet}): centre/scale allele frequencies and replaces missing
+  \item \texttt{tab} (\textit{adegenet}): extract allele counts or frequencies and replaces missing
     data; useful, among other things, before running a principal component analysis (PCA).
   \item \texttt{dudi.pca} (\textit{ade4}): implements PCA; can be used on transformed allele
     frequencies of individuals or populations.
@@ -1345,40 +1345,38 @@ genetic data.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Performing a Principal Component Analysis on \texttt{genind} objects}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The tables contained in \texttt{genind} objects can be submitted to a Principal Component Analysis
-(PCA) to seek a summary of the genetic diversity among the sampled individuals.
-Such analysis is straightforward using \textit{adegenet} to prepare data and \textit{ade4} for the analysis \textit{per se}.
-One has first to replace missing data (NAs) and transform the allele frequencies in an appropriate way.
-These operations are achieved by \texttt{scaleGen}.
-NAs are replaced by the mean allele frequency; different scaling options are available (argument
-\texttt{method}), but in general centring is sufficient since allele frequencies have inherently
-comparable variances.
+
+The tables contained in \texttt{genind} objects can be submitted to a Principal
+Component Analysis (PCA) to seek a summary of the genetic diversity among the
+sampled individuals.  Such analysis is straightforward using \textit{adegenet}
+to prepare data and \textit{ade4} for the analysis \textit{per se}.  One has
+first to extract allele counts or frequencies from the \texttt{genind} object
+and replace missing data (NAs) by the mean allele frequency. This is achieved by \texttt{tab}:
+
 <<pcaexpl>>=
 data(microbov)
 sum(is.na(microbov$tab))
 @
-There are 6325 missing data. They will all be replaced by \texttt{scaleGen}:
+There are \Sexpr{sum(is.na(microbov$tab))} missing data, which will be replaced by \texttt{tab}:
 <<>>=
-X <- scaleGen(microbov, NA.method="mean")
+X <- tab(microbov, freq = TRUE, NA.method = "mean")
 class(X)
 dim(X)
 X[1:5,1:5]
 @
 
-\noindent Note that alternatively, we could have used \texttt{na.replace} to replace missing data,
-and then left the centring/scaling to \texttt{dudi.pca}.
-\\
 
 The analysis can now be performed.
-We disable the scaling in \texttt{dudi.pca}, which would erase the scaling choice made earlier in \texttt{scaleGen}.
+We disable the scaling in \texttt{dudi.pca}, as all 'variables' (alleles) are vary on a common scale. 
 Note: in practice, retained axes can be chosen interactively by removing the arguments \texttt{scannf=FALSE,nf=3}.
 <<>>=
-pca1 <- dudi.pca(X,cent=FALSE,scale=FALSE,scannf=FALSE,nf=3)
-barplot(pca1$eig[1:50],main="PCA eigenvalues", col=heat.colors(50))
+pca1 <- dudi.pca(X, scale = FALSE, scannf = FALSE, nf = 3)
+barplot(pca1$eig[1:50], main = "PCA eigenvalues", col = heat.colors(50))
 @
 <<>>=
 pca1
 @
+
 The output object \texttt{pca1} is a list containing various information; of particular interest are:
 \begin{itemize}
 \item \texttt{\$eig}: the eigenvalues of the analysis, indicating the amount of variance represented

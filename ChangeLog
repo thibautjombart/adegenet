@@ -1,3 +1,18 @@
+
+
+			CHANGES IN ADEGENET VERSION 2.1.0
+NEW FEATURES
+	o new set of functions 'snapclust' for genetic clustering using
+	fast maximum-likelihood estimation
+
+	o compoplot is now a generic with methods for different objects,
+	including dapc and snapclust
+
+BUG FIXES
+	o fixed registration of C routines which could cause problems with
+	SNPbin and genlight objects.
+
+	
 			CHANGES IN ADEGENET VERSION 2.0.2
 BUG FIXES
 	o df2genind will now replace "." in alleles with "_" (or "p" if sep = "_")
