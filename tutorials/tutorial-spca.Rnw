@@ -160,24 +160,25 @@ library(adegenet)
 @
 <<message=FALSE>>=
 library(spdep)
-library(adehabitat)
 data(spcaIllus)
 obj <- spcaIllus$dat2A
 obj
-head(tab(obj[loc=1]))
+head(tab(obj[loc = 1]))
 @
 \noindent The object \texttt{obj} is a \texttt{genind} object; note
 that here, we only displayed the table for the first locus (\texttt{loc=1}).
 \\
 
 
-The function performing the sPCA is \texttt{spca}; it accepts a bunch
-of arguments, but only the first two are mandatory to perform the
-analysis (see \texttt{?spca} for further information):
+The function performing the sPCA is \texttt{spca}. As of \textit{adegenet}
+2.1.0, it is a generic with methods for various types of objects. The
+\texttt{genind} method accepts a bunch of arguments, but only the first two are
+mandatory to perform the analysis (see \texttt{?spca} for further information):
 <<>>=
-args(spca)
+methods("spca")
+args(spca.genind)
 @
-The argument \texttt{obj} is a \texttt{genind}/\texttt{genpop} object.
+The argument \texttt{obj} is a \texttt{genind} object.
 By definition in sPCA, the studied entities are georeferenced.
 The spatial information can be provided to the function \texttt{spca}
 in several ways, the first being through the \texttt{xy} argument,
@@ -213,13 +214,13 @@ Note that many of the \texttt{spca} arguments are in fact arguments
 for \texttt{chooseCN}: \texttt{type}, \texttt{ask}, \texttt{plot.nb},
 \texttt{edit.nb}, \texttt{d1}, \texttt{d2}, \texttt{k}, \texttt{a}, and \texttt{dmin}.
 For instance, the command:
-<<eval=FALSE>>=
+<<eval = FALSE>>=
 mySpca <- spca(obj,type=1,ask=FALSE,scannf=FALSE)
 @
 \noindent performs a sPCA using the Delaunay triangulation as
 connection network (\texttt{type=1}, see \texttt{?chooseCN}), while
 the command:
-<<>>=
+<<message = FALSE>>=
 mySpca <- spca(obj,type=5,d1=0,d2=2,scannf=FALSE)
 @
 \noindent computes a sPCA using a connection network which defines
@@ -597,7 +598,6 @@ of objects storing genotypes (as opposed to population data) in \textit{adegenet
 \texttt{rupica} also contains topographic information about the
 sampled area, which can be displayed by calling
 \texttt{rupica\$other\$showBauges}.
-Altitude maps are displayed using the \textit{adehabitat} package \cite{tj440}.
 The spatial distribution of the sampling can be displayed as follows:
 <<dev='png',echo=TRUE>>=
 rupica$other$showBauges()
@@ -648,17 +648,16 @@ t.test(rupica.smry$Hexp, rupica.smry$Hobs,paired=TRUE,var.equal=TRUE)
 We can seek a global picture of the genetic diversity among genotypes
 using a Principal Component Analysis (PCA, function \texttt{dudi.pca} in the \texttt{ade4}
 package).
-The analysis is performed on a table of standardized alleles
-frequencies, obtained by \texttt{scaleGen}.
-Note that we disable the scaling option when performing the PCA, which would otherwise re-scale the
-data and therefore erase the previous scaling of \texttt{scaleGen}.
+The analysis is performed on a table of alleles
+frequencies, obtained by \texttt{tab}.
+
 The function \texttt{dudi.pca} displays a barplot of
 eigenvalues and asks for a number of retained principal components:
 <<results='hide'>>=
-rupica.X <- scaleGen(rupica)
-rupica.pca1 <- dudi.pca(rupica.X, cent=FALSE, scale=FALSE, scannf=FALSE, nf=2)
-barplot(rupica.pca1$eig, main="Rupica dataset - PCA eigenvalues",
-        col=heat.colors(length(rupica.pca1$eig)))
+rupica.X <- tab(rupica, freq = TRUE, NA.method = "mean")
+rupica.pca1 <- dudi.pca(rupica.X, scale = TRUE, scannf = FALSE, nf = 2)
+barplot(rupica.pca1$eig, main = "Rupica dataset - PCA eigenvalues",
+        col = heat.colors(length(rupica.pca1$eig)))
 @
 
 \noindent The output produced by \texttt{dudi.pca} is a \texttt{dudi} object.
