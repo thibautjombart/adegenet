@@ -107,6 +107,7 @@ Collate:
     showmekittens.R
     spca_randtest.R
     export_to_mvmapper.R
+    doc_C_routines.R
     zzz.R
 License: GPL (>=2)
 LazyLoad: yes
