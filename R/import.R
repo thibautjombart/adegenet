@@ -1262,7 +1262,7 @@ read.snp <- function(file, quiet=FALSE, chunkSize=1000,
 #' provided, a list of two components is returned, containing chromosome and
 #' position information.
 #'
-extract.PLINKmap <- function(file, x=NULL){
+extract.PLINKmap <- function(file, x = NULL){
     ## CHECK EXTENSION ##
     ext <- .readExt(file)
     ext <- toupper(ext)
@@ -1271,28 +1271,33 @@ extract.PLINKmap <- function(file, x=NULL){
 
     ## READ FILE ##
     ## find nb of columns
-    txt <- scan(file,what="character",sep="\n",quiet=TRUE,  nlines=1)
+    txt <- scan(file, what = "character", sep = "\n", quiet = TRUE,  nlines = 1)
     nb.col <- length( unlist(strsplit(txt,"[[:blank:]]+")))
 
     ## read file
-    txt <- scan(file,what="character",sep="\t",quiet=TRUE)
+    txt <- scan(file, what = "character", sep= "\n", quiet = TRUE)
+    txt <- unlist(strsplit(as.vector(txt), split = "[[:blank:]]"))
     txt <- matrix(txt, ncol=4, byrow=TRUE)
 
 
     ## EXTRACT INFO AND RETURN OBJECT ##
     ## return a genlight
-    if(!is.null(x)){
-        ## match data
-        ord <- match(locNames(x), txt[,2]) # check that it is the 2nd column
+    if (!is.null(x)) {
         if(!inherits(x, "genlight")) stop("x is not a genlight object")
-        other(x)$chromosome <- factor(txt[ord,1])
-        other(x)$position <- as.integer(txt[ord,4])
+
+        ## match data: we need remove the potential alleles added to locus names        
+        marker_id <- sub("_.*$", "", locNames(x))
+        ord <- match(marker_id, txt[,2])
+        
+        chromosome(x) <- factor(txt[ord, 1])
+        position(x) <- as.integer(txt[ord, 4])
 
         return(x)
     }
 
     ## return a list
-    res <- list(chromosome=factor(txt[ord,1]), position=as.integer(txt[ord,4]))
+    res <- list(chromosome = factor(txt[ord, 1]),
+                position = as.integer(txt[ord, 4]))
 
     return(res)
 } # end extract.PLINKmap
