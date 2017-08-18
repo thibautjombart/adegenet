@@ -24,9 +24,9 @@ returned.}
 Do not use. We work on that stuff. Contact us if interested.
 }
 \seealso{
-\code{\link{snapclust}} to generate individual clustering
-    solutions, and \code{\link{BIC.snapclust}} for computing BIC for
-    \code{snapclust} objects.
+\code{\link{snapclust}} to generate individual clustering solutions,
+and \code{\link{BIC.snapclust}} for computing BIC for \code{snapclust}
+objects.
 }
 \author{
 Thibaut Jombart \email{thibautjombart@gmail.com}

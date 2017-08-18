@@ -6,9 +6,9 @@
 #'
 #' @export
 #'
-#' @seealso \code{\link{snapclust}} to generate individual clustering
-#'     solutions, and \code{\link{BIC.snapclust}} for computing BIC for
-#'     \code{snapclust} objects.
+#' @seealso \code{\link{snapclust}} to generate individual clustering solutions,
+#' and \code{\link{BIC.snapclust}} for computing BIC for \code{snapclust}
+#' objects.
 #'
 #' @param max An integer indicating the maximum number of clusters to seek;
 #'     \code{\link{snapclust}} will be run for all k from 2 to max.
@@ -23,10 +23,6 @@
 #'
 #' @param ... Arguments passed to \code{\link{snapclust}}.
 #'
-#' @seealso \code{\link{snapclust} to generate clustering solutions,
-#'     \code{\link{AIC.snapclust}} for Akaike's criterion, and
-#'     \code{\link{BIC.snapclust}} for the Bayesian information criterion.
-#' 
 snapclust.choose.k <- function(max, ..., IC = AIC, IC.only = TRUE) {
 
     ## This function is a glorified for loop which runs snapclust for several
