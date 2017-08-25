@@ -103,6 +103,7 @@ Collate:
     AIC.snapclust.R
     AICc.snapclust.R
     BIC.snapclust.R
+    KIC.snapclust.R
     snapclust.choose.k.R
     servers.R
     showmekittens.R
