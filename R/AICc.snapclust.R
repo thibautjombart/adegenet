@@ -31,6 +31,6 @@ AICc.snapclust <- function(object, ...) {
     ## The number of parameters is defined as:
     ## (number of independent allele frequencies) x (nb clusters).
     k <- object$n.param
-    n <- length(x$group)
+    n <- length(object$group)
     AIC(object) + (2 * k * (k + 1)) / (n - k -1)
 }

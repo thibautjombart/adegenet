@@ -101,6 +101,7 @@ Collate:
     pairDist.R
     snapclust.R
     AIC.snapclust.R
+    AICc.snapclust.R
     BIC.snapclust.R
     snapclust.choose.k.R
     servers.R

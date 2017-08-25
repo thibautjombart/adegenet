@@ -13,8 +13,8 @@ snapclust.choose.k(max, ..., IC = AIC, IC.only = TRUE)
 \item{...}{Arguments passed to \code{\link{snapclust}}.}
 
 \item{IC}{A function computing the information criterion for
-\code{\link{BIC.snapclust}} objects. Available statistics are
-\code{AIC} (default) and \code{BIC}.}
+\code{\link{snapclust}} objects. Available statistics are
+\code{AIC} (default), \code{AICc}, and \code{BIC}.}
 
 \item{IC.only}{A logical (TRUE by default) indicating if IC values only
 should be returned; if \code{FALSE}, full \code{snapclust} objects are

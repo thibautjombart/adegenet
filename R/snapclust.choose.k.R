@@ -14,8 +14,8 @@
 #'     \code{\link{snapclust}} will be run for all k from 2 to max.
 #'
 #' @param IC A function computing the information criterion for
-#'     \code{\link{BIC.snapclust}} objects. Available statistics are
-#'     \code{AIC} (default) and \code{BIC}.
+#'     \code{\link{snapclust}} objects. Available statistics are
+#'     \code{AIC} (default), \code{AICc}, and \code{BIC}.
 #' 
 #' @param IC.only A logical (TRUE by default) indicating if IC values only
 #'     should be returned; if \code{FALSE}, full \code{snapclust} objects are
@@ -66,9 +66,9 @@ snapclust.choose.k <- function(max, ..., IC = AIC, IC.only = TRUE) {
         out <- out.IC
     } else {
         out <- list(AIC = out.IC, objects = out.objects)
-        if (IC == BIC) {
-            names(out)[1] <- "BIC"
-        }
+
+        ## names stat as appropriate
+        names(out)[1] <- deparse(substitute(IC))
     }
 
     return(out)
@@ -98,7 +98,7 @@ snapclust.choose.k <- function(max, ..., IC = AIC, IC.only = TRUE) {
     
     ll <- .global.ll(group, ll.mat)
 
-    ## make a fake snapclust object to get BIC
+    ## make a fake snapclust object to get IC
     fake <- list(ll = ll,
                  group = group,
                  n.param = ncol(tab(x)) - nLoc(x))
