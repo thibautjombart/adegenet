@@ -13,10 +13,10 @@
 #'
 #' @seealso  \code{\link{snapclust}} to generate clustering solutions.
 #'
-#' @rdname AICc
+#' @rdname KIC
 #'
-AICc <- function(object, ...) {
-    UseMethod("AICc", object)
+KIC <- function(object, ...) {
+    UseMethod("KIC", object)
 }
 
 
@@ -24,14 +24,13 @@ AICc <- function(object, ...) {
 
 
 #' @export
-#' @aliases AICc.snapclust
-#' @rdname AICc
-AICc.snapclust <- function(object, ...) {
+#' @aliases KIC.snapclust
+#' @rdname KIC
+KIC.snapclust <- function(object, ...) {
 
     ## The number of parameters is defined as:
     ## (number of independent allele frequencies) x (nb clusters).
     k <- object$n.param
-    n <- length(object$group)
-    -2 * object$ll + (2 * k * n) / (n - k - 1)
+    -2 * object$ll + 3 * (k + 1)
 
 }
