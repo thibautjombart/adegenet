@@ -37,10 +37,10 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
       old.i <- i
       i <- match(i, indNames(x))
       if(any(is.na(i))){
-          warning(paste("the following specified individuals do not exist:", old.i[is.na(i)]))
+          warning(paste("the following specified individuals do not exist:", paste0(old.i[is.na(i)], collapse = ", ")), call. = FALSE)
           i <- i[!is.na(i)]
           if(length(i)==0) {
-              warning("no individual selected - ignoring")
+              warning("no individual selected - ignoring", call. = FALSE)
               i <- TRUE
           }
       }
@@ -52,7 +52,11 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
     if(!is.character(pop)) pop <- popNames(x)[pop]
     temp <- !pop %in% pop(x)
     if (any(temp)) { # if wrong population specified
-      warning(paste("the following specified populations do not exist:", pop[temp]))
+      warning(paste("the following specified populations do not exist:", paste0(pop[temp], collapse = ", ")), call. = FALSE)
+      if (all(temp)){
+        warning("no populations selected - ignoring", call. = FALSE)
+        pop <- pop(x)
+      }
     }
     i <- pop(x) %in% pop
   }
@@ -76,7 +80,11 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
       if(!is.character(loc)) loc <- locNames(x)[loc]
       temp <- !loc %in% locFac(x)
       if (any(temp)) { # if wrong loci specified
-        warning(paste("the following specified loci do not exist:", loc[temp]))
+        warning(paste("the following specified loci do not exist:", paste0(loc[temp], collapse = ", ")), call. = FALSE)
+        if (all(temp)){
+          warning("no loci selected - ignoring", call. = FALSE)
+          loc <- x@loc.fac
+        }
       }
       j <- x$loc.fac %in% loc
     } # end loc argument
@@ -154,10 +162,10 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
       old.i <- i
       i <- match(i, popNames(x))
       if(any(is.na(i))){
-          warning(paste("the following specified populations do not exist:", old.i[is.na(i)]))
+          warning(paste("the following specified populations do not exist:", paste0(old.i[is.na(i)], collapse = ", ")), call. = FALSE)
           i <- i[!is.na(i)]
           if(length(i)==0) {
-              warning("no population selected - ignoring")
+              warning("no population selected - ignoring", call. = FALSE)
               i <- TRUE
           }
       }
@@ -169,7 +177,11 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
     if(!is.character(loc)) loc <- locNames(x)[loc]
     temp <- !loc %in% locFac(x)
     if(any(temp)) { # si mauvais loci
-      warning(paste("the following specified loci do not exist:", loc[temp]))
+      warning(paste("the following specified loci do not exist:", paste0(loc[temp], collapse = ", ")), call. = FALSE)
+    }
+    if (all(temp)){
+      warning("no loci selected - ignoring", call. = FALSE)
+      loc <- x@loc.fac
     }
     j <- x$loc.fac %in% loc
   } # end loc argument
@@ -206,7 +218,7 @@ setMethod("[", "genpop", function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=
       } else if(length(obj) == n) { # if the element is not a matrix but has a length == n
         obj <- obj[i]
         if(is.factor(obj)) {obj <- factor(obj)}
-      } else {warning(paste("cannot treat the object",namesOther[counter]))}
+      } else {warning(paste("cannot treat the object",namesOther[counter]), call. = FALSE)}
 
       return(obj)
     } # end f1
