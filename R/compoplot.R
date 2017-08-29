@@ -35,6 +35,41 @@ compoplot <- function(x, ...){
 }
 
 
+#' Palette parser
+#'
+#' @param inPAL a palette function OR a character vector (named or unnamed)
+#' @param npop number of populations/colors desired
+#' @param pnames names of these populations if `inPal` is a function
+#'
+#' @md
+#' @return a named character vector specifying the colors for the palette.
+#' @keywords internal
+#' 
+#' @note This was originally from the poppr package [commit a0818eed6](https://github.com/grunwaldlab/poppr/commit/a0818eed6a72d9145e46da73715dc22be0640b0c)
+#'
+#' @examples
+#' palette_parser(rainbow, 5, letters[1:5])
+#' palette_parser(colors()[1:5], 5, letters[1:5])
+.palette_parser <- function(inPAL, npop, pnames){
+  PAL <- try(match.fun(inPAL, descend = FALSE), silent = TRUE)
+  if ("try-error" %in% class(PAL)){
+    if (all(pnames %in% names(inPAL))){
+      color <- inPAL[pnames]
+    } else if (npop == length(inPAL)){
+      color <- stats::setNames(inPAL, pnames)
+    } else if (npop < length(inPAL)){
+      warning("Number of populations fewer than number of colors supplied. Discarding extra colors.")
+      color <- stats::setNames(inPAL[1:npop], pnames)
+    } else {
+      warning("insufficient color palette supplied. Using funky().")
+      color <- stats::setNames(funky(npop), pnames)
+    }
+  } else {
+    color   <- stats::setNames(PAL(npop), pnames)
+  }
+  return(color)
+}
+
 
 #' @rdname compoplot
 #'
@@ -71,9 +106,6 @@ compoplot.matrix <- function(x, col.pal = funky, border = NA,
                              posi = NULL, cleg = .8,
                              bg = transp("white"), ...) {
 
-    ## generate colors, process arguments
-    col <- col.pal(ncol(x))
-
     ## individual labels
     if (!show.lab) {
         lab <- rep("", nrow(x))
@@ -93,7 +125,9 @@ compoplot.matrix <- function(x, col.pal = funky, border = NA,
     if (is.null(txt.leg)) {
         txt.leg <- seq_len(ncol(x))
     }
-
+    ## generate colors, process arguments
+    col <- .palette_parser(col.pal, ncol(x), txt.leg)
+    
     ## position of the legend
     if (is.null(posi)) {
         posi <- list(x=0, y=-.01)
