@@ -147,3 +147,29 @@ test_that("tab will return frequencies for PA data", {
   res  <- tab(apop)/rowSums(tab(apop))
   expect_equivalent(atab, res)
 })
+
+test_that("subsettors give one warning for individuals", {
+  skip_on_cran()
+  expect_warning(microbov[c("bippity", "hop", "bop")], "the following specified individuals do not exist: bippity, hop, bop")
+  expect_warning(microbov[c("bippity", "hop", "bop")], "no individual selected - ignoring")
+})
+
+
+test_that("subsettors give one warning for loci", {
+  skip_on_cran()
+  expect_warning(microbov[loc = c("bippity", "hop", "bop")], "the following specified loci do not exist: bippity, hop, bop")
+  expect_warning(microbov[loc = c("bippity", "hop", "bop")], "no loci selected - ignoring")
+})
+  
+test_that("subsettors give one warning for populations", {
+  skip_on_cran()
+  expect_warning(microbov[pop = c("bippity", "hop", "bop")], "the following specified populations do not exist: bippity, hop, bop")
+  expect_warning(microbov[pop = c("bippity", "hop", "bop")], "no populations selected - ignoring")
+})
+
+test_that("subsettors give one warning for genpop objects", {
+  skip_on_cran()
+  micropop <- genind2genpop(microbov, quiet = TRUE)
+  expect_warning(micropop[c("bippity", "hop", "bop")], "the following specified populations do not exist: bippity, hop, bop")
+  expect_warning(micropop[c("bippity", "hop", "bop")], "no population selected - ignoring")
+})
