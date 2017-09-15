@@ -1,8 +1,11 @@
 \encoding{UTF-8}
 \name{DAPC cross-validation}
 \alias{xvalDapc}
+\alias{xvalDapc.default}
 \alias{xvalDapc.data.frame}
 \alias{xvalDapc.matrix}
+\alias{xvalDapc.genlight}
+\alias{xvalDapc.genind}
 \title{Cross-validation for Discriminant Analysis of Principal Components (DAPC)}
 \description{
   The function \code{xvalDapc} performs stratified cross-validation of DAPC 
@@ -11,11 +14,12 @@
   \code{data.frame} and \code{matrix}.\cr
 }
 \usage{
-xvalDapc(x, grp, n.pca.max = 300, n.da = NULL,
+xvalDapc(x, \dots)
+
+\method{xvalDapc}{default}(x, grp, n.pca.max = 300, n.da = NULL,
               training.set = 0.9, result = c("groupMean", "overall"),
               center = TRUE, scale = FALSE,
               n.pca=NULL, n.rep = 30, xval.plot = TRUE, \dots)
-
 
 \method{xvalDapc}{data.frame}(x, grp, n.pca.max = 300, n.da = NULL,
               training.set = 0.9, result = c("groupMean", "overall"),
@@ -26,6 +30,10 @@ xvalDapc(x, grp, n.pca.max = 300, n.da = NULL,
               training.set = 0.9, result = c("groupMean", "overall"),
               center = TRUE, scale = FALSE,
               n.pca=NULL, n.rep = 30, xval.plot = TRUE, \dots)
+
+\method{xvalDapc}{genlight}(x, \dots)
+
+\method{xvalDapc}{genind}(x, \dots)
 }
 \arguments{
   \item{x}{\code{a data.frame} or a \code{matrix} used as input of DAPC.}

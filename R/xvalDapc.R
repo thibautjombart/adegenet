@@ -1,4 +1,7 @@
 
+
+xvalDapc <- function (x, ...) UseMethod("xvalDapc")
+
 ##############
 ## xvalDapc ##
 ##############
@@ -48,7 +51,12 @@
     
     new_grp   <- x$GRP[-x$KEEP]
     train_grp <- x$GRP[x$KEEP]      
-    
+    dapclist <- list(train_dat,
+                     train_grp,
+                     n.pca = n.pca,
+                     n.da = n.da,
+                     dudi = x$PCA)
+    temp.dapc <- suppressWarnings(do.call("dapc", dapclist))
     temp.dapc <- suppressWarnings(dapc(train_dat, train_grp, dudi = x$PCA, 
                                        n.pca = n.pca, n.da = n.da))
     temp.pred <- predict.dapc(temp.dapc, newdata = new_dat)
@@ -100,7 +108,7 @@
 ##############
 ## xvalDapc ##
 ##############
-xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9, 
+xvalDapc.default <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9, 
                      result = c("groupMean", "overall"), center = TRUE, scale = FALSE, 
                      n.pca = NULL, n.rep = 30, xval.plot = TRUE, ...){
   
@@ -172,9 +180,10 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
   
   ## GET FULL PCA ##
   if(missing(n.pca.max)) n.pca.max <- min(dim(x))
-  pcaX <- dudi.pca(x, nf=n.pca.max, scannf=FALSE, center=center, scale=scale)
+
+  pcaX      <- dudi.pca(x, nf=n.pca.max, scannf=FALSE, center=center, scale=scale)
   n.pca.max <- min(n.pca.max, pcaX$rank, N.training-1) # re-defines n.pca.max (so user's input may not be the value used...)
-  
+    
   ## DETERMINE N.PCA IF NEEDED ##
   if(n.pca.max < 10){
     runs <- n.pca.max
@@ -252,6 +261,12 @@ xvalDapc <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9,
 } # end xvalDapc.data.frame
 
 
-xvalDapc.data.frame <- xvalDapc
+xvalDapc.data.frame <- xvalDapc.default
 xvalDapc.matrix <- xvalDapc.data.frame
+xvalDapc.genlight <- function(x, ...){
+  xvalDapc.matrix(as.matrix(x), ...)
+}
+xvalDapc.genind <- function(x, ...){
+  xvalDapc.matrix(tab(x), ...)
+}
 
