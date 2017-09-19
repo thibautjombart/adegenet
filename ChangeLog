@@ -18,8 +18,10 @@ BUG FIXES
 	o fixed issues relating to `read.PLINK` and the reading of `.map`
 	files (issues 94 and 188)
 
-
-
+	o fixed issues relating xvalDapc with non-table objects by registering
+	methods for genind and genlight object (issue 193)
+	
+	
 			CHANGES IN ADEGENET VERSION 2.0.2
 BUG FIXES
 	o df2genind will now replace "." in alleles with "_" (or "p" if sep = "_")
