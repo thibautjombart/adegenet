@@ -9,7 +9,7 @@
 #' \code{data.frame} and writes the output to a .csv file.\cr
 #'
 #' \code{mvmapper} can be found at:
-#' \url{https://github.com/genomeannotation/mvMapper}
+#' \url{https://popphylotools.github.io/mvMapper/}
 #'
 #' @author Thibaut Jombart \email{thibautjombart@@gmail.com}
 #'

@@ -83,7 +83,7 @@ the second argument \code{info}. By default, the function returns a formatted
 }
 \details{
 \code{mvmapper} can be found at:
-\url{https://github.com/genomeannotation/mvMapper}
+\url{https://popphylotools.github.io/mvMapper/}
 }
 \examples{
 
