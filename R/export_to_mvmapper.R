@@ -5,7 +5,8 @@
 #' \code{export_to_mvmapper} is a generic with methods for several standard
 #' classes of analyses in \code{adegenet} and \code{ade4}. Information on
 #' individual locations, as well as any other relevant data, is passed through
-#' the second argument \code{info}.\cr
+#' the second argument \code{info}. By default, the function returns a formatted
+#' \code{data.frame} and writes the output to a .csv file.\cr
 #'
 #' \code{mvmapper} can be found at:
 #' \url{https://github.com/genomeannotation/mvMapper}
@@ -20,6 +21,14 @@
 #' least the following columns: \code{key} (unique individual identifier),
 #' \code{lat} (latitude), and \code{lon} (longitude). Other columns will be
 #' exported as well, but are optional.
+#'
+#'
+#' @param write_file A \code{logical} indicating if the output should be written
+#'   out to a .csv file. Defaults to \code{TRUE}.
+#'
+#' @param out_file A character string indicating the file to which the output
+#'   should be written. If NULL, the file used will be named
+#'   \code{'mvmapper_data_[date and time].csv'}
 #'
 #' @param ... Further arguments to pass to other methods.
 #'
@@ -109,7 +118,7 @@ export_to_mvmapper.default <- function(x, ...) {
 #' out <- export_to_mvmapper(dapc1, info)
 #' head(out)
 
-export_to_mvmapper.dapc <- function(x, info, ...) {
+export_to_mvmapper.dapc <- function(x, info, write_file = TRUE, out_file = NULL, ...) {
 
   ## Extract principal components, groups, assigned groups and the corresponding
   ## probability.
@@ -131,6 +140,7 @@ export_to_mvmapper.dapc <- function(x, info, ...) {
   info <- .check_info(info, key)
 
   out <- merge(analysis, info, by = "key")
+  .write_mvmapper_output(out, write_file, out_file)
   return(out)
 }
 
@@ -142,7 +152,7 @@ export_to_mvmapper.dapc <- function(x, info, ...) {
 #' @export
 #' @rdname export_to_mvmapper
 
-export_to_mvmapper.dudi <- function(x, info, ...) {
+export_to_mvmapper.dudi <- function(x, info, write_file = TRUE, out_file = NULL, ...) {
 
   ## Extract principal components, groups, assigned groups and the corresponding
   ## probability.
@@ -157,6 +167,7 @@ export_to_mvmapper.dudi <- function(x, info, ...) {
   info <- .check_info(info, key)
 
   out <- merge(analysis, info, by = "key")
+  .write_mvmapper_output(out, write_file, out_file)
   return(out)
 }
 
@@ -183,7 +194,7 @@ export_to_mvmapper.dudi <- function(x, info, ...) {
 #' head(out)
 #'
 
-export_to_mvmapper.spca <- function(x, info, ...) {
+export_to_mvmapper.spca <- function(x, info, write_file = TRUE, out_file = NULL, ...) {
 
   ## Extract principal components, groups, assigned groups and the corresponding
   ## probability.
@@ -200,6 +211,7 @@ export_to_mvmapper.spca <- function(x, info, ...) {
   info <- .check_info(info, key)
 
   out <- merge(analysis, info, by = "key")
+  .write_mvmapper_output(out, write_file, out_file)
   return(out)
 }
 
@@ -233,4 +245,27 @@ export_to_mvmapper.spca <- function(x, info, ...) {
   }
 
   return(info)
+}
+
+
+
+
+
+
+## This internal function writes results to a csv file if needed, and does
+## nothing otherwise.
+##
+## 'x' is the data.frame output from the export function
+## other arguments as documented
+##
+.write_mvmapper_output <- function(x, write_file = TRUE, out_file = NULL) {
+  if (write_file) {
+    if (is.null(out_file)) {
+      out_file <- paste0("mvmapper_data_",
+                         gsub(" ", "_", Sys.time()),
+                         ".csv")
+    }
+    message("Writing output to the file: ", out_file)
+    write.csv(x, out_file, row.names = FALSE)
+  }
 }

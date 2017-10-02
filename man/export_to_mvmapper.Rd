@@ -12,11 +12,14 @@ export_to_mvmapper(x, ...)
 
 \method{export_to_mvmapper}{default}(x, ...)
 
-\method{export_to_mvmapper}{dapc}(x, info, ...)
+\method{export_to_mvmapper}{dapc}(x, info, write_file = TRUE,
+  out_file = NULL, ...)
 
-\method{export_to_mvmapper}{dudi}(x, info, ...)
+\method{export_to_mvmapper}{dudi}(x, info, write_file = TRUE,
+  out_file = NULL, ...)
 
-\method{export_to_mvmapper}{spca}(x, info, ...)
+\method{export_to_mvmapper}{spca}(x, info, write_file = TRUE,
+  out_file = NULL, ...)
 }
 \arguments{
 \item{x}{The analysis to be exported. Can be a \code{dapc}, \code{spca}, or a
@@ -28,6 +31,13 @@ export_to_mvmapper(x, ...)
 least the following columns: \code{key} (unique individual identifier),
 \code{lat} (latitude), and \code{lon} (longitude). Other columns will be
 exported as well, but are optional.}
+
+\item{write_file}{A \code{logical} indicating if the output should be written
+out to a .csv file. Defaults to \code{TRUE}.}
+
+\item{out_file}{A character string indicating the file to which the output
+should be written. If NULL, the file used will be named
+\code{'mvmapper_data_[date and time].csv'}}
 }
 \value{
 A \code{data.frame} which can serve as input to \code{mvmapper},
@@ -68,7 +78,8 @@ multivariate analysis on a map from a web browser. The function
 \code{export_to_mvmapper} is a generic with methods for several standard
 classes of analyses in \code{adegenet} and \code{ade4}. Information on
 individual locations, as well as any other relevant data, is passed through
-the second argument \code{info}.\cr
+the second argument \code{info}. By default, the function returns a formatted
+\code{data.frame} and writes the output to a .csv file.\cr
 }
 \details{
 \code{mvmapper} can be found at:
