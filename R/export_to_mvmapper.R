@@ -73,7 +73,7 @@
 #' @seealso
 #'
 #' \code{mvmapper} is available at:
-#' \url{https://github.com/genomeannotation/mvMapper}
+#' \url{https://popphylotools.github.io/mvMapper/}
 #'
 
 

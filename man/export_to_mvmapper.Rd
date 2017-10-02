@@ -115,7 +115,7 @@ head(out)
 }
 \seealso{
 \code{mvmapper} is available at:
-\url{https://github.com/genomeannotation/mvMapper}
+\url{https://popphylotools.github.io/mvMapper/}
 }
 \author{
 Thibaut Jombart \email{thibautjombart@gmail.com}
