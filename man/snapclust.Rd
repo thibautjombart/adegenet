@@ -4,7 +4,7 @@
 \alias{snapclust}
 \title{Maximum-likelihood genetic clustering using EM algorithm}
 \usage{
-snapclust(x, k, pop.ini = "kmeans", max.iter = 100, n.start = 10,
+snapclust(x, k, pop.ini = "ward", max.iter = 100, n.start = 10,
   n.start.kmeans = 50, hybrids = FALSE, dim.ini = 100,
   hybrid.coef = NULL, parent.lab = c("A", "B"), ...)
 }
