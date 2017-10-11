@@ -21,6 +21,10 @@ BUG FIXES
 	o fixed issues relating xvalDapc with non-table objects by registering
 	methods for genind and genlight object (issue 193)
 	
+	o find.clusters with clust parameter will no longer throw an error when
+	attempting to find clusters of populations with less than n/10 individuals 
+	(issue 184)
+	
 	
 			CHANGES IN ADEGENET VERSION 2.0.2
 BUG FIXES
