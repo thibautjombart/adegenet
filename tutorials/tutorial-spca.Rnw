@@ -193,7 +193,7 @@ Note that \texttt{obj} already contains spatial coordinates at the
 appropriate place.
 Hence, we can use the following command to run the sPCA (\texttt{ask} and \texttt{scannf}
 are set to FALSE to avoid interactivity):
-<<>>=
+<<message = FALSE>>=
 mySpca <- spca(obj, ask=FALSE, type=1, scannf=FALSE)
 @
 ~\\
