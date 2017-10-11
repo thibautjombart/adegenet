@@ -115,7 +115,7 @@ export_to_mvmapper.default <- function(x, ...) {
 #'                    lon = other(sim2pop)$xy[,1],
 #'                    Population = pop(sim2pop))
 #'
-#' out <- export_to_mvmapper(dapc1, info)
+#' out <- export_to_mvmapper(dapc1, info, write_file = FALSE)
 #' head(out)
 
 export_to_mvmapper.dapc <- function(x, info, write_file = TRUE, out_file = NULL, ...) {
@@ -190,7 +190,7 @@ export_to_mvmapper.dudi <- function(x, info, write_file = TRUE, out_file = NULL,
 #'                    lat = rupica$other$xy[,2],
 #'                    lon = rupica$other$xy[,1])
 #'
-#' out <- export_to_mvmapper(spca1, info)
+#' out <- export_to_mvmapper(spca1, info, write_file = FALSE)
 #' head(out)
 #'
 

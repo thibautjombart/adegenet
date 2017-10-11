@@ -96,7 +96,7 @@ info <- data.frame(key = indNames(sim2pop),
                    lon = other(sim2pop)$xy[,1],
                    Population = pop(sim2pop))
 
-out <- export_to_mvmapper(dapc1, info)
+out <- export_to_mvmapper(dapc1, info, write_file = FALSE)
 head(out)
 
 data(rupica)
@@ -109,7 +109,7 @@ info <- data.frame(key = indNames(rupica),
                    lat = rupica$other$xy[,2],
                    lon = rupica$other$xy[,1])
 
-out <- export_to_mvmapper(spca1, info)
+out <- export_to_mvmapper(spca1, info, write_file = FALSE)
 head(out)
 
 }
