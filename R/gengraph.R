@@ -50,7 +50,7 @@ gengraph.matrix <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
             }
             cat("\nPlease choose a cutoff distance:  ")
             ans <- NA
-            while(is.null(ans) || is.na(ans)) suppressWarnings(ans <- as.numeric(readLines(n = 1)))
+            while(is.null(ans) || is.na(ans)) suppressWarnings(ans <- as.numeric(readLines(con = getOption('adegenet.testcon'), n = 1)))
             if(plot){
                 abline(v=ans,col="red",lty=2, lwd=2)
             }
@@ -64,7 +64,7 @@ gengraph.matrix <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
             ans <- ""
             while(!ans %in% c("y","n")){
                 cat("\nAre you satisfied with this solution? (yes:y / no:n): ")
-                ans <- tolower(readLines(n = 1))
+                ans <- tolower(readLines(con = getOption('adegenet.testcon'), n = 1))
             }
             if(ans=="y") chooseAgain <- FALSE
         }

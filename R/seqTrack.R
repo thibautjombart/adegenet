@@ -620,7 +620,7 @@ plot.seqTrack <- function(x, y=NULL, col.pal=redpal, ...){
 ##     if(!exists("edmondsOptimumBranching")) {
 ##         stop("edmondsOptimumBranching does not exist; \nmake sure to use the latest Bioconductor (not CRAN) version of RBGL")
 ##         cat("\nWould you like to try and install latest version of RBGL (needs internet connection)\n y/n: ")
-##         ans <- tolower(as.character(readLines(n = 1)))
+##         ans <- tolower(as.character(readLines(con = getOption('adegenet.testcon'), n = 1)))
 ##         if(ans=="y"){
 ##             source("http://bioconductor.org/biocLite.R")
 ##             biocLite("RBGL")

@@ -769,22 +769,22 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL,
     ## required questions
     if(is.null(n.ind)){
         cat("\n How many genotypes are there? ")
-        n.ind <- as.integer(readLines(n = 1))
+        n.ind <- as.integer(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     if(is.null(n.loc)){
         cat("\n How many markers are there? ")
-        n.loc <- as.integer(readLines(n = 1))
+        n.loc <- as.integer(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     if(is.null(col.lab)){
         cat("\n Which column contains labels for genotypes ('0' if absent)? ")
-        col.lab <- as.integer(readLines(n = 1))
+        col.lab <- as.integer(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     if(is.null(col.pop)){
         cat("\n Which column contains the population factor ('0' if absent)? ")
-        col.pop <- as.integer(readLines(n = 1))
+        col.pop <- as.integer(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     if(is.null(col.others) & ask){
@@ -795,12 +795,12 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL,
 
     if(is.null(row.marknames)){
         cat("\n Which row contains the marker names ('0' if absent)? ")
-        row.marknames <- as.integer(readLines(n = 1))
+        row.marknames <- as.integer(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     if(is.null(onerowperind)){
         cat("\n Are genotypes coded by a single row (y/n)? ")
-        onerowperind <- toupper(readLines(n = 1))
+        onerowperind <- toupper(readLines(con = getOption('adegenet.testcon'), n = 1))
         if(onerowperind == "Y") {
             onerowperind <- TRUE
         } else {
@@ -810,7 +810,7 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL,
 
     if(is.null(NA.char)){
         cat("\n What is the code for missing data (default is '-9')? ")
-        NA.char <- as.character(readLines(n = 1))
+        NA.char <- as.character(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     ## message to console

@@ -147,7 +147,7 @@ chooseCN <- function(xy, ask = TRUE, type = NULL, result.type = "nb",
         cat("\t Inverse distances (type 7)\n")
         cat("Answer: ")
 
-        type <- as.integer(readLines(n = 1))
+        type <- as.integer(readLines(con = getOption('adegenet.testcon'), n = 1))
         temp <- type < 1 |type > 7
         if(temp) cat("\nWrong answer\n")
 
@@ -202,9 +202,9 @@ chooseCN <- function(xy, ask = TRUE, type = NULL, result.type = "nb",
         dig <- options("digits")
         options("digits=5")
         cat("\n Enter minimum distance: ")
-        d1 <- as.numeric(readLines(n = 1))
+        d1 <- as.numeric(readLines(con = getOption('adegenet.testcon'), n = 1))
         cat("\n Enter maximum distance \n(dmin=", d2min, ", dmax=", d2max, "): ")
-        d2 <- readLines(n = 1)
+        d2 <- readLines(con = getOption('adegenet.testcon'), n = 1)
         ## handle character
         if(d2=="dmin") {
             d2 <- d2min
@@ -227,7 +227,7 @@ chooseCN <- function(xy, ask = TRUE, type = NULL, result.type = "nb",
     if(type==6){
       if(is.null(k)) {
         cat("\n Enter the number of neighbours: ")
-        k <- as.numeric(readLines(n = 1))
+        k <- as.numeric(readLines(con = getOption('adegenet.testcon'), n = 1))
       }
       cn <- knearneigh(x=xy, k=k)
       cn <- knn2nb(cn, sym=TRUE)
@@ -237,12 +237,12 @@ chooseCN <- function(xy, ask = TRUE, type = NULL, result.type = "nb",
     if(type==7){
         if(is.null(a)) {
             cat("\n Enter the exponent: ")
-            a <- as.numeric(readLines(n = 1))
+            a <- as.numeric(readLines(con = getOption('adegenet.testcon'), n = 1))
         }
         cn <- as.matrix(dist(xy))
         if(is.null(dmin)) {
             cat("\n Enter the minimum distance \n(range = 0 -", max(cn),"): ")
-            dmin <- as.numeric(readLines(n = 1))
+            dmin <- as.numeric(readLines(con = getOption('adegenet.testcon'), n = 1))
         }
         if(a<1) { a <- 1 }
         thres <- mean(cn)/1e8
@@ -261,7 +261,7 @@ chooseCN <- function(xy, ask = TRUE, type = NULL, result.type = "nb",
     if(ask & plot.nb) {
       plot(cn,xy)
       cat("\nKeep this graph (y/n)? ")
-    ans <- tolower(readLines(n=1))
+    ans <- tolower(readLines(con = getOption('adegenet.testcon'), n=1))
       if(ans=="n") {chooseAgain <- TRUE} else {chooseAgain <- FALSE}
     }
     else if(plot.nb){

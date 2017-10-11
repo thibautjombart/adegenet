@@ -400,7 +400,7 @@ glPca <- function(x, center=TRUE, scale=FALSE, nf=NULL, loadings=TRUE, alleleAsU
     if(is.null(nf)){
         barplot(eigRes$values, main="Eigenvalues", col=heat.colors(rank))
         cat("Select the number of axes: ")
-        nf <- as.integer(readLines(n = 1))
+        nf <- as.integer(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     ## rescale PCs
