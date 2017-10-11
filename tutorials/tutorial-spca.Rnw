@@ -942,15 +942,6 @@ title("sPCA - colorplot of PC 1 and 2\n(lagged scores)", col.main="yellow",
 \bibitem{tj179} Menozzi P, Piazza A and Cavalli-Sforza LL (1978) Synthetic maps of human gene frequencies in {Europeans}.
   \emph{Science} 201: 786--792.
 
-%% \bibitem{tj177}
-%% Cavalli-Sforza LL, Menozzi P and Piazza A (1993) Demic expansions and human evolution.
-%%  \textit{Science} 259: 639--646.
-
-\bibitem{tj440}
-  Callenge C (2006) The package "adehabitat" for the R software: a tool for the analysis
-  of space and habitat use by animals. \textit{Ecological Modelling} 197: 516--519.
-
-
 %% \bibitem{tjart20}
 %%   Jombart T, Eggo RM, Dodd PJ and Balloux F (2010) Reconstructing disease outbreaks from genetic
 %%   data: a graph approach. \textit{Heredity} 106: 383-390.
