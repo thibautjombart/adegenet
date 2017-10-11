@@ -93,6 +93,7 @@ Other tutorials are available via the command \texttt{adegenetTutorial}:
  \item \texttt{adegenetTutorial("dapc")}: tutorial on the DAPC
  \item \texttt{adegenetTutorial("genomics")}: tutorial on handling large SNP datasets using
    \texttt{genlight} objects
+ \item \texttt{adegenetTutorial("strata")}: tutorial on handling stratified population data
 \end{itemize}
 %% Data can be imported from a wide range of formats, including those of
 %% popular population genetics software (GENETIX, STRUCTURE, Fstat, Genepop), or from simple dataframes of genotypes.
