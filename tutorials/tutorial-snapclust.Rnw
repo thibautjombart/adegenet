@@ -560,10 +560,10 @@ abline(v = 6, lty = 2, col = "red")
 ## same data, using BIC
 a.bic <- snapclust.choose.k(20, dapcIllus$a, IC = BIC)
 plot(a.bic, type = "b", cex = 2, xlab = "k", ylab = "BIC")
-points(which.min(a.bic), min(b.aic), col = "blue", pch = 20, cex = 2)
+points(which.min(a.bic), min(a.bic), col = "blue", pch = 20, cex = 2)
 abline(v = 6, lty = 2, col = "red")
 
-@ 
+@
 
 In both cases, the true number of groups (6) is well identified, albeit more
 clearly by the BIC. Note that this is not systematically the case, and AIC may
@@ -589,7 +589,7 @@ plot(c.bic, type = "b", cex = 2, xlab = "k", ylab = "BIC")
 points(which.min(c.bic), min(c.bic), col = "blue", pch = 20, cex = 2)
 abline(v = 12, lty = 2, col = "red")
 
-@ 
+@
 
 
 
