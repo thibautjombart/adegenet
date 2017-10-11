@@ -340,7 +340,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
       # [4,]    4   14
 
       out[missing_coordinates] <- NA
-      
+
       #          X1401_25.33
       # A_KH1584           1
       # C_KH1059           1
@@ -1285,10 +1285,10 @@ extract.PLINKmap <- function(file, x = NULL){
     if (!is.null(x)) {
         if(!inherits(x, "genlight")) stop("x is not a genlight object")
 
-        ## match data: we need remove the potential alleles added to locus names        
+        ## match data: we need remove the potential alleles added to locus names
         marker_id <- sub("_.*$", "", locNames(x))
         ord <- match(marker_id, txt[,2])
-        
+
         chromosome(x) <- factor(txt[ord, 1])
         position(x) <- as.integer(txt[ord, 4])
 
@@ -1335,7 +1335,7 @@ extract.PLINKmap <- function(file, x = NULL){
 #' Data need to be exported from PLINK using the option "--recodeA" (and NOT
 #' "--recodeAD"). The PLINK command should therefore look like: \code{plink
 #' --file data --recodeA}. For more information on this topic, please look at
-#' this webpage: \url{http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml}
+#' this webpage: \url{http://zzz.bwh.harvard.edu/plink/}
 #'
 #' @aliases read.PLINK read.plink
 #' @param file for \code{read.PLINK} a character string giving the path to the
