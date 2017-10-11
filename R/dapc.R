@@ -42,13 +42,13 @@ dapc.data.frame <- function(x, grp, n.pca=NULL, n.da=NULL,
     if(is.null(n.pca) & pca.select=="nbEig"){
         plot(cumVar, xlab="Number of retained PCs", ylab="Cumulative variance (%)", main="Variance explained by PCA", col=myCol)
         cat("Choose the number PCs to retain (>=1): ")
-        n.pca <- as.integer(readLines(n = 1))
+        n.pca <- as.integer(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     if(is.null(perc.pca) & pca.select=="percVar"){
         plot(cumVar, xlab="Number of retained PCs", ylab="Cumulative variance (%)", main="Variance explained by PCA", col=myCol)
         cat("Choose the percentage of variance to retain (0-100): ")
-        nperc.pca <- as.numeric(readLines(n = 1))
+        nperc.pca <- as.numeric(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     ## get n.pca from the % of variance to conserve
@@ -82,7 +82,7 @@ dapc.data.frame <- function(x, grp, n.pca=NULL, n.da=NULL,
     if(is.null(n.da)){
         barplot(ldaX$svd^2, xlab="Linear Discriminants", ylab="F-statistic", main="Discriminant analysis eigenvalues", col=heat.colors(length(levels(grp))) )
         cat("Choose the number discriminant functions to retain (>=1): ")
-        n.da <- as.integer(readLines(n = 1))
+        n.da <- as.integer(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     ##n.da <- min(n.da, length(levels(grp))-1, n.pca) # can't be more than K-1 disc. func., or more than n.pca
@@ -262,13 +262,13 @@ dapc.genlight <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
     if(is.null(n.pca) & pca.select=="nbEig"){
         plot(cumVar, xlab="Number of retained PCs", ylab="Cumulative variance (%)", main="Variance explained by PCA", col=myCol)
         cat("Choose the number PCs to retain (>=1): ")
-        n.pca <- as.integer(readLines(n = 1))
+        n.pca <- as.integer(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     if(is.null(perc.pca) & pca.select=="percVar"){
         plot(cumVar, xlab="Number of retained PCs", ylab="Cumulative variance (%)", main="Variance explained by PCA", col=myCol)
         cat("Choose the percentage of variance to retain (0-100): ")
-        nperc.pca <- as.numeric(readLines(n = 1))
+        nperc.pca <- as.numeric(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     ## get n.pca from the % of variance to conserve
@@ -313,7 +313,7 @@ dapc.genlight <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
     if(is.null(n.da)){
         barplot(ldaX$svd^2, xlab="Linear Discriminants", ylab="F-statistic", main="Discriminant analysis eigenvalues", col=heat.colors(length(levels(pop.fac))) )
         cat("Choose the number discriminant functions to retain (>=1): ")
-        n.da <- as.integer(readLines(n = 1))
+        n.da <- as.integer(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     n.da <- min(n.da, length(levels(pop.fac))-1, n.pca, sum(ldaX$svd>1e-10)) # can't be more than K-1 disc. func., or more than n.pca

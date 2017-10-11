@@ -70,7 +70,7 @@ find.clusters.data.frame <- function(x, clust = NULL, n.pca = NULL, n.clust = NU
              main = "Variance explained by PCA",
              col = myCol)
         cat("Choose the number PCs to retain (>= 1): ")
-        n.pca <- as.integer(readLines(n = 1))
+        n.pca <- as.integer(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     if(is.null(perc.pca) & pca.select == "percVar"){
@@ -79,7 +79,7 @@ find.clusters.data.frame <- function(x, clust = NULL, n.pca = NULL, n.clust = NU
              main = "Variance explained by PCA",
              col = myCol)
         cat("Choose the percentage of variance to retain (0-100): ")
-        nperc.pca <- as.numeric(readLines(n = 1))
+        nperc.pca <- as.numeric(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     ## get n.pca from the % of variance to conserve
@@ -156,7 +156,7 @@ find.clusters.data.frame <- function(x, clust = NULL, n.pca = NULL, n.clust = NU
             cat("Choose the number of clusters (>=2: ")
             n.clust <- NA
             while(is.na(n.clust)){
-                n.clust <- max(1, as.integer(readLines(n = 1)))
+                n.clust <- max(1, as.integer(readLines(con = getOption('adegenet.testcon'), n = 1)))
             }
         } else {
             if(criterion=="min") {
@@ -320,13 +320,13 @@ find.clusters.genlight <- function(x, clust = NULL, n.pca = NULL, n.clust = NULL
     if(is.null(n.pca) & pca.select=="nbEig"){
         plot(cumVar, xlab="Number of retained PCs", ylab="Cumulative variance (%)", main="Variance explained by PCA", col=myCol)
         cat("Choose the number PCs to retain (>=1): ")
-        n.pca <- as.integer(readLines(n = 1))
+        n.pca <- as.integer(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     if(is.null(perc.pca) & pca.select=="percVar"){
         plot(cumVar, xlab="Number of retained PCs", ylab="Cumulative variance (%)", main="Variance explained by PCA", col=myCol)
         cat("Choose the percentage of variance to retain (0-100): ")
-        nperc.pca <- as.numeric(readLines(n = 1))
+        nperc.pca <- as.numeric(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     ## get n.pca from the % of variance to conserve

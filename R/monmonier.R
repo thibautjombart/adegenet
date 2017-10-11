@@ -60,7 +60,7 @@ if(scanthres){
   abline(h=Dlim,lty=2)
   mtext("Dashed line indicates present threshold")
   cat("Indicate the threshold (\'d\' for default): ")
-  temp <- as.character(readLines(n = 1))
+  temp <- as.character(readLines(con = getOption('adegenet.testcon'), n = 1))
   if(toupper(temp)!="D") { Dlim <- as.numeric(temp) }
 }
 
@@ -616,7 +616,7 @@ if(scanthres){
   abline(h=Dlim,lty=2)
   mtext("Dashed line indicates present threshold")
   cat("Indicate the threshold (\'d\' for default): ")
-  temp <- as.character(readLines(n = 1))
+  temp <- as.character(readLines(con = getOption('adegenet.testcon'), n = 1))
   if(toupper(temp)!="D") { Dlim <- as.numeric(temp) }
 }
 

@@ -264,7 +264,7 @@ corner <- function(text, posi="topleft",  inset=0.1, ...){
     char <- c("?","??","?!?!?")
     for(i in 1:3){
         cat("\nGrind",  char[i], " (y/N): ")
-        x <- readLines(n=1)
+        x <- readLines(con = getOption('adegenet.testcon'), n=1)
         if(x!="y") {
             cat("\n =( \n")
             return(invisible())

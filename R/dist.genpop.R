@@ -36,7 +36,7 @@ dist.genpop <- function(x, method = 1, diag = FALSE, upper = FALSE) {
     cat("4 = Rodgers 1972\n")
     cat("5 = Provesti 1975\n")
     cat("Select an integer (1-5): ")
-    method <- as.integer(readLines(n = 1))
+    method <- as.integer(readLines(con = getOption('adegenet.testcon'), n = 1))
   }
   if (all((1:5)!=method)) (stop ("Non convenient method number"))
 
