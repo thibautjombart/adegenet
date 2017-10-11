@@ -390,7 +390,8 @@ find.clusters.genlight <- function(x, clust = NULL, n.pca = NULL, n.clust = NULL
     ## find sub clusters
     for(i in levels(clust)){
         if(!quiet) cat("\nLooking for sub-clusters in cluster",i,"\n")
-        myArgs$x <- x[clust==i, ]
+        myArgs$x <- x[clust==i, , drop = FALSE]
+        myArgs$max.n.clust <- nrow(x[clust==i, , drop = FALSE]) - 1
         temp <- do.call(find.clusters, myArgs)$grp
         levels(temp) <- paste(i, levels(temp), sep=".")
         newFac[clust==i] <- as.character(temp)
