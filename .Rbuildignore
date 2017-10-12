@@ -7,3 +7,4 @@ tutorials
 .*.tar.gz$
 ^appveyor\.yml$
 misc/
+docker/
