@@ -29,7 +29,7 @@ BUG FIXES
 	methods for genind and genlight object (issue 193)
 
 	- find.clusters with clust parameter will no longer throw an error
-	when attempting to find clusters of populations with less than
+	when attempting to find clusters of populations with fewer than
 	n/10 individuals (issue 184)
 
 
