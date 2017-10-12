@@ -13,6 +13,11 @@ NEW FEATURES
 	- spca is now a generic with methods for genind, data.frame and
 	genlight objects
 
+	- a new generic wrapper `export_to_mvmapper` has been added, which
+	exports multivariate analyses (e.g. DAPC, sPCA, or standard dudi
+	objects) with geo-referenced units to serve as input to mvmapper
+	(https://popphylotools.github.io/mvMapper/)
+
 BUG FIXES
 	- fixed registration of C routines which could cause problems with
 	SNPbin and genlight objects.
