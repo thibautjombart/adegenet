@@ -12,7 +12,8 @@ Suggests:
     maps,
     splancs,
     tripack,
-    testthat
+    testthat,
+    poppr
 Depends:
     R (>= 2.14),
     methods,
