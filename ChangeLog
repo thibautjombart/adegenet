@@ -2,30 +2,33 @@
 
 			CHANGES IN ADEGENET VERSION 2.1.0
 NEW FEATURES
-	o new set of functions 'snapclust' for genetic clustering using
-	fast maximum-likelihood estimation
+	- new set of functions implementing 'snapclust' for genetic
+	clustering using fast maximum-likelihood estimation; new functions
+	include: `snapclust`, `snapclust.choose.k`, and methods for `AIC`,
+	`AICc`, `BIC`, `KIC`
 
-	o compoplot is now a generic with methods for different objects,
+	- compoplot is now a generic with methods for different objects,
 	including dapc and snapclust
 
-	o spca is now a generic with methods for genind, data.frame and
+	- spca is now a generic with methods for genind, data.frame and
 	genlight objects
 
 BUG FIXES
-	o fixed registration of C routines which could cause problems with
+	- fixed registration of C routines which could cause problems with
 	SNPbin and genlight objects.
 
-	o fixed issues relating to `read.PLINK` and the reading of `.map`
+	- fixed issues relating to `read.PLINK` and the reading of `.map`
 	files (issues 94 and 188)
 
-	o fixed issues relating xvalDapc with non-table objects by registering
+	- fixed issues relating xvalDapc with non-table objects by registering
 	methods for genind and genlight object (issue 193)
-	
-	o find.clusters with clust parameter will no longer throw an error when
-	attempting to find clusters of populations with less than n/10 individuals 
-	(issue 184)
-	
-	
+
+	- find.clusters with clust parameter will no longer throw an error
+	when attempting to find clusters of populations with less than
+	n/10 individuals (issue 184)
+
+
+
 			CHANGES IN ADEGENET VERSION 2.0.2
 BUG FIXES
 	o df2genind will now replace "." in alleles with "_" (or "p" if sep = "_")
