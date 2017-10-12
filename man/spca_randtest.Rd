@@ -26,6 +26,7 @@ sum of the absolute values of the corresponding eigenvalues.
 }
 \examples{
 
+\dontrun{
 ## Load data
 data(sim2pop)
 
@@ -41,6 +42,8 @@ tests <- spca_randtest(spca1, nperm = 49)
 ## check results
 tests
 plot(tests[[1]]) # global structures
+
+}
 
 }
 \author{

@@ -18,6 +18,9 @@ NEW FEATURES
 	objects) with geo-referenced units to serve as input to mvmapper
 	(https://popphylotools.github.io/mvMapper/)
 
+	- the new function `spca_randtest` implements a Monte Carlo test
+	for spatial structure in the sPCA framework.
+
 BUG FIXES
 	- fixed registration of C routines which could cause problems with
 	SNPbin and genlight objects.

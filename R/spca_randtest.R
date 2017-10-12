@@ -23,6 +23,7 @@
 #'
 #' @examples
 #'
+#' \dontrun{
 #' ## Load data
 #' data(sim2pop)
 #'
@@ -39,6 +40,8 @@
 #' tests
 #' plot(tests[[1]]) # global structures
 #  plot(tests[[2]]) # local structures
+#'
+#' }
 #'
 spca_randtest <-function(x, nperm = 499){
 
