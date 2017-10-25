@@ -21,7 +21,9 @@
 showmekittens <- function(x = NULL, list = FALSE){
     ## 'pool' is a named character vector of video URLs
     pool <- c(capucine = "http://www.youtube.com/watch?v=KIePsbJSS04",
-              vacuum = "https://www.youtube.com/watch?v=uiyKVWqxXWM")
+              vacuum = "https://www.youtube.com/watch?v=9J4UKYm9320",
+              eclipse = "https://www.youtube.com/watch?v=RsUH2MuY33o",
+              nom     = "https://www.youtube.com/watch?v=Cl5Pfc5TyO0")
 
     ## either we return the list of videos, or we show one
     if (list) {
