@@ -5,43 +5,43 @@ strata(microbov) <- data.frame(other(microbov))
 
 test_that("individual accessors work as expected", {
   skip_on_cran()
-  expect_that(nInd(microbov), equals(704))
+  expect_equal(nInd(microbov), 704)
   indNames(microbov)[1] <- "replacement"
-  expect_that(indNames(microbov)[1], equals("replacement"))
+  expect_equal(indNames(microbov)[1], "replacement")
 })
 
 test_that("population accessors work for genind objects", {
   skip_on_cran()
-  expect_that(nPop(microbov), equals(15))
-  expect_that(popNames(microbov), is_equivalent_to(levels(pop(microbov))))
+  expect_equal(nPop(microbov), 15)
+  expect_equivalent(popNames(microbov), levels(pop(microbov)))
   popNames(microbov)[1] <- "replacement"
-  expect_that(popNames(microbov)[1], equals("replacement"))
-  expect_that(unique(head(pop(microbov))), is_equivalent_to(factor("replacement")))
+  expect_equal(popNames(microbov)[1], "replacement")
+  expect_equivalent(unique(head(pop(microbov))), factor("replacement"))
 })
 
 test_that("population accessors work for genpop objects", {
   skip_on_cran()
   micpop <- genind2genpop(microbov, quiet = TRUE)
-  expect_that(nPop(micpop), equals(15))
-  expect_that(popNames(micpop), is_equivalent_to(rownames(micpop@tab)))
+  expect_equal(nPop(micpop), 15)
+  expect_equivalent(popNames(micpop), rownames(micpop@tab))
   popNames(micpop)[1] <- "replacement"
-  expect_that(popNames(micpop)[1], equals("replacement"))
-  expect_that(rownames(micpop@tab)[1], equals("replacement"))
+  expect_equal(popNames(micpop)[1], "replacement")
+  expect_equal(rownames(micpop@tab)[1], "replacement")
 })
 
 test_that("locus accessors work for genind objects", {
   skip_on_cran()
-  expect_that(nLoc(microbov), equals(30))
+  expect_equal(nLoc(microbov), 30)
   locNames(microbov)[1] <- "replacement"
-  expect_that(locNames(microbov)[1], equals("replacement"))
+  expect_equal(locNames(microbov)[1], "replacement")
 })
 
 test_that("locus accessors work for genpop objects", {
   skip_on_cran()
   micpop <- genind2genpop(microbov, quiet = TRUE)
-  expect_that(nLoc(micpop), equals(30))
+  expect_equal(nLoc(micpop), 30)
   locNames(micpop)[1] <- "replacement"
-  expect_that(locNames(micpop)[1], equals("replacement"))
+  expect_equal(locNames(micpop)[1], "replacement")
 })
 
 test_that("'[' method works for genind objects", {
@@ -62,26 +62,26 @@ test_that("'[' method works for genind objects", {
   names(two_random_loci) <- two_random_loci
   two_random_loci <- two_random_loci[levels(loci)]
 
-  expect_that(nInd(mic10), equals(10))
-  expect_that(nInd(mic2Loc), equals(nInd(microbov)))
-  expect_that(nInd(mic2Loc10), equals(10))
+  expect_equal(nInd(mic10), 10)
+  expect_equal(nInd(mic2Loc), nInd(microbov))
+  expect_equal(nInd(mic2Loc10), 10)
 
-  expect_that(nLoc(mic10), equals(nLoc(microbov)))
-  expect_that(nLoc(mic2Loc), equals(2))
-  expect_that(nLoc(mic2Loc10), equals(2))
+  expect_equal(nLoc(mic10), nLoc(microbov))
+  expect_equal(nLoc(mic2Loc), 2)
+  expect_equal(nLoc(mic2Loc10), 2)
 
   expect_equivalent(popNames(mic10), pops)
   expect_equivalent(popNames(mic2Loc10), pops)
-  expect_that(nPop(mic10), equals(length(pops)))
-  expect_that(nPop(mic2Loc10), equals(length(pops)))
+  expect_equal(nPop(mic10), length(pops))
+  expect_equal(nPop(mic2Loc10), length(pops))
 
-  expect_that(length(mic10@loc.fac), equals(ncol(tab(microbov))))
-  expect_that(mic2Loc@loc.fac, equals(loci))
-  expect_that(mic2Loc10@loc.fac, equals(loci))
+  expect_equal(length(mic10@loc.fac), ncol(tab(microbov)))
+  expect_equal(mic2Loc@loc.fac, loci)
+  expect_equal(mic2Loc10@loc.fac, loci)
 
-  expect_that(mic10@loc.n.all, equals(microbov@loc.n.all))
-  expect_that(mic2Loc@loc.n.all, equals(microbov@loc.n.all[two_random_loci]))
-  expect_that(mic2Loc10@loc.n.all, equals(microbov@loc.n.all[two_random_loci]))
+  expect_equal(mic10@loc.n.all, microbov@loc.n.all)
+  expect_equal(mic2Loc@loc.n.all, microbov@loc.n.all[two_random_loci])
+  expect_equal(mic2Loc10@loc.n.all, microbov@loc.n.all[two_random_loci])
 })
 
 test_that("'[' method works for genind objects with drop = TRUE", {
@@ -106,27 +106,27 @@ test_that("'[' method works for genind objects with drop = TRUE", {
   names(two_random_loci) <- two_random_loci
   two_random_loci <- two_random_loci[levels(loci)]
 
-  expect_that(nInd(mic10), equals(10))
-  expect_that(nInd(mic2Loc), equals(nInd(microbov)))
-  expect_that(nInd(mic2Loc10), equals(10))
+  expect_equal(nInd(mic10), 10)
+  expect_equal(nInd(mic2Loc), nInd(microbov))
+  expect_equal(nInd(mic2Loc10), 10)
 
-  expect_that(nLoc(mic10), equals(nLoc(microbov)))
-  expect_that(nLoc(mic2Loc), equals(2))
-  expect_that(nLoc(mic2Loc10), equals(2))
+  expect_equal(nLoc(mic10), nLoc(microbov))
+  expect_equal(nLoc(mic2Loc), 2)
+  expect_equal(nLoc(mic2Loc10), 2)
 
   expect_equivalent(popNames(mic10), pops)
   expect_equivalent(popNames(mic2Loc10), pops)
-  expect_that(nPop(mic10), equals(length(pops)))
-  expect_that(nPop(mic2Loc10), equals(length(pops)))
+  expect_equal(nPop(mic10), length(pops))
+  expect_equal(nPop(mic2Loc10), length(pops))
 
   ten_ind_loci2 <- factor(mic10@loc.fac[mic10@loc.fac %in% levels(loci)])
-  expect_that(length(mic10@loc.fac), equals(ncol(tab(microbov)[, ten_ind_loci])))
-  expect_that(mic2Loc@loc.fac, equals(loci))
-  expect_that(mic2Loc10@loc.fac, equals(ten_ind_loci2))
+  expect_equal(length(mic10@loc.fac), ncol(tab(microbov)[, ten_ind_loci]))
+  expect_equal(mic2Loc@loc.fac, loci)
+  expect_equal(mic2Loc10@loc.fac, ten_ind_loci2)
 
   expect_true(all(mic10@loc.n.all <= microbov@loc.n.all))
-  expect_that(mic2Loc@loc.n.all, equals(microbov@loc.n.all[two_random_loci]))
-  expect_that(names(mic2Loc10@loc.n.all), equals(names(microbov@loc.n.all[two_random_loci])))
+  expect_equal(mic2Loc@loc.n.all, microbov@loc.n.all[two_random_loci])
+  expect_equal(names(mic2Loc10@loc.n.all), names(microbov@loc.n.all[two_random_loci]))
   expect_true(all(mic2Loc10@loc.n.all <= microbov@loc.n.all[two_random_loci]))
 })
 
@@ -134,15 +134,15 @@ test_that("tab will retain dimensions", {
   skip_on_cran()
   micpop <- genind2genpop(microbov[pop(microbov) %in% popNames(microbov)[1]], quiet = TRUE)
   tabdim <- dim(micpop@tab)
-  expect_that(tabdim, equals(dim(tab(micpop))))
-  expect_that(tabdim, equals(dim(tab(micpop, freq = TRUE))))
+  expect_equal(tabdim, dim(tab(micpop)))
+  expect_equal(tabdim, dim(tab(micpop, freq = TRUE)))
 })
 
 test_that("tab will return frequencies for PA data", {
   skip_on_cran()
   x <- read.table(system.file("files/AFLP.txt", package = "adegenet"))
   aflp <- df2genind(x, type = "PA", ploidy = 1, pop = c(rep(1, 4), rep(2, 3)))
-  apop <- genind2genpop(aflp)
+  apop <- genind2genpop(aflp, quiet = TRUE)
   atab <- tab(apop, freq = TRUE)
   res  <- tab(apop)/rowSums(tab(apop))
   expect_equivalent(atab, res)
