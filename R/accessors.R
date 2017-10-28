@@ -238,6 +238,7 @@ setMethod("indNames","genind", function(x, ...){
 setReplaceMethod("indNames","genind",function(x,value) {
     if(length(value) != nrow(x@tab)) stop("Vector length does not match number of individuals")
     rownames(x@tab) <- as.character(value)
+    
     return(x)
 })
 
@@ -255,6 +256,12 @@ setReplaceMethod("indNames","genind",function(x,value) {
 #' @noRd
 #'
 #' @examples
+#' data(microbov)
+#' strata(microbov) <- data.frame(other(microbov))
+#' pop(adegenet:::.addIndInfo(microbov, "pop"))
+#' ploidy(adegenet:::.addIndInfo(microbov, "ploidy"))
+#' strata(adegenet:::.addIndInfo(microbov, "strata"))
+#' other(adegenet:::.addIndInfo(microbov, "other"))
 .addIndInfo <- function(x, the_slot){
   slot_values <- slot(x, the_slot)
   if (is.null(slot_values)) {
@@ -262,19 +269,22 @@ setReplaceMethod("indNames","genind",function(x,value) {
   }
   NAMES <- switch(the_slot,
                   pop    = "names",
+                  ploidy = "names",
                   strata = "rownames",
                   other  = NULL
                   )
   if (!is.null(NAMES)) { # treat pop and strata
-    NAMES <- match.fun(NAMES)
+    `RENAME<-` <- match.fun(paste0(NAMES, "<-"))
+    NAMES      <- match.fun(NAMES)
     if (!is.null(NAMES(slot_values))) {
-      slot(x, the_slot) <- slot_values[indNames(x)]
+      slot_values <- slot_values[indNames(x)]
     } else {
-      slot(x, the_slot) <- setNames(slot_values, indNames(x))
+      RENAME(slot_values) <- indNames(x)
     }
-  } else { # treat the other slot
-    
+  } else { # treat the other slot, item by item
+    # something still needs to give here.
   }
+  slot(x, the_slot) <- slot_values
   x
 }
 
@@ -376,11 +386,18 @@ setMethod("ploidy","genind", function(x,...){
 
 setReplaceMethod("ploidy","genind",function(x,value) {
     value <- as.integer(value)
-    if(any(value)<1) stop("Negative or null values provided")
-    if(any(is.na(value))) stop("NA values provided")
-    if(length(value)!=nInd(x)) value <- rep(value, length=nInd(x))
-    slot(x,"ploidy",check=TRUE) <- value
-    return(x)
+    if (any(value) < 1)
+      stop("Negative or null values provided")
+    if (any(is.na(value)))
+      stop("NA values provided")
+    if (length(value) != nInd(x) && length(value) == 1){
+      value <- rep(value, length = nInd(x))
+    } else {
+      stop(paste("I found", length(value), "values for ploidy.",
+                 "This must match the number of individuals."))
+    }
+    slot(x, "ploidy", check = TRUE) <- value
+    return(.addIndInfo(x))
 })
 
 
@@ -424,7 +441,7 @@ setReplaceMethod("other","gen",function(x,value) {
     if( !is.null(value) && (!is.list(value) | is.data.frame(value)) ) {
         value <- list(value)
     }
-    slot(x,"other",check=TRUE) <- value
+    slot(x,"other", check = TRUE) <- value
     return(x)
 })
 
