@@ -4,11 +4,11 @@ test_that("df2genind works with haploids", {
   skip_on_cran()
   x <- matrix(as.character(sample(20)), nrow = 10, ncol = 2)
   res <- df2genind(x, ploidy = 1)
-  expect_that(sum(res@loc.n.all), equals(20))
-  expect_that(nInd(res), equals(10))
-  expect_that(nLoc(res), equals(2))
+  expect_equal(sum(res@loc.n.all), 20)
+  expect_equal(nInd(res), 10)
+  expect_equal(nLoc(res), 2)
   resdf <- genind2df(res)
-  all.equal(unlist(resdf, use.names=FALSE), as.vector(x))
+  expect_equal(unlist(resdf, use.names=FALSE), as.vector(x))
 })
 
 test_that("df2genind makes sense for given example", {
@@ -18,13 +18,13 @@ test_that("df2genind makes sense for given example", {
                    locusC=c("22","22","21","22"))
   row.names(df) <- .genlab("genotype",4)
   obj <- df2genind(df, ploidy=2, ncode=1)
-  expect_that(nInd(obj), equals(4))
-  expect_that(nLoc(obj), equals(3))
-  expect_that(locNames(obj), equals(colnames(df)))
-  expect_that(indNames(obj), equals(rownames(df)))
-  expect_that(obj@loc.n.all, is_equivalent_to(c(3, 4, 2)))
+  expect_equal(nInd(obj), 4)
+  expect_equal(nLoc(obj), 3)
+  expect_equal(locNames(obj), colnames(df))
+  expect_equal(indNames(obj), rownames(df))
+  expect_equivalent(obj@loc.n.all, c(3, 4, 2))
   objdf <- genind2df(obj)
-  expect_that(df, is_equivalent_to(df))
+  expect_equivalent(df, df)
 })
 
 test_that("df2genind handles NAs for 'numerically named' samples correctly", {
@@ -43,11 +43,10 @@ AnimalID,Samp,INRA21,AHT137,REN169D01,AHTk253
   obj <- df2genind(X = df[, !grepl("AnimalID|Samp", colnames(df))], ind.names = df$AnimalID,
                    sep = " ", ncode = 6)
   g <- tab(obj)
-  expect_that(g["730", grepl("REN169D01", colnames(g))],
-              is_equivalent_to(c(REN169D01.204 = as.integer(NA),
-                                 REN169D01.208 = as.integer(NA),
-                                 REN169D01.198 = as.integer(NA)))
-  )
+  expect_equivalent(g["730", grepl("REN169D01", colnames(g))],
+                    c(REN169D01.204 = NA_integer_,
+                      REN169D01.208 = NA_integer_,
+                      REN169D01.198 = NA_integer_))
   })
 
 test_that("df2genind will handle duplicate samples and loci", {
@@ -61,14 +60,16 @@ test_that("df2genind will handle duplicate samples and loci", {
   inds <- c("one", "one", "two")
   loci <- rep("double", 2)
   expect_warning(xgid <- df2genind(xdf, sep = "/", ind.names = inds, loc.names = loci))
-  expect_that(unique(rowSums(tab(xgid))), is_equivalent_to(4))
-  expect_that(genind2df(xgid, sep = "/"), is_equivalent_to(xdf))
+  expect_equivalent(unique(rowSums(tab(xgid))), 4)
+  expect_equivalent(genind2df(xgid, sep = "/"), xdf)
 })
 
 
 test_that("read.X functions work as expected", {
   skip_on_cran()
-  gpop <- read.genepop(system.file("files/nancycats.gen",package="adegenet"), quiet = TRUE)
+  suppressWarnings({
+    gpop <- read.genepop(system.file("files/nancycats.gen",package="adegenet"), quiet = TRUE)
+  })
   fsta <- read.fstat(system.file("files/nancycats.dat",package="adegenet"), quiet = TRUE)
   gntx <- read.genetix(system.file("files/nancycats.gtx",package="adegenet"), quiet = TRUE)
   stru <- read.structure(system.file("files/nancycats.str",package="adegenet"),
@@ -125,7 +126,7 @@ C45, 0205 0909 0202 0000      0405
   "
   tmp <- tempfile(fileext = ".gen")
   cat(x, file = tmp)
-  expect_warning(gp <- read.genepop(tmp))
+  expect_warning(gp <- read.genepop(tmp, quiet = TRUE))
   expect_identical(indNames(gp), .genlab("", nInd(gp)))
 
 })
@@ -162,12 +163,32 @@ test_that("different imports sort populations in the same way", {
     skip_on_cran()
 
     ## read nancycats data from different formats
-    x.str <- read.structure(system.file("files/nancycats.str",package="adegenet"),
-                          onerowperind=FALSE, n.ind=237, n.loc=9, col.lab=1, col.pop=2, ask=FALSE)
-    x.gen <- read.genepop(system.file("files/nancycats.gen",package="adegenet"))
-    x.dat <- read.fstat(system.file("files/nancycats.dat",package="adegenet"))
-    x.gtx <- read.genetix(system.file("files/nancycats.gtx",package="adegenet"))
-
+  expect_output({
+    x.str <- read.structure(
+      system.file("files/nancycats.str", package = "adegenet"),
+      onerowperind = FALSE,
+      n.ind = 237,
+      n.loc = 9,
+      col.lab = 1,
+      col.pop = 2,
+      ask = FALSE
+    )
+  }, "Converting data")
+  expect_output({
+    expect_warning({
+      x.gen <- read.genepop(system.file("files/nancycats.gen", package = "adegenet"))
+    }, "Duplicate individual names detected.")
+  }, "Converting data")
+  
+  expect_output({
+    x.dat <- read.fstat(system.file("files/nancycats.dat", package = "adegenet"))
+  }, "Converting data")
+  
+  expect_output({
+    x.gtx <- read.genetix(system.file("files/nancycats.gtx", package = "adegenet"))
+  }, "Converting data")
+  
+  
     ## check that the pop are identical:
 
     ## we use 'table(pop(...))' because individuals may be sorted differently in the files, so
@@ -184,7 +205,9 @@ test_that("ensure importing structure files with numbers for locus names imports
   
   # Column names should have no extra characters in front of them. Your IDE
   # may be adding them, so watch out!
-  cat(print("		1_25	8_54	1358_15	1363_12	1368_57	1369_41	1372_14	1373_9	1377_42	1378_53	1379_10	1382_37	1386_27	1398_46	1400_9	1401_25	1403_13	1404_17	1409_42	1416_48	1419_11	1421_14	1423_5	1424_74	1426_55	1429_46	1432_23	1435_30	1436_7	1438_9	1443_37
+  tmp <- tempfile(fileext = ".stru")
+  cat(
+"		1_25	8_54	1358_15	1363_12	1368_57	1369_41	1372_14	1373_9	1377_42	1378_53	1379_10	1382_37	1386_27	1398_46	1400_9	1401_25	1403_13	1404_17	1409_42	1416_48	1419_11	1421_14	1423_5	1424_74	1426_55	1429_46	1432_23	1435_30	1436_7	1438_9	1443_37
 A_KH1584	A	1	4	4	1	1	3	2	4	4	2	3	3	2	4	1	3	1	1	2	3	1	4	4	3	2	2	3	4	4	4	2
 A_KH1584	A	1	4	4	1	1	3	2	4	4	4	3	3	4	4	1	3	1	3	2	3	3	4	4	3	4	2	3	4	4	4	2
 C_KH1059	C	0	4	4	1	1	3	2	4	4	2	1	3	2	4	1	3	1	3	2	3	3	2	4	3	2	2	3	2	4	4	2
@@ -192,23 +215,32 @@ C_KH1059	C	0	4	4	1	1	3	2	4	4	4	3	3	2	4	1	3	1	3	2	3	3	4	4	3	2	2	3	4	4	4	2
 M_KH1834	M	0	2	2	1	1	3	2	4	4	2	3	3	2	4	1	3	1	1	2	3	3	4	4	3	2	2	3	2	4	4	2
 M_KH1834	M	0	4	4	1	3	3	2	4	4	2	3	3	2	4	1	3	1	3	2	3	3	4	4	3	2	4	3	4	4	4	2
 M_KH1837	M	1	4	4	1	1	3	2	4	4	0	3	3	2	2	1	3	1	1	2	3	3	4	4	3	4	2	3	4	4	4	2
-M_KH1837	M	1	4	4	1	3	3	2	4	4	0	3	3	4	4	1	3	1	3	2	3	3	4	4	3	4	2	3	4	4	4	2"), 
-      file = "elizabeth_starts_with_number.stru")
+M_KH1837	M	1	4	4	1	3	3	2	4	4	0	3	3	4	4	1	3	1	3	2	3	3	4	4	3	4	2	3	4	4	4	2", 
+      file = tmp)
   
-  xy1 <- read.structure("elizabeth_starts_with_number.stru", NA.char="0",
-                        n.ind = 4, n.loc = 31, onerowperind = FALSE,
-                        col.lab = 1, col.pop = 2, row.marknames = 1,
-                        sep = "\t", col.others = 0)
-  
-  unlink("elizabeth_starts_with_number.stru")
+  xy1 <- read.structure(
+    tmp,
+    NA.char = "0",
+    n.ind = 4,
+    n.loc = 31,
+    onerowperind = FALSE,
+    col.lab = 1,
+    col.pop = 2,
+    row.marknames = 1,
+    sep = "\t",
+    col.others = 0,
+    quiet = TRUE
+  )
   
   x1 <- tab(xy1)
   # should return all 1, incorrect is NA
   expect_true(all(x1[, grepl("1401_25", colnames(x1)), drop = FALSE] == 1))
 
+  tmp2 <- tempfile(fileext = ".stru")
   # Column names should have no extra characters in front of them. Your IDE
   # may be adding them, so watch out!
-  cat(print("		X1_25	X8_54	X1358_15	X1363_12	X1368_57	X1369_41	X1372_14	X1373_9	X1377_42	X1378_53	X1379_10	X1382_37	X1386_27	X1398_46	X1400_9	X1401_25	X1403_13	X1404_17	X1409_42	X1416_48	X1419_11	X1421_14	X1423_5	X1424_74	X1426_55	X1429_46	X1432_23	X1435_30	X1436_7	X1438_9	X1443_37
+  cat(
+"		X1_25	X8_54	X1358_15	X1363_12	X1368_57	X1369_41	X1372_14	X1373_9	X1377_42	X1378_53	X1379_10	X1382_37	X1386_27	X1398_46	X1400_9	X1401_25	X1403_13	X1404_17	X1409_42	X1416_48	X1419_11	X1421_14	X1423_5	X1424_74	X1426_55	X1429_46	X1432_23	X1435_30	X1436_7	X1438_9	X1443_37
 A_KH1584	A	1	4	4	1	1	3	2	4	4	2	3	3	2	4	1	3	1	1	2	3	1	4	4	3	2	2	3	4	4	4	2
 A_KH1584	A	1	4	4	1	1	3	2	4	4	4	3	3	4	4	1	3	1	3	2	3	3	4	4	3	4	2	3	4	4	4	2
 C_KH1059	C	0	4	4	1	1	3	2	4	4	2	1	3	2	4	1	3	1	3	2	3	3	2	4	3	2	2	3	2	4	4	2
@@ -216,15 +248,23 @@ C_KH1059	C	0	4	4	1	1	3	2	4	4	4	3	3	2	4	1	3	1	3	2	3	3	4	4	3	2	2	3	4	4	4	2
 M_KH1834	M	0	2	2	1	1	3	2	4	4	2	3	3	2	4	1	3	1	1	2	3	3	4	4	3	2	2	3	2	4	4	2
 M_KH1834	M	0	4	4	1	3	3	2	4	4	2	3	3	2	4	1	3	1	3	2	3	3	4	4	3	2	4	3	4	4	4	2
 M_KH1837	M	1	4	4	1	1	3	2	4	4	0	3	3	2	2	1	3	1	1	2	3	3	4	4	3	4	2	3	4	4	4	2
-M_KH1837	M	1	4	4	1	3	3	2	4	4	0	3	3	4	4	1	3	1	3	2	3	3	4	4	3	4	2	3	4	4	4	2"), 
-      file = "elizabeth_starts_with_letter.stru")
+M_KH1837	M	1	4	4	1	3	3	2	4	4	0	3	3	4	4	1	3	1	3	2	3	3	4	4	3	4	2	3	4	4	4	2", 
+      file = tmp2)
   
-  xy2 <- read.structure("elizabeth_starts_with_letter.stru", NA.char="0",
-                        n.ind = 4, n.loc = 31, onerowperind = FALSE,
-                        col.lab = 1, col.pop = 2, row.marknames = 1,
-                        sep = "\t", col.others = 0)
+  xy2 <- read.structure(
+    tmp2,
+    NA.char = "0",
+    n.ind = 4,
+    n.loc = 31,
+    onerowperind = FALSE,
+    col.lab = 1,
+    col.pop = 2,
+    row.marknames = 1,
+    sep = "\t",
+    col.others = 0,
+    quiet = TRUE
+  )
   
-  unlink("elizabeth_starts_with_letter.stru")
   x2 <- tab(xy2)
   
   # should return all 1
