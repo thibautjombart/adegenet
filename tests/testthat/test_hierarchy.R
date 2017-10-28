@@ -10,13 +10,17 @@ test_that("strata methods work for genind objects.", {
               "BlondeAquitaine", "BretPieNoire", "Charolais", "Gascon", "Limousin",
               "MaineAnjou", "Montbeliard", "Salers")
 
-  expect_that(length(strata(microbov)), equals(3))
-  expect_that(popNames(microbov), equals(breeds))
-  expect_that({microbovsplit <- splitStrata(microbov, ~Pop/Subpop)}, throws_error())
+  expect_equal(length(strata(microbov)), 3)
+  expect_equal(popNames(microbov), breeds)
+  expect_warning(
+    expect_error({
+      microbovsplit <- splitStrata(microbov, ~Pop/Subpop)
+      })
+    )
   nameStrata(microbov) <- ~Country/Breed/Species
-  expect_that(names(strata(microbov)), equals(c("Country", "Breed", "Species")))
+  expect_equal(names(strata(microbov)), c("Country", "Breed", "Species"))
   setPop(microbov) <- ~Country/Species
-  expect_that(popNames(microbov), equals(c("AF_BI", "AF_BT", "FR_BT")))
+  expect_equal(popNames(microbov), c("AF_BI", "AF_BT", "FR_BT"))
 })
 
 test_that("strata produce proper errors", {
@@ -41,10 +45,10 @@ test_that("strata methods work for genlight objects", {
   set.seed(9999)
   glTest <- lapply(1:10, function(x, y, z) make_gl(y, z), 10, michier)
   res <- do.call("rbind.genlight", c(glTest, parallel = FALSE))
-  expect_that(res, is_a("genlight"))
-  expect_that(nInd(res), equals(100))
-  expect_that(nLoc(res), equals(10))
-  expect_that(length(strata(res)), equals(3))
+  expect_is(res, "genlight")
+  expect_equal(nInd(res), 100)
+  expect_equal(nLoc(res), 10)
+  expect_equal(length(strata(res)), 3)
   nameStrata(res) <- ~Hickory/Dickory/Doc
-  expect_that(names(strata(res)), equals(c("Hickory", "Dickory", "Doc")))
+  expect_equal(names(strata(res)), c("Hickory", "Dickory", "Doc"))
 })

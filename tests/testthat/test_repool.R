@@ -8,15 +8,9 @@ test_that("slots are equivalent", {
   temp   <- seppop(microbov)
   retemp <- repool(temp)
   expect_null(other(retemp))
-  expect_that(microbov@call, not(is_equivalent_to(retemp@call)))
-  expect_that(names(microbov), equals(names(retemp)))
+  expect_failure(expect_identical(microbov@call, retemp@call))
+  expect_equal(names(microbov), names(retemp))
 
-#   micnames <- names(microbov)
-#   micnames <- micnames[!micnames %in% c("other", "call", "all.names")]
-#   for (i in micnames){
-#     x <- paste0("expect_that(slot(microbov, '", i, "'), is_equivalent_to(slot(retemp, '", i, "')))", "\n")
-#     cat(x)
-#   }
   # Alleles in repooled samples are out of order.
   # This makes sure they are ordered.
   retempallnames <- lapply(retemp@all.names, sort)
@@ -31,5 +25,5 @@ test_that("slots are equivalent", {
   expect_equivalent(slot(microbov, 'pop'), slot(retemp, 'pop'))
   expect_equivalent(slot(microbov, 'ploidy'), slot(retemp, 'ploidy'))
   expect_equivalent(slot(microbov, 'type'), slot(retemp, 'type'))
-
+  
 })
