@@ -241,6 +241,43 @@ setReplaceMethod("indNames","genind",function(x,value) {
     return(x)
 })
 
+#' Use sample names to reorder or name the values in a slot
+#' 
+#' Because the slots "pop", "strata", and "other" contain information about each
+#' individual specifically, we want to make sure that these are in the right
+#' order. This function will be added to the replacement methods so that data
+#' will be subset consistently. 
+#'
+#' @param x a genind or genlight object
+#' @param the_slot a character specifying either "pop", "strata", or "other"
+#'
+#' @return a genind or genlight object
+#' @noRd
+#'
+#' @examples
+.addIndInfo <- function(x, the_slot){
+  slot_values <- slot(x, the_slot)
+  if (is.null(slot_values)) {
+    return(x)
+  }
+  NAMES <- switch(the_slot,
+                  pop    = "names",
+                  strata = "rownames",
+                  other  = NULL
+                  )
+  if (!is.null(NAMES)) { # treat pop and strata
+    NAMES <- match.fun(NAMES)
+    if (!is.null(NAMES(slot_values))) {
+      slot(x, the_slot) <- slot_values[indNames(x)]
+    } else {
+      slot(x, the_slot) <- setNames(slot_values, indNames(x))
+    }
+  } else { # treat the other slot
+    
+  }
+  x
+}
+
 ###########
 # popNames (no gen method)
 ###########
