@@ -21,6 +21,23 @@ setMethod("$<-","genpop",function(x,name,value) {
   return(x)
 }
 
+.treatOther <- function(obj, i, n, quiet = FALSE, oname = NULL) {
+  if (!is.null(dim(obj)) && nrow(obj) == n) {
+    # if the element is a matrix-like obj
+    obj <- obj[i, , drop = FALSE]
+  } else if (length(obj) == n) {
+    # if the element is not a matrix but has a length == n
+    obj <- obj[i]
+    if (is.factor(obj)) {
+      obj <- factor(obj)
+    }
+  } else {
+    if (!quiet)
+      warning(paste("cannot treat the object", oname))
+  }
+  return(obj)
+} 
+
 
 ###############
 # '[' operator

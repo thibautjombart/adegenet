@@ -38,12 +38,12 @@
 ####################
 # Unions of classes
 ####################
-setClassUnion("listOrNULL", c("list","NULL"))
-setClassUnion("factorOrNULL", c("factor","NULL"))
-setClassUnion("charOrNULL", c("character","NULL"))
-setClassUnion("callOrNULL", c("call","NULL"))
-setClassUnion("intOrNum", c("integer","numeric","NULL"))
-setClassUnion("intOrNULL", c("integer","NULL"))
+setClassUnion("listOrNULL", c("list", "NULL"))
+setClassUnion("factorOrNULL", c("factor", "NULL"))
+setClassUnion("charOrNULL", c("character", "NULL"))
+setClassUnion("callOrNULL", c("call", "NULL"))
+setClassUnion("intOrNum", c("integer", "numeric", "NULL"))
+setClassUnion("intOrNULL", c("integer", "NULL"))
 setClassUnion("dfOrNULL", c("data.frame", "NULL"))
 setClassUnion("formOrNULL", c("formula", "NULL"))
 
