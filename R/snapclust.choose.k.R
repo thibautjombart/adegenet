@@ -41,9 +41,12 @@ snapclust.choose.k <- function(max, ..., IC = AIC, IC.only = TRUE) {
     k.values <- 2:max
 
     call.args <- list(...)
-    genind.posi <- match("genind", sapply(call.args, class))
-    if (is.na(genind.posi)) {
+    genind.posi <- which(vapply(call.args, inherits, logical(1), "genind"))
+    if (length(genind.posi) == 0) {
         stop("No genind provided in '...'.")
+    } else if (length(genind.posi) > 1){
+        warning("Too many genind objects provided in '...'. I am taking the first one.")
+        genind.posi <- genind.posi[1]
     }
     names(call.args)[genind.posi] <- "x"
 

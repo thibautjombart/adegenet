@@ -60,3 +60,31 @@ test_that("snapclust gives decent results for F1 & back-cross Zebu-Salers", {
 
 })
 
+
+test_that("snapclust.choose.k will recognize objects that inherit genind objects", {
+  skip_on_cran()
+  skip_if_not_installed("poppr")
+  requireNamespace("poppr", quietly = TRUE)
+  data(microbov)
+  zebu <- poppr::as.genclone(microbov[pop = "Zebu"])
+  expect_is(zebu, "genclone")
+  res <- snapclust.choose.k(2, zebu)
+  expect_length(res, 2)
+  expect_is(res, "numeric")
+  unloadNamespace("poppr")
+})
+
+test_that("snapclust.choose.k will ignore any extra genind objects supplied", {
+  skip_on_cran()
+  data(microbov)
+  expect_warning({
+    res <- snapclust.choose.k(2, microbov[pop = "Zebu"], microbov[pop = "Salers"])  
+  }, "Too many genind objects provided")
+  expect_is(res, "numeric")
+  expect_length(res, 2)
+})
+
+test_that("snapclust.choose.k will throw an error if there are no genind objects", {
+  skip_on_cran()
+  expect_error(snapclust.choose.k(2, 1), "No genind provided")
+})
