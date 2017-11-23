@@ -6,6 +6,8 @@
 
 [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/adegenet)](https://cran.r-project.org/package=adegenet)
 
+[![Research software impact](http://depsy.org/api/package/cran/adegenet/badge.svg)](http://depsy.org/package/r/adegenet)
+
 adegenet
 ========
 *adegenet*: a R Package for the Multivariate Analysis of Genetic Markers
