@@ -267,7 +267,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     if (any(ploidy > 1)){
         allele.data <- strsplit(X, sep)
         n.items <- sapply(allele.data, length)
-        locus.data <- rep(rep(loc.names, each=nind), n.items)
+        locus.data <- rep(rep(loc.names, each = nind), n.items)
         ind.data <- rep(rep(ind.names,ncol(X)), n.items)
         allele.data <- unlist(allele.data)
     } else {
@@ -348,7 +348,18 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
       # M_KH1837           1
     }
 
-
+    ploidmat <- vapply(loc.names, function(i){
+      rowSums(out[, grepl(paste0(i, "\\."), colnames(out)), drop = FALSE], na.rm = TRUE)
+      }, FUN.VALUE = double(nrow(out)))
+    if (max(ploidmat, na.rm = TRUE) > max(ploidy, na.rm = TRUE)) {
+      oran <- paste(range(ploidmat, na.rm = TRUE), collapse = "-")
+      eran <- paste(range(ploidy, na.rm = TRUE), collapse = "-")
+      msg <- paste0("The observed allele dosage (", oran, ") ", 
+                    "does not match the defined ploidy ", "(", eran, ").\n",
+                    "Please check that your input parameters (ncode, sep) ",
+                    "are correct.")
+      warning(msg, immediate. = TRUE)
+    }
     ## call upon genind constructor
     prevcall <- match.call()
     out <- genind(tab=out, pop=pop, prevcall=prevcall, ploidy=ploidy, type=type,

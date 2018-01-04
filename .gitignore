@@ -10,3 +10,4 @@ tutorials/*bbl
 tutorials/*gz
 *.blg
 *.tar.gz
+tests/testthat/*pdf
