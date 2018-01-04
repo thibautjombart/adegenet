@@ -1,5 +1,11 @@
 
 
+			CHANGES IN ADEGENET VERSION 2.1.1
+BUG FIXES
+  - A warning will be issued if the user specifies a ploidy range that is less
+    than the observed allele dosage when data is imported by df2genind. See
+    https://github.com/thibautjombart/adegenet/issues/216 for details.
+
 			CHANGES IN ADEGENET VERSION 2.1.0
 NEW FEATURES
 	- new set of functions implementing 'snapclust' for genetic
