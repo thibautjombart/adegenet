@@ -271,3 +271,21 @@ M_KH1837	M	1	4	4	1	3	3	2	4	4	0	3	3	4	4	1	3	1	3	2	3	3	4	4	3	4	2	3	4	4	4	2",
   expect_true(all(x2[, grepl("1401_25", colnames(x2)), drop = FALSE] == 1))
   
 })
+
+
+test_that("df2genind throws a warning when the user borks the ncode", {
+  dat <- data.frame(stringsAsFactors = FALSE,
+                    A = c("A5A5", "A5A4", "A5A5", "A5A5", "A5A4", "A5A4", "A5A5",
+                          "A5A4", "A5A4", "A5A5"),
+                    B = c("B1B1", "B1B1", "B1B1", "B1B1", "B1B1", "B1B1", "B1B1",
+                          "B1B1", "B1B2", "B1B1"),
+                    C = c("C2C2", "C2C2", "C2C2", "C2C2", "C2C2", "C2C2", "C2C2",
+                          "C2C2", "C2C2", "C2C2"),
+                    D = c("D2D5", "D5D3", "D5D5", "D2D5", "D2D1", "D5D3", "D1D1",
+                          "D2D2", "D2D5", "D2D4")
+  )
+  dat
+  
+  expect_warning(df2genind(dat, ploidy = 2, ncode = 1), "observed allele dosage \\(4-4\\)")
+  
+})
