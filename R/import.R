@@ -349,7 +349,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     }
 
     ploidmat <- vapply(loc.names, function(i){
-      rowSums(out[, grepl(paste0(i, "\\."), colnames(out)), drop = FALSE], na.rm = TRUE)
+      rowSums(out[, grepl(paste0("^", i, "\\."), colnames(out)), drop = FALSE], na.rm = TRUE)
       }, FUN.VALUE = double(nrow(out)))
     if (max(ploidmat, na.rm = TRUE) > max(ploidy, na.rm = TRUE)) {
       oran <- paste(range(ploidmat, na.rm = TRUE), collapse = "-")
