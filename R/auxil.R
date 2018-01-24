@@ -82,6 +82,7 @@
 #' \item 'dapc': population structure using the Discriminant Analysis of Principal Components
 #' \item 'genomics': handling large genome-wide SNP data using adegenet
 #' \item 'strata': introduction to hierarchical population structure in adegenet
+#' \item 'snapclust': introduction to fast maximum-likelihood genetic clustering using snapclust
 #' }
 #'
 #' @export
@@ -98,11 +99,11 @@ adegenetWeb <- function(){
 
 #' @rdname web
 #' @export
-adegenetTutorial <- function(which = c("basics","spca","dapc","genomics","strata")){
+adegenetTutorial <- function(which = c("basics","spca","dapc","genomics","strata","snapclust")){
 
     ## which <- match.arg(which)
     which <- which[1]
-    choices <- c("basics","spca","dapc","genomics","strata","genclust")
+    choices <- c("basics","spca","dapc","genomics","strata","snapclust")
     if (!which %in% choices) {
         stop("Unknown tutorial")
     }
@@ -141,10 +142,10 @@ adegenetTutorial <- function(which = c("basics","spca","dapc","genomics","strata
         cat("  >> Seeking url: ",url,"\n ", sep="")
         cat("\n")
     }
-    if(which=="genclust"){
-        url <- "https://github.com/thibautjombart/adegenet/raw/master/tutorials/tutorial-genclust.pdf"
+    if(which=="snapclust"){
+        url <- "https://github.com/thibautjombart/adegenet/raw/master/tutorials/tutorial-snapclust.pdf"
         cat("\n")
-        cat("  >> Opening the genclust tutorial.\n")
+        cat("  >> Opening the snapclust tutorial.\n")
         cat("  >> Seeking url: ",url,"\n ", sep="")
         cat("\n")
     }
