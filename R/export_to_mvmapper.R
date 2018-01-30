@@ -105,18 +105,22 @@ export_to_mvmapper.default <- function(x, ...) {
 #' @export
 #' @rdname export_to_mvmapper
 #' @examples
-#'
-#' data(sim2pop)
-#'
-#' dapc1 <- dapc(sim2pop, n.pca = 10, n.da = 1)
-#'
-#' info <- data.frame(key = indNames(sim2pop),
-#'                    lat = other(sim2pop)$xy[,2],
-#'                    lon = other(sim2pop)$xy[,1],
-#'                    Population = pop(sim2pop))
-#'
-#' out <- export_to_mvmapper(dapc1, info, write_file = FALSE)
-#' head(out)
+#' 
+#' # An example using the microsatellite dataset of Dupuis et al. 2016 (781 individuals, 10 loci, doi: 10.1111/jeb.12931)
+#' # Reading input file from adegenet
+#' input_data <- system.file("data/swallowtails.rda", package="adegenet")
+#' data(swallowtails)
+#' 
+#' # conducting a DAPC (n.pca determined using xvalDapc, see ??xvalDapc)
+#' dapc1 <- dapc(butterflies, n.pca=40, n.da=200)
+#' 
+#' # read in swallowtails_loc.csv, which contains "key", "lat", and "lon" columns with column headers (this example contains additional columns containing species identifications, locality descriptions, and COI haplotype clades)
+#' input_locs <- system.file("data/swallowtails_loc.csv", package="adegenet")
+#' loc <- read.csv(input_locs, header=T)
+#' 
+#' # generate mvmapper input file, automatically write the output to a csv, and name the output csv "mvMapper_Data.csv" 
+#' out <- export_to_mvmapper(dapc1, loc, write_file=TRUE, out_file="mvMapper_Data.csv")
+#' 
 
 export_to_mvmapper.dapc <- function(x, info, write_file = TRUE, out_file = NULL, ...) {
 
@@ -178,21 +182,7 @@ export_to_mvmapper.dudi <- function(x, info, write_file = TRUE, out_file = NULL,
 
 #' @export
 #' @rdname export_to_mvmapper
-#' @examples
-#'
-#' data(rupica)
-#'
-#' spca1 <- spca(rupica, type=5, d1 = 0, d2 = 2300,
-#'               plot = FALSE, scannf = FALSE,
-#'               nfposi = 2,nfnega = 0)
-#'
-#' info <- data.frame(key = indNames(rupica),
-#'                    lat = rupica$other$xy[,2],
-#'                    lon = rupica$other$xy[,1])
-#'
-#' out <- export_to_mvmapper(spca1, info, write_file = FALSE)
-#' head(out)
-#'
+
 
 export_to_mvmapper.spca <- function(x, info, write_file = TRUE, out_file = NULL, ...) {
 
