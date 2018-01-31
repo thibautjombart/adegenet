@@ -135,6 +135,23 @@
 snapclust <- function(x, k, pop.ini = "ward", max.iter = 100, n.start = 10,
                       n.start.kmeans = 50, hybrids = FALSE, dim.ini = 100,
                       hybrid.coef = NULL, parent.lab = c('A', 'B'), ...) {
+
+  if (!is.genind(x)) {
+    stop("x is not a valid genind object")
+  }
+
+  if (any(ploidy(x) > 2)) {
+    stop("snapclust not currently implemented for ploidy > 2")
+  }
+
+  if (all(ploidy(x) == 1)) {
+    .ll.genotype <- .ll.genotype.haploid
+  } else if (all(ploidy(x) == 2)) {
+    .ll.genotype <- .ll.genotype.diploid
+  } else {
+    stop("snapclust not currently implemented for varying ploidy")
+  }
+
   ## This function uses the EM algorithm to find ML group assignment of a set
   ## of genotypes stored in a genind object into 'k' clusters. We need an
   ## initial cluster definition to start with. The rest of the algorithm
@@ -325,7 +342,7 @@ snapclust <- function(x, k, pop.ini = "ward", max.iter = 100, n.start = 10,
 ## TODO: extend this to various ploidy levels, possibly optimizing procedures
 ## for haploids.
 
-.ll.genotype <- function(x, pop.freq, n.loc){
+.ll.genotype.diploid <- function(x, pop.freq, n.loc){
   ## homozygote (diploid)
   ## p(AA) = f(A)^2 for each locus
   ll.homoz.one.indiv <- function(f) {
@@ -343,6 +360,20 @@ snapclust <- function(x, k, pop.ini = "ward", max.iter = 100, n.start = 10,
   ll.heteroz <- apply(pop.freq, 1, ll.hetero.one.indiv)
 
   return(ll.homoz + ll.heteroz)
+}
+
+
+
+.ll.genotype.haploid <- function(x, pop.freq, n.loc){
+  ## homozygote (diploid)
+  ## p(A) = f(A) for each locus
+  ll.one.indiv <- function(f) {
+    sum(log(f[x == 1L]), na.rm = TRUE)
+  }
+
+  ll <- apply(pop.freq, 1, ll.one.indiv)
+
+  return(ll)
 }
 
 
