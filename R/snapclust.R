@@ -275,8 +275,6 @@ snapclust <- function(x, k, pop.ini = "ward", max.iter = 100, n.start = 10,
       ll <- new.ll
       out <- list(group = group, ll = ll)
 
-      browser()
-
       ## group membership probability
       rescaled.ll.mat <- .rescale.ll.mat(ll.mat)
       out$proba <- prop.table(t(exp(rescaled.ll.mat)), 1)
@@ -499,6 +497,7 @@ snapclust <- function(x, k, pop.ini = "ward", max.iter = 100, n.start = 10,
   ## largest ll such that exp(ll) is strictly less than +Inf
   new_max <- (1:1000)[max(which(exp(1:1000) < Inf))]
 
+  counter <- 0
 
 
   ## find rescaling for a single individual;
@@ -509,15 +508,23 @@ snapclust <- function(x, k, pop.ini = "ward", max.iter = 100, n.start = 10,
 
     ## set sum to the maximum
     if (sum(x) > new_max) {
-      msg <- paste("Range of log-likelihoods exceeds computer precision;",
-                   "using group membership probability approximation")
-      message(msg)
+      counter <<- counter + 1
       x <- x - min(x) # reset min to 0
       x <- new_min + (x / sum(x)) * new_max # range: new_min to new_max
-      return(x)
     }
+    return(x)
   }
 
   out <- apply(ll.mat, 2, rescale.ll.indiv)
 
+  if (counter > 0) {
+    msg <- paste("Large dataset syndrome:\n",
+                 "for", counter, "individuals,",
+                 "differences in log-likelihoods exceed computer precision;\n",
+                 "group membership probabilities are approximated\n",
+                 "(only trust clear-cut values)")
+    message(msg)
+  }
+
+  return(out)
 }
