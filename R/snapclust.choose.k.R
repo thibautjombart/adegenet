@@ -16,7 +16,7 @@
 #' @param IC A function computing the information criterion for
 #'     \code{\link{snapclust}} objects. Available statistics are
 #'     \code{AIC} (default), \code{AICc}, and \code{BIC}.
-#' 
+#'
 #' @param IC.only A logical (TRUE by default) indicating if IC values only
 #'     should be returned; if \code{FALSE}, full \code{snapclust} objects are
 #'     returned.
@@ -30,7 +30,7 @@ snapclust.choose.k <- function(max, ..., IC = AIC, IC.only = TRUE) {
     ## BIC), and can also return the full snapclust objects if needed. For
     ## k=1, AIC and BIC are computed via an internal (i.e. non-exported)
     ## procedure.
-    
+
     max <- as.integer(max)
     if (any(!is.finite(max))) {
         stop("Values of k need to be finite.")
@@ -53,7 +53,7 @@ snapclust.choose.k <- function(max, ..., IC = AIC, IC.only = TRUE) {
 
     out.IC <- double(length(k.values))
     out.objects <- list(length(k.values))
-    
+
     for (i in seq_along(k.values)) {
         ## get clustering solution for 'k'
         call.args$k <- k.values[i]
@@ -64,7 +64,7 @@ snapclust.choose.k <- function(max, ..., IC = AIC, IC.only = TRUE) {
     out.IC <- .compute.null.IC(call.args$x)
     out.IC <- c(out.IC, vapply(out.objects, IC, double(1)))
     names(out.IC) <- 1:max
-                 
+
     if (IC.only) {
         out <- out.IC
     } else {
@@ -93,12 +93,26 @@ snapclust.choose.k <- function(max, ..., IC = AIC, IC.only = TRUE) {
     pop.freq <- tab(genind2genpop(x, pop = group, quiet = TRUE),
                     freq = TRUE)
 
-    ## browser()
+    if (!is.genind(x)) {
+      stop("x is not a valid genind object")
+    }
+
+    if (any(ploidy(x) > 2)) {
+      stop("snapclust not currently implemented for ploidy > 2")
+    }
+
+    if (all(ploidy(x) == 1)) {
+      .ll.genotype <- .ll.genotype.haploid
+    } else if (all(ploidy(x) == 2)) {
+      .ll.genotype <- .ll.genotype.diploid
+    } else {
+      stop("snapclust not currently implemented for varying ploidy")
+    }
 
     ## get likelihoods of genotypes
     ll.mat <- apply(genotypes, 1, .ll.genotype, pop.freq, n.loc)
     ll.mat <- matrix(ll.mat, nrow = 1)
-    
+
     ll <- .global.ll(group, ll.mat)
 
     ## make a fake snapclust object to get IC
