@@ -87,30 +87,34 @@ the second argument \code{info}. By default, the function returns a formatted
 }
 \examples{
 
-data(sim2pop)
+# An example using the microsatellite dataset of Dupuis et al. 2016 (781
+# individuals, 10 loci, doi: 10.1111/jeb.12931)
 
-dapc1 <- dapc(sim2pop, n.pca = 10, n.da = 1)
+# Reading input file from adegenet
 
-info <- data.frame(key = indNames(sim2pop),
-                   lat = other(sim2pop)$xy[,2],
-                   lon = other(sim2pop)$xy[,1],
-                   Population = pop(sim2pop))
+input_data <- system.file("data/swallowtails.rda", package="adegenet")
+data(swallowtails)
 
-out <- export_to_mvmapper(dapc1, info, write_file = FALSE)
-head(out)
 
-data(rupica)
+# conducting a DAPC (n.pca determined using xvalDapc, see ??xvalDapc)
 
-spca1 <- spca(rupica, type=5, d1 = 0, d2 = 2300,
-              plot = FALSE, scannf = FALSE,
-              nfposi = 2,nfnega = 0)
+dapc1 <- dapc(swallowtails, n.pca=40, n.da=200)
 
-info <- data.frame(key = indNames(rupica),
-                   lat = rupica$other$xy[,2],
-                   lon = rupica$other$xy[,1])
 
-out <- export_to_mvmapper(spca1, info, write_file = FALSE)
-head(out)
+# read in swallowtails_loc.csv, which contains "key", "lat", and "lon"
+# columns with column headers (this example contains additional columns
+# containing species identifications, locality descriptions, and COI
+# haplotype clades)
+
+input_locs <- system.file("files/swallowtails_loc.csv", package = "adegenet")
+loc <- read.csv(input_locs, header = TRUE)
+
+
+# generate mvmapper input file, automatically write the output to a csv, and
+# name the output csv "mvMapper_Data.csv"
+
+out <- export_to_mvmapper(dapc1, loc, write_file = TRUE,
+                          out_file = "mvMapper_Data.csv")
 
 }
 \seealso{

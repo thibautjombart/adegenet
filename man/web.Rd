@@ -8,7 +8,8 @@
 \usage{
 adegenetWeb()
 
-adegenetTutorial(which = c("basics", "spca", "dapc", "genomics", "strata"))
+adegenetTutorial(which = c("basics", "spca", "dapc", "genomics", "strata",
+  "snapclust"))
 
 adegenetIssues()
 }
@@ -36,5 +37,6 @@ Available tutorials are:
 \item 'dapc': population structure using the Discriminant Analysis of Principal Components
 \item 'genomics': handling large genome-wide SNP data using adegenet
 \item 'strata': introduction to hierarchical population structure in adegenet
+\item 'snapclust': introduction to fast maximum-likelihood genetic clustering using snapclust
 }
 }
