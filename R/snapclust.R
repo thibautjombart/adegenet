@@ -345,6 +345,7 @@ snapclust <- function(x, k, pop.ini = "ward", max.iter = 100, n.start = 10,
 .ll.genotype.diploid <- function(x, pop.freq, n.loc){
   ## homozygote (diploid)
   ## p(AA) = f(A)^2 for each locus
+  ## so that log(p(AA)) = 2 * log(f(A))
   ll.homoz.one.indiv <- function(f) {
     sum(log(f[x == 2L]), na.rm = TRUE) * 2
   }
@@ -352,9 +353,14 @@ snapclust <- function(x, k, pop.ini = "ward", max.iter = 100, n.start = 10,
   ll.homoz <- apply(pop.freq, 1, ll.homoz.one.indiv)
 
   ## heterozygote (diploid, expl with 2 loci)
-  ## p(Aa)p(Bb) = 2^n.loc * f(A)f(a) f(B)f(b)
+  ## p(AB) = 2 * f(A) f(B)
+  ## so that log(p(AB)) = log(f(A)) + log(f(B)) + log(2)
+  ## if an individual is heterozygote for n.heter loci, the term
+  ## log(2) will be added n.heter times
+
   ll.hetero.one.indiv <- function(f) {
-    sum(log(f[x == 1L]), na.rm = TRUE) + n.loc * log(2)
+    n.heter <- sum(x == 1L, na.rm = TRUE) / 2
+    sum(log(f[x == 1L]), na.rm = TRUE) + n.heter * log(2)
   }
 
   ll.heteroz <- apply(pop.freq, 1, ll.hetero.one.indiv)
@@ -365,7 +371,7 @@ snapclust <- function(x, k, pop.ini = "ward", max.iter = 100, n.start = 10,
 
 
 .ll.genotype.haploid <- function(x, pop.freq, n.loc){
-  ## homozygote (diploid)
+
   ## p(A) = f(A) for each locus
   ll.one.indiv <- function(f) {
     sum(log(f[x == 1L]), na.rm = TRUE)
