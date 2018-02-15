@@ -91,8 +91,8 @@ The following notations will be used to describe the model.
  \item $x$: matrix of allele counts, obtained by row-concatenation of the $x_i$
  \item $g_i$: group of individual $i$ ($g_i \in \{1, \ldots, K \} \:\:\forall\:\: i \in \{1, \ldots, I\}$)
  \item $g$: vector of group memberships ($g = g_1, \ldots, g_I$)
- \item $f_{k,j}$: vector of alle frequencies of group $k$ at locus $j$
- \item $f_{k}$: vector of alle frequencies of group $k$ for all loci, i.e. concatenation $[f_{k,1} \ldots x_{k,J}]$
+ \item $f_{k,j}$: vector of allele frequencies of group $k$ at locus $j$
+ \item $f_{k}$: vector of allele frequencies of group $k$ for all loci, i.e. concatenation $[f_{k,1} \ldots x_{k,J}]$
  \item $x$: matrix of all allele frequencies, obtained by row-concatenation of the $f_k$
  \item $\pi$: the ploidy of all individuals
 \end{itemize}
@@ -256,7 +256,7 @@ opts_chunk$set(fig.width=10, fig.height=6, out.width="\\textwidth")
 The method described above is implemented in the function
 \texttt{snapclust}. To illustrate it, we first re-analyse datasets originally
 simulated to illustrate the DAPC (Jombart \textit{et al.} 2010, BCM
-Genetics). The data \texttt{dapcIllus} contains for datasets:
+Genetics). The data \texttt{dapcIllus} contains four datasets:
 \begin{itemize}
   \item \texttt{\$a}: island model with 6 demes
   \item \texttt{\$b}: hierarchical island model with 6 demes (3,2,1)
@@ -398,7 +398,7 @@ y <- repool(x, f1.zebu, f1.salers)
 
 
 % % % % % % % % % % % % % % % % % % % % % % % %
-\subsubsection{Looking for hybrid using \texttt{snapclust}}
+\subsubsection{Looking for hybrids using \texttt{snapclust}}
 % % % % % % % % % % % % % % % % % % % % % % % %
 
 
@@ -447,7 +447,7 @@ of likelihood contribution (results not shown) suggest that individuals slightly
 closer to either parental population are simply much more likely to belong to
 this population. The same can be observed in the Discriminant Analysis of
 Principal Components (DAPC), which does not use likelihood but a geometric
-criteria.
+criterion.
 This can be illustrated by analysing the parental population (first 100
 individuals) and predicting the group membership of the hybrids as supplementary individuals:
 <<dapc>>=

@@ -56,7 +56,7 @@ opts_chunk$set(fig.path='figs/dapc-', fig.keep='high', dev='pdf', fig.width=7, f
 \begin{abstract}
   This vignette provides a tutorial for applying the Discriminant Analysis of Principal Components
   (DAPC \cite{tjart19}) using the \textit{adegenet} package \cite{tjart05} for the R software
-  \cite{np145}. This methods aims to identify and describe genetic clusters, although it can in fact
+  \cite{np145}. This method aims to identify and describe genetic clusters, although it can in fact
   be applied to any quantitative data. We illustrate how to use \code{find.clusters} to identify
   clusters, and \code{dapc} to describe the relationships between these clusters. More advanced
   topics are then introduced, such as advanced graphics, assessing the stability of DAPC results and
@@ -282,7 +282,7 @@ pointing to possible admixture.
 \\
 
 Lastly, using the allele loadings, it is possible to represent new individuals (which have not participated to the analysis)
-onto the factorial planes, and derive membership probabilities as welll. Such individuals are
+onto the factorial planes, and derive membership probabilities as well. Such individuals are
 referred to as \textit{supplementary individuals}.
 
 
@@ -359,7 +359,7 @@ customize, as shown below.
 
 DAPC scatterplots are the main result of DAPC. It is therefore essential to ensure that information
 is displayed efficiently, and if possible to produce pretty figures.
-Possibility are almost unlimited, and here we just illustrate a few possibilities offered by
+Possibilities are almost unlimited, and here we just illustrate a few possibilities offered by
 \texttt{scatter}. Note that \texttt{scatter} is a generic function, with a dedicated method for
 objects produced by \texttt{dapc}. Documentation of this function can be accessed by typing \texttt{?scatter.dapc}.
 \\
@@ -496,7 +496,7 @@ axis(side=1, at=1:6, lab=2001:2006)
 
 In both cases, a new allele appeared in 2005 at a very low frequency, and reached high or even dominant frequencies a
 year later.
-Irrespective of the mecanism underlying these changes (drift or selection), this illustrates that in
+Irrespective of the mechanism underlying these changes (drift or selection), this illustrates that in
 seasonal influenza, specific nucleotides can undergo drastic changes within only a couple of years.
 
 
