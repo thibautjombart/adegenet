@@ -6,6 +6,8 @@
 
 [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/adegenet)](https://cran.r-project.org/package=adegenet)
 
+[![Downloads from Rstudio mirror](https://cranlogs.r-pkg.org/badges/grand-total/adegenet)](http://www.r-pkg.org/pkg/adegenet)
+
 [![Research software impact](http://depsy.org/api/package/cran/adegenet/badge.svg)](http://depsy.org/package/r/adegenet)
 
 adegenet
