@@ -6,7 +6,8 @@
 \usage{
 df2genind(X, sep = NULL, ncode = NULL, ind.names = NULL,
   loc.names = NULL, pop = NULL, NA.char = "", ploidy = 2,
-  type = c("codom", "PA"), strata = NULL, hierarchy = NULL)
+  type = c("codom", "PA"), strata = NULL, hierarchy = NULL,
+  check.ploidy = getOption("adegenet.check.ploidy"))
 }
 \arguments{
 \item{X}{a matrix or a data.frame containing allelle data only (see
@@ -42,6 +43,10 @@ factorial sampling design.}
 
 \item{hierarchy}{a hierarchical formula that explicitely defines hierarchical
 levels in your strata. see \code{\link{hierarchy}} for details.}
+
+\item{check.ploidy}{a boolean indicating if the ploidy should be checked or
+is assumed to be correct. Skipping this step improves significantly the time
+needed to create a genind object.}
 }
 \value{
 an object of the class \linkS4class{genind} for \code{df2genind}; a

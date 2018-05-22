@@ -63,6 +63,9 @@
 #'   factorial sampling design.
 #' @param hierarchy a hierarchical formula that explicitely defines hierarchical
 #'   levels in your strata. see \code{\link{hierarchy}} for details.
+#' @param check.ploidy a boolean indicating if the ploidy should be checked or
+#' is assumed to be correct. Skipping this step improves significantly the time
+#' needed to create a genind object. 
 #'
 #' @return an object of the class \linkS4class{genind} for \code{df2genind}; a
 #'   matrix of biallelic genotypes for \code{genind2df}
@@ -96,7 +99,8 @@
 #'
 df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
                       pop=NULL, NA.char="", ploidy=2, type=c("codom","PA"),
-                      strata = NULL, hierarchy = NULL){
+                      strata = NULL, hierarchy = NULL,
+                      check.ploidy = getOption("adegenet.check.ploidy")){
 
     ## CHECKS ##
     if(is.data.frame(X)) X <- as.matrix(X)
@@ -347,18 +351,19 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
       # M_KH1834           1
       # M_KH1837           1
     }
-
-    ploidmat <- vapply(loc.names, function(i){
-      rowSums(out[, grepl(paste0("^", i, "\\."), colnames(out)), drop = FALSE], na.rm = TRUE)
-      }, FUN.VALUE = double(nrow(out)))
-    if (max(ploidmat, na.rm = TRUE) > max(ploidy, na.rm = TRUE)) {
-      oran <- paste(range(ploidmat, na.rm = TRUE), collapse = "-")
-      eran <- paste(range(ploidy, na.rm = TRUE), collapse = "-")
-      msg <- paste0("The observed allele dosage (", oran, ") ", 
-                    "does not match the defined ploidy ", "(", eran, ").\n",
-                    "Please check that your input parameters (ncode, sep) ",
-                    "are correct.")
-      warning(msg, immediate. = TRUE)
+    if(check.ploidy){
+      ploidmat <- vapply(loc.names, function(i){
+        rowSums(out[, grepl(paste0("^", i, "\\."), colnames(out)), drop = FALSE], na.rm = TRUE)
+        }, FUN.VALUE = double(nrow(out)))
+      if (max(ploidmat, na.rm = TRUE) > max(ploidy, na.rm = TRUE)) {
+        oran <- paste(range(ploidmat, na.rm = TRUE), collapse = "-")
+        eran <- paste(range(ploidy, na.rm = TRUE), collapse = "-")
+        msg <- paste0("The observed allele dosage (", oran, ") ", 
+                      "does not match the defined ploidy ", "(", eran, ").\n",
+                      "Please check that your input parameters (ncode, sep) ",
+                      "are correct.")
+        warning(msg, immediate. = TRUE)
+      }
     }
     ## call upon genind constructor
     prevcall <- match.call()

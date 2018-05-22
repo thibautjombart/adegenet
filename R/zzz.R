@@ -6,7 +6,8 @@
     )
     toset <- !(names(op.adegenet) %in% names(op))
     if(any(toset)) options(op.adegenet[toset])
-
+    options(adegenet.check.ploidy = TRUE)
+    
     # startup message ---------------------------------------------------------
     pkg.version <- packageDescription("adegenet", fields = "Version")
     startup.txt <- paste("\n   /// adegenet ", pkg.version, " is loaded ////////////",
