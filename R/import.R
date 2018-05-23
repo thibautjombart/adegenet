@@ -63,9 +63,11 @@
 #'   factorial sampling design.
 #' @param hierarchy a hierarchical formula that explicitely defines hierarchical
 #'   levels in your strata. see \code{\link{hierarchy}} for details.
-#' @param check.ploidy a boolean indicating if the ploidy should be checked or
-#' is assumed to be correct. Skipping this step improves significantly the time
-#' needed to create a genind object. 
+#' @param check.ploidy a boolean indicating if the ploidy should be checked (TRUE,
+#' default) or not (FALSE). Not checking the ploidy makes the import much faster,
+#' but might result in bugs/problems if the input file is misread or the ploidy is
+#' wrong. It is therefore advised to first import and check a subset of data to 
+#' see if everything works as expected before setting this option to false. 
 #'
 #' @return an object of the class \linkS4class{genind} for \code{df2genind}; a
 #'   matrix of biallelic genotypes for \code{genind2df}

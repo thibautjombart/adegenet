@@ -2,11 +2,11 @@
     # adegenet specific options -----------------------------------------------
     op <- options()
     op.adegenet <- list(
-      adegenet.testcon = stdin() # for readLines, read from stdin. This allows it to be changed for tests.
+      adegenet.testcon = stdin(), # for readLines, read from stdin. This allows it to be changed for tests.
+      adegenet.check.ploidy = TRUE
     )
     toset <- !(names(op.adegenet) %in% names(op))
     if(any(toset)) options(op.adegenet[toset])
-    options(adegenet.check.ploidy = TRUE)
     
     # startup message ---------------------------------------------------------
     pkg.version <- packageDescription("adegenet", fields = "Version")
