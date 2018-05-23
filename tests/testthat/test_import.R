@@ -287,5 +287,6 @@ test_that("df2genind throws a warning when the user borks the ncode", {
   dat
   
   expect_warning(df2genind(dat, ploidy = 2, ncode = 1), "observed allele dosage \\(4-4\\)")
+  expect_warning(df2genind(dat, ploidy = 2, ncode = 1,check.ploidy = FALSE), regexp = NA)
   
 })
