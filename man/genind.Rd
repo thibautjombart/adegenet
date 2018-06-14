@@ -21,7 +21,7 @@
 }
 \section{Slots}{
   \describe{
-    \item{\code{tab}:}{
+    \item{\code{tab}:}{ \strong{(accessor: \code{\link{tab}})}
       matrix integers containing genotypes data for
       individuals (in rows) for all alleles (in columns). The table
       differs depending on the \code{@type} slot:\cr
@@ -30,22 +30,37 @@
       individuals' ploidies.\cr
       - 'PA': values are presence/absence of alleles.\cr
       In all cases, rows and columns are given generic names.}
-    \item{\code{loc.fac}:}{locus factor for the columns of \code{tab}}
-    \item{\code{loc.n.all}:}{integer vector giving the number of alleles per locus}
-    \item{\code{all.names}:}{list having one component per locus, each containing a character vector of alleles names}
-    \item{\code{ploidy}:}{ an integer indicating the degree of ploidy of
-      the genotypes. Beware: 2 is not an integer, but as.integer(2) is.}
+    \item{\code{loc.fac}:}{\strong{(accessor: \code{\link{locFac}})} locus 
+    factor for the columns of \code{tab}}
+    \item{\code{loc.n.all}:}{\strong{(accessor: \code{\link{nAll}})} integer 
+    vector giving the number of observed alleles per locus (see note)}
+    \item{\code{all.names}:}{\strong{(accessor: \code{\link{alleles}})} list 
+    having one component per locus, each containing a character vector of allele
+    names}
+    \item{\code{ploidy}:}{\strong{(accessor: \code{\link{ploidy}})} an integer 
+    vector indicating the degree of ploidy of the genotypes. Beware: 2 is not 
+    an integer, but 2L or as.integer(2) is.}
     \item{\code{type}:}{ a character string indicating the type of
       marker: 'codom' stands for 'codominant' (e.g. microstallites,
       allozymes); 'PA' stands for 'presence/absence' (e.g. AFLP).}
     \item{\code{call}:}{the matched call}
-    \item{\code{strata}:}{(optional) data frame giving levels of population stratification for each individual}
-    \item{\code{hierarchy}:}{(optional) a hierarchical \code{\link{formula}} defining the hierarchical levels in the \code{@@strata} slot.}
-    \item{\code{pop}:}{(optional) factor giving the population of each individual}
-    \item{\code{other}:}{(optional) a list containing other information}
+    \item{\code{strata}:}{\strong{(accessor: \code{\link{strata}})} (optional) 
+    data frame giving levels of population stratification for each individual}
+    \item{\code{hierarchy}:}{\strong{(accessor: \code{\link{hier}})} (optional, 
+    currently unused) a hierarchical \code{\link{formula}} defining the 
+    hierarchical levels in the \code{@@strata} slot.}
+    \item{\code{pop}:}{\strong{(accessor: \code{\link{pop}})} (optional) factor 
+    giving the population of each individual}
+    \item{\code{other}:}{\strong{(accessor: \code{\link{other}})} (optional) a 
+    list containing other information}
   }
 }
-
+\section{Note:}{
+  The \code{loc.n.all} slot will reflect the number of columns per locus that 
+  contain at least one observation. This means that the sum of the this vector 
+  will not necessarily equal the number of columns in the data unless you use 
+  \code{drop = TRUE} when subsetting. 
+}
 \section{Extends}{
 Class \code{"\linkS4class{gen}"}, directly.
 Class \code{"\linkS4class{indInfo}"}, directly.
