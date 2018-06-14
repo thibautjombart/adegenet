@@ -6,8 +6,6 @@
 \alias{scaleGen-methods}
 \alias{scaleGen,genind-method}
 \alias{scaleGen,genpop-method}
-\alias{scaleGen,genind-method}
-\alias{scaleGen,genpop-method}
 \title{Compute scaled allele frequencies}
 \usage{
 scaleGen(x, ...)
