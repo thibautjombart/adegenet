@@ -1,10 +1,20 @@
 			CHANGES IN ADEGENET VERSION 2.1.2
 NEW FEATURES
+
   - While creating genind from dataframe, it is now possible to skip
     the test of the ploidy that was added in 2.1.1 by passing the option
     check.ploidy = FALSE to the function df2genind. See 
     https://github.com/thibautjombart/adegenet/issues/231 and
     https://github.com/thibautjombart/adegenet/pull/232 for details
+    
+BUG FIXES
+
+  - A bug where the number of alleles per locus was unaffected after subsetting
+    a population with `drop = FALSE` has been fixed. Now, by default, the 
+    `@loc.n.all` slot (accessor: `nAll()`) will store the number of observed
+    alleles in the current data set, regardless of whether or not these were
+    dropped from the data matrix. 
+    See https://github.com/thibautjombart/adegenet/issues/234 for details.
 
 			CHANGES IN ADEGENET VERSION 2.1.1
 BUG FIXES
