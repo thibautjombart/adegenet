@@ -265,40 +265,49 @@ setMethod("$<-","genind",function(x,name,value) {
 setGeneric("seppop", function(x, ...) standardGeneric("seppop"))
 
 ## genind
-setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,res.type=c("genind","matrix"),
-                              drop=FALSE, treatOther=TRUE, quiet=TRUE){
+setMethod(
+  f = "seppop", 
+  signature(x = "genind"), 
+  definition = function(x,
+                        pop = NULL,
+                        truenames = TRUE,
+                        res.type = c("genind", "matrix"),
+                        drop = FALSE,
+                        treatOther = TRUE,
+                        keepNA = FALSE,
+                        quiet = TRUE) {
     ## checkType(x)
     truenames <- TRUE # this argument will be deprecated
-
+    
     ## misc checks
-    if(!is.genind(x)) stop("x is not a valid genind object")
-    if(is.null(pop)) { # pop taken from @pop
-        if(is.null(x@pop)) stop("pop not provided and x@pop is empty")
-        pop <- pop(x)
-    } else if (is.language(pop)){
+    if (!is.genind(x))
+      stop("x is not a valid genind object")
+    if (is.null(pop)) {
+      # pop taken from @pop
+      if (is.null(x@pop))
+        stop("pop not provided and x@pop is empty")
+      pop <- pop(x)
+    } else if (is.language(pop)) {
       setPop(x) <- pop
       pop <- pop(x)
     } else {
-        pop <- factor(pop)
+      pop <- factor(pop)
     }
-
-
     res.type <- match.arg(res.type)
-
-    ## pop <- x@pop # comment to take pop arg into account
-
     ## make a list of genind objects
-    kObj <- lapply(levels(pop), function(lev) x[pop==lev, , drop=drop, treatOther=treatOther, quiet=quiet])
+    kObj <- lapply(levels(pop), function(lev) x[pop == lev, , drop = drop, treatOther = treatOther, quiet = quiet])
     names(kObj) <- levels(pop)
-
+    
     ## res is a list of genind
-    if(res.type=="genind"){ return(kObj) }
-
+    if (res.type == "genind") {
+      return(kObj)
+    }
+    
     ## res is list of matrices
     res <- lapply(kObj, function(obj) tab(obj))
-
+    
     return(res)
-}) # end seppop
+  }) # end seppop
 
 
 
