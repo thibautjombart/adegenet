@@ -280,8 +280,6 @@ setMethod(
     truenames <- TRUE # this argument will be deprecated
     
     ## misc checks
-    if (!is.genind(x))
-      stop("x is not a valid genind object")
     if (is.null(pop)) {
       # pop taken from @pop
       if (is.null(x@pop))
