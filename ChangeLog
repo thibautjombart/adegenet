@@ -15,6 +15,10 @@ BUG FIXES
     alleles in the current data set, regardless of whether or not these were
     dropped from the data matrix. 
     See https://github.com/thibautjombart/adegenet/issues/234 for details.
+    
+  - `seppop()` will now take into account `NA` population assignments with the
+    new `keepNA` argument. 
+    See https://github.com/thibautjombart/adegenet/pull/236 for details.
 
 			CHANGES IN ADEGENET VERSION 2.1.1
 BUG FIXES
