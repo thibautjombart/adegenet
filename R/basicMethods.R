@@ -14,9 +14,10 @@ setMethod("$<-","genpop",function(x,name,value) {
 .drop_alleles <- function(x, toKeep){
   all.vec <- unlist(alleles(x), use.names = FALSE)[toKeep]
   loc.fac <- factor(locFac(x)[toKeep])
+  present_alleles <- colSums(tab(x), na.rm = TRUE) > 0L
 
   x@all.names <- split(all.vec, loc.fac)
-  x@loc.n.all  <- setNames(tabulate(loc.fac), levels(loc.fac))
+  x@loc.n.all <- vapply(split(present_alleles, loc.fac), sum, integer(1))
   x@loc.fac   <- loc.fac
   return(x)
 }

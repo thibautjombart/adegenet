@@ -52,7 +52,7 @@ test_that("'[' method works for genind objects", {
 #       dput(ten_random_samples), "\n")
   pops <- levels(pop(microbov))
   pops <- pops[pops %in% pop(microbov)[ten_random_samples]]
-  loci <- microbov@loc.fac[microbov@loc.fac %in% two_random_loci]
+  loci <- locFac(microbov)[locFac(microbov) %in% two_random_loci]
   loci <- factor(loci)
 
   mic10     <- microbov[ten_random_samples]
@@ -75,25 +75,41 @@ test_that("'[' method works for genind objects", {
   expect_equal(nPop(mic10), length(pops))
   expect_equal(nPop(mic2Loc10), length(pops))
 
-  expect_equal(length(mic10@loc.fac), ncol(tab(microbov)))
-  expect_equal(mic2Loc@loc.fac, loci)
-  expect_equal(mic2Loc10@loc.fac, loci)
-
-  expect_equal(mic10@loc.n.all, microbov@loc.n.all)
-  expect_equal(mic2Loc@loc.n.all, microbov@loc.n.all[two_random_loci])
-  expect_equal(mic2Loc10@loc.n.all, microbov@loc.n.all[two_random_loci])
+  expect_equal(length(locFac(mic10)), ncol(tab(microbov)))
+  expect_equal(locFac(mic2Loc), loci)
+  expect_equal(locFac(mic2Loc10), loci)
+  
+  # Without drop, the potential alleles are kept
+  expect_equal(alleles(mic10),     alleles(microbov))
+  expect_equal(alleles(mic2Loc),   alleles(microbov)[two_random_loci])
+  expect_equal(alleles(mic2Loc10), alleles(microbov)[two_random_loci])
+  
+  # The loc.n.all slot should be less than or equal to the
+  # number of alleles from the full data set.
+  for (loc in seq(nLoc(microbov))) {
+    expect_lte(nAll(mic10)[loc], nAll(microbov)[loc], 
+               label = paste("mic10, locus", loc),
+               expected.label = "full data set")
+    if (loc %in% two_random_loci) {
+      expect_lte(nAll(mic2Loc), nAll(microbov)[two_random_loci],
+                 label = paste("mic2Loc, locus", loc),
+                 expected.label = "full data set")
+      expect_lte(nAll(mic2Loc10), nAll(microbov)[two_random_loci],
+                 label = paste("mic2Loc10, locus", loc),
+                 expected.label = "full data set")
+    }
+  }
 })
 
 test_that("'[' method works for genind objects with drop = TRUE", {
   skip_on_cran()
   two_random_loci    <- sample(locNames(microbov), 2)
   ten_random_samples <- sample(nInd(microbov), 10)
-#   cat("\nLoci:", dput(two_random_loci),
-#       "\nSamples:", dput(ten_random_samples), "\n")
+
   pops <- levels(pop(microbov))
   pops <- pops[pops %in% pop(microbov)[ten_random_samples]]
-  j    <- microbov@loc.fac %in% two_random_loci
-  loci <- microbov@loc.fac[j]
+  j    <- locFac(microbov) %in% two_random_loci
+  loci <- locFac(microbov)[j]
   loci <- factor(loci)
   loci <- loci[colSums(tab(microbov)[, j], na.rm = TRUE) > 0]
   ten_ind_loci <- colSums(tab(microbov[ten_random_samples, ]), na.rm = TRUE) > 0
@@ -119,15 +135,15 @@ test_that("'[' method works for genind objects with drop = TRUE", {
   expect_equal(nPop(mic10), length(pops))
   expect_equal(nPop(mic2Loc10), length(pops))
 
-  ten_ind_loci2 <- factor(mic10@loc.fac[mic10@loc.fac %in% levels(loci)])
-  expect_equal(length(mic10@loc.fac), ncol(tab(microbov)[, ten_ind_loci]))
-  expect_equal(mic2Loc@loc.fac, loci)
-  expect_equal(mic2Loc10@loc.fac, ten_ind_loci2)
+  ten_ind_loci2 <- factor(locFac(mic10)[locFac(mic10) %in% levels(loci)])
+  expect_equal(length(locFac(mic10)), ncol(tab(microbov)[, ten_ind_loci]))
+  expect_equal(locFac(mic2Loc), loci)
+  expect_equal(locFac(mic2Loc10), ten_ind_loci2)
 
-  expect_true(all(mic10@loc.n.all <= microbov@loc.n.all))
-  expect_equal(mic2Loc@loc.n.all, microbov@loc.n.all[two_random_loci])
-  expect_equal(names(mic2Loc10@loc.n.all), names(microbov@loc.n.all[two_random_loci]))
-  expect_true(all(mic2Loc10@loc.n.all <= microbov@loc.n.all[two_random_loci]))
+  expect_true(all(nAll(mic10) <= nAll(microbov)))
+  expect_equal(nAll(mic2Loc), nAll(microbov)[two_random_loci])
+  expect_equal(names(nAll(mic2Loc10)), names(nAll(microbov)[two_random_loci]))
+  expect_true(all(nAll(mic2Loc10) <= nAll(microbov)[two_random_loci]))
 })
 
 test_that("tab will retain dimensions", {

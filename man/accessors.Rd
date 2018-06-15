@@ -118,7 +118,7 @@
   \describe{
     \item{nInd}{returns the number of individuals in the \code{genind} object}
     \item{nLoc}{returns the number of loci}
-    \item{nAll}{returns the number of alleles in each locus}
+    \item{nAll}{returns the number of observed alleles in each locus}
     \item{nPop}{returns the number of populations}
     \item{pop}{returns a factor assigning individuals to populations.}
     \item{pop<-}{replacement method for the \code{@pop} slot of an
@@ -193,6 +193,11 @@ ploidy(x, \dots)
   The \code{drop} argument can be set to TRUE to retain only alleles
   that are present in the subset. To achieve better control of
   polymorphism of the data, see \code{\link{isPoly}}.
+  
+  \code{nAll()} will always reflect the number of columns per locus that 
+  contain at least one observation. This means that the sum of the this vector 
+  will not necessarily equal the number of columns in the data unless you use 
+  \code{drop = TRUE} when subsetting. 
 }
 \examples{
 data(nancycats)
@@ -200,7 +205,8 @@ nancycats
 pop(nancycats) # get the populations
 indNames(nancycats) # get the labels of individuals
 locNames(nancycats) # get the labels of the loci
-alleles(nancycats) # get the alleles
+alleles(nancycats)  # get the alleles
+nAll(nancycats)     # count the number of alleles
 
 head(tab(nancycats)) # get allele counts
 
@@ -209,10 +215,12 @@ head(tab(nancycats, freq = TRUE, NA.method = "mean"))
 
 # let's isolate populations 4 and 8
 popNames(nancycats)
-obj <- nancycats[pop=c(4,8)]
+obj <- nancycats[pop=c(4, 8)]
 obj
 popNames(obj)
 pop(obj)
+nAll(obj) # count number of alleles among these two populations
+all(nAll(obj) == lengths(alleles(obj))) # will be FALSE since drop = FALSE
 
 # let's isolate two markers, fca23 and fca90
 locNames(nancycats)

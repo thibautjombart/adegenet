@@ -42,14 +42,15 @@ compoplot <- function(x, ...){
 #' @param pnames names of these populations if `inPal` is a function
 #'
 #' @md
+#' @noRd
 #' @return a named character vector specifying the colors for the palette.
 #' @keywords internal
 #' 
 #' @note This was originally from the poppr package [commit a0818eed6](https://github.com/grunwaldlab/poppr/commit/a0818eed6a72d9145e46da73715dc22be0640b0c)
 #'
 #' @examples
-#' palette_parser(rainbow, 5, letters[1:5])
-#' palette_parser(colors()[1:5], 5, letters[1:5])
+#' .palette_parser(rainbow, 5, letters[1:5])
+#' .palette_parser(colors()[1:5], 5, letters[1:5])
 .palette_parser <- function(inPAL, npop, pnames){
   PAL <- try(match.fun(inPAL, descend = FALSE), silent = TRUE)
   if ("try-error" %in% class(PAL)){
