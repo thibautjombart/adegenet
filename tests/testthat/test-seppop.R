@@ -1,4 +1,4 @@
-context("Test seppop")
+context("Test seppop for genind")
 
 data(microbov)
 
@@ -29,7 +29,25 @@ test_that("seppop will use formula input", {
   expect_equivalent(names(slist), popNames(microbov))
 })
 
+test_that("seppop will throw a warning if there are missing populations", {
+  skip_on_cran()
+  # Create 10 ambiguous population assignments
+  pop(microbov)[sample(nInd(microbov), 10)] <- NA
+  
+  # Missing data will throw a warning by default
+  expect_warning(res <- seppop(microbov), "missing population information")
+  # The resulting list will be equal to the number of populations
+  expect_length(res, nPop(microbov))
+  
+  # keepNA does not throw a warning
+  expect_failure(expect_warning(res2 <- seppop(microbov, keepNA = TRUE)))
+  # The resulting list will have 1 more population
+  expect_length(res2, nPop(microbov) + 1L)
+  # This population will be equal to the number of missing samples
+  expect_equal(nInd(res2[[length(res2)]]), 10L)
+})
 
+context("Test seppop for genight")
 
 x <- new("genlight", list(a=rep(1,1e3),b=rep(0,1e3),c=rep(1, 1e3)), parallel = FALSE)
 pop(x) <- c("pop1","pop2", "pop1")

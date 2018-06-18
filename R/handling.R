@@ -264,41 +264,85 @@ setMethod("$<-","genind",function(x,name,value) {
 ##################
 setGeneric("seppop", function(x, ...) standardGeneric("seppop"))
 
+.seppop_internal <- function(x,
+                             pop = NULL,
+                             treatOther = TRUE,
+                             keepNA = FALSE,
+                             quiet = TRUE, 
+                             ...) {
+  
+  ## misc checks
+  if (is.null(pop)) {
+    # pop taken from @pop
+    if (is.null(x@pop))
+      stop("pop not provided and pop(x) is empty")
+    pop <- pop(x)
+  } else if (is.language(pop)) {
+    setPop(x) <- pop
+    pop <- pop(x)
+  } else {
+    pop <- factor(pop)
+    pop(x) <- pop
+  }
+  if (anyNA(pop) && !keepNA) {
+    msg <- paste("There are individuals with missing population information",
+                 "in the data set. If you want to retain these, use the",
+                 "option `keepNA = TRUE`.")
+    warning(msg, call. = FALSE)
+  }
+  keep_missing <- anyNA(pop) && keepNA
+  list_length <- nlevels(pop)
+  pop_names  <- levels(pop)
+  if (keep_missing) {
+    list_length <- list_length + 1L
+    pop_names  <- c(pop_names, NA)
+  }
+  kObj <- vector(mode = "list", length = list_length)
+  ## make a list of genind objects
+  for (lev in seq(pop_names)) {
+    kObj[[lev]] <- x[pop = pop_names[lev], 
+                     treatOther = treatOther, 
+                     quiet = quiet, 
+                     ...]
+  }
+  names(kObj) <- pop_names
+  names(kObj)[is.na(names(kObj))] <- ""
+  kObj
+}
+
 ## genind
-setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,res.type=c("genind","matrix"),
-                              drop=FALSE, treatOther=TRUE, quiet=TRUE){
-    ## checkType(x)
-    truenames <- TRUE # this argument will be deprecated
-
-    ## misc checks
-    if(!is.genind(x)) stop("x is not a valid genind object")
-    if(is.null(pop)) { # pop taken from @pop
-        if(is.null(x@pop)) stop("pop not provided and x@pop is empty")
-        pop <- pop(x)
-    } else if (is.language(pop)){
-      setPop(x) <- pop
-      pop <- pop(x)
-    } else {
-        pop <- factor(pop)
-    }
-
-
+setMethod(
+  f = "seppop", 
+  signature(x = "genind"), 
+  definition = function(x,
+                        pop = NULL,
+                        truenames = TRUE,
+                        res.type = c("genind", "matrix"),
+                        drop = FALSE,
+                        treatOther = TRUE,
+                        keepNA = FALSE,
+                        quiet = TRUE) {
+    
     res.type <- match.arg(res.type)
-
-    ## pop <- x@pop # comment to take pop arg into account
-
-    ## make a list of genind objects
-    kObj <- lapply(levels(pop), function(lev) x[pop==lev, , drop=drop, treatOther=treatOther, quiet=quiet])
-    names(kObj) <- levels(pop)
-
+    kObj <- .seppop_internal(
+              x = x,
+              pop = pop,
+              treatOther = treatOther,
+              keepNA = keepNA,
+              quiet = quiet,
+              drop = drop
+            )
+    
     ## res is a list of genind
-    if(res.type=="genind"){ return(kObj) }
-
+    if (res.type == "genind") {
+      return(kObj)
+    }
+    
     ## res is list of matrices
     res <- lapply(kObj, function(obj) tab(obj))
-
+    
     return(res)
-}) # end seppop
+  }) # end seppop
 
 
 

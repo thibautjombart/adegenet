@@ -348,23 +348,15 @@ rbind.genlight <- function(...){
 ##########
 ## seppop
 ##########
-setMethod("seppop", signature(x="genlight"), function(x, pop=NULL, treatOther=TRUE, quiet=TRUE, ...){
-    ## HANDLE POP ARGUMENT ##
-    if(!is.null(pop)) {
-      if (is.language(pop)){
-        setPop(x) <- pop
-      } else {
-        pop(x) <- pop
-      }
-    }
-
-    if(is.null(pop(x))) stop("pop not provided and pop(x) is NULL")
-
-    ## PERFORM SUBSETTING ##
-    kObj <- lapply(levels(pop(x)), function(lev) x[pop(x)==lev, , treatOther=treatOther, quiet=quiet, ...])
-    names(kObj) <- levels(pop(x))
-
-    return(kObj)
+setMethod("seppop", signature(x="genlight"), function(x, pop=NULL, treatOther=TRUE, keepNA = FALSE, quiet=TRUE, ...){
+  .seppop_internal(
+    x = x,
+    pop = pop,
+    treatOther = treatOther,
+    keepNA = keepNA,
+    quiet = quiet,
+    ...
+  )
 }) # end seppop
 
 
