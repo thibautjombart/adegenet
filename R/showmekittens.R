@@ -23,7 +23,22 @@ showmekittens <- function(x = NULL, list = FALSE){
     pool <- c(capucine = "http://www.youtube.com/watch?v=KIePsbJSS04",
               vacuum = "https://www.youtube.com/watch?v=9J4UKYm9320",
               eclipse = "https://www.youtube.com/watch?v=RsUH2MuY33o",
-              nom     = "https://www.youtube.com/watch?v=Cl5Pfc5TyO0")
+              nom     = "https://www.youtube.com/watch?v=Cl5Pfc5TyO0",
+              knockdown = "https://www.youtube.com/watch?v=izRZxhqfk0Y",
+              Tedders = "https://www.youtube.com/watch?v=2J1ynsuWcNQ",
+              deepvoice = "https://www.youtube.com/watch?v=w7x_lWJNnNg",
+              goblin = "https://www.youtube.com/watch?v=LtNrf4wsy_U",
+              duettocatti = "https://www.youtube.com/watch?v=gMdn0ezJxUE",
+              blackjaguar = "https://www.youtube.com/watch?v=UdwRo9wfKmc",
+              heySOUP = "https://www.youtube.com/watch?v=JQo3ZOO6FG4",
+              noisyboy = "https://www.youtube.com/watch?v=FjY-6usXzgg",
+              honking = "https://www.youtube.com/watch?v=omTE4iM7pTA",
+              curiouskitten = "https://www.youtube.com/watch?v=AYYwM6aNegs",
+              wheresthebabies = "https://www.youtube.com/watch?v=2rELs4jl64k",
+              stayinalive = "https://www.youtube.com/watch?v=69SzfigTO7M",
+              treadmill = "https://www.youtube.com/watch?v=i0sb0K7UPeU",
+              leapfrog = "https://www.youtube.com/watch?v=RqA0SszVOcc",
+              balloons = "https://www.youtube.com/watch?v=MSkDGa9Ei4U")
 
     ## either we return the list of videos, or we show one
     if (list) {
