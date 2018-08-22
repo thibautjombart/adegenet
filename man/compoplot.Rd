@@ -9,10 +9,10 @@
 \usage{
 compoplot(x, ...)
 
-\method{compoplot}{matrix}(x, col.pal = funky, border = NA, subset = NULL,
-  show.lab = FALSE, lab = rownames(x), legend = TRUE,
-  txt.leg = colnames(x), n.col = 4, posi = NULL, cleg = 0.8,
-  bg = transp("white"), ...)
+\method{compoplot}{matrix}(x, col.pal = funky, border = NA,
+  subset = NULL, show.lab = FALSE, lab = rownames(x),
+  legend = TRUE, txt.leg = colnames(x), n.col = 4, posi = NULL,
+  cleg = 0.8, bg = transp("white"), ...)
 
 \method{compoplot}{dapc}(x, only.grp = NULL, border = NA, ...)
 

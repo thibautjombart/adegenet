@@ -8,8 +8,8 @@
 \usage{
 adegenetWeb()
 
-adegenetTutorial(which = c("basics", "spca", "dapc", "genomics", "strata",
-  "snapclust"))
+adegenetTutorial(which = c("basics", "spca", "dapc", "genomics",
+  "strata", "snapclust"))
 
 adegenetIssues()
 }

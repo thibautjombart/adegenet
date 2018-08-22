@@ -8,8 +8,8 @@
 \alias{as.genpop}
 \title{genpop constructor}
 \usage{
-\S4method{initialize}{genpop}(.Object, tab, prevcall = NULL, ploidy = 2L,
-  type = c("codom", "PA"), ...)
+\S4method{initialize}{genpop}(.Object, tab, prevcall = NULL,
+  ploidy = 2L, type = c("codom", "PA"), ...)
 
 genpop(...)
 

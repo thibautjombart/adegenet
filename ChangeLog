@@ -3,9 +3,11 @@ NEW FEATURES
 
   - While creating genind from dataframe, it is now possible to skip
     the test of the ploidy that was added in 2.1.1 by passing the option
-    check.ploidy = FALSE to the function df2genind. See 
-    https://github.com/thibautjombart/adegenet/issues/231 and
+    check.ploidy = FALSE to the function df2genind. Thanks to Frederic Michaud
+    for the fix. See https://github.com/thibautjombart/adegenet/issues/231 and
     https://github.com/thibautjombart/adegenet/pull/232 for details
+
+  - `showmekittens()` has gained several new kittens thanks to @rdecamp
     
 BUG FIXES
 
@@ -20,8 +22,19 @@ BUG FIXES
     new `keepNA` argument. 
     See https://github.com/thibautjombart/adegenet/pull/236 for details.
 
+  - `snapclust()` likelihood calculation was incorrect for haploids. This has
+    been fixed in commits 3a5f820db388c9821c3095cd29ad3cd3843237a5 and
+    e41d2d598369bb5921465a60adffac9ecb61f86d. 
+
+MISC
+
+  - `snapclust()` will give a better warning message when the number of
+    samples in the dataset exceeds computer precision. See
+    https://github.com/thibautjombart/adegenet/issues/221 for details
+
 			CHANGES IN ADEGENET VERSION 2.1.1
 BUG FIXES
+
   - A warning will be issued if the user specifies a ploidy range that is less
     than the observed allele dosage when data is imported by df2genind. See
     https://github.com/thibautjombart/adegenet/issues/216 for details.
