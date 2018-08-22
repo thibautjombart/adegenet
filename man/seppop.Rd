@@ -18,9 +18,9 @@
 }
 \usage{
 \S4method{seppop}{genind}(x,pop=NULL,truenames=TRUE,res.type=c("genind","matrix"),
-  drop=FALSE, treatOther=TRUE, quiet=TRUE)
+  drop=FALSE, treatOther=TRUE, keepNA = FALSE, quiet=TRUE)
 
-\S4method{seppop}{genlight}(x,pop=NULL, treatOther=TRUE, quiet=TRUE, \dots)
+\S4method{seppop}{genlight}(x,pop=NULL, treatOther=TRUE, keepNA = FALSE, quiet=TRUE, \dots)
 }
 \arguments{
   \item{x}{a \linkS4class{genind} object}
