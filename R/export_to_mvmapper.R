@@ -107,7 +107,7 @@ export_to_mvmapper.default <- function(x, ...) {
 #' @rdname export_to_mvmapper
 #' @examples
 #'
-#' # An example using the microsatellite dataset of Dupuis et al. 2016 (781
+#' # An example using the swallowtail butterfly microsatellite dataset of Dupuis et al. 2016 (781
 #' # individuals, 10 loci, doi: 10.1111/jeb.12931)
 #'
 #' # Reading input file from adegenet
