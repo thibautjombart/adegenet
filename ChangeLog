@@ -8,6 +8,9 @@ NEW FEATURES
     https://github.com/thibautjombart/adegenet/pull/232 for details
 
   - `showmekittens()` has gained several new kittens thanks to @rdecamp
+
+  - A new data set called `swallowtails` has been added to demonstrate the
+    export to MVmapper functionality.
     
 BUG FIXES
 
@@ -30,7 +33,7 @@ MISC
 
   - `snapclust()` will give a better warning message when the number of
     samples in the dataset exceeds computer precision. See
-    https://github.com/thibautjombart/adegenet/issues/221 for details
+    https://github.com/thibautjombart/adegenet/issues/221 for details.
 
 			CHANGES IN ADEGENET VERSION 2.1.1
 BUG FIXES

@@ -779,3 +779,49 @@ NULL
 #' table(res$group, pop(x))
 #'
 NULL
+
+
+
+
+#' Microsatellites genotypes of 781 swallowtail butterflies from 40 populations in
+#' Alberta and British Columbia, Canada
+#'
+#' This data set gives the genotypes of 781 swallowtail butterflies 
+#' (\emph{Papilio machaon} species group) for 10 microsatellites markers.
+#' The individuals are divided into 40 populations.
+#'
+#'
+#' @name swallowtails
+#' @docType data
+#' @format \code{swallowtails} is a genind object containing 781 individuals, 
+#' 10 microsatellite markers, and 40 populations.
+#' @references Dupuis, J.R. & Sperling, F.A.H. Hybrid dynamics in a species
+#' group of swallowtail butterflies. \emph{Journal of Evolutionary Biology}, 
+#' \bold{10}, 1932--1951.
+#' @source Julian Dupuis (University of Hawaii, USA)
+#' @keywords datasets
+#' @examples
+#'
+#' \dontrun{
+#' data(swallowtails)
+#' swallowtails
+#' 
+#' # conducting a DAPC (n.pca determined using xvalDapc, see ??xvalDapc)
+#' 
+#' dapc1 <- dapc(swallowtails, n.pca=40, n.da=200)
+#' 
+#' # read in swallowtails_loc.csv, which contains "key", "lat", and "lon"
+#' # columns with column headers (this example contains additional columns
+#' # containing species identifications, locality descriptions, and COI
+#' # haplotype clades)
+#' 
+#' input_locs <- system.file("files/swallowtails_loc.csv", package = "adegenet")
+#' loc <- read.csv(input_locs, header = TRUE)
+#' 
+#' # generate mvmapper input file, automatically write the output to a csv, and
+#' # name the output csv "mvMapper_Data.csv"
+#' 
+#' out <- export_to_mvmapper(dapc1, loc, write_file = TRUE, out_file = "mvMapper_Data.csv")
+#' }
+NULL
+
