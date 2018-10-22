@@ -1,0 +1,60 @@
+spca_randtest <-function(x, nperm = 499, p=.05){
+
+  if(!inherits(x, "spca")){
+    stop("x must be an spca object")
+  }
+
+  ## This function compute the eigenvalues for a given data object.
+
+  get_stats <- function(obj){
+    obj_pca <- ade4::dudi.pca(obj, center = FALSE, scale = FALSE,
+                              scannf = FALSE)
+    obj_spca <- ade4::multispati(dudi = obj_pca,
+                                 listw = x$lw, scannf = FALSE,
+                                 nfposi = 1, nfnega = 1)
+    lambda <- obj_spca$eig
+ 
+    return(lambda)
+  }
+
+
+  ## This function permutes individuals (rows) in the dataset.
+
+  perm_data <- function(obj = x$tab){
+    obj[sample(1:nrow(obj)), , drop = FALSE]
+  }
+
+  ## Retains all simulated eigenvalues
+
+  sims <- vapply(seq_len(nperm),
+                 function(i) get_stats(perm_data()),
+                 double(length(x$eig)))
+
+  obs <- get_stats(x$tab)
+
+  ## sum(eigenvalues >= 0) for global structure
+  ## sum(eigenvalues < 0) for local structure
+
+  obs_pos <- obs[obs >= 0]
+  obs_neg <- obs[obs < 0]
+  stats <- c(pos = sum(obs_pos), 
+               neg = sum(abs(obs_neg)))
+
+  pos_test <- as.randtest(sim = sum(sims[sims >= 0]), obs = stats[1], alter = "greater")
+  neg_test <- as.randtest(sim = sum(abs(sims[sims < 0])), obs = stats[2], alter = "greater")
+
+  ## Single eigenvalue observed p-value and Bonferroni correction
+ 
+  eigen_p<-sapply(1:length(obs), function(e) as.randtest(abs(sims[e,]), abs(obs[e]), alter="greater")[[5]])
+
+  bon_corr<-sapply(1:length(obs), function(e) if(obs[e] >= 0){p/e
+			}else{p/(length(obs)-e+1)})
+
+  eigentest<-cbind(round(obs, 4), round(eigen_p, 4), round(bon_corr, 4))
+ 
+  colnames(eigentest)<-c("eigen", "sim_p", "bonf_p")
+
+  list(global = pos_test, local = neg_test, eigentest = eigentest)
+
+}
+	
