@@ -33,7 +33,8 @@ Imports:
     boot,
     reshape2,
     dplyr (>= 0.4.1),
-    vegan
+    vegan,
+    later
 URL: https://github.com/thibautjombart/adegenet
 Description: Toolset for the exploration of genetic and genomic data. Adegenet
     provides formal (S4) classes for storing and handling various genetic data,
