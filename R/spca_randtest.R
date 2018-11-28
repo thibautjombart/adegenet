@@ -13,6 +13,8 @@
 #' @param x A \code{\link{spca}} object.
 #'
 #' @param nperm The number of permutations to be used for the test.
+#' 
+#' @param p a p value to use for correction
 #'
 #' @return
 #'
@@ -39,22 +41,17 @@
 #' ## check results
 #' tests
 #' plot(tests[[1]]) # global structures
-#  plot(tests[[2]]) # local structures
+#' plot(tests[[2]]) # local structures
 #'
 #' }
 #'
-spca_randtest <-function(x, nperm = 499){
+spca_randtest <-function(x, nperm = 499, p=.05){
 
   if(!inherits(x, "spca")){
     stop("x must be an spca object")
   }
 
-
-  ## This function compute the test statistics for a given data object. Two test
-  ## statistics are computed, from the eigenvalues of the sPCA, called 'lambda':
-
-  ## sum(lambda >= 0)
-  ## sum(lambda < 0)
+  ## This function compute the eigenvalues for a given data object.
 
   get_stats <- function(obj){
     obj_pca <- ade4::dudi.pca(obj, center = FALSE, scale = FALSE,
@@ -63,12 +60,8 @@ spca_randtest <-function(x, nperm = 499){
                                  listw = x$lw, scannf = FALSE,
                                  nfposi = 1, nfnega = 1)
     lambda <- obj_spca$eig
-    lambda_pos <- lambda[lambda >= 0]
-    lambda_neg <- lambda[lambda < 0]
-    stats <- c(pos = sum(lambda_pos),
-               neg = sum(abs(lambda_neg)))
-
-    return(stats)
+ 
+    return(lambda)
   }
 
 
@@ -78,15 +71,37 @@ spca_randtest <-function(x, nperm = 499){
     obj[sample(1:nrow(obj)), , drop = FALSE]
   }
 
+  ## Retains all simulated eigenvalues
+
   sims <- vapply(seq_len(nperm),
                  function(i) get_stats(perm_data()),
-                 double(2))
+                 double(length(x$eig)))
 
   obs <- get_stats(x$tab)
 
-  pos_test <- as.randtest(sim = sims[1,], obs = obs[1], alter = "greater")
-  neg_test <- as.randtest(sim = sims[2,], obs = obs[2], alter = "greater")
+  ## sum(eigenvalues >= 0) for global structure
+  ## sum(eigenvalues < 0) for local structure
 
-  list(global = pos_test, local = neg_test)
+  obs_pos <- obs[obs >= 0]
+  obs_neg <- obs[obs < 0]
+  stats <- c(pos = sum(obs_pos), 
+               neg = sum(abs(obs_neg)))
+
+  pos_test <- as.randtest(sim = sum(sims[sims >= 0]), obs = stats[1], alter = "greater")
+  neg_test <- as.randtest(sim = sum(abs(sims[sims < 0])), obs = stats[2], alter = "greater")
+
+  ## Single eigenvalue observed p-value and Bonferroni correction
+ 
+  eigen_p <- vapply(seq(obs), function(e) as.randtest(abs(sims[e, ]), abs(obs[e]), alter="greater")[["pvalue"]], numeric(1))
+
+  bon_corr <- vapply(seq(obs), function(e) if(obs[e] >= 0){p/e
+			}else{p/(length(obs)-e+1)}, numeric(1))
+
+  eigentest <- cbind(obs, eigen_p, bon_corr)
+ 
+  colnames(eigentest) <- c("eigen", "sim_p", "bonf_p")
+
+  list(global = pos_test, local = neg_test, eigentest = eigentest)
+
 }
-
+	
