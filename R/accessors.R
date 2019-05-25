@@ -195,7 +195,7 @@ setReplaceMethod("locNames","gen",function(x,value) {
     names(x@all.names) <- value
     levels(x@loc.fac) <- value
     names(x@loc.n.all) <- value
-    newColNames <- paste(rep(value, x@loc.n.all), unlist(x@all.names), sep=".")
+    newColNames <- paste(rep(value, lengths(x@all.names)), unlist(x@all.names), sep=".")
     colnames(x@tab) <- newColNames
 
     ## return
@@ -299,7 +299,7 @@ setMethod("alleles","gen", function(x, ...){
 setReplaceMethod("alleles","gen", function(x, value){
     if(!is.list(value)) stop("replacement value must be a list")
     if(length(value)!=nLoc(x)) stop("replacement list must be of length nLoc(x)")
-    if(any(sapply(value, length) != x$loc.n.all)) stop("number of replacement alleles do not match that of the object")
+    if(any(lengths(value) != lengths(x$all.names))) stop("number of replacement alleles do not match that of the object")
     x@all.names <- value
     names(x@all.names) <- locNames(x)
     return(x)
