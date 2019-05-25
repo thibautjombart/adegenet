@@ -139,7 +139,7 @@
     \item{alleles<-}{sets the alleles of each locus using a list with
       one character vector for each locus.}
     \item{other}{returns the content of the \code{@other} slot
-      (misc. information); returns \code{NULL} if the slot is empty or of
+      (misc. information); returns \code{NULL} if the slot is onlyObserved or of
       length zero.}
     \item{other<-}{sets the content of the \code{@other} slot
       (misc. information); the provided value needs to be a list; it
@@ -149,6 +149,7 @@
 \usage{
 nInd(x, \dots)
 nLoc(x, \dots)
+nAll(x, onlyObserved = FALSE, \dots)
 nPop(x, \dots)
 pop(x)
 indNames(x, \dots)
@@ -168,6 +169,11 @@ ploidy(x, \dots)
 }
 \arguments{
   \item{x}{a \linkS4class{genind} or a \linkS4class{genpop} object.}
+  \item{onlyObserved}{a logical indicating whether the allele count should
+    also include the alleles with onlyObserved columns in the matrix. Defaults
+    to \code{FALSE}, which will report only the observed alleles in the
+    given population. \code{onlyObserved = TRUE} will be the equivalent of
+    \code{table(locFac(x))}, but faster.}
   \item{withAlleles}{a logical indicating whether the result should be
     of the form [locus name].[allele name], instead of [locus name].}
   \item{\dots}{further arguments to be passed to other methods
@@ -194,10 +200,9 @@ ploidy(x, \dots)
   that are present in the subset. To achieve better control of
   polymorphism of the data, see \code{\link{isPoly}}.
   
-  \code{nAll()} will always reflect the number of columns per locus that 
-  contain at least one observation. This means that the sum of the this vector 
-  will not necessarily equal the number of columns in the data unless you use 
-  \code{drop = TRUE} when subsetting. 
+  \code{nAll()} reflects the number of columns per locus present in the current
+  gen object. If \code{onlyObserved = TRUE}, then the number of columns with at
+  least one non-missing allele is shown. 
 }
 \examples{
 data(nancycats)
@@ -219,7 +224,9 @@ obj <- nancycats[pop=c(4, 8)]
 obj
 popNames(obj)
 pop(obj)
-nAll(obj) # count number of alleles among these two populations
+nAll(obj, onlyObserved = TRUE) # count number of alleles among these two populations
+nAll(obj) # count number of columns in the data
+all(nAll(obj, onlyObserved = TRUE) == lengths(alleles(obj))) # will be FALSE since drop = FALSE
 all(nAll(obj) == lengths(alleles(obj))) # will be FALSE since drop = FALSE
 
 # let's isolate two markers, fca23 and fca90

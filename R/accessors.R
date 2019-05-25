@@ -65,24 +65,27 @@ setMethod("locFac","genpop", function(x,...){
 #######
 # nAll
 #######
-setGeneric("nAll", function(x,...){
+setGeneric("nAll", function(x, onlyObserved = FALSE, ...){
     standardGeneric("nAll")
 })
 
 
-setMethod("nAll","gen", function(x,...){
+setMethod("nAll","gen", function(x, onlyObserved = FALSE, ...){
   if (x@type == "PA"){
     return(ncol(x@tab))
+  } else if (onlyObserved) {
+    present_alleles <- colSums(tab(x), na.rm = TRUE) > 0L
+    return(vapply(split(present_alleles, x@loc.fac), sum, integer(1)))
   } else {
     return(x@loc.n.all)
   }
 })
 
-setMethod("nAll","genind", function(x,...){
+setMethod("nAll","genind", function(x, onlyObserved = FALSE, ...){
   callNextMethod()
 })
 
-setMethod("nAll","genpop", function(x,...){
+setMethod("nAll","genpop", function(x, onlyObserved = FALSE, ...){
     callNextMethod()
 })
 
