@@ -59,6 +59,10 @@ test_that("'[' method works for genind objects", {
   mic2Loc   <- microbov[loc = two_random_loci]
   mic2Loc10 <- microbov[ten_random_samples, loc = two_random_loci]
 
+  # Ensure that the replacement methods work. The tests below will confirm
+  alleles(mic2Loc)  <- alleles(mic2Loc)
+  locNames(mic2Loc) <- locNames(mic2Loc)
+
   names(two_random_loci) <- two_random_loci
   two_random_loci <- two_random_loci[levels(loci)]
 
