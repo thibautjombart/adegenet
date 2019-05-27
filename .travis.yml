@@ -13,6 +13,7 @@ addons:
   apt:
     packages:
       - libudunits2-dev
+      - libgdal-dev
 
 # enable when codecov link established
 # r_github_packages:
