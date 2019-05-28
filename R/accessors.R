@@ -302,7 +302,7 @@ setMethod("alleles","gen", function(x, ...){
 setReplaceMethod("alleles","gen", function(x, value){
     if(!is.list(value)) stop("replacement value must be a list")
     if(length(value)!=nLoc(x)) stop("replacement list must be of length nLoc(x)")
-    if(any(lengths(value) != lengths(x$all.names))) stop("number of replacement alleles do not match that of the object")
+    if(any(lengths(value) != x@loc.n.all)) stop("number of replacement alleles do not match that of the object")
     x@all.names <- value
     names(x@all.names) <- locNames(x)
     return(x)
