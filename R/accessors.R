@@ -65,24 +65,27 @@ setMethod("locFac","genpop", function(x,...){
 #######
 # nAll
 #######
-setGeneric("nAll", function(x,...){
+setGeneric("nAll", function(x, onlyObserved = FALSE, ...){
     standardGeneric("nAll")
 })
 
 
-setMethod("nAll","gen", function(x,...){
+setMethod("nAll","gen", function(x, onlyObserved = FALSE, ...){
   if (x@type == "PA"){
     return(ncol(x@tab))
+  } else if (onlyObserved) {
+    present_alleles <- colSums(tab(x), na.rm = TRUE) > 0L
+    return(vapply(split(present_alleles, x@loc.fac), sum, integer(1)))
   } else {
     return(x@loc.n.all)
   }
 })
 
-setMethod("nAll","genind", function(x,...){
+setMethod("nAll","genind", function(x, onlyObserved = FALSE, ...){
   callNextMethod()
 })
 
-setMethod("nAll","genpop", function(x,...){
+setMethod("nAll","genpop", function(x, onlyObserved = FALSE, ...){
     callNextMethod()
 })
 
@@ -195,7 +198,7 @@ setReplaceMethod("locNames","gen",function(x,value) {
     names(x@all.names) <- value
     levels(x@loc.fac) <- value
     names(x@loc.n.all) <- value
-    newColNames <- paste(rep(value, x@loc.n.all), unlist(x@all.names), sep=".")
+    newColNames <- paste(rep(value, lengths(x@all.names)), unlist(x@all.names), sep=".")
     colnames(x@tab) <- newColNames
 
     ## return
@@ -299,7 +302,7 @@ setMethod("alleles","gen", function(x, ...){
 setReplaceMethod("alleles","gen", function(x, value){
     if(!is.list(value)) stop("replacement value must be a list")
     if(length(value)!=nLoc(x)) stop("replacement list must be of length nLoc(x)")
-    if(any(sapply(value, length) != x$loc.n.all)) stop("number of replacement alleles do not match that of the object")
+    if(any(lengths(value) != x@loc.n.all)) stop("number of replacement alleles do not match that of the object")
     x@all.names <- value
     names(x@all.names) <- locNames(x)
     return(x)

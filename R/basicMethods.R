@@ -17,7 +17,7 @@ setMethod("$<-","genpop",function(x,name,value) {
   present_alleles <- colSums(tab(x), na.rm = TRUE) > 0L
 
   x@all.names <- split(all.vec, loc.fac)
-  x@loc.n.all <- vapply(split(present_alleles, loc.fac), sum, integer(1))
+  x@loc.n.all <- setNames(tabulate(loc.fac), levels(loc.fac)) #vapply(split(present_alleles, loc.fac), sum, integer(1))
   x@loc.fac   <- loc.fac
   return(x)
 }
@@ -269,8 +269,8 @@ setMethod ("show", "genind", function(object){
 
   cat("\n   @tab: ", nrow(tab(x)), "x", ncol(tab(x)), "matrix of allele counts" )
 
-  if(!is.null(nAll(x))){
-    alleletxt <- paste("(range: ", paste(range(nAll(x)), collapse="-"), ")", sep="")
+  if (!is.null(nAll(x))){
+    alleletxt <- paste("(range: ", paste(range(nAll(x, onlyObserved = FALSE)), collapse="-"), ")", sep="")
     cat("\n   @loc.n.all: number of alleles per locus", alleletxt)
   }
 
@@ -355,7 +355,7 @@ setMethod ("show", "genpop", function(object){
   cat("\n   @tab: ", nrow(tab(x)), "x", ncol(tab(x)), "matrix of allele counts" )
 
   if(!is.null(nAll(x))){
-    alleletxt <- paste("(range: ", paste(range(nAll(x)), collapse="-"), ")", sep="")
+    alleletxt <- paste("(range: ", paste(range(nAll(x, onlyObserved = FALSE)), collapse="-"), ")", sep="")
     cat("\n   @loc.n.all: number of alleles per locus", alleletxt)
   }
 
@@ -427,7 +427,7 @@ setMethod ("summary", signature(object="genind"), function(object, verbose = TRU
 
 
   ## codom case ##
-  res$loc.n.all <- nAll(x)
+  res$loc.n.all <- nAll(x, onlyObserved = TRUE)
 
   temp <- tab(genind2genpop(x,quiet=TRUE))
 
@@ -496,7 +496,7 @@ setMethod ("summary", signature(object="genpop"), function(object, verbose = TRU
 
 
   ## codom case ##
-  res$loc.n.all <- nAll(x)
+  res$loc.n.all <- nAll(x, onlyObserved = TRUE)
 
   res$pop.n.all <- apply(tab(x),1,function(r) sum(r>0,na.rm=TRUE))
 

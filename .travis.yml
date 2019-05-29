@@ -9,6 +9,12 @@ cran: http://cran.at.r-project.org
 cache: packages
 warnings_are_errors: false
 
+addons:
+  apt:
+    packages:
+      - libudunits2-dev
+      - libgdal-dev
+
 # enable when codecov link established
 # r_github_packages:
 #   - jimhester/covr
@@ -17,8 +23,8 @@ before_install:
   - Rscript -e 'update.packages(ask = FALSE)'
 
 # enable when codecov link established
-# after_success:
-#   - Rscript -e 'library(covr);codecov()'
+after_success:
+  - Rscript -e 'library(covr);codecov()'
 
 notifications:
   email:
