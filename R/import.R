@@ -272,7 +272,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     ## unfold data for each cell of the table
     if (any(ploidy > 1)){
         allele.data <- strsplit(X, sep)
-        n.items <- sapply(allele.data, length)
+        n.items <- lengths(allele.data)
         locus.data <- rep(rep(loc.names, each = nind), n.items)
         ind.data <- rep(rep(ind.names,ncol(X)), n.items)
         allele.data <- unlist(allele.data)
@@ -313,8 +313,10 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     pos <- tmpfun(locus.data[ind]) 
     
     allele.data <- factor(allele.data, levels=unique(allele.data))
+    ind.data    <- factor(ind.data, levels=ind.names)
+    
     out         <- table(ind.data, allele.data)
-    out         <- out[ind.names, , drop = FALSE] # table sorts alphabetically. This resets.
+#    out         <- out[ind.names, , drop = FALSE] # table sorts alphabetically. This resets.
 
     ## force type 'matrix'
     class(out) <- NULL
