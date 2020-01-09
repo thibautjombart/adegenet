@@ -1,4 +1,9 @@
 			CHANGES IN ADEGENET VERSION 2.1.2
+
+NEW MANAGEMENT
+
+  - Zhian N. Kamvar is now the acting maintainer of the package.
+
 NEW FEATURES
 
   - While creating genind from dataframe, it is now possible to skip
