@@ -231,7 +231,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
         if(is.null(ncode)) stop("please indicate either the separator (sep) or the number of characters coding an allele (ncode).")
 
         ## add "/" as separator
-        X <- gsub(paste("([[:alnum:]]{",ncode,"})",sep=""), "\\1/", X)
+        X <- gsub(paste0("([[:alnum:]]{",ncode,"})"), "\\1/", X)
         X <- sub("/$","",X)
         sep <- "/"
     }
@@ -272,7 +272,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     ## unfold data for each cell of the table
     if (any(ploidy > 1)){
         allele.data <- strsplit(X, sep)
-        n.items <- sapply(allele.data, length)
+        n.items <- lengths(allele.data)
         locus.data <- rep(rep(loc.names, each = nind), n.items)
         ind.data <- rep(rep(ind.names,ncol(X)), n.items)
         allele.data <- unlist(allele.data)
@@ -298,9 +298,25 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
 
     ## get matrix of allele counts
     allele.data <- paste(locus.data, allele.data, sep=".")
+
+    tmpfun <- function(x){
+      tab <- tabulate(factor(x, levels = unique(x)))
+      to <- cumsum(tab)
+      from <- c(0L, to[-length(to)])+ 1L
+      res <- mapply(seq, from, to, SIMPLIFY=FALSE)
+      names(res) <- unique(x)
+      res
+    }    
+    tmp <- unique(allele.data)
+    ind <- match(tmp, allele.data)
+    ## named list with position of the columns for each locus 
+    pos <- tmpfun(locus.data[ind]) 
+    
     allele.data <- factor(allele.data, levels=unique(allele.data))
+    ind.data    <- factor(ind.data, levels=ind.names)
+    
     out         <- table(ind.data, allele.data)
-    out         <- out[ind.names, , drop = FALSE] # table sorts alphabetically. This resets.
+#    out         <- out[ind.names, , drop = FALSE] # table sorts alphabetically. This resets.
 
     ## force type 'matrix'
     class(out) <- NULL
@@ -321,14 +337,10 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     #  }
     ## This one is modified from above to make everything more explicit.
     if (length(NA.posi) > 0) {
-      out.colnames <- colnames(out)
       NA.row <- match(NA.ind, rownames(out))
-      loc <- paste0(NA.locus, "\\.")
-      uloc <- unique(loc)
-      loc.list <- lapply(uloc, FUN = function(x, y) {
-        grep(pattern = paste("^", x, sep = ""), x = out.colnames, perl = TRUE)
-      }, y = out.colnames)
-      NA.col <- match(loc, uloc)
+      uloc <- unique(NA.locus)
+      loc.list <- pos[uloc] ## subset pos 
+      NA.col <- match(NA.locus, uloc)
 
       # Coordinates for missing rows
       missing.ind <- vapply(loc.list, length, integer(1))[NA.col]
@@ -354,9 +366,8 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
       # M_KH1837           1
     }
     if(check.ploidy){
-      ploidmat <- vapply(loc.names, function(i){
-        rowSums(out[, grepl(paste0("^", i, "\\."), colnames(out)), drop = FALSE], na.rm = TRUE)
-        }, FUN.VALUE = double(nrow(out)))
+      ploidmat <- vapply(pos, function(i) rowSums(out[, i, drop = FALSE], 
+                         na.rm = TRUE), FUN.VALUE = double(nrow(out)))      
       if (max(ploidmat, na.rm = TRUE) > max(ploidy, na.rm = TRUE)) {
         oran <- paste(range(ploidmat, na.rm = TRUE), collapse = "-")
         eran <- paste(range(ploidy, na.rm = TRUE), collapse = "-")
@@ -1590,7 +1601,7 @@ fasta2genlight <- function(file, quiet=FALSE, chunkSize=1000, saveNbAlleles=FALS
     letterOK <- c("a","g","c","t","A","G","C","T")
     POOL <- lapply(POOL, function(e) e[e %in% letterOK]) # keep only proper letters
     ## POOL <- lapply(POOL, setdiff, "-")
-    nb.alleles <- sapply(POOL, length)
+    nb.alleles <- lengths(POOL)
     snp.posi <- nb.alleles==2
     if(all(!snp.posi)){
         warning("No polymorphism in the alignment - returning empty object")

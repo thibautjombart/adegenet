@@ -39,6 +39,9 @@ MISC
   - `snapclust()` will give a better warning message when the number of
     samples in the dataset exceeds computer precision. See
     https://github.com/thibautjombart/adegenet/issues/221 for details.
+    
+  - `df2genind()` now imports data >100x faster 
+    (@KlausVigo, https://github.com/thibautjombart/adegenet/pulls/260)
 
 			CHANGES IN ADEGENET VERSION 2.1.1
 BUG FIXES
