@@ -61,30 +61,39 @@ setAs("genpop", "ktab", function(from, to) {
 ##############
 # S3 versions
 ##############
+
+#' @export
 as.data.frame.genind <- function(x,...){
     return(as(x,"data.frame"))
 }
 
 
 
+#' @export
 as.data.frame.genpop <- function(x,...){
     return(as(x,"data.frame"))
 }
 
 
 
+#' @method as.matrix genind
+#' @export
 as.matrix.genind <- function(x,...){
     return(as(x,"matrix"))
 }
 
 
 
+#' @method as.matrix genpop
+#' @export
 as.matrix.genpop <- function(x,...){
     return(as(x,"matrix"))
 }
 
 
 
+#' @method as.genpop genind
+#' @export
 as.genpop.genind <- function(x,...){
     return(as(x,"genpop"))
 }

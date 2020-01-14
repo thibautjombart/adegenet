@@ -5,17 +5,17 @@
 \alias{makefreq}
 \alias{makefreq,genind-method}
 \alias{makefreq,genind-methods}
+\alias{makefreq.genind}
 \alias{makefreq,genpop-method}
 \alias{makefreq,genpop-methods}
+\alias{makefreq.genpop}
 \title{Compute allelic frequencies}
 \usage{
 makefreq(x, ...)
 
-\S4method{makefreq}{genind}(x, quiet = FALSE, missing = NA,
-  truenames = TRUE, ...)
+\S4method{makefreq}{genind}(x, quiet = FALSE, missing = NA, truenames = TRUE, ...)
 
-\S4method{makefreq}{genpop}(x, quiet = FALSE, missing = NA,
-  truenames = TRUE, ...)
+\S4method{makefreq}{genpop}(x, quiet = FALSE, missing = NA, truenames = TRUE, ...)
 }
 \arguments{
 \item{x}{a \linkS4class{genind} or \linkS4class{genpop} object.}

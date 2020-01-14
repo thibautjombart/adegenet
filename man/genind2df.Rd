@@ -4,8 +4,7 @@
 \alias{genind2df}
 \title{Convert a genind object to a data.frame.}
 \usage{
-genind2df(x, pop = NULL, sep = "", usepop = TRUE,
-  oneColPerAll = FALSE)
+genind2df(x, pop = NULL, sep = "", usepop = TRUE, oneColPerAll = FALSE)
 }
 \arguments{
 \item{x}{a \linkS4class{genind} object}

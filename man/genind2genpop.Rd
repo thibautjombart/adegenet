@@ -4,8 +4,13 @@
 \alias{genind2genpop}
 \title{Conversion from a genind to a genpop object}
 \usage{
-genind2genpop(x, pop = NULL, quiet = FALSE, process.other = FALSE,
-  other.action = mean)
+genind2genpop(
+  x,
+  pop = NULL,
+  quiet = FALSE,
+  process.other = FALSE,
+  other.action = mean
+)
 }
 \arguments{
 \item{x}{an object of class \code{genind}.}

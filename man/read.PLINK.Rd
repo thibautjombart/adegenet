@@ -8,8 +8,15 @@
 \usage{
 extract.PLINKmap(file, x = NULL)
 
-read.PLINK(file, map.file = NULL, quiet = FALSE, chunkSize = 1000,
-  parallel = require("parallel"), n.cores = NULL, ...)
+read.PLINK(
+  file,
+  map.file = NULL,
+  quiet = FALSE,
+  chunkSize = 1000,
+  parallel = require("parallel"),
+  n.cores = NULL,
+  ...
+)
 }
 \arguments{
 \item{file}{for \code{read.PLINK} a character string giving the path to the

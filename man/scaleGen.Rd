@@ -10,11 +10,21 @@
 \usage{
 scaleGen(x, ...)
 
-\S4method{scaleGen}{genind}(x, center = TRUE, scale = TRUE,
-  NA.method = c("asis", "mean", "zero"), truenames = TRUE)
+\S4method{scaleGen}{genind}(
+  x,
+  center = TRUE,
+  scale = TRUE,
+  NA.method = c("asis", "mean", "zero"),
+  truenames = TRUE
+)
 
-\S4method{scaleGen}{genpop}(x, center = TRUE, scale = TRUE,
-  NA.method = c("asis", "mean", "zero"), truenames = TRUE)
+\S4method{scaleGen}{genpop}(
+  x,
+  center = TRUE,
+  scale = TRUE,
+  NA.method = c("asis", "mean", "zero"),
+  truenames = TRUE
+)
 }
 \arguments{
 \item{x}{a \linkS4class{genind} and \linkS4class{genpop} object}
@@ -76,9 +86,9 @@ pro1 <- procuste(U1,U2,nf=2)
 ## graphics
 par(mfrow=c(2,2))
 # eigenvalues
-barplot(pcaObj$eig,main="Eigenvalues\\n no scaling")
-barplot(pcaX1$eig,main="Eigenvalues\\n usual scaling")
-barplot(pcaX2$eig,main="Eigenvalues\\n 'binomial' scaling")
+barplot(pcaObj$eig,main="Eigenvalues\n no scaling")
+barplot(pcaX1$eig,main="Eigenvalues\n usual scaling")
+barplot(pcaX2$eig,main="Eigenvalues\n 'binomial' scaling")
 # differences between loadings of alleles
 s.match(pro1$scor1,pro1$scor2,clab=0,sub="usual -> binom (procustean rotation)")
 

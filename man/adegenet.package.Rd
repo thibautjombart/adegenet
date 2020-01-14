@@ -5,7 +5,6 @@
 \name{adegenet.package}
 \alias{adegenet.package}
 \alias{adegenet}
-\alias{adegenet.package-package}
 \title{The adegenet package}
 \description{
 This package is devoted to the multivariate analysis of genetic markers

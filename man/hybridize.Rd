@@ -6,9 +6,17 @@
 and generates hybrids individuals having one parent
 in both objects.}
 \usage{
-hybridize(x1, x2, n, pop = "hybrid", res.type = c("genind", "df",
-  "STRUCTURE"), file = NULL, quiet = FALSE, sep = "/",
-  hyb.label = "h")
+hybridize(
+  x1,
+  x2,
+  n,
+  pop = "hybrid",
+  res.type = c("genind", "df", "STRUCTURE"),
+  file = NULL,
+  quiet = FALSE,
+  sep = "/",
+  hyb.label = "h"
+)
 }
 \arguments{
 \item{x1}{a \linkS4class{genind} object}

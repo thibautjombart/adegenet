@@ -332,6 +332,8 @@ haploGen <- function(seq.length=1e4, mu.transi=1e-4, mu.transv=mu.transi/2, t.ma
 ##################
 ## print.haploGen
 ##################
+#' @method print haploGen
+#' @export
 print.haploGen <- function(x, ...){
 
     cat("\t\n========================")
@@ -374,6 +376,7 @@ print.haploGen <- function(x, ...){
 ##############
 ## [.haploGen
 ##############
+#' @export
 "[.haploGen" <- function(x,i,j,drop=FALSE){
     res <- x
     res$seq <- res$seq[i,,drop=FALSE]
@@ -394,6 +397,9 @@ print.haploGen <- function(x, ...){
 ##################
 ## labels.haploGen
 ##################
+
+#' @method labels haploGen
+#' @export
 labels.haploGen <- function(object, ...){
     return(object$id)
 }
@@ -405,6 +411,8 @@ labels.haploGen <- function(object, ...){
 #######################
 ## as.POSIXct.haploGen
 #######################
+#' @method as.POSIXct haploGen
+#' @export
 as.POSIXct.haploGen <- function(x, tz="", origin=as.POSIXct("2000/01/01"), ...){
     res <- as.POSIXct(x$dates*24*3600, origin=origin)
     return(res)
@@ -418,6 +426,8 @@ as.POSIXct.haploGen <- function(x, tz="", origin=as.POSIXct("2000/01/01"), ...){
 #####################
 ## seqTrack.haploGen
 #####################
+#' @method seqTrack haploGen
+#' @export
 seqTrack.haploGen <- function(x, best=c("min","max"), prox.mat=NULL, ...){
     myX <- dist.dna(x$seq, model="raw")
     x.names <- labels(x)
@@ -443,6 +453,8 @@ seqTrack.haploGen <- function(x, best=c("min","max"), prox.mat=NULL, ...){
 ########################
 ## as.seqTrack.haploGen
 ########################
+#' @method as.seqTrack haploGen
+#' @export
 as.seqTrack.haploGen <- function(x){
     ## x.ori <- x
     ## x <- na.omit(x)
@@ -516,6 +528,8 @@ plotHaploGen <- function(x, annot=FALSE, date.range=NULL, col=NULL, bg="grey", a
 ###################
 ## sample.haploGen
 ###################
+#' @method sample haploGen
+#' @export
 sample.haploGen <- function(x, n){
 ##sample.haploGen <- function(x, n, rDate=.rTimeSeq, arg.rDate=NULL){
     ## EXTRACT THE SAMPLE ##
@@ -558,6 +572,8 @@ sample.haploGen <- function(x, n){
 ######################
 ## as.igraph.haploGen
 ######################
+#' @method as.igraph haploGen
+#' @export
 as.igraph.haploGen <- function(x, col.pal=redpal, ...){
 
     ## GET DAG ##
@@ -599,6 +615,8 @@ as.igraph.haploGen <- function(x, col.pal=redpal, ...){
 #################
 ## plot.haploGen
 #################
+#' @method plot haploGen
+#' @export
 plot.haploGen <- function(x, y=NULL, col.pal=redpal, ...){
 
     ## get graph ##

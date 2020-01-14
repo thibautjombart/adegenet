@@ -1030,6 +1030,7 @@ setAs("SNPbin", "integer", def=function(from){
 })
 
 
+#' @export
 as.integer.SNPbin <- function(x, ...){
     return(as(x, "integer"))
 }
@@ -1047,6 +1048,8 @@ setAs("genlight", "matrix", def=function(from){
 })
 
 
+#' @method as.matrix genlight
+#' @export
 as.matrix.genlight <- function(x, ...){
     return(as(x, "matrix"))
 }
@@ -1057,6 +1060,7 @@ setAs("genlight", "data.frame", def=function(from){
 })
 
 
+#' @export
 as.data.frame.genlight <- function(x, ...){
     return(as(x, "data.frame"))
 }
@@ -1069,6 +1073,7 @@ setAs("genlight", "list", def=function(from){
 })
 
 
+#' @export
 as.list.genlight <- function(x, ...){
     return(as(x, "list"))
 }
