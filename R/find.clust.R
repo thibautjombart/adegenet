@@ -4,8 +4,8 @@
 find.clusters <- function (x, ...) UseMethod("find.clusters")
 
 ############################
-## find.clusters.data.frame
-############################
+#' @method find.clusters data.frame
+#' @export
 find.clusters.data.frame <- function(x, clust = NULL, n.pca = NULL, n.clust = NULL,
                                      method = c("kmeans", "ward"),
                                      stat = c("BIC", "AIC", "WSS"), choose.n.clust = TRUE,
@@ -221,7 +221,8 @@ find.clusters.data.frame <- function(x, clust = NULL, n.pca = NULL, n.clust = NU
 
 
 ########################
-## find.clusters.genind
+#' @method find.clusters genind
+#' @export
 ########################
 find.clusters.genind <- function(x, clust = NULL, n.pca = NULL, n.clust = NULL, 
                                  method = c("kmeans", "ward"),
@@ -259,7 +260,8 @@ find.clusters.genind <- function(x, clust = NULL, n.pca = NULL, n.clust = NULL,
 
 
 ###################
-## find.clusters.matrix
+#' @method find.clusters matrix
+#' @export
 ###################
 find.clusters.matrix <- function(x, ...){
     return(find.clusters(as.data.frame(x), ...))
@@ -273,7 +275,9 @@ find.clusters.matrix <- function(x, ...){
 
 
 ##########################
-## find.clusters.genlight
+#' @method find.clusters genlight
+#' @export
+#' @export
 ##########################
 find.clusters.genlight <- function(x, clust = NULL, n.pca = NULL, n.clust = NULL,
                                    method = c("kmeans", "ward"),

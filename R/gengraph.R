@@ -1,6 +1,5 @@
 #############
-## GENERIC ##
-#############
+#' @export
 gengraph <-  function (x, ...) UseMethod("gengraph")
 
 
@@ -8,7 +7,8 @@ gengraph <-  function (x, ...) UseMethod("gengraph")
 
 
 #############
-## DEFAULT ##
+#' @method gengraph default 
+#' @export
 #############
 gengraph.default <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE,
                              show.graph=TRUE, col.pal=funky, truenames=TRUE, nbreaks=10, ...){
@@ -20,11 +20,9 @@ gengraph.default <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=T
 
 
 ############
-## MATRIX ##
+#' @method gengraph matrix 
+#' @export
 ############
-##
-## this is the basic method
-##
 gengraph.matrix <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE, show.graph=TRUE, col.pal=funky,
                             truenames=TRUE, nbreaks=10, ...){
     ## CHECKS ##
@@ -143,7 +141,8 @@ gengraph.matrix <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
 
 
 ############
-## GENIND ##
+#' @method gengraph dist 
+#' @export
 ############
 gengraph.dist <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE,
                           show.graph=TRUE, col.pal=funky, truenames=TRUE, nbreaks=10, ...){
@@ -162,7 +161,8 @@ gengraph.dist <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE
 
 
 ############
-## GENIND ##
+#' @method gengraph genind 
+#' @export
 ############
 gengraph.genind <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE,
                             show.graph=TRUE, col.pal=funky, truenames=TRUE, nbreaks=10, ...){
@@ -190,7 +190,8 @@ gengraph.genind <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
 
 
 ############
-## GENPOP ##
+#' @method gengraph genpop 
+#' @export
 ############
 gengraph.genpop <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE, show.graph=TRUE,
                             col.pal=funky, method=1, truenames=TRUE, nbreaks=10, ...){ ## CHECKS ##
@@ -216,7 +217,8 @@ gengraph.genpop <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
 
 
 ############
-## DNABIN ##
+#' @method gengraph DNAbin 
+#' @export
 ############
 gengraph.DNAbin <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE, show.graph=TRUE, col.pal=funky,
                             truenames=TRUE, nbreaks=10, ...){

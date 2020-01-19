@@ -19,6 +19,7 @@ colorplot <- function(...){
 #################
 # default method
 #################
+#' @export
 colorplot.default <- function(xy, X, axes=NULL, add.plot=FALSE, defaultLevel=0, transp=FALSE, alpha=.5, ...){
 
     ## some checks

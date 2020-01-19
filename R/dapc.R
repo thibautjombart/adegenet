@@ -6,6 +6,8 @@ dapc <- function (x, ...) UseMethod("dapc")
 ###################
 ## dapc.data.frame
 ###################
+#' @method dapc data.frame
+#' @export
 dapc.data.frame <- function(x, grp, n.pca=NULL, n.da=NULL,
                             center=TRUE, scale=FALSE, var.contrib=TRUE, var.loadings=FALSE,
                             pca.info=TRUE, pca.select=c("nbEig","percVar"), perc.pca=NULL, ..., dudi=NULL){
@@ -142,6 +144,8 @@ dapc.data.frame <- function(x, grp, n.pca=NULL, n.da=NULL,
 #############
 ## dapc.matrix
 #############
+#' @method dapc matrix
+#' @export
 dapc.matrix <- function(x, ...){
     return(dapc(as.data.frame(x), ...))
 }
@@ -152,6 +156,8 @@ dapc.matrix <- function(x, ...){
 #############
 ## dapc.genind
 #############
+#' @method dapc genind
+#' @export
 dapc.genind <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
                         scale=FALSE, truenames=TRUE, var.contrib=TRUE, var.loadings=FALSE,
                         pca.info=TRUE, pca.select=c("nbEig","percVar"), perc.pca=NULL, ...){
@@ -202,6 +208,8 @@ dapc.genind <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
 ######################
 ## Function dapc.dudi
 ######################
+#' @method dapc dudi
+#' @export
 dapc.dudi <- function(x, grp, ...){
     return(dapc.data.frame(x$li, grp, dudi=x, ...))
 }
@@ -213,6 +221,8 @@ dapc.dudi <- function(x, grp, ...){
 #################
 ## dapc.genlight
 #################
+#' @method dapc genlight
+#' @export
 dapc.genlight <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
                           scale=FALSE,  var.contrib=TRUE, var.loadings=FALSE, pca.info=TRUE,
                           pca.select=c("nbEig","percVar"), perc.pca=NULL, glPca=NULL, ...){
@@ -378,6 +388,8 @@ dapc.genlight <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
 ######################
 # Function print.dapc
 ######################
+#' @method print dapc
+#' @export
 print.dapc <- function(x, ...){
     cat("\t#################################################\n")
     cat("\t# Discriminant Analysis of Principal Components #\n")
@@ -465,6 +477,9 @@ print.dapc <- function(x, ...){
 ##############
 ## summary.dapc
 ##############
+
+#' @export
+#' @method summary dapc
 summary.dapc <- function(object, ...){
     x <- object
     res <- list()
@@ -495,6 +510,8 @@ summary.dapc <- function(object, ...){
 ##############
 #' @importFrom vegan orditorp
 #' 
+#' @method scatter dapc
+#' @export
 scatter.dapc <- function(x, xax = 1, yax = 2, grp = x$grp,
                          col = seasun(length(levels(grp))),
                          pch = 20, bg = "white", solid = .7,
@@ -894,6 +911,9 @@ as.lda <- function(...){
     UseMethod("as.lda")
 }
 
+
+#' @method as.lda dapc
+#' @export
 as.lda.dapc <- function(x, ...){
     if(!inherits(x,"dapc")) stop("x is not a dapc object")
     res <- list()
@@ -920,6 +940,8 @@ as.lda.dapc <- function(x, ...){
 ##############
 ## predict.dapc
 ##############
+#' @method predict dapc
+#' @export
 predict.dapc <- function(object, newdata, prior = object$prior, dimen,
                          method = c("plug-in", "predictive", "debiased"), ...){
 

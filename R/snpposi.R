@@ -3,6 +3,7 @@
 ################
 
 ## GENERIC
+#' @export
 snpposi.test <- function(...){
     UseMethod("snpposi.test")
 }
@@ -12,6 +13,8 @@ snpposi.test <- function(...){
 
 
 ## METHOD FOR INTEGER - BASIC METHOD
+#' @method snpposi.test integer
+#' @export
 snpposi.test.integer <- function(x, genome.size, n.sim=999, stat=median, ...){
     ## AUXILIARY FUNCTION ##
     ## computes the test statistics for one vector of SNP positions
@@ -39,6 +42,8 @@ snpposi.test.integer <- function(x, genome.size, n.sim=999, stat=median, ...){
 
 
 ## METHOD FOR NUMERIC
+#' @method snpposi.test numeric
+#' @export
 snpposi.test.numeric <- function(x, ...){
     out <- snpposi.test(as.integer(x), ...)
     return(out)
@@ -49,6 +54,8 @@ snpposi.test.numeric <- function(x, ...){
 
 
 ## METHOD FOR DNABIN
+#' @method snpposi.test DNAbin
+#' @export
 snpposi.test.DNAbin <- function(x, ...){
     out <- snpposi.test(x=as.integer(seg.sites(x)),
                         genome.size=ncol(x), ...)
@@ -70,6 +77,7 @@ snpposi.test.DNAbin <- function(x, ...){
 ################
 
 ## GENERIC
+#' @export
 snpposi.plot <- function(...){
     UseMethod("snpposi.plot")
 }
@@ -78,6 +86,8 @@ snpposi.plot <- function(...){
 
 
 ## METHOD FOR INTEGER - BASIC METHOD
+#' @method snpposi.plot integer
+#' @export
 snpposi.plot.integer <- function(x, genome.size, smooth=0.1, col="royalblue", alpha=.2,
                                  codon=TRUE, start.at=1, ...){
     ## IF WE REPRESENT DENSITY PER CODON POSITION ##
@@ -108,7 +118,8 @@ snpposi.plot.integer <- function(x, genome.size, smooth=0.1, col="royalblue", al
 
 
 
-## METHOD FOR NUMERIC
+#' @method snpposi.plot numeric
+#' @export
 snpposi.plot.numeric <- function(x, ...){
     out <- snpposi.plot(as.integer(x), ...)
     return(out)
@@ -117,7 +128,8 @@ snpposi.plot.numeric <- function(x, ...){
 
 
 
-## METHOD FOR DNABIN
+#' @method snpposi.plot DNAbin
+#' @export
 snpposi.plot.DNAbin <- function(x, ...){
     out <- snpposi.plot(x=as.integer(seg.sites(x)),
                         genome.size=ncol(x), ...)

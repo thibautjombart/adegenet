@@ -1,9 +1,11 @@
 ##############
 # loadingplot
 ##############
+#' @export
 loadingplot <- function (x, ...) UseMethod("loadingplot")
 
-
+#' @method loadingplot default
+#' @export
 loadingplot.default <- function(x, at=NULL, threshold=quantile(x,0.75), axis=1, fac=NULL, byfac=FALSE,
                         lab=NULL, cex.lab=0.7, cex.fac=1, lab.jitter=0,
                         main="Loading plot", xlab="Variables", ylab="Loadings", srt=0, adj=NULL, ...){

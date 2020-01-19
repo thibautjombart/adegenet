@@ -448,6 +448,8 @@ return(output)
 ##########################
 # function plot.monmonier
 ##########################
+#' @method plot monmonier
+#' @export
 plot.monmonier <- function(x, variable=NULL,displayed.runs=1:x$nrun,
                            add.arrows=TRUE, col='blue',lty=1,bwd=4, clegend=1,csize=0.7,
                            method = c('squaresize','greylevel'),sub='',csub=1,possub='topleft',
@@ -534,6 +536,9 @@ plot.monmonier <- function(x, variable=NULL,displayed.runs=1:x$nrun,
 #####################
 # print function
 #####################
+#' @method print monmonier
+#' @export
+#' 
 print.monmonier <- function(x, ...){
 cat("\t\n###########################################################")
 cat("\t\n# List of paths of maximum differences between neighbours #")

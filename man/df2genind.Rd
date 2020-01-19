@@ -4,10 +4,20 @@
 \alias{df2genind}
 \title{Convert a data.frame of allele data to a genind object.}
 \usage{
-df2genind(X, sep = NULL, ncode = NULL, ind.names = NULL,
-  loc.names = NULL, pop = NULL, NA.char = "", ploidy = 2,
-  type = c("codom", "PA"), strata = NULL, hierarchy = NULL,
-  check.ploidy = getOption("adegenet.check.ploidy"))
+df2genind(
+  X,
+  sep = NULL,
+  ncode = NULL,
+  ind.names = NULL,
+  loc.names = NULL,
+  pop = NULL,
+  NA.char = "",
+  ploidy = 2,
+  type = c("codom", "PA"),
+  strata = NULL,
+  hierarchy = NULL,
+  check.ploidy = getOption("adegenet.check.ploidy")
+)
 }
 \arguments{
 \item{X}{a matrix or a data.frame containing allelle data only (see

@@ -5,17 +5,17 @@
 \alias{tab}
 \alias{tab,genind-method}
 \alias{tab,genind-methods}
+\alias{tab.genind}
 \alias{tab,genpop-method}
 \alias{tab,genpop-methods}
+\alias{tab.genpop}
 \title{Access allele counts or frequencies}
 \usage{
 tab(x, ...)
 
-\S4method{tab}{genind}(x, freq = FALSE, NA.method = c("asis", "mean",
-  "zero"), ...)
+\S4method{tab}{genind}(x, freq = FALSE, NA.method = c("asis", "mean", "zero"), ...)
 
-\S4method{tab}{genpop}(x, freq = FALSE, NA.method = c("asis", "mean",
-  "zero"), ...)
+\S4method{tab}{genpop}(x, freq = FALSE, NA.method = c("asis", "mean", "zero"), ...)
 }
 \arguments{
 \item{x}{a \linkS4class{genind} or \linkS4class{genpop} object.}

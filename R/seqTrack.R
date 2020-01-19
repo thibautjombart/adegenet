@@ -1,10 +1,13 @@
 ############
 ## generics
 ############
+#' @export
 seqTrack <- function(...){
     UseMethod("seqTrack")
 }
 
+#' @method seqTrack default
+#' @export
 seqTrack.default <- function(x, ...){
     cat("\nseqTrack not implemented for object of the class", class(x),"\n")
     return(invisible(NULL))
@@ -37,6 +40,8 @@ get.likelihood <- function(...){
 ## - prox.mat is a directed proximity measure, so that prox.mat[i,j] is
 ## the 'proximity when going from i to j'
 ##
+#' @method seqTrack matrix
+#' @export
 seqTrack.matrix <- function(x, x.names, x.dates, best=c("min","max"),
                      prox.mat=NULL, mu=NULL, haplo.length=NULL, ...){
 
@@ -315,6 +320,8 @@ plotSeqTrack <- function(x, xy, use.arrows=TRUE, annot=TRUE, labels=NULL,
 ###########################
 ## get.likelihood.seqTrack
 ###########################
+#' @export
+#' @method get.likelihood seqTrack
 get.likelihood.seqTrack <- function(x, mu, haplo.length,...){
     if(any(na.omit(x$weight - round(x$weight)) > 1e-10)){
         warning("Non-integer weights: number of mutations expected in x$weight.")
@@ -383,6 +390,8 @@ as.igraph.seqTrack <- function(x, col.pal=redpal, ...){
 #################
 ## plot.seqTrack
 #################
+#' @method plot seqTrack
+#' @export
 plot.seqTrack <- function(x, y=NULL, col.pal=redpal, ...){
 
     ## get graph ##

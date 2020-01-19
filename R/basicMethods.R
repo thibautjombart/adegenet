@@ -523,6 +523,9 @@ setMethod ("summary", signature(object="genpop"), function(object, verbose = TRU
 #######################
 ## print for summaries
 #######################
+
+#' @method print genindSummary
+#' @export
 print.genindSummary <- function(x, ...){
     if(!is.null(x$n)) cat("\n// Number of individuals:", x$n)
     if(!is.null(x$n.by.pop)) cat("\n// Group sizes:", x$n.by.pop)
@@ -535,6 +538,8 @@ print.genindSummary <- function(x, ...){
 } # end print.genindSummary
 
 
+#' @method print genpopSummary
+#' @export
 print.genpopSummary <- function(x, ...){
     if(!is.null(x$n.pop)) cat("\n// Number of populations:", x$n.pop)
     if(!is.null(x$loc.n.all)) cat("\n// Number of alleles per locus:", x$loc.n.all)
@@ -548,11 +553,15 @@ print.genpopSummary <- function(x, ...){
 ###############
 # Methods "is"
 ###############
+#' @method is genind
+#' @export
 is.genind <- function(x){
   res <- ( is(x, "genind") & validObject(x))
   return(res)
 }
 
+#' @method is genpop
+#' @export
 is.genpop <- function(x){
   res <- ( is(x, "genpop") & validObject(x))
   return(res)

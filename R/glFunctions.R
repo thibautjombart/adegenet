@@ -483,6 +483,8 @@ glPca <- function(x, center=TRUE, scale=FALSE, nf=NULL, loadings=TRUE, alleleAsU
 ###############
 ## print.glPca
 ###############
+#' @method print glPca
+#' @export
 print.glPca <- function(x, ...){
     cat(" === PCA of genlight object ===")
     cat("\nClass: list of type glPca")
@@ -506,6 +508,8 @@ print.glPca <- function(x, ...){
 #################
 ## scatter.glPca
 #################
+#' @method scatter glPca
+#' @export
 scatter.glPca <- function(x, xax=1, yax=2, posi="bottomleft", bg="white", ratio=0.3,
                           label = rownames(x$scores), clabel = 1, xlim = NULL, ylim = NULL,
                           grid = TRUE, addaxes = TRUE, origin = c(0,0), include.origin = TRUE,
@@ -539,6 +543,8 @@ scatter.glPca <- function(x, xax=1, yax=2, posi="bottomleft", bg="white", ratio=
 #####################
 ## loadingplot.glPca
 #####################
+#' @method loadingplot glPca
+#' @export
 loadingplot.glPca <- function(x, at=NULL, threshold=NULL, axis=1, fac=NULL, byfac=FALSE,
                         lab=rownames(x$loadings), cex.lab=0.7, cex.fac=1, lab.jitter=0,
                         main="Loading plot", xlab="SNP positions", ylab="Contributions", srt=90, adj=c(0,0.5), ... ){

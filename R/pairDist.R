@@ -1,4 +1,4 @@
-## AVOID:
+## avoid:
 ## airDistPlot.dist: no visible binding for global variable ‘groups’
 ## pairDistPlot.dist: no visible binding for global variable ‘distance’
 if(getRversion() >= "2.15.1")  utils::globalVariables(c("groups","distance"))
@@ -16,7 +16,8 @@ pairDist <-  function (x, ...) UseMethod("pairDistPlot")
 
 
 #############
-## DEFAULT ##
+#' @method pairDistPlot default 
+#' @export
 #############
 pairDistPlot.default <- function(x, ...){
     stop(paste("No method for objects of class",class(x)))
@@ -31,11 +32,9 @@ pairDist.default <- function(x, grp, within=FALSE, sep="-", ...){
 
 
 ##########
-## DIST ##
+#' @method pairDistPlot dist 
+#' @export
 ##########
-##
-## this is the basic method
-##
 pairDistPlot.dist <- function(x, grp, within=FALSE, sep="-", data=TRUE, violin=TRUE, boxplot=TRUE,
                               jitter=TRUE, ...){
     ## CHECKS ##
@@ -103,7 +102,8 @@ pairDistPlot.dist <- function(x, grp, within=FALSE, sep="-", data=TRUE, violin=T
 
 
 ############
-## MATRIX ##
+#' @method pairDistPlot matrix
+#' @export
 ############
 pairDistPlot.matrix <- function(x, grp, within=FALSE, sep="-", data=TRUE, violin=TRUE, boxplot=TRUE,
                                 jitter=TRUE, ...){
@@ -123,7 +123,8 @@ pairDistPlot.matrix <- function(x, grp, within=FALSE, sep="-", data=TRUE, violin
 
 
 ############
-## GENIND ##
+#' @method pairDistPlot genind 
+#' @export
 ############
 pairDistPlot.genind <- function(x, grp, within=FALSE, sep="-", data=TRUE, violin=TRUE, boxplot=TRUE,
                                 jitter=TRUE, ...){
@@ -151,7 +152,8 @@ pairDistPlot.genind <- function(x, grp, within=FALSE, sep="-", data=TRUE, violin
 
 
 ############
-## DNAbin ##
+#' @method pairDistPlot DNAbin
+#' @export
 ############
 pairDistPlot.DNAbin <- function(x, grp, within=FALSE, sep="-", data=TRUE, violin=TRUE, boxplot=TRUE,
                                 jitter=TRUE, ...){

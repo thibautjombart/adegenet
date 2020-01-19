@@ -18,6 +18,7 @@ spca <- function (...) UseMethod("spca")
 ################
 ## spca.default
 ################
+#' @export
 spca.default <- function(x, ...) {
   stop(sprintf("No spca method for object of class %s",
                paste(class(x), collapse = " ")))
@@ -30,6 +31,7 @@ spca.default <- function(x, ...) {
 ###############
 ## spca.matrix
 ###############
+#' @export
 spca.matrix <- function(x, xy = NULL, cn = NULL, matWeight = NULL,
                         center = TRUE, scale = FALSE, scannf = TRUE,
                         nfposi = 1, nfnega = 1,
@@ -167,6 +169,8 @@ spca.matrix <- function(x, xy = NULL, cn = NULL, matWeight = NULL,
 ## spca.data.frame
 ###################
 
+#' @method spca data.frame
+#' @export
 spca.data.frame <- function(x, xy = NULL, cn = NULL, matWeight = NULL,
                             center = TRUE, scale = FALSE, scannf = TRUE,
                             nfposi = 1, nfnega = 1,
@@ -194,6 +198,7 @@ spca.data.frame <- function(x, xy = NULL, cn = NULL, matWeight = NULL,
 ## spca genind
 ################
 
+#' @export
 spca.genind <- function(obj, xy = NULL, cn = NULL, matWeight = NULL,
                         scale = FALSE, scannf = TRUE,
                         nfposi = 1, nfnega = 1,
@@ -249,6 +254,7 @@ spca.genind <- function(obj, xy = NULL, cn = NULL, matWeight = NULL,
 ## spca genpop
 ################
 
+#' @export
 spca.genpop <- function(obj, xy = NULL, cn = NULL, matWeight = NULL,
                         scale = FALSE, scannf = TRUE,
                         nfposi = 1, nfnega = 1,
@@ -300,6 +306,8 @@ spca.genpop <- function(obj, xy = NULL, cn = NULL, matWeight = NULL,
 ## Function print.spca
 ######################
 
+#' @method print spca
+#' @export
 print.spca <- function(x, ...){
   cat("\t########################################\n")
   cat("\t# spatial Principal Component Analysis #\n")
@@ -362,6 +370,8 @@ print.spca <- function(x, ...){
 ########################
 ## Function summary.spca
 ########################
+#' @method summary spca
+#' @export
 summary.spca <- function (object, ..., printres=TRUE) {
   if (!inherits(object, "spca"))stop("to be used with 'spca' object")
 
@@ -479,6 +489,8 @@ summary.spca <- function (object, ..., printres=TRUE) {
 #####################
 ## Function plot.spca
 #####################
+#' @method plot spca
+#' @export
 plot.spca <- function (x, axis = 1, useLag=FALSE, ...){
   if (!inherits(x, "spca")) stop("Use only with 'spca' objects.")
 
@@ -558,6 +570,8 @@ plot.spca <- function (x, axis = 1, useLag=FALSE, ...){
 ##########################
 ## Function screeplot.spca
 ##########################
+#' @method screeplot spca
+#' @export
 screeplot.spca <- function(x,...,main=NULL){
 
   opar <- par("las")
@@ -599,6 +613,8 @@ screeplot.spca <- function(x,...,main=NULL){
 ###################
 ## colorplot method
 ###################
+#' @method colorplot spca
+#' @export
 colorplot.spca <- function(x, axes=1:ncol(x$li), useLag=FALSE, ...){
   ## some checks
   if(!any(inherits(x,"spca"))) stop("x in not a spca object.")
