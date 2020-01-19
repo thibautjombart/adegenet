@@ -1,5 +1,4 @@
 #############
-#' @method gengraph GENERIC 
 #' @export
 #############
 gengraph <-  function (x, ...) UseMethod("gengraph")
@@ -219,7 +218,7 @@ gengraph.genpop <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
 
 
 ############
-#' @method gengraph dnabin 
+#' @method gengraph DNAbin 
 #' @export
 ############
 gengraph.DNAbin <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE, show.graph=TRUE, col.pal=funky,

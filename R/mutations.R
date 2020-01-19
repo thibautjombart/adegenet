@@ -12,6 +12,8 @@ findMutations <- function(...){
 
 
 ## METHOD FOR DNABIN
+#' @method findMutations DNAbin
+#' @export
 findMutations.DNAbin <- function(x, from=NULL, to=NULL, allcomb=TRUE, ...){
     ## CHECKS ##
     if(!inherits(x,"DNAbin")) stop("x is not a DNAbin object")

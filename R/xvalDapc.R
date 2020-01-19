@@ -1,5 +1,7 @@
 
 
+#' @export
+#' 
 xvalDapc <- function (x, ...) UseMethod("xvalDapc")
 
 ##############
@@ -106,7 +108,8 @@ xvalDapc <- function (x, ...) UseMethod("xvalDapc")
 
 
 ##############
-## xvalDapc ##
+#' @method xvalDapc default
+#' @export
 ##############
 xvalDapc.default <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set = 0.9, 
                      result = c("groupMean", "overall"), center = TRUE, scale = FALSE, 
@@ -261,11 +264,19 @@ xvalDapc.default <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set 
 } # end xvalDapc.data.frame
 
 
+#' @method xvalDapc data.frame
+#' @export
 xvalDapc.data.frame <- xvalDapc.default
+#' @method xvalDapc matrix
+#' @export
 xvalDapc.matrix <- xvalDapc.data.frame
+#' @method xvalDapc genlight
+#' @export
 xvalDapc.genlight <- function(x, ...){
   xvalDapc.matrix(as.matrix(x), ...)
 }
+#' @method xvalDapc genind
+#' @export
 xvalDapc.genind <- function(x, ...){
   xvalDapc.matrix(tab(x), ...)
 }
