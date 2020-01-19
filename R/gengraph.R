@@ -1,6 +1,5 @@
 #############
 #' @export
-#############
 gengraph <-  function (x, ...) UseMethod("gengraph")
 
 
@@ -142,7 +141,7 @@ gengraph.matrix <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
 
 
 ############
-#' @method gengraph genind 
+#' @method gengraph dist 
 #' @export
 ############
 gengraph.dist <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE,

@@ -483,6 +483,8 @@ glPca <- function(x, center=TRUE, scale=FALSE, nf=NULL, loadings=TRUE, alleleAsU
 ###############
 ## print.glPca
 ###############
+#' @method print glPca
+#' @export
 print.glPca <- function(x, ...){
     cat(" === PCA of genlight object ===")
     cat("\nClass: list of type glPca")

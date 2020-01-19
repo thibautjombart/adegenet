@@ -86,6 +86,8 @@ graphMutations <- function(...){
 
 
 ## METHOD FOR DNABIN
+#' @method graphMutations DNAbin
+#' @export
 graphMutations.DNAbin <- function(x, from=NULL, to=NULL, allcomb=TRUE, plot=TRUE, curved.edges=TRUE, ...){
 
     ## GET MUTATIONS ##

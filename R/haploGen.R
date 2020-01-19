@@ -453,8 +453,6 @@ seqTrack.haploGen <- function(x, best=c("min","max"), prox.mat=NULL, ...){
 ########################
 ## as.seqTrack.haploGen
 ########################
-#' @method as.seqTrack haploGen
-#' @export
 as.seqTrack.haploGen <- function(x){
     ## x.ori <- x
     ## x <- na.omit(x)

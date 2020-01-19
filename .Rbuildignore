@@ -8,3 +8,4 @@ tutorials
 ^appveyor\.yml$
 misc/
 docker/
+spca_randtest.modified.
