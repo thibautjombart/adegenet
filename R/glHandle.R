@@ -108,7 +108,7 @@ setMethod("[", signature(x="SNPbin", i="ANY"), function(x, i) {
 
 ## genlight
 setMethod("[", signature(x = "genlight", i = "ANY", j = "ANY", drop = "ANY"),
-          function(x, i, j, ..., treatOther = TRUE, quiet = TRUE, drop = FALSE) {
+          function(x, i, j, ..., pop=NULL, treatOther=TRUE, quiet=TRUE, drop=FALSE) {
     if (missing(i)) i <- TRUE
     if (missing(j)) j <- TRUE
 
@@ -118,6 +118,10 @@ setMethod("[", signature(x = "genlight", i = "ANY", j = "ANY", drop = "ANY"),
     ## recycle logicals if needed
     if(!is.null(i) && is.logical(i)) i <- rep(i, length=ori.n)
     if(!is.null(j) && is.logical(j)) j <- rep(j, length=ori.p)
+
+    if (!is.null(pop) && !is.null(pop(x))){
+      i <- .get_pop_inds(x, pop)
+    }
 
 
     ## SUBSET INDIVIDUALS ##
