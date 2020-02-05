@@ -48,18 +48,8 @@ setMethod("[", signature(x="genind", i="ANY", j="ANY", drop="ANY"), function(x, 
   }
 
   ## HANDLE 'POP'
-  if(!is.null(pop) && !is.null(pop(x))){
-    if(is.factor(pop)) pop <- as.character(pop)
-    if(!is.character(pop)) pop <- popNames(x)[pop]
-    temp <- !pop %in% pop(x)
-    if (any(temp)) { # if wrong population specified
-      warning(paste("the following specified populations do not exist:", paste0(pop[temp], collapse = ", ")), call. = FALSE)
-      if (all(temp)){
-        warning("no populations selected - ignoring", call. = FALSE)
-        pop <- pop(x)
-      }
-    }
-    i <- pop(x) %in% pop
+  if (!is.null(pop) && !is.null(pop(x))){
+    i <- .get_pop_inds(x, pop)
   }
 
   ## handle population factor

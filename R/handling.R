@@ -310,6 +310,22 @@ setGeneric("seppop", function(x, ...) standardGeneric("seppop"))
   kObj
 }
 
+.get_pop_inds <- function(x, pop) {
+
+  if(is.factor(pop)) pop <- as.character(pop)
+  if(!is.character(pop)) pop <- popNames(x)[pop]
+  temp <- !pop %in% pop(x)
+  if (any(temp)) { # if wrong population specified
+    warning(paste("the following specified populations do not exist:", paste0(pop[temp], collapse = ", ")), call. = FALSE)
+    if (all(temp)){
+      warning("no populations selected - ignoring", call. = FALSE)
+      pop <- pop(x)
+    }
+  }
+  
+  pop(x) %in% pop
+}
+
 ## genind
 setMethod(
   f = "seppop", 

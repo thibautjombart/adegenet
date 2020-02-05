@@ -54,10 +54,11 @@ pop(x) <- c("pop1","pop2", "pop1")
 
 test_that("seppop will work for genlight objects", {
   skip_on_cran()
-  plist <- seppop(x)
+  plist <- seppop(x) 
   expect_is(plist, "list")
   expect_equal(length(plist), nPop(x))
   expect_equivalent(names(plist), popNames(x))
+  expect_equivalent(vapply(plist, nInd, integer(1)), setNames(c(2, 1), popNames(x)))
 })
 
 test_that("seppop will work for genlight objects with external factor", {
@@ -67,6 +68,7 @@ test_that("seppop will work for genlight objects with external factor", {
   expect_is(ulist, "list")
   expect_equal(length(ulist), length(uniqpop))
   expect_equivalent(names(ulist), sort(uniqpop))
+  expect_equal(vapply(ulist, nInd, integer(1)), c(X = 1, Y = 1, Z = 1))
 })
 
 test_that("seppop will work for genlight objects with formula", {
@@ -78,4 +80,5 @@ test_that("seppop will work for genlight objects with formula", {
   expect_is(alist, "list")
   expect_equal(length(alist), nPop(x))
   expect_equivalent(names(alist), popNames(x))
+  expect_equal(nInd(alist[[1]]), nInd(x))
 })
