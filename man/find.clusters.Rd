@@ -170,7 +170,7 @@ from adegenet.
   So far, the analysis of data simulated under various population
   genetics models (see reference) suggested an ad hoc rule for the
   selection of the optimal number of clusters. First important result is
-  that BIC seems for efficient than AIC and WSS to select the
+  that BIC seems more efficient than AIC and WSS to select the
   appropriate number of clusters (see example). The rule of thumb
   consists in increasing K until it no longer leads to an appreciable
   improvement of fit (i.e., to a decrease of BIC).  In the most simple
