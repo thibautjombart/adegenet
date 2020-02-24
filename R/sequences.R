@@ -57,7 +57,7 @@ DNAbin2genind <- function(x, pop=NULL, exp.char=c("a","t","g","c"), polyThres=1/
 
     ## sort out col/row names ##
     ## check if col.names is in matrix format and change to vector format
-    if(class(col.names)=="matrix") col.names <- as.vector(col.names)
+    if(inherits(col.names, "matrix")) col.names <- as.vector(col.names)
     colnames(temp) <- col.names # restore correct names
     rownames(temp) <- rownames(x)
 
