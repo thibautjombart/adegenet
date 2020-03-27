@@ -189,7 +189,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
         temp <- colSums(is.na(X))==nrow(X)
         if(any(temp)){
             X <- X[,!temp]
-            warning("entirely non-type marker(s) deleted")
+            warning("Markers with no scored alleles have been removed")
         }
 
         ## Erase entierely non-type individuals
@@ -199,7 +199,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
             if(!is.null(pop)) pop <- pop[!temp]
             ploidy <- ploidy[!temp]
             ind.names <- ind.names[!temp]
-            warning("entirely non-type individual(s) deleted")
+            warning("Individuals with no scored loci have been removed")
         }
 
         ## erase non-polymorphic loci
@@ -249,7 +249,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     if(length(toRemove) > 0){
         X <- X[,-toRemove, drop = FALSE]
         loc.names <- loc.names[-toRemove]
-        warning("entirely non-type marker(s) deleted")
+        warning("Markers with no scored alleles have been removed")
     }
 
 
@@ -260,7 +260,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
         ind.names <- rownames(X)
         ploidy <- ploidy[-toRemove]
         if(!is.null(pop)) pop <- pop[-toRemove]
-        warning("entirely non-type individual(s) deleted")
+        warning("Individuals with no scored loci have been removed")
     }
 
 
