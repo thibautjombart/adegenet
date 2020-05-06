@@ -153,7 +153,7 @@ find.clusters.data.frame <- function(x, clust = NULL, n.pca = NULL, n.clust = NU
             plot(c(1,nbClust), myStat, xlab = "Number of clusters",
                  ylab = myLab, main = myTitle, type = "o", col = "blue")
             abline(h=0, lty=2, col="red")
-            cat("Choose the number of clusters (>=2: ")
+            cat("Choose the number of clusters (>=2): ")
             n.clust <- NA
             while(is.na(n.clust)){
                 n.clust <- max(1, as.integer(readLines(con = getOption('adegenet.testcon'), n = 1)))
