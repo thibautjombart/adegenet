@@ -4,11 +4,13 @@
 \name{microbov}
 \alias{microbov}
 \title{Microsatellites genotypes of 15 cattle breeds}
-\format{\code{microbov} is a genind object with 3 supplementary components:
+\format{
+\code{microbov} is a genind object with 3 supplementary components:
 \describe{ \item{coun}{a factor giving the country of each individual (AF:
 Afric; FR: France).} \item{breed}{a factor giving the breed of each
 individual.} \item{spe}{is a factor giving the species of each individual
-(BT: Bos taurus; BI: Bos indicus).} }}
+(BT: Bos taurus; BI: Bos indicus).} }
+}
 \source{
 Data prepared by Katayoun Moazami-Goudarzi and Denis Lalo\"e (INRA,
 Jouy-en-Josas, France)

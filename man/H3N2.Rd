@@ -8,13 +8,15 @@
 \alias{USflu}
 \alias{USflu.fasta}
 \title{Seasonal influenza (H3N2) HA segment data}
-\format{\code{H3N2} is a genind object with several data frame as
+\format{
+\code{H3N2} is a genind object with several data frame as
 supplementary components (\code{H3N2@other) slort}, which contains the
 following items: \describe{ \item{x}{a \code{data.frame} containing
 miscellaneous annotations of the sequences.} \item{xy}{a matrix with two
 columns indicating the geographic coordinates of the strains, as longitudes
 and latitudes.} \item{epid}{a character vector indicating the epidemic of
-the strains.} }}
+the strains.} }
+}
 \source{
 This dataset was prepared by Thibaut Jombart
 (t.jombart@imperia.ac.uk), from annotated sequences available on Genbank

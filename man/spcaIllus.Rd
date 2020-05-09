@@ -4,8 +4,10 @@
 \name{spcaIllus}
 \alias{spcaIllus}
 \title{Simulated data illustrating the sPCA}
-\format{\code{spcaIllus} is list of 5 components being either genind or
-genpop objects.}
+\format{
+\code{spcaIllus} is list of 5 components being either genind or
+genpop objects.
+}
 \source{
 Jombart, T., Devillard, S., Dufour, A.-B. and Pontier, D. Revealing
 cryptic spatial patterns in genetic variability by a new multivariate

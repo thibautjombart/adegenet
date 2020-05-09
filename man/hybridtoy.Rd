@@ -4,7 +4,9 @@
 \name{hybridtoy}
 \alias{hybridtoy}
 \title{Toy hybrid dataset}
-\format{a \linkS4class{genind} object}
+\format{
+a \linkS4class{genind} object
+}
 \description{
 Toy hybrid dataset
 }

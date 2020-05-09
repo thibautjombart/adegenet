@@ -4,8 +4,10 @@
 \name{sim2pop}
 \alias{sim2pop}
 \title{Simulated genotypes of two georeferenced populations}
-\format{\code{sim2pop} is a genind object with a matrix of xy coordinates as
-supplementary component.}
+\format{
+\code{sim2pop} is a genind object with a matrix of xy coordinates as
+supplementary component.
+}
 \source{
 Easypop version 2.0.1 was run with the following parameters:\cr -
 two diploid populations, one sex, random mating\cr - 1000 individuals per

@@ -12,7 +12,9 @@
 \alias{bytesToInt}
 \alias{nb_shared_all}
 \title{Internal C routines}
-\format{An object of class \code{NULL} of length 0.}
+\format{
+An object of class \code{NULL} of length 0.
+}
 \usage{
 .internal_C_routines
 }

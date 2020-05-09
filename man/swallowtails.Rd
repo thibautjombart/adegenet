@@ -5,8 +5,10 @@
 \alias{swallowtails}
 \title{Microsatellites genotypes of 781 swallowtail butterflies from 40 populations in
 Alberta and British Columbia, Canada}
-\format{\code{swallowtails} is a genind object containing 781 individuals, 
-10 microsatellite markers, and 40 populations.}
+\format{
+\code{swallowtails} is a genind object containing 781 individuals, 
+10 microsatellite markers, and 40 populations.
+}
 \source{
 Julian Dupuis (University of Hawaii, USA)
 }
