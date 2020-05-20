@@ -4,7 +4,9 @@
 \name{dapcIllus}
 \alias{dapcIllus}
 \title{Simulated data illustrating the DAPC}
-\format{\code{dapcIllus} is list of 4 components being all genind objects.}
+\format{
+\code{dapcIllus} is list of 4 components being all genind objects.
+}
 \source{
 Jombart, T., Devillard, S. and Balloux, F.  Discriminant analysis of
 principal components: a new method for the analysis of genetically

@@ -4,7 +4,8 @@
 \name{eHGDP}
 \alias{eHGDP}
 \title{Extended HGDP-CEPH dataset}
-\format{\code{eHGDP} is a genind object with a data frame named
+\format{
+\code{eHGDP} is a genind object with a data frame named
 \code{popInfo} as supplementary component (\code{eHGDP@other$popInfo}),
 which contains the following variables: \describe{ \item{Population: }{a
 character vector indicating populations.} \item{Region: }{a character vector
@@ -12,7 +13,8 @@ indicating the geographic region of each population.} \item{Label: }{a
 character vector indicating the correspondence with population labels used
 in the genind object (i.e., as output by \code{pop(eHGDP)}).}
 \item{Latitude,Longitude: }{geographic coordinates of the populations,
-indicated as north and east degrees.} }}
+indicated as north and east degrees.} }
+}
 \source{
 Original panel by Human Genome Diversity Project (HGDP) and Centre
 d'Etude du Polymorphisme Humain (CEPH). See reference [4] for Native

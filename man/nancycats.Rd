@@ -4,8 +4,10 @@
 \name{nancycats}
 \alias{nancycats}
 \title{Microsatellites genotypes of 237 cats from 17 colonies of Nancy (France)}
-\format{\code{nancycats} is a genind object with spatial coordinates of the
-colonies as a supplementary components (@xy).}
+\format{
+\code{nancycats} is a genind object with spatial coordinates of the
+colonies as a supplementary components (@xy).
+}
 \source{
 Dominique Pontier (UMR CNRS 5558, University Lyon1, France)
 }

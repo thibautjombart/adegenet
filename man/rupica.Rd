@@ -6,12 +6,14 @@
 \alias{rupica}
 \title{Microsatellites genotypes of 335 chamois (Rupicapra rupicapra) from the
 Bauges mountains (France)}
-\format{\code{rupica} is a genind object with 3 supplementary components
+\format{
+\code{rupica} is a genind object with 3 supplementary components
 inside the \code{@other} slot: \describe{ \item{xy}{a matrix containing the
 spatial coordinates of the genotypes.} \item{mnt}{a raster map of elevation,
 with the \code{asc} format from the \code{adehabitat} package.}
 \item{showBauges}{a function to display the map of elevation with an
-appropriate legend (use \code{showBauges()}).} }}
+appropriate legend (use \code{showBauges()}).} }
+}
 \source{
 Daniel Maillard, 'Office National de la Chasse et de la Faune
 Sauvage' (ONCFS), France.

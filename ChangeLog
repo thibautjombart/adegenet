@@ -1,4 +1,5 @@
 			CHANGES IN ADEGENET VERSION 2.1.3
+
 BUG FIX
 
   - `seppop()` correctly subsets genlight objects now. (@rdinnager, #270)
@@ -7,6 +8,16 @@ MISC
 
   - A bug in the `scaleGen()` example has been fixed and a minor spelling
     mistake was corrected (@courtiol, #273)
+	- `find.clusters()` gains a missing parenthesis in the user prompt 
+  	(@knausb, #283)
+	- Warning messages for missing loci and individuals have been made clearer
+	  (@zkamvar, #276)
+	- DESCRIPTION file now uses Authors@R syntax
+
+CRAN MAINTENANCE
+
+  - `DNAbin2genind()` now checks for matrices by using `inherits()` instead of
+	  `class(x) == "matrix"` (@zkamvar, #275)
 
 			CHANGES IN ADEGENET VERSION 2.1.2
 
