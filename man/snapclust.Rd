@@ -85,7 +85,20 @@ algorithm was run for.
 }
 }
 \description{
-Do not use. We work on that stuff. Contact us if interested.
+This function implements the fast maximum-likelihood genetic clustering
+approach described in Beugin et al (2018). The underlying model is very close
+to the model implemented by STRUCTURE, but allows for much faster estimation
+of genetic clusters thanks to the use of the Expectation-Maximization (EM)
+algorithm. Optionally, the model can explicitely account for hybridization
+and detect different types of hybrids (see \code{hybrids} and
+\code{hybrid.coef} arguments). The method is fully documented in a dedicated
+tutorial which can be accessed using \code{adegenetTutorial("snapclust")}.
+}
+\details{
+The method is described in Beugin et al (2018) A fast likelihood
+  solution to the genetic clustering problem. Methods in Ecology and
+  Evolution \url{https://doi.org/10.1111/2041-210X.12968}. A dedicated
+  tutorial is available by typing \code{adegenetTutorial("snapclust")}.
 }
 \examples{
 \dontrun{
@@ -140,9 +153,13 @@ compoplot(res2.hyb, col.pal = hybridpal(), n.col = 2)
 
 ## method with back-cross
 res2.back <- snapclust(y, k = 2, hybrids = TRUE, hybrid.coef = c(.25,.5))
- compoplot(res2.hyb, col.pal = hybridpal(), n.col = 2)
+compoplot(res2.back, col.pal = hybridpal(), n.col = 2)
 
 }
+}
+\seealso{
+The function \link{\code{snapclust.choose.k}} to investigate the optimal
+  value number of clusters 'k'.
 }
 \author{
 Thibaut Jombart \email{thibautjombart@gmail.com} and Marie-Pauline
