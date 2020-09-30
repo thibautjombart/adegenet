@@ -24,7 +24,7 @@ returned.}
 This function implements methods for investigating the optimal number of
 genetic clusters ('k') using the fast maximum-likelihood genetic clustering
 approach described in Beugin et al (2018). The method runs
-\link{\code{snapclust}} for varying values of 'k', and computes the requested
+\code{\link{snapclust}} for varying values of 'k', and computes the requested
 summary statistics for each clustering solution to assess goodness of
 fit. The method is fully documented in a dedicated tutorial which can be
 accessed using \code{adegenetTutorial("snapclust")}.

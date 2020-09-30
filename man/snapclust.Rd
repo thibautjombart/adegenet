@@ -158,7 +158,7 @@ compoplot(res2.back, col.pal = hybridpal(), n.col = 2)
 }
 }
 \seealso{
-The function \link{\code{snapclust.choose.k}} to investigate the optimal
+The function \code{\link{snapclust.choose.k}} to investigate the optimal
   value number of clusters 'k'.
 }
 \author{

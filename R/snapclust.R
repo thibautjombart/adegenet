@@ -14,7 +14,7 @@
 #'   Evolution \url{https://doi.org/10.1111/2041-210X.12968}. A dedicated
 #'   tutorial is available by typing \code{adegenetTutorial("snapclust")}.
 #'
-#' @seealso The function \link{\code{snapclust.choose.k}} to investigate the optimal
+#' @seealso The function \code{\link{snapclust.choose.k}} to investigate the optimal
 #'   value number of clusters 'k'. 
 #' 
 #' @author Thibaut Jombart \email{thibautjombart@@gmail.com} and Marie-Pauline
