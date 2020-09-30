@@ -1,7 +1,18 @@
-#' Choose the number of clusters for snapclust using BIC
+#' Choose the number of clusters for snapclust using AIC, BIC or AICc
 #'
-#' Do not use. We work on that stuff. Contact us if interested.
-#'
+#' This function implements methods for investigating the optimal number of
+#' genetic clusters ('k') using the fast maximum-likelihood genetic clustering
+#' approach described in Beugin et al (2018). The method runs
+#' \code{\link{snapclust}} for varying values of 'k', and computes the requested
+#' summary statistics for each clustering solution to assess goodness of
+#' fit. The method is fully documented in a dedicated tutorial which can be
+#' accessed using \code{adegenetTutorial("snapclust")}.
+#' 
+#' @details The method is described in Beugin et al (2018) A fast likelihood
+#'   solution to the genetic clustering problem. Methods in Ecology and
+#'   Evolution \url{https://doi.org/10.1111/2041-210X.12968}. A dedicated
+#'   tutorial is available by typing \code{adegenetTutorial("snapclust")}.
+#' 
 #' @author Thibaut Jombart \email{thibautjombart@@gmail.com}
 #'
 #' @export
