@@ -11,3 +11,4 @@ docker/
 spca_randtest.modified.
 cran-comments.md
 ^CRAN-RELEASE$
+^\.github$
