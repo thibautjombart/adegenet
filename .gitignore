@@ -8,6 +8,9 @@ adegenet.Rcheck
 .Rproj.user
 tutorials/*bbl
 tutorials/*gz
+tutorials/*log
+tutorials/figure/*
 *.blg
 *.tar.gz
 tests/testthat/*pdf
+*.DS_Store
