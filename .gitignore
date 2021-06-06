@@ -10,6 +10,9 @@ tutorials/*bbl
 tutorials/*gz
 tutorials/*log
 tutorials/figure/*
+tutorials/figs/*chunk*.pdf
+tutorials/figs/*-1.pdf
+tutorials/figs/*-2.pdf
 *.blg
 *.tar.gz
 tests/testthat/*pdf
