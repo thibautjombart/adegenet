@@ -41,8 +41,9 @@
 \selectlanguage{english}
 
 <<include=FALSE>>=
-opts_chunk$set(fig.path='figs/base-', fig.keep='high', dev='pdf', fig.width=7, fig.height=7,
-               tidy=FALSE, warning=FALSE, fig.show="asis", fig.align='center', out.width=".8\\textwidth")
+knitr::opts_chunk$set(fig.path='figs/base-', fig.keep='high', dev='pdf',
+  fig.width=7, fig.height=7, tidy=FALSE, warning=FALSE, fig.show="asis",
+  fig.align='center', out.width=".8\\textwidth")
 @
 
 
@@ -1107,34 +1108,40 @@ of permutations to use for a Monte-Carlo version.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Population structure is traditionally measured and tested using $F$ statistics, in particular $F_{st}$.
 As of version 2.0.0, \textit{adegenet} relies on \emph{hierfstat} and \emph{pegas} for most $F$ statistics.
-%' Note that some of these features might be part of the current devel version of \emph{hierfstat},
-%' which can be installed by:
-%' <<eval=FALSE>>=
-%' library(devtools)
-%' install_github("jgx65/hierfstat")
-%' @
 
 Can we find any population structure in the cat colonies from Nancy?
-The basic $F$ statistics are provided by:
+The basic Weir and Cockerham \cite{tj342} $F$ statistics are provided by the
+\texttt{wc()} function from \emph{heirfstat}:
+
 <<>>=
 library("hierfstat")
-fstat(nancycats)
+wc(nancycats)
 @
-This table provides the three F statistics $Fst$ (pop/total), $Fit$ (Ind/total), and $Fis$ (ind/pop).
+This table provides two F statistics $Fst$ (pop/total), and $Fis$ (ind/pop).
 These are overall measures which take into account all genotypes and all loci.
 \\
 
 For more detail, \emph{pegas} provides estimates by locus:
 <<>>=
 library(pegas)
-Fst(as.loci(nancycats))
+ftab <- Fst(as.loci(nancycats))
+ftab # per-locus F-statistics
+colMeans(ftab) # global F-statistics
 @
 
-Are these values significant? This question can be addressed using the G-statistic test \cite{tj511}; it is implemented for \texttt{genind} objects and produces a \texttt{randtest} object (package ade4).
+Confidence intervals for these $F$ statistics can be obtained through the 
+\texttt{boot.vc()} function in \emph{hierfstat}, which takes a data frame of 
+population strata and a data frame of genotypes. You can convert the genind 
+object to this data frame with \emph{genind2hierfstat()}
+
+% NOTE: This used to give people a test for significance using gstat.randtest,
+% which no longer exists in hierfstat (I don't know when it was removed). This
+% is not as pretty, but it serves a similar purpose (but is unsatisfying for 
+% people who want to know if something is _significant_). 
+
 <<>>=
-Gtest <- gstat.randtest(nancycats,nsim=99)
-Gtest
-plot(Gtest)
+nc <- genind2hierfstat(nancycats)
+boot.vc(nc[1], nc[-1])$ci
 @
 
 Finally, pairwise $Fst$ is frequently used as a measure of distance between populations.
@@ -1147,11 +1154,11 @@ expected heterozygosity $H_s(A)$ and $H_s(B)$, and $H_t$ is the expected heteroz
 For a given locus, expected heterozygosity is computed as $1 - \sum p_i^2$, where $p_i$ is the
 frequency of the $i$th allele, and the $\sum$ represents summation over all alleles.
 For multilocus data, the heterozygosity is simply averaged over all loci.
-These computations are achieved for all pairs of populations by the function \texttt{pairwise.fst}; we
+These computations are achieved for all pairs of populations by the function \texttt{genet.dist()} with the ``Nei87" method; we
 illustrate this on a subset of individuals of \texttt{nancycats} (computations for the whole dataset
 would take a few tens of seconds):
 <<>>=
-matFst <- pairwise.fst(nancycats[1:50,])
+matFst <- genet.dist(nancycats[1:50, ], method = "Nei87")
 matFst
 @
 
