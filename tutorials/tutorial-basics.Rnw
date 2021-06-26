@@ -362,8 +362,8 @@ so that slots can be accessed as if they were components of a list.
     dedicated tutorial).
   \item \texttt{other}: (optional) a list storing optional information.
 \end{itemize}
-Slots can be accessed using '\texttt{@}' or '\texttt{\$}', although it is recommended to use
-accessors to retrieve and change slot values (see section 'Using accessors').
+Slots can be accessed using '\texttt{@}' or '\texttt{\$}', although \textbf{it is recommended to use
+accessors to retrieve and change slot values (see section 'Using accessors')}.
 \\
 
 The main slot of a \texttt{genind} is the table of allelic counts \texttt{@tab}, with individuals in rows and
@@ -408,7 +408,7 @@ catpop
 As in \texttt{genind} objects, data are stored as numbers of alleles, but this time for populations
 (here, cat colonies):
 <<>>=
-catpop$tab[1:5,1:10]
+tab(catpop)[1:5, 1:10] # using the accessor for the allele table
 @
 
 
@@ -618,7 +618,7 @@ tab(obj)
 One can see that for instance, the summary of this object is more simple (no numbers of alleles per locus, no heterozygosity):
 <<>>=
 pop(obj) <- rep(c('a','b'),4:3)
-summary(obj)
+print(summary(obj))
 @
 
 \noindent But we can still perform basic manipulation, like converting
@@ -854,6 +854,7 @@ slot: a matrix of integers with individuals in row and alleles in columns, with 
 Here is an example for \texttt{genpop} using a dataset from \textit{ade4}:
 <<>>=
 data(microsatt)
+str(microsatt, max.level = 1) # a plain list with a data frame and three vectors
 microsatt$tab[10:15,12:15]
 @
 \texttt{microsatt\$tab} contains alleles counts per populations, and can therefore be used to make a \texttt{genpop} object.
@@ -919,7 +920,7 @@ data(microbov)
 toto <- genind2genpop(microbov)
 toto
 popNames(toto)
-titi <- toto[1:3,]
+titi <- toto[1:3, ]
 popNames(titi)
 @
 
@@ -930,7 +931,7 @@ In addition, we can subset loci directly using indices or logicals, in which cas
 output of \texttt{locNames}:
 <<>>=
 nAll(titi)
-tata <- titi[,loc=c(1,3)]
+tata <- titi[, loc=c(1, 3)]
 tata
 nAll(tata)
 @
@@ -938,7 +939,7 @@ nAll(tata)
 Alternatively, one can subset loci using their explicit name:
 <<>>=
 locNames(titi)
-hel5 <- titi[,loc="HEL5"]
+hel5 <- titi[, loc="HEL5"]
 hel5
 locNames(hel5)
 @
@@ -1070,6 +1071,7 @@ barplot(toto$Hexp-toto$Hobs, main="Heterozygosity: expected-observed",
 
 barplot(toto$n.by.pop, main="Sample sizes per population",
         ylab="Number of genotypes",las=3)
+par(mfrow = c(1,1))
 @
 
 Is mean observed H significantly lower than mean expected H ?
@@ -1144,7 +1146,7 @@ nc <- genind2hierfstat(nancycats)
 boot.vc(nc[1], nc[-1])$ci
 @
 
-Finally, pairwise $Fst$ is frequently used as a measure of distance between populations.
+Finally, pairwise $F_{st}$ is frequently used as a measure of distance between populations.
 The function \texttt{pairwise.fst} computes Nei's estimator \cite{tj814} of pairwise $Fst$, defined as:
 $$
 Fst(A,B) = \frac{H_t - (n_AH_s(A) + n_BH_s(B))/(n_A + n_B)}{Ht}
@@ -1574,9 +1576,11 @@ Classical IBD would result in continuous clines of genetic differentiation and c
 However, distant and differentiated populations would also result in such a pattern.
 These are slightly different processes and we would like to be able to disentangle them.
 A very simple first approach is simply plotting both distances:
+
 <<>>=
 plot(Dgeo, Dgen)
-abline(lm(Dgen~Dgeo), col="red",lty=2)
+dist_lm <- lm(as.vector(Dgen) ~ as.vector(Dgeo))
+abline(dist_lm, col="red", lty=2)
 @
 
 \noindent Most of the time, simple scatterplots fail to provide a good picture of the data as the
@@ -1585,24 +1589,20 @@ Colors can be used to provide better (and prettier) plots.
 Local density is measured using a 2-dimensional kernel density estimation (\texttt{kde2d}), and the
 results are displayed using \texttt{image}; \texttt{colorRampPalette} is used to generate a
 customized color palette:
+
 <<eval=TRUE>>=
 library(MASS)
-dens <- kde2d(Dgeo,Dgen, n=300)
-myPal <- colorRampPalette(c("white","blue","gold", "orange", "red"))
+dens <- kde2d(as.vector(Dgeo), as.vector(Dgen), n=300)
+myPal <- colorRampPalette(c("white", "blue", "gold", "orange", "red"))
 plot(Dgeo, Dgen, pch=20,cex=.5)
 image(dens, col=transp(myPal(300),.7), add=TRUE)
-abline(lm(Dgen~Dgeo))
+abline(dist_lm)
 title("Isolation by distance plot")
 @
-%% \begin{center}
-%% \includegraphics{densIbd}
-%% \end{center}
 
 The scatterplot clearly shows one single consistent cloud of point, without discontinuities which
 would have indicated patches.
 This is reassuring, since the data were actually simulated under an IBD (continuous) model.
-
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1656,13 +1656,13 @@ Routines for building such networks are scattered over several packages, but all
 through the function \texttt{chooseCN}.
 Here, we disable the interactivity of the function (\texttt{ask=FALSE}) and select the second type of graph which is the graph of Gabriel (\texttt{type=2}).
 <<mon4>>=
-gab <- chooseCN(sim2pop$other$xy,ask=FALSE,type=2)
+gab <- chooseCN(sim2pop$other$xy, ask=FALSE, type=2)
 @
 
 \noindent The obtained network is automatically plotted by the function.
 It seems we are now ready to proceed to the algorithm.
-<<mon5,eval=FALSE>>=
-mon1 <- monmonier(sim2pop$other$xy,D,gab)
+<<mon5, eval=FALSE>>=
+mon1 <- monmonier(sim2pop$other$xy, D, gab)
 @
 \begin{center}
 \includegraphics[width=.5\textwidth]{figs/monthres1.png}
@@ -1679,16 +1679,22 @@ Why do the algorithm fail to find a boundary?
 Either because there is no genetic differentiation to be found, or because the signal differentiating both populations is too weak to overcome the random noise in genetic distances.
 What is the $F_{st}$ between the two samples?
 <<>>=
-pairwise.fst(sim2pop)
+library(hierfstat)
+genet.dist(sim2pop, method = "Nei87")
 @
 
 \noindent This value would be considered as very weak differentiation ($F_{ST}=0.023$).
 Is it significant?
 We can easily ellaborate a permutation test of this $F_{ST}$ value; to save computational time, we
 use only a small number of replicates to generate $F_{ST}$ values in absence of population structure:
+
 <<>>=
-replicate(10, pairwise.fst(sim2pop, pop=sample(pop(sim2pop))))
+replicate(10, {
+  pop(sim2pop) <- sample(pop(sim2pop))
+  genet.dist(sim2pop, method = "Nei87")
+})
 @
+
 $F_{ST}$ values in absence of population structure would be one order of magnitude lower (more
 replicate would give a very low p-value --- just replace \texttt{10} by \texttt{200} in the above command).
 In fact, the two samples are indeed genetically differentiated.
@@ -1699,8 +1705,8 @@ Yes, if we get rid of the random noise.
 This can be achieved using a simple ordination method such as Principal Coordinates Analysis.
 
 <<mon6>>=
-pco1 <- dudi.pco(D,scannf=FALSE,nf=1)
-barplot(pco1$eig,main="Eigenvalues")
+pco1 <- dudi.pco(D, scannf=FALSE, nf=1)
+barplot(pco1$eig, main="Eigenvalues")
 @
 
 \noindent We retain only the first eigenvalue.
@@ -1710,14 +1716,14 @@ The algorithm is then re-run.
 D <- dist(pco1$li)
 @
 <<mon8,eval=FALSE>>=
-mon1 <- monmonier(sim2pop$other$xy,D,gab)
+mon1 <- monmonier(sim2pop$other$xy, D, gab)
 @
 \begin{center}
 \includegraphics[width=.5\textwidth]{figs/monthres2.png}
 \end{center}
 
-<<mon9,echo=FALSE>>=
-mon1 <- monmonier(sim2pop$other$xy,D,gab,scan=FALSE)
+<<mon9, echo=2>>=
+mon1 <- monmonier(sim2pop$other$xy, D, gab, scan=FALSE)
 mon1
 @
 
@@ -1750,10 +1756,10 @@ plot(mon1)
 \noindent see arguments in \texttt{?plot.monmonier} to customize this representation.
 Last, we can compare the infered boundary with the actual distribution of populations:
 <<>>=
-plot(mon1,add.arrows=FALSE,bwd=10,col="black")
+plot(mon1, add.arrows=FALSE, bwd=10, col="black")
 points(sim2pop$other$xy, cex=2, pch=20,
        col=fac2col(pop(sim2pop), col.pal=spectral))
-legend("topright",leg=c("Pop A", "Pop B"), pch=c(20),
+legend("topright", leg=c("Pop A", "Pop B"), pch=c(20),
        col=spectral(2), pt.cex=2)
 @
 
@@ -1803,60 +1809,6 @@ implemented... suggestion or (better) contributions are welcome!
 \newpage
 \bibliography{biblioTJ}
 \bibliographystyle{plain}
-%% \begin{thebibliography}{13}
-
-%% \bibitem{tjart05}
-%%   Jombart, T. (2008) adegenet: a R package for the multivariate
-%%   analysis of genetic markers. \textit{Bioinformatics} 24: 1403-1405.
-
-%% \bibitem{np145}
-%%   R Development Core Team (2014). R: A language and environment for
-%%   statistical computing. R Foundation for Statistical Computing,
-%%   Vienna, Austria. ISBN 3-900051-07-0.
-
-%% \bibitem{tj548}
-%%   Dray S and Dufour A-B (2007) The ade4 package: implementing the duality diagram for ecologists. \textit{Journal of Statistical Software} 22: 1-20.
-
-%% \bibitem{tjart19}
-%%   Jombart T, Devillard S and Balloux, F (2010).
-%%   Discriminant analysis of principal components: a new method for the analysis of genetically structured populations.
-%%   \textit{BMC Genetics} 11: 94.
-
-%% \bibitem{tjart04}
-%%   Jombart T, Devillard S, Dufour A-B and Pontier D (2008) Revealing cryptic spatial
-%%   patterns in genetic variability by a new multivariate method.  \textit{Heredity} 101: 92-103.
-
-%% \bibitem{tjart20}
-%%   Jombart T, Eggo RM, Dodd PJ and Balloux F (2010) Reconstructing disease outbreaks from genetic
-%%   data: a graph approach. \textit{Heredity} 106: 383-390.
-
-%% \bibitem{tjart10}
-%%   Jombart T, Pontier D and Dufour A-B (2009) Genetic markers in the playground of multivariate analysis.
-%%   \textit{Heredity} 102: 330-341.
-
-%% \bibitem{tj527}
-%%   Paradis E, Claude J, and Strimmer K (2004) APE: analyses of phylogenetics and evolution in R language.
-%%   \textit{Bioinformatics}: 20, 289-290.
-
-%% \bibitem{np160}
-%%   Charif D, and Lobry J (2007) SeqinR 1.0-2: a contributed package to the R project for statistical
-%%   computing devoted to biological sequences retrieval and analysis. \textit{in} Structural approaches to sequence evolution: Molecules, networks, populations, \textit{Springer Verlag}, 207-232.
-
-%% \bibitem{tj551}
-%%   Goudet J, Raymond M, DeMeeus T and Rousset F (1996) Testing differentiation in diploid populations. \textit{Genetics} 144: 1933-1940.
-
-%% \bibitem{tj814}
-%%   Nei M (1973) Analysis of gene diversity in subdivided populations. \textit{Proc Natl Acad Sci USA} 70: 3321-3323.
-
-%% \bibitem{tj433}
-%%   Monmonier M (1973) Maximum-difference barriers: an alternative numerical regionalization method. \textit{Geographical Analysis} 3: 245-261.
-
-%% \bibitem{np120}
-%%   Manni F, Guerard E and Heyer E (2004) Geographic patterns of (genetic, morphologic, linguistic)
-%%   variation: how barriers can be detected by "Monmonier's algorithm". \textit{Human Biology} 76: 173-190.
-
-
-%% \end{thebibliography}
 
 \end{document}
 
