@@ -14,7 +14,8 @@ find.clusters.data.frame <- function(x, clust = NULL, n.pca = NULL, n.clust = NU
                                      max.n.clust = round(nrow(x)/10), n.iter = 1e5,
                                      n.start = 10, center = TRUE, scale = TRUE,
                                      pca.select = c("nbEig","percVar"),
-                                     perc.pca = NULL, ..., dudi = NULL){
+                                     perc.pca = NULL, ..., dudi = NULL,
+                                     parallel=FALSE, n.cores=NULL){
 
     ## CHECKS ##
     stat <- match.arg(stat)
@@ -103,7 +104,28 @@ find.clusters.data.frame <- function(x, clust = NULL, n.pca = NULL, n.clust = NU
         nbClust <- min.n.clust:max.n.clust
         WSS <- numeric(0)
 
-        for(i in 1:length(nbClust)){
+        if(parallel && is.null(n.cores)){
+          n.cores <- parallel::detectCores()
+        }
+
+        if(parallel){
+          WSS <- unlist(parallel::mclapply(1:length(nbClust),
+                                           function(i){
+                                             if (method == "kmeans") {
+                                               ## kmeans clustering (original method)
+                                               temp <- kmeans(XU, centers = nbClust[i], iter.max = n.iter, nstart = n.start)
+                                               ##WSS[i] <- sum(temp$withinss)
+                                             } else {
+                                               ## ward clustering
+                                               temp <- list()
+                                               temp$cluster <- cutree(hclust(dist(XU)^2, method = "ward.D2"), k = nbClust[i])
+                                             }
+                                             WSS[i] <- .compute.wss(XU, temp$cluster)
+                                           },
+                                           mc.cores=n.cores, mc.silent=TRUE,
+                                           mc.cleanup=TRUE, mc.preschedule=FALSE))
+        } else{
+          for(i in 1:length(nbClust)){
             if (method == "kmeans") {
                 ## kmeans clustering (original method)
                 temp <- kmeans(XU, centers = nbClust[i], iter.max = n.iter, nstart = n.start)
@@ -114,7 +136,7 @@ find.clusters.data.frame <- function(x, clust = NULL, n.pca = NULL, n.clust = NU
                 temp$cluster <- cutree(hclust(dist(XU)^2, method = "ward.D2"), k = nbClust[i])
             }
                 WSS[i] <- .compute.wss(XU, temp$cluster)
-            
+          }
         }
 
 
