@@ -32,7 +32,7 @@ accessed using \code{adegenetTutorial("snapclust")}.
 \details{
 The method is described in Beugin et al (2018) A fast likelihood
   solution to the genetic clustering problem. Methods in Ecology and
-  Evolution \url{https://doi.org/10.1111/2041-210X.12968}. A dedicated
+  Evolution \doi{10.1111/2041-210X.12968}. A dedicated
   tutorial is available by typing \code{adegenetTutorial("snapclust")}.
 }
 \seealso{

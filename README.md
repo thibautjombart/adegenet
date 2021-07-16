@@ -3,13 +3,11 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/l7a9k1saqnshakk9/branch/master?svg=true)](https://ci.appveyor.com/project/thibautjombart/adegenet/branch/master)
 
-[![CRAN Status Badge](http://www.r-pkg.org/badges/version/adegenet)](https://cran.r-project.org/package=adegenet)
+[![CRAN Status Badge](https://www.r-pkg.org/badges/version/adegenet)](https://cran.r-project.org/package=adegenet)
 
 [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/adegenet)](https://cran.r-project.org/package=adegenet)
 
 [![Downloads from Rstudio mirror](https://cranlogs.r-pkg.org/badges/grand-total/adegenet)](http://www.r-pkg.org/pkg/adegenet)
-
-[![Research software impact](http://depsy.org/api/package/cran/adegenet/badge.svg)](http://depsy.org/package/r/adegenet)
 
   <!-- badges: end -->
 
