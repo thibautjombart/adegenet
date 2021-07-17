@@ -1,5 +1,5 @@
-This is largely a maintenance update. 
- 
+This is a maintenance update and fixes the urls giving 301 codes 
+
 ## Test environments
 * local OS X install, R 4.0.1
 * ubuntu 20.04 (on GitHub Actions), R 4.0.1
