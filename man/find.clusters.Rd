@@ -27,7 +27,8 @@ The K-means procedure used in \code{find.clusters} is
 \code{\link[stats]{kmeans}} function from the \code{stats} package. The PCA
 function is \code{\link[ade4]{dudi.pca}} from the \code{ade4} package, except
 for \linkS4class{genlight} objects which use the \code{\link{glPca}} procedure
-from adegenet.
+from adegenet. When the \code{parallel} package is available, \code{glPca}
+uses multiple-core ressources for more efficient computations.
 
 \code{find.clusters} is a generic function with methods for the
  following types of objects:\cr
@@ -46,7 +47,7 @@ from adegenet.
               "smoothNgoesup", "goodfit"), max.n.clust = round(nrow(x)/10),
               n.iter = 1e5, n.start = 10, center = TRUE, scale = TRUE,
               pca.select = c("nbEig","percVar"), perc.pca = NULL, \ldots, dudi =
-              NULL)
+              NULL, parallel = FALSE, n.cores = NULL)
 
 \method{find.clusters}{matrix}(x, \ldots)
 
@@ -158,6 +159,15 @@ from adegenet.
     the ade4 package). If provided, prior PCA will be ignored, and this object
     will be used as a prior step for variable orthogonalisation.}
 
+\item{parallel}{a logical indicating whether multiple cores -if
+    available- should be used for the computations (TRUE, default), or
+    not (FALSE); requires the package \code{parallel} to be installed
+    (see details).}
+
+\item{n.cores}{if \code{parallel} is TRUE, the number of cores to be
+    used in the computations; if NULL, then the maximum number of cores
+    available on the computer is used.}
+
 \item{glPca}{an optional \code{\link{glPca}} object; if provided, dimension
     reduction is not performed (saving computational time) but taken directly
     from this object.}
@@ -220,6 +230,13 @@ from adegenet.
   number of clusters. This approach does not rely on differences between
   successive statistics, but on absolute fit. It selects the model with
   the smallest K so that the overall fit is above a given threshold.
+
+  === Using multiple cores ===
+  
+  Most recent machines have one or several processors with multiple
+  cores. R processes usually use one single core. The package
+  \code{parallel} allows for parallelizing some computations on
+  multiple cores, which can decrease drastically computational time.
 }
 \value{
   The class \code{find.clusters} is a list with the following
