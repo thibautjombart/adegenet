@@ -1,6 +1,6 @@
 Package: adegenet
 Title: Exploratory Analysis of Genetic and Genomic Data
-Version: 2.1.4
+Version: 2.1.5
 Authors@R: 
     c(person(given = "Thibaut",
              family = "Jombart",
@@ -102,7 +102,7 @@ Suggests:
     poppr
 Encoding: UTF-8
 LazyLoad: yes
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Collate:
     'adegenet.package.R'
     'datasets.R'
