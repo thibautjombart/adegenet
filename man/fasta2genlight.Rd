@@ -18,8 +18,8 @@
   on parallel architectures (needs the package \code{parallel}).
 }
 \usage{
-fasta2genlight(file, quiet=FALSE, chunkSize = 1000, saveNbAlleles=FALSE,
-               parallel = require("parallel"), n.cores = NULL, \dots)
+fasta2genlight(file, quiet = FALSE, chunkSize = 1000, saveNbAlleles = FALSE,
+               parallel = FALSE, n.cores = NULL, \dots)
 }
 \arguments{
   \item{file}{ a character string giving the path to the file to
