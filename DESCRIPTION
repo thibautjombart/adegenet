@@ -86,7 +86,6 @@ Imports:
     ggplot2,
     seqinr,
     parallel,
-    spdep,
     boot,
     reshape2,
     dplyr (>= 0.4.1),
@@ -96,13 +95,14 @@ Suggests:
     hierfstat,
     akima,
     maps,
+    spdep,
     splancs,
     tripack,
     testthat,
     poppr
 Encoding: UTF-8
 LazyLoad: yes
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Collate:
     'adegenet.package.R'
     'datasets.R'

@@ -73,21 +73,25 @@
 #' }
 #'
 #' @export chooseCN
-#' @importFrom spdep "tri2nb" "gabrielneigh" "graph2nb" "relativeneigh" "dnearneigh" "knearneigh" "knn2nb" "nb2listw" "mat2listw" "listw2mat" "lag.listw" "card"
 #' @import ade4
+# importFrom spdep "listw2mat" "lag.listw" "card"
 #'
 chooseCN <- function(xy, ask = TRUE, type = NULL, result.type = "nb",
                      d1 = NULL, d2 = NULL, k = NULL, a = NULL,
                      dmin = NULL, plot.nb = TRUE, edit.nb = FALSE,
                      check.duplicates = TRUE){
 
+  if (!requireNamespace("spdep", quietly=TRUE)) {
+    install <- paste0('install.packages(', shQuote("spdep"), ")")
+    msg <- c("The spdep package is required. Please use `", install, "` to install it")
+    stop(paste(msg, collapse = ""))
+  }
+
   if(is.data.frame(xy)) xy <- as.matrix(xy)
   if(ncol(xy) != 2) stop("xy does not have two columns.")
   if(any(is.na(xy))) stop("NA entries in xy.")
   result.type <- tolower(result.type)
    if(is.null(type) & !ask) stop("Non-interactive mode but no graph chosen; please provide a value for 'type' argument.")
-
-  ## if(!require(spdep, quietly=TRUE)) stop("spdep library is required.")
 
   res <- list()
 
@@ -170,19 +174,19 @@ chooseCN <- function(xy, ask = TRUE, type = NULL, result.type = "nb",
     ## type 1: Delaunay
     if(type==1){
       ## if(!require(tripack, quietly=TRUE)) stop("tripack library is required.")
-      cn <- tri2nb(xy)
+      cn <- spdep::tri2nb(xy)
     }
 
     # type 2: Gabriel
     if(type==2){
-      cn <- gabrielneigh(xy)
-      cn <- graph2nb(cn, sym=TRUE)
+      cn <- spdep::gabrielneigh(xy)
+      cn <- spdep::graph2nb(cn, sym=TRUE)
     }
 
     ## type 3: Relative neighbours
     if(type==3){
-      cn <- relativeneigh(xy)
-      cn <- graph2nb(cn, sym=TRUE)
+      cn <- spdep::relativeneigh(xy)
+      cn <- spdep::graph2nb(cn, sym=TRUE)
     }
 
     ## type 4: Minimum spanning tree
@@ -229,8 +233,8 @@ chooseCN <- function(xy, ask = TRUE, type = NULL, result.type = "nb",
         cat("\n Enter the number of neighbours: ")
         k <- as.numeric(readLines(con = getOption('adegenet.testcon'), n = 1))
       }
-      cn <- knearneigh(x=xy, k=k)
-      cn <- knn2nb(cn, sym=TRUE)
+      cn <- spdep::knearneigh(x=xy, k=k)
+      cn <- spdep::knn2nb(cn, sym=TRUE)
     }
 
     ## type 7: inverse distances
@@ -277,9 +281,9 @@ chooseCN <- function(xy, ask = TRUE, type = NULL, result.type = "nb",
 
   if(result.type == "listw") {
       if(type!=7) {
-          cn <- nb2listw(cn, style="W", zero.policy=TRUE)
+          cn <- spdep::nb2listw(cn, style="W", zero.policy=TRUE)
       } else {
-          cn <- mat2listw(cn)
+          cn <- spdep::mat2listw(cn)
           cn$style <- "W"
       }
   }
