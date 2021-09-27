@@ -9,6 +9,11 @@ DEPENDENCIS
 
  - spdep and adespatial have been moved to Suggests
 
+BUG FIX
+
+ - tab() method for genpop objects no longer return NaN for freq = TRUE when a
+   locus is missing from a population (this affects hybridize)
+
 			CHANGES IN ADEGENET VERSION 2.1.4
 
 DOCUMENTATION
