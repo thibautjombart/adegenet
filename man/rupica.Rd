@@ -32,7 +32,10 @@ rupica
 
 
 \dontrun{
-if(require(adehabitat)){
+required_packages <- require(adehabitat) &&
+  require(adespatial) &&
+  require(spdep)
+if (required_packages) {
 
 ## see the sampling area
 showBauges <- rupica$other$showBauges

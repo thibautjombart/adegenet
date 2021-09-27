@@ -28,6 +28,9 @@ See "source" for a reference providing simulation details.
 }
 \examples{
 
+required_packages <- require(adespatial) &&
+  require(spdep)
+if (required_packages) {
 data(spcaIllus)
 attach(spcaIllus)
 opar <- par(no.readonly=TRUE)
@@ -110,7 +113,7 @@ text(spca4$xy[,1], spca4$xy[,2], dat4$other$sup.pop)
 
 # detach data
 detach(spcaIllus)
-
+}
 
 }
 \references{

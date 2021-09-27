@@ -41,6 +41,16 @@ spca.matrix <- function(x, xy = NULL, cn = NULL, matWeight = NULL,
                         d1 = NULL, d2 = NULL, k = NULL,
                         a = NULL, dmin = NULL, ...) {
 
+  if (!requireNamespace("spdep", quietly=TRUE)) {
+    install <- paste0('install.packages(', shQuote("spdep"), ")")
+    msg <- c("The spdep package is required. Please use `", install, "` to install it")
+    stop(paste(msg, collapse = ""))
+  }
+  if (!requireNamespace("adespatial", quietly=TRUE)) {
+    install <- paste0('install.packages(', shQuote("adespatial"), ")")
+    msg <- c("The adespatial package is required. Please use `", install, "` to install it")
+    stop(paste(msg, collapse = ""))
+  }
   ## check type of x: only numeric values are acceptable
 
   if (!is.numeric(x)) {
@@ -91,7 +101,7 @@ spca.matrix <- function(x, xy = NULL, cn = NULL, matWeight = NULL,
     }
     diag(matWeight) <- 0
     matWeight <- prop.table(matWeight, 1)
-    resCN <- mat2listw(matWeight)
+    resCN <- spdep::mat2listw(matWeight)
     resCN$style <- "W"
 
   }
@@ -101,7 +111,7 @@ spca.matrix <- function(x, xy = NULL, cn = NULL, matWeight = NULL,
   if(is.null(resCN) & !is.null(cn)) {
     if(inherits(cn,"nb")) {
       if(!inherits(cn,"listw")){ # cn is a 'pure' nb object (i.e., nb but not listw)
-        cn <- nb2listw(cn, style="W", zero.policy=TRUE)
+        cn <- spdep::nb2listw(cn, style="W", zero.policy=TRUE)
       }
       resCN <- cn
     } else {
@@ -121,7 +131,7 @@ spca.matrix <- function(x, xy = NULL, cn = NULL, matWeight = NULL,
 
   x_pca <- ade4::dudi.pca(x, center = center, scale = scale, scannf = FALSE)
 
-  out <- ade4::multispati(dudi = x_pca, listw = resCN, scannf = scannf,
+  out <- adespatial::multispati(dudi = x_pca, listw = resCN, scannf = scannf,
                           nfposi = nfposi, nfnega = nfnega)
 
   nfposi <- out$nfposi
@@ -422,7 +432,7 @@ summary.spca <- function (object, ..., printres=TRUE) {
   # I0, Imin, Imax
   n <- nrow(X)
   I0 <- -1/(n-1)
-  L <- listw2mat(lw)
+  L <- spdep::listw2mat(lw)
   ## use 'as.numeric' to avoid possible bug with large matrices,
   ## returning complex numbers with zero imaginary parts
   eigL <- suppressWarnings(as.numeric(eigen(0.5*(L+t(L)))$values))
@@ -445,7 +455,7 @@ summary.spca <- function (object, ..., printres=TRUE) {
   eig <- dudi$eig[1:nf]
   cum <- cumsum(dudi$eig)[1:nf]
   ratio <- cum/sum(dudi$eig)
-  w <- apply(dudi$l1,2,lag.listw,x=lw)
+  w <- apply(dudi$l1,2,spdep::lag.listw,x=lw)
   moran <- apply(w*as.matrix(dudi$l1)*dudi$lw,2,sum)
   res <- data.frame(var=eig,cum=cum,ratio=ratio, moran=moran)
   row.names(res) <- paste("Axis",1:nf)
@@ -463,7 +473,7 @@ summary.spca <- function (object, ..., printres=TRUE) {
   nfposimax <- sum(eig > 0)
   nfnegamax <- sum(eig < 0)
 
-  ms <- multispati(dudi=dudi, listw=lw, scannf=FALSE,
+  ms <- adespatial::multispati(dudi=dudi, listw=lw, scannf=FALSE,
                    nfposi=nfposimax, nfnega=nfnegamax)
 
   ndim <- dudi$rank
@@ -512,7 +522,7 @@ plot.spca <- function (x, axis = 1, useLag=FALSE, ...){
   nfposi <- x$nfposi
   nfnega <- x$nfnega
   ## handle neig parameter - hide cn if nore than 100 links
-  nLinks <- sum(card(x$lw$neighbours))
+  nLinks <- sum(spdep::card(x$lw$neighbours))
   if(nLinks < 500) {
     neig <- nb2neig(x$lw$neighbours)
   } else {

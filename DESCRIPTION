@@ -86,16 +86,17 @@ Imports:
     ggplot2,
     seqinr,
     parallel,
-    spdep,
     boot,
     reshape2,
     dplyr (>= 0.4.1),
     vegan
 Suggests:
+    adespatial,
     pegas,
     hierfstat,
     akima,
     maps,
+    spdep,
     splancs,
     tripack,
     testthat,
