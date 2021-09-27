@@ -1415,7 +1415,7 @@ extract.PLINKmap <- function(file, x = NULL){
 #' @export
 #' @rdname read.PLINK
 read.PLINK <- function(file, map.file=NULL, quiet=FALSE, chunkSize=1000,
-                       parallel=require("parallel"), n.cores=NULL, ...){
+                       parallel=FALSE, n.cores=NULL, ...){
     ## HANDLE ARGUMENTS ##
     ext <- .readExt(file)
     ext <- toupper(ext)
@@ -1529,7 +1529,7 @@ read.PLINK <- function(file, map.file=NULL, quiet=FALSE, chunkSize=1000,
 ## Function fasta2genlight
 ###########################
 fasta2genlight <- function(file, quiet=FALSE, chunkSize=1000, saveNbAlleles=FALSE,
-                       parallel=require("parallel"), n.cores=NULL, ...){
+                       parallel=FALSE, n.cores=NULL, ...){
     ## HANDLE ARGUMENTS ##
     ext <- .readExt(file)
     ext <- toupper(ext)

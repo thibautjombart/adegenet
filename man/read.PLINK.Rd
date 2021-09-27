@@ -13,7 +13,7 @@ read.PLINK(
   map.file = NULL,
   quiet = FALSE,
   chunkSize = 1000,
-  parallel = require("parallel"),
+  parallel = FALSE,
   n.cores = NULL,
   ...
 )

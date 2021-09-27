@@ -1,3 +1,10 @@
+			CHANGES IN ADEGENET VERSION 2.1.5
+
+PARALLEL COMPUTATION
+
+ - parallel computation defaults to `FALSE` from now on to avoid frustrating
+   errors on windows machines.
+
 			CHANGES IN ADEGENET VERSION 2.1.4
 
 DOCUMENTATION
