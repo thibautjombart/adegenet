@@ -5,6 +5,10 @@ PARALLEL COMPUTATION
  - parallel computation defaults to `FALSE` from now on to avoid frustrating
    errors on windows machines.
 
+DEPENDENCIS
+
+ - spdep and adespatial have been moved to Suggests
+
 			CHANGES IN ADEGENET VERSION 2.1.4
 
 DOCUMENTATION
