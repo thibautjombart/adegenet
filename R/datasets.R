@@ -518,7 +518,10 @@ NULL
 #'
 #'
 #' \dontrun{
-#' if(require(adehabitat)){
+#' required_packages <- require(adehabitat) &&
+#'   require(adespatial) &&
+#'   require(spdep)
+#' if (required_packages) {
 #'
 #' ## see the sampling area
 #' showBauges <- rupica$other$showBauges
@@ -655,6 +658,8 @@ NULL
 #' @keywords datasets spatial
 #' @examples
 #'
+#' required_packages <- require(adespatial) && require(spdep)
+#' if (required_packages) {
 #' data(spcaIllus)
 #' attach(spcaIllus)
 #' opar <- par(no.readonly=TRUE)
@@ -737,7 +742,7 @@ NULL
 #'
 #' # detach data
 #' detach(spcaIllus)
-#'
+#' }
 #'
 NULL
 

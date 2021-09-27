@@ -45,6 +45,12 @@
 #'
 spca_randtest <-function(x, nperm = 499){
 
+  if (!requireNamespace("adespatial", quietly=TRUE)) {
+    install <- paste0('install.packages(', shQuote("adespatial"), ")")
+    msg <- c("The adespatial package is required. Please use `", install, "` to install it")
+    stop(paste(msg, collapse = ""))
+  }
+
   if(!inherits(x, "spca")){
     stop("x must be an spca object")
   }
@@ -59,7 +65,7 @@ spca_randtest <-function(x, nperm = 499){
   get_stats <- function(obj){
     obj_pca <- ade4::dudi.pca(obj, center = FALSE, scale = FALSE,
                               scannf = FALSE)
-    obj_spca <- ade4::multispati(dudi = obj_pca,
+    obj_spca <- adespatial::multispati(dudi = obj_pca,
                                  listw = x$lw, scannf = FALSE,
                                  nfposi = 1, nfnega = 1)
     lambda <- obj_spca$eig

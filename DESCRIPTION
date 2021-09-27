@@ -91,6 +91,7 @@ Imports:
     dplyr (>= 0.4.1),
     vegan
 Suggests:
+    adespatial,
     pegas,
     hierfstat,
     akima,

@@ -224,7 +224,7 @@ chooseCN <- function(xy, ask = TRUE, type = NULL, result.type = "nb",
       dmin <- mean(dist(xy))/100000
       if(d1<dmin) d1 <- dmin
       if(d2<d1) stop("d2 < d1")
-      cn <- dnearneigh(x=xy, d1=d1, d2=d2)
+      cn <- spdep::dnearneigh(x=xy, d1=d1, d2=d2)
     }
 
     ## type 6: K nearests
