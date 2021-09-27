@@ -117,7 +117,15 @@ setMethod("tab", signature(x="genpop"), function(x, freq=FALSE, NA.method=c("asi
         out <- x@tab
     } else {
         out <- x@tab
-        f1 <- function(vec) return(vec/sum(vec,na.rm=TRUE))
+        f1 <- function(vec) {
+          sums <- sum(vec, na.rm = TRUE)
+          if (sums == 0) {
+            vec[] <- 0.0
+            return(vec)
+          } else {
+            return(vec/sums)
+          }
+        }
         ## compute frequencies
         fac <- x@loc.fac
         if (is.null(fac)) fac <- rep(1, nLoc(x))
