@@ -1147,7 +1147,7 @@ boot.vc(nc[1], nc[-1])$ci
 @
 
 Finally, pairwise $F_{st}$ is frequently used as a measure of distance between populations.
-The function \texttt{pairwise.fst} computes Nei's estimator \cite{tj814} of pairwise $Fst$, defined as:
+The function \texttt{genet.dist} can compute Nei's estimator \cite{tj814} of pairwise $Fst$, defined as:
 $$
 Fst(A,B) = \frac{H_t - (n_AH_s(A) + n_BH_s(B))/(n_A + n_B)}{Ht}
 $$
@@ -1288,13 +1288,13 @@ Useful functions include:
   \item \texttt{dudi.ca} (\textit{ade4}): implements Correspondance Analysis (CA); can be used on raw
     allele counts of populations (\texttt{@tab} slot in \texttt{genpop} objects).
   \item \texttt{dist.genpop} (\textit{adegenet}): implements 5 pairwise genetic distances between populations
-  \item \texttt{pairwise.fst} (\textit{adegenet}): implements pairwise $F_{ST}$, which is also a
+  \item \texttt{genet.dist} (\textit{hierfstat}): implements pairwise $F_{ST}$, which is also a
     Euclidean distance between populations.
   \item \texttt{dist} (\textit{stats}): computes pairwise distances between multivariate
     observations; can be used on raw or transformed allele frequencies.
   \item \texttt{dudi.pco} (\textit{ade4}): implements Principal Coordinates Analysis (PCoA); this
     methods finds synthetic variables which summarize a Euclidean distance matrix as best as
-    possible; can be used on outputs of \texttt{dist}, \texttt{dist.genpop}, and \texttt{pairwise.fst}.
+    possible; can be used on outputs of \texttt{dist}, \texttt{dist.genpop}, and \texttt{genet.dist}.
   \item \texttt{is.euclid} (\textit{ade4}): tests whether a distance matrix is Euclidean, which is a
     pre-requisite of PCoA.
   \item \texttt{cailliez} (\textit{ade4}): renders a non-Euclidean distance matrix Euclidean by
