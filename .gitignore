@@ -17,3 +17,4 @@ tutorials/figs/*-2.pdf
 *.tar.gz
 tests/testthat/*pdf
 *.DS_Store
+revdep/*
