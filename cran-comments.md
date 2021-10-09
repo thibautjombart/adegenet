@@ -1,4 +1,4 @@
-This is a maintenance update and fixes the urls giving 301 codes 
+This update moves the Imported package, spdep, to Suggests and fixes a bug.
 
 ## Test environments
 * local OS X install, R 4.1.1
