@@ -3,16 +3,22 @@
 PARALLEL COMPUTATION
 
  - parallel computation defaults to `FALSE` from now on to avoid frustrating
-   errors on windows machines.
+   errors on windows machines (@courtiol, #313).
 
 DEPENDENCIS
 
- - spdep and adespatial have been moved to Suggests
+ - spdep and adespatial have been moved to Suggests to make installation
+   easier for people who do not need spatial functions.
 
 BUG FIX
 
  - tab() method for genpop objects no longer return NaN for freq = TRUE when a
-   locus is missing from a population (this affects hybridize)
+   locus is missing from a population (this affects hybridize; @Sergi-Taboada, 
+   @eachambers, #262)
+
+MISC
+
+ - Mis-matched documentation in glPca() has been fixed (@plantarum, #298)
 
 			CHANGES IN ADEGENET VERSION 2.1.4
 

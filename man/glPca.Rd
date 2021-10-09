@@ -67,8 +67,8 @@ glPca(x, center = TRUE, scale = FALSE, nf = NULL, loadings = TRUE,
     used for faster computations; this option cannot be used alongside
     parallel option.}
   \item{parallel}{a logical indicating whether multiple cores -if
-    available- should be used for the computations (TRUE, default), or
-    not (FALSE); requires the package \code{parallel} to be installed
+    available- should be used for the computations (TRUE), or
+    not (FALSE, default); requires the package \code{parallel} to be installed
     (see details); this option cannot be used alongside useCoption.}
   \item{n.cores}{if \code{parallel} is TRUE, the number of cores to be
     used in the computations; if NULL, then the maximum number of cores
