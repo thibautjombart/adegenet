@@ -59,7 +59,11 @@ Authors@R:
       person(given = "Alexandre",
              family = "Courtiol",
              role = "ctb",
-             comment = c(ORCID = "0000-0003-0637-2959")))
+             comment = c(ORCID = "0000-0003-0637-2959")),
+      person(given = "Lindsay V.",
+             family = "Clark",
+             role = "ctb",
+             comment = c(ORCID = "0000-0002-3881-9252")))
 Description: Toolset for the exploration of genetic and genomic
     data. Adegenet provides formal (S4) classes for storing and handling
     various genetic data, including genetic markers with varying ploidy
