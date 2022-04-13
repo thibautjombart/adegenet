@@ -142,8 +142,8 @@ xvalDapc.default <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set 
   }else{ 
     if(length(result) > 1) result <- result[1]
     result <- result}
-  
-  
+
+    
   ## GET TRAINING SET SIZE ##
   N <- nrow(x)
   groups <- levels(grp)
@@ -183,6 +183,7 @@ xvalDapc.default <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set 
   
   ## GET FULL PCA ##
   if(missing(n.pca.max)) n.pca.max <- min(dim(x))
+  if(length(n.pca.max > 1)) n.pca.max <- max(n.pca.max)
 
   pcaX      <- dudi.pca(x, nf=n.pca.max, scannf=FALSE, center=center, scale=scale)
   n.pca.max <- min(n.pca.max, pcaX$rank, N.training-1) # re-defines n.pca.max (so user's input may not be the value used...)
