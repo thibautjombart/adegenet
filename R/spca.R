@@ -408,6 +408,7 @@ summary.spca <- function (object, ..., printres=TRUE) {
   ## compute original pca
   # prepare data
   obj <- eval(appel$obj)
+  if(is.null(obj)) obj <- eval(appel$x) # for matrices and data frames
   if(is.null(appel$truenames)) appel$truenames <- FALSE
 
   f1 <- function(vec){
@@ -418,6 +419,8 @@ summary.spca <- function (object, ..., printres=TRUE) {
 
   if(is.genind(obj)) { X <- obj@tab }
   if(is.genpop(obj)) { X <- makefreq(obj, quiet=TRUE) }
+  if(is.matrix(obj)) { X <- obj }
+  if(is.data.frame(obj)) { X <- as.matrix(obj) }
 
   X <- apply(X,2,f1)
 
