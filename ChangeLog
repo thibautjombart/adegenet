@@ -1,3 +1,16 @@
+			CHANGES IN ADEGENET VERSION 2.1.6
+
+MISC
+
+ - in `xvalDapc()`, if `n.pca.max` is a vector greter than length 1, the
+   maximum value will be used (@pdimens, #323)
+
+BUG FIX
+
+ - `summary.spca()` now works when matricies and data frames are used as the
+   input for `spca` (@lvclark, #329)
+
+
 			CHANGES IN ADEGENET VERSION 2.1.5
 
 PARALLEL COMPUTATION
