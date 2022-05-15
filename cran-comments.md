@@ -1,8 +1,8 @@
-This update moves the Imported package, spdep, to Suggests and fixes a bug.
+This update fixes a couple of bugs for users.
 
 ## Test environments
-* local OS X install, R 4.1.1
-* ubuntu 20.04 (on GitHub Actions), R 4.1.1
+* local OS X install, R 4.2.0
+* ubuntu 20.04 (on GitHub Actions), R 4.2.0
 * win-builder (devel and release)
 
 ## R CMD check results
@@ -11,7 +11,13 @@ This update moves the Imported package, spdep, to Suggests and fixes a bug.
 
 ## revdepcheck results
 
-We checked 19 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
+We checked 21 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
 
  * We saw 0 new problems
- * We failed to check 0 packages
+ * We failed to check 1 packages
+
+Issues with CRAN packages are summarised below.
+
+### Failed to check
+
+* dartR (This currently has failing checks on CRAN due to BioConductor imports)
