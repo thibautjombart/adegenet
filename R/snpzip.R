@@ -9,7 +9,7 @@ snpzip <- function(snps, y, plot=TRUE, xval.plot=FALSE, loading.plot=FALSE,
                             "mcquitty","median","ward"), ...) {
   
   ## dapc input prompts only SNP selection function
-  if(class(y)=="dapc"){ 
+  if(inherits(y, "dapc")){ 
     
     dapc1 <- y
     phen <- 0
@@ -32,7 +32,7 @@ snpzip <- function(snps, y, plot=TRUE, xval.plot=FALSE, loading.plot=FALSE,
   }
   
   
-  if(class(y)!="dapc"){
+  if(!inherits(y, "dapc")){
     
     ################################################
     ######## Stratified Cross-Validation ###########
@@ -315,7 +315,7 @@ snpzip <- function(snps, y, plot=TRUE, xval.plot=FALSE, loading.plot=FALSE,
   ########## Return snpzip Results  ##############
   ################################################
   
-  if(class(y)=="dapc"){
+  if(inherits(y, "dapc")){
     
     answer <- list(dapc1$n.pca, features)
     names(answer)[[1]] <- "Number of PCs of PCA retained"

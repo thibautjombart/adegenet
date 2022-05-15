@@ -488,7 +488,7 @@ as.seqTrack.haploGen <- function(x){
 plotHaploGen <- function(x, annot=FALSE, date.range=NULL, col=NULL, bg="grey", add=FALSE, ...){
 
     ## SOME CHECKS ##
-    if(class(x)!="haploGen") stop("x is not a haploGen object")
+    if(!inherits(x, "haploGen")) stop("x is not a haploGen object")
     if(is.null(x$xy)) stop("x does not contain xy coordinates - try converting to graphNEL for plotting")
 
 
