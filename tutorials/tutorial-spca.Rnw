@@ -475,10 +475,10 @@ for more examples of applications of colorplot to represent sPCA scores.
 Another common practice is interpolating principal components to get maps of genetic clines.
 Note that it is crucial to perform this interpolation after the analysis, and not before, which
 would add artefactual structures to the data.
-Interpolation is easy to realize using \texttt{interp} from the \texttt{akima} package, and
+Interpolation is easy to realize using \texttt{interp} from the \texttt{interp} package, and
 \texttt{image}, or \texttt{filled.contour} to display the results:
 <<>>=
-library(akima)
+library(interp)
 x <- other(obj)$xy[,1]
 y <- other(obj)$xy[,2]
 @

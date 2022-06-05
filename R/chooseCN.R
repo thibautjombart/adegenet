@@ -173,7 +173,6 @@ chooseCN <- function(xy, ask = TRUE, type = NULL, result.type = "nb",
     ## graph types
     ## type 1: Delaunay
     if(type==1){
-      ## if(!require(tripack, quietly=TRUE)) stop("tripack library is required.")
       cn <- spdep::tri2nb(xy)
     }
 

@@ -2,7 +2,7 @@
 ##
 ## spatial Principal Components Analysis
 ##
-## require ade4, spdep and eventually tripack
+## require ade4 and spdep
 ##
 ## generic functions were derived from
 ## those of multispati class (ade4)

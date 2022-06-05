@@ -1,5 +1,18 @@
 			CHANGES IN ADEGENET VERSION 2.1.6
 
+BUG FIX
+
+ - as.matrix and as.data.frame methods for genind/genpop objects will now use
+   `tab()` internally to avoid https://github.com/thibautjombart/adegenet/issues/331
+
+DEPENDENCIES
+
+ - Suggested packages tripack and akima have been removed and replaced with
+   interp, which is used in the tutorials.
+   (see https://github.com/thibautjombart/adegenet/issues/332)
+
+			CHANGES IN ADEGENET VERSION 2.1.6
+
 MISC
 
  - in `xvalDapc()`, if `n.pca.max` is a vector greter than length 1, the
