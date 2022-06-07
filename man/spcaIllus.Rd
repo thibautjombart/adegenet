@@ -28,8 +28,7 @@ See "source" for a reference providing simulation details.
 }
 \examples{
 
-required_packages <- require(adespatial) &&
-  require(spdep)
+required_packages <- require(adespatial) && require(spdep)
 if (required_packages) {
 data(spcaIllus)
 attach(spcaIllus)

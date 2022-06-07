@@ -64,14 +64,14 @@ setAs("genpop", "ktab", function(from, to) {
 
 #' @export
 as.data.frame.genind <- function(x,...){
-    return(as(x,"data.frame"))
+    return(as.data.frame(tab(x, ...)))
 }
 
 
 
 #' @export
 as.data.frame.genpop <- function(x,...){
-    return(as(x,"data.frame"))
+    return(as.data.frame(tab(x, ...)))
 }
 
 
@@ -79,7 +79,7 @@ as.data.frame.genpop <- function(x,...){
 #' @method as.matrix genind
 #' @export
 as.matrix.genind <- function(x,...){
-    return(as(x,"matrix"))
+    return(tab(x, ...))
 }
 
 
@@ -87,7 +87,7 @@ as.matrix.genind <- function(x,...){
 #' @method as.matrix genpop
 #' @export
 as.matrix.genpop <- function(x,...){
-    return(as(x,"matrix"))
+    return(tab(x, ...))
 }
 
 
