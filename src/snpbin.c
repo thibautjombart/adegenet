@@ -530,15 +530,6 @@ void testRaw(unsigned char *a, int *n){
 
 
 
-/* Test: increases for a raw (unsigned char) vector */
-void testSizePointer(int *sizePointer, int *sizeFirstElement, int *nbElements){
-    double *a;
-    a = (double *) calloc(5, sizeof(double));
-    *sizePointer = sizeof(a);
-    *sizeFirstElement = sizeof(a[0]);
-    *nbElements = sizeof(a) / sizeof(a[0]);
-    free(a);
-}
 
 
 /* TESTING in R */
@@ -546,7 +537,6 @@ void testSizePointer(int *sizePointer, int *sizeFirstElement, int *nbElements){
 /*
   ## test raw conversion
   .C("testRaw", raw(256), 256L, PACKAGE="adegenet")
-  .C("testSizePointer", integer(1), integer(1), integer(1), PACKAGE="adegenet")
 
   ## test raw->int conversion
   x <- sample(0:1,800,replace=TRUE)
