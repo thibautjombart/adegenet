@@ -26,7 +26,7 @@
 #'  'details' for STRUCTURE output.
 #' @param file a character giving the name of the file to be written
 #'  when 'res.type' is "STRUCTURE"; if NULL, a the created file is of the
-#'  form "hybrids\_[the current date].str".
+#'  form "hybrids_[the current date].str".
 #' @param quiet a logical specifying whether the writing to a file (when
 #'    'res.type' is "STRUCTURE") should be announced (FALSE, default) or
 #'    not (TRUE).
