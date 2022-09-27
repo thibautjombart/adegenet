@@ -1,9 +1,9 @@
-This update fixes a bug and replaces two outdated suggested packages
+This update removes unused C code with an error, fixes file encodings, and unescapes characters in the documentation
 
 ## Test environments
 
-* local OS X install, R 4.2.0
-* ubuntu 20.04 (on GitHub Actions), R 4.2.0
+* local OS X install, R 4.2.1
+* ubuntu 20.04 (on GitHub Actions), R 4.2.1
 * win-builder (devel and release)
 
 ## R CMD check results
