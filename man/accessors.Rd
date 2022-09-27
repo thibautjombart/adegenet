@@ -76,7 +76,7 @@
 \description{
   An accessor is a function that allows to interact with slots of an
   object in a convenient way. Several accessors are available for \linkS4class{genind} or
-  \linkS4class{genpop} objects. The operator "\$" and "\$<-" are used to
+  \linkS4class{genpop} objects. The operator "$" and "$<-" are used to
   access the slots, being equivalent to "@" and "@<-".\cr
 
   The operator "[" is a flexible way to subset data by individuals,

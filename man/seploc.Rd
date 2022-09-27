@@ -44,7 +44,7 @@
 }
 \value{The function \code{seploc} returns an list of objects of the
   same class as the initial object, or a list of matrices similar to
-  x\$tab.\cr
+  x$tab.\cr
 }
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \seealso{\code{\link{seppop}}, \code{\link{repool}}}

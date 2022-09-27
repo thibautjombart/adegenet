@@ -110,7 +110,7 @@ spca(...)
   \item{obj}{a \code{genind} or \code{genpop} object.}
 
   \item{xy}{a matrix or data.frame with two columns for x and y
-    coordinates. Seeked from obj\$other\$xy if it exists when xy is not
+    coordinates. Seeked from obj$other$xy if it exists when xy is not
     provided. Can be NULL if a \code{nb} object is provided in
     \code{cn}.\cr Longitude/latitude coordinates should be converted
     first by a given projection (see 'See Also' section).}
@@ -187,8 +187,8 @@ spca(...)
     three axes can be chosen.}
 
   \item{useLag}{a logical stating whether the lagged components
-    (\code{x\$ls}) should be used instead of the components
-    (\code{x\$li}).}
+    (\code{x$ls}) should be used instead of the components
+    (\code{x$li}).}
 
 }
 \details{

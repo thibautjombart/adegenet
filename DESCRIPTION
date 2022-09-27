@@ -111,7 +111,7 @@ Suggests:
     testthat
 Encoding: UTF-8
 LazyLoad: yes
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1
 Collate:
     'adegenet.package.R'
     'datasets.R'
