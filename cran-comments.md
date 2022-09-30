@@ -1,4 +1,4 @@
-This update removes unused C code with an error, fixes file encodings, and unescapes characters in the documentation
+This update removes unused C code with an error, fixes file encodings, and unescapes characters in the documentation. Additionally, the build has been run with the --resave-data flag to reduce the size of the package
 
 ## Test environments
 
