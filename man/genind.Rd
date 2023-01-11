@@ -17,7 +17,7 @@
   The function \code{genind} creates a genind object from a valid table
   of alleles corresponding to the \code{@tab} slot.
   Note that as in other S4 classes, slots are accessed using @ instead
-  of \$.
+  of $.
 }
 \section{Slots}{
   \describe{

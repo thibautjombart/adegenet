@@ -1,3 +1,9 @@
+			CHANGES IN ADEGENET VERSION 2.1.8
+
+CRAN MAINTENANCE
+
+ - Some testing code in C that was triggering warnings in clang was removed
+
 			CHANGES IN ADEGENET VERSION 2.1.7
 
 BUG FIX

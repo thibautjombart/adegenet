@@ -17,7 +17,7 @@
 \arguments{
   \item{x}{a \linkS4class{genind} object}
   \item{pop}{a vector of characters or a factor giving the population of
-    each genotype in 'x'. If not provided, seeked from x\$pop.}
+    each genotype in 'x'. If not provided, seeked from x$pop.}
   \item{nMin}{the minimum sample size for a population to be
     retained. Samples sizes strictly less than \code{nMin} will be
     discarded, those equal to or greater than \code{nMin} are kept.}

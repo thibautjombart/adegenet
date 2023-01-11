@@ -19,7 +19,7 @@
 \arguments{
   \item{x}{an object of class \code{genind}.}
   \item{pop}{a factor giving the population of each individual. If NULL,
-  pop is seeked from x\$pop.}
+  pop is seeked from x$pop.}
   \item{permut}{a logical passed to \code{HWE.test} stating whether
     Monte Carlo version (TRUE) should be used or not (FALSE, default).}
   \item{nsim}{number of simulations if Monte Carlo is used (passed to \code{HWE.test}).}

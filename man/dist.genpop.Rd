@@ -88,7 +88,7 @@ Avise, J. C. (1994) Molecular markers, natural history and evolution. Chapman & 
 
 Distance 5:\cr
 Prevosti A. (1974) La distancia genetica entre poblaciones. \emph{Miscellanea Alcobe}, \bold{68}, 109--118. \cr
-Prevosti A., Oca\~na J. and Alonso G. (1975) Distances between populations of Drosophila subobscura, based on chromosome arrangements frequencies. \emph{Theoretical and Applied Genetics}, \bold{45}, 231--241. \cr
+Prevosti A., Ocaña J. and Alonso G. (1975) Distances between populations of Drosophila subobscura, based on chromosome arrangements frequencies. \emph{Theoretical and Applied Genetics}, \bold{45}, 231--241. \cr
 
 For more information on dissimilarity indexes:\cr
 Gower J. and Legendre P. (1986) Metric and Euclidean properties of

@@ -99,4 +99,3 @@ struct genlightC genlightTogenlightC(unsigned char *gen, int *nbvecperind, int *
 
 
 void testRaw(unsigned char *a, int *n);
-void testSizePointer(int *sizePointer, int *sizeFirstElement, int *nbElements);

@@ -25,11 +25,11 @@
   \item{x}{a \linkS4class{genind} or a \linkS4class{genpop} object}
 }
 \value{
-  If x\$pop is empty (NULL), a matrix similar to the x\$tab slot but
+  If x$pop is empty (NULL), a matrix similar to the x$tab slot but
   with true labels.
   
-  If x\$pop exists, a list with this matrix (\$tab) and a population
-  vector with true names (\$pop).\cr
+  If x$pop exists, a list with this matrix ($tab) and a population
+  vector with true names ($pop).\cr
   
 }
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }

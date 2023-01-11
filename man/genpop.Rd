@@ -17,7 +17,7 @@
   Note that the function \code{summary} of a \code{genpop} object
   returns a list of components.
   Note that as in other S4 classes, slots are accessed using @ instead
-  of \$.
+  of $.
 }
 \section{Slots}{
          \describe{
