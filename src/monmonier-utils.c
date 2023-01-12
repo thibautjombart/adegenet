@@ -30,6 +30,7 @@ not removed.
 #include <time.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "adesub.h"
 
 
@@ -37,8 +38,6 @@ not removed.
 #define	EXIT_FAILURE 1
 #define	X 0
 #define	Y 1
-typedef	enum { FALSE, TRUE } bool;
-
 #define	DIM 2               /* Dimension of points */
 
 typedef	double tPointd[DIM];   /* Type double point */

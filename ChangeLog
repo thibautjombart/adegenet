@@ -1,3 +1,10 @@
+			CHANGES IN ADEGENET VERSION 2.1.9
+
+CRAN MAINTENANCE
+
+ - failures on C23 were fixed. The reserved word `bool` definition was
+ replaced with including stdbool
+
 			CHANGES IN ADEGENET VERSION 2.1.8
 
 CRAN MAINTENANCE

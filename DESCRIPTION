@@ -1,6 +1,6 @@
 Package: adegenet
 Title: Exploratory Analysis of Genetic and Genomic Data
-Version: 2.1.8
+Version: 2.1.9
 Authors@R: 
     c(person(given = "Thibaut",
              family = "Jombart",

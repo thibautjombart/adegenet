@@ -476,7 +476,7 @@ void getpermutation (int *numero, int repet)
 * que deux appels donnent deux resultats distincts (seed=clock+repet)
 ------------------------*/
 {
-    int i, n, seed;
+    int i, n; //, seed;
     int *alea;
     
     n=numero[0];

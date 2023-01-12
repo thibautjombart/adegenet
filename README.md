@@ -1,8 +1,6 @@
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/thibautjombart/adegenet/workflows/R-CMD-check/badge.svg)](https://github.com/thibautjombart/adegenet/actions)
 
-[![Build status](https://ci.appveyor.com/api/projects/status/l7a9k1saqnshakk9/branch/master?svg=true)](https://ci.appveyor.com/project/thibautjombart/adegenet/branch/master)
-
 [![CRAN Status Badge](https://www.r-pkg.org/badges/version/adegenet)](https://cran.r-project.org/package=adegenet)
 
 [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/adegenet)](https://cran.r-project.org/package=adegenet)
