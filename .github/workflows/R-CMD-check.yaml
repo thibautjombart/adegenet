@@ -51,5 +51,5 @@ jobs:
 
       - uses: r-lib/actions/check-r-package@v2
         with:
-          args: c("--resave-data")
+          build_args: c("--no-manual", "--resave-data")
           upload-snapshots: true
