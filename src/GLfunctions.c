@@ -20,7 +20,7 @@
 /* Function to compute all dot products between individuals */
 /* centring and scaling is always used */
 /* but need to pass vectors of 0 and 1*/
-void GLdotProd(unsigned char *gen, int *nbvecperind, int *byteveclength, int *nbnaperind, int *naposi, int *nind, int *nloc, int *ploidy, double *mean, double *sd, bool *freq, double *res){
+void GLdotProd(unsigned char *gen, int *nbvecperind, int *byteveclength, int *nbnaperind, int *naposi, int *nind, int *nloc, int *ploidy, double *mean, double *sd, short *freq, double *res){
 	struct genlightC dat;
 	int i, j, k=0;
 
