@@ -3,7 +3,7 @@
 BUG FIX
 
 - genlight objects subset without any arguments to loci no longer gain an
-  extra byte. (reported: @maxcoulter, #363)
+  extra byte. (reported: @maxecoulter, #363)
 
 			CHANGES IN ADEGENET VERSION 2.1.10
 
