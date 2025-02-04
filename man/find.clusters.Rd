@@ -44,7 +44,7 @@ from adegenet.
               NULL, method = c("kmeans", "ward"), stat = c("BIC","AIC", "WSS"),
               choose.n.clust = TRUE, criterion = c("diffNgroup", "min","goesup",
               "smoothNgoesup", "goodfit"), max.n.clust = round(nrow(x)/10),
-              n.iter = 1e5, n.start = 10, center = TRUE, scale = TRUE,
+              n.iter = 1e5, n.start = 10, center = TRUE, scale = FALSE,
               pca.select = c("nbEig","percVar"), perc.pca = NULL, \ldots, dudi =
               NULL)
 
