@@ -28,6 +28,24 @@ test_that("Genlight objects can be created predictably", {
 })
 
 
+test_that("(#363) genlight objects don't gain extra byte after subsetting", {
+  # https://github.com/thibautjombart/adegenet/issues/363
+  
+  dat <- list(toto=c(1,2,0,0), titi=c(NA,1,2,0), tata=c(NA,0,2, NA))#3 individuals, 4 binary snps
+  
+  x <- new("genlight", gen = dat, ploidy = c(2,2,2,2), 
+    loc.names = c("m1", "m2", "m3", "m4"), 
+    loc.all = c("A/T", "A/T", "A/T", "A/T") 
+  )
+  x2 <- x[]
+  # the output tables should be equal
+  expect_equal(tab(x), tab(x2))
+  # the snps should be equal
+  expect_equal(x, x2)
+
+})
+
+
 x <- new("genlight", list(a=1,b=0,c=1), other=list(1:3, letters, data.frame(2:4)), parallel = FALSE)
 pop(x) <- c("pop1","pop1", "pop2")
 

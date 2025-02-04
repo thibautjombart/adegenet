@@ -4,7 +4,10 @@
     # Take a raw vector, subset the bits and then convert to integers.
     xint   <- as.integer(rawToBits(x)[i])
     # Figure out how many zeroes are needed to pad the end.
-    zeroes <- 8 - (length(xint) %% 8)
+    extra_bits <- length(xint) %% 8
+    # https://github.com/thibautjombart/adegenet/issues/363
+    # Fix to a bug caught by @maxcoulter. In the case 
+    zeroes <- if (extra_bits > 0) 8 - extra_bits else 0
     # Convert the integer vector with zeroes on the end back into a raw vector.
     return(packBits(c(xint, rep(0L, zeroes))))
 }

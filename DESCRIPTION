@@ -1,6 +1,6 @@
 Package: adegenet
 Title: Exploratory Analysis of Genetic and Genomic Data
-Version: 2.1.10
+Version: 2.1.11
 Authors@R: 
     c(person(given = "Thibaut",
              family = "Jombart",
@@ -67,7 +67,10 @@ Authors@R:
        person(given = "Pavel",
               family = "Dimens",
               role = "ctb",
-              comment = c(ORCID = "0000-0003-3823-0373"))
+              comment = c(ORCID = "0000-0003-3823-0373")),
+       person(given = "Max",
+              family = "Coulter",
+              role = "ctb")
        )
 Description: Toolset for the exploration of genetic and genomic
     data. Adegenet provides formal (S4) classes for storing and handling
