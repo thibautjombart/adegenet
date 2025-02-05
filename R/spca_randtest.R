@@ -13,6 +13,8 @@
 #' @param x A \code{\link{spca}} object.
 #'
 #' @param nperm The number of permutations to be used for the test.
+#' 
+#' @param p p value to use for Bonferroni correction.
 #'
 #' @return
 #'

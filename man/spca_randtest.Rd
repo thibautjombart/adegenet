@@ -10,6 +10,8 @@ spca_randtest(x, nperm = 499, p = 0.05)
 \item{x}{A \code{\link{spca}} object.}
 
 \item{nperm}{The number of permutations to be used for the test.}
+
+\item{p}{p value to use for Bonferroni correction.}
 }
 \value{
 A list with two objects of the class 'randtest' (see
