@@ -3,6 +3,7 @@
 \docType{package}
 \encoding{utf-8}
 \name{adegenet.package}
+\alias{adegenet-package}
 \alias{adegenet.package}
 \alias{adegenet}
 \title{The adegenet package}

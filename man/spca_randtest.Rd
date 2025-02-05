@@ -4,7 +4,7 @@
 \alias{spca_randtest}
 \title{Monte Carlo test for sPCA}
 \usage{
-spca_randtest(x, nperm = 499)
+spca_randtest(x, nperm = 499, p = 0.05)
 }
 \arguments{
 \item{x}{A \code{\link{spca}} object.}
