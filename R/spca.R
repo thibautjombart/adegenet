@@ -5,7 +5,7 @@
 ## require ade4 and spdep
 ##
 ## generic functions were derived from
-## those of multispati class (ade4)
+## those of multispati class (adespatial)
 ##
 ## T. Jombart (t.jombart@imperial.ac.uk)
 ## 31 may 2007

@@ -23,7 +23,7 @@
     \item \code{genpop}: any \linkS4class{genpop} object is accepted
   }
   
-  The core computation use \code{multispati} from the \code{ade4} package.\cr
+  The core computation use \code{multispati} from the \code{adespatial} package.\cr
   
   Besides the set of \code{spca} functions, other functions include:
   \itemize{
@@ -255,8 +255,7 @@ of Moran's I and Geary's c. \emph{Geographical Analysis}, \bold{16}, 17--24.
 }
 \seealso{\code{\link{spcaIllus}} and \code{\link{rupica}} for datasets illustrating the sPCA \cr
   \code{\link{global.rtest}} and \code{\link{local.rtest}} \cr
-  \code{\link{chooseCN}}, \code{\link[ade4]{multispati}},
-  \code{\link[ade4]{multispati.randtest}}\cr
+  \code{\link{chooseCN}}, \code{\link[adespatial]{multispati}}\cr
   \code{convUL}, from the package 'PBSmapping' to convert longitude/latitude to
   UTM coordinates.
 }
