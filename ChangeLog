@@ -4,6 +4,8 @@ BUG FIX
 
 - genlight objects subset without any arguments to loci no longer gain an
   extra byte. (reported: @maxecoulter, #363)
+- internal C functions `bytesToInt()` and `bytesToDouble()` have a new
+  condition to prevent overflows (thanks for the suggested fix by Ivan Krylov)
 
 MISC
 

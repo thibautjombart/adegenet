@@ -70,6 +70,9 @@ Authors@R:
               comment = c(ORCID = "0000-0003-3823-0373")),
        person(given = "Max",
               family = "Coulter",
+              role = "ctb"),
+       person(given = "Ivan",
+              family = "Krylov",
               role = "ctb")
        )
 Description: Toolset for the exploration of genetic and genomic
