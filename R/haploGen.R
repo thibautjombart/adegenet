@@ -526,7 +526,6 @@ plotHaploGen <- function(x, annot=FALSE, date.range=NULL, col=NULL, bg="grey", a
 ###################
 ## sample.haploGen
 ###################
-#' @method sample haploGen
 #' @export
 sample.haploGen <- function(x, n){
 ##sample.haploGen <- function(x, n, rDate=.rTimeSeq, arg.rDate=NULL){

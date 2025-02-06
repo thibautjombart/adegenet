@@ -45,7 +45,7 @@ pairDistPlot(x, \dots)
     object. For \code{\linkS4class{genind}} objects, pairwise squared
     Euclidean distances are computed from the allele data. For
     \code{DNAbin} objects, distances are computed uing
-    \code{\link{dist.dna}}, and '...' is used to pass arguments to the
+    \code{dist.dna}, and '...' is used to pass arguments to the
     function.  }
 
   \item{grp}{a factor defining a grouping of individuals.}
