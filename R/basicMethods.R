@@ -543,14 +543,12 @@ print.genpopSummary <- function(x, ...){
 ###############
 # Methods "is"
 ###############
-#' @method is genind
 #' @export
 is.genind <- function(x){
   res <- ( is(x, "genind") & validObject(x))
   return(res)
 }
 
-#' @method is genpop
 #' @export
 is.genpop <- function(x){
   res <- ( is(x, "genpop") & validObject(x))
