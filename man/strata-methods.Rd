@@ -110,7 +110,7 @@ or genlight object.
   levels of the strata. An example of a hierarchical formula would
   be:\tabular{r}{ \code{~Country/City/Neighborhood}} This convention was
   chosen as it becomes easier to type and makes intuitive sense when defining
-  a \code{\link{hierarchy}}. Note: it is important to use hiearchical
+  a hierarchy. Note: it is important to use hiearchical
   formulas when specifying hierarchies as other types of formulas (eg. 
   \code{~Country*City*Neighborhood}) will give incorrect results.}
 }

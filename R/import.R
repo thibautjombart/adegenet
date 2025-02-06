@@ -62,7 +62,7 @@
 #'   for your samples. This is especially useful if you have a hierarchical or
 #'   factorial sampling design.
 #' @param hierarchy a hierarchical formula that explicitely defines hierarchical
-#'   levels in your strata. see \code{\link{hierarchy}} for details.
+#'   levels in your strata. 
 #' @param check.ploidy a boolean indicating if the ploidy should be checked (TRUE,
 #' default) or not (FALSE). Not checking the ploidy makes the import much faster,
 #' but might result in bugs/problems if the input file is misread or the ploidy is
