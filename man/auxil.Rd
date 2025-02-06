@@ -5,6 +5,7 @@
 \alias{.rmspaces}
 \alias{.genlab}
 \alias{.readExt}
+\alias{.render.server.info}
 \alias{corner}
 \alias{num2col}
 \alias{fac2col}
@@ -50,6 +51,7 @@
     \item \code{.rmspaces}: remove peripheric spaces in a character string. 
     \item \code{.genlab}: generate labels in a correct alphanumeric ordering. 
     \item \code{.readExt}: read the extension of a given file. 
+    \item \code{.render.server.info} used to display session information for the dapcServer
   }
 
   Color palettes include:
