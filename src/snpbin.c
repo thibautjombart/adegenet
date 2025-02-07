@@ -146,11 +146,11 @@ void bytesToBinInt(unsigned char *vecbytes, int *vecsize, int *vecres){
     temp = (int *) calloc(8, sizeof(int));
 
     for(i=0;i<*vecsize;i++){
-	byteToBinInt(vecbytes[i], temp);
-	for(j=0;j<=7;j++){
-	    vecres[j+idres] = temp[j];
-	}
-	idres = idres + 8;
+        byteToBinInt(vecbytes[i], temp);
+        for(j=0;j<=7;j++){
+            vecres[j+idres] = temp[j];
+        }
+        idres = idres + 8;
     }
 
     free(temp);
@@ -186,19 +186,20 @@ void bytesToInt(unsigned char *vecbytes, int *veclength, int *nbvec, int *vecres
 
     /* initialize result vector to 0 */
     for(i=0; i < *reslength; i++){
-	vecres[i]=0;
+        vecres[i]=0;
     }
 
     /* build output */
     for(k=0;k<*nbvec;k++){ /* for all input vector */
-	idres = 0;
-	for(i=0;i<*veclength;i++){ /* for one input vector */
-	    byteToBinInt(vecbytes[i+ k* *veclength], temp); /* byte -> 8 int (0/1)*/
-	    for(j=0;j<=7;j++){ /* fill in the result*/
-		vecres[j+idres] += temp[j];
-	    }
-	    idres = idres + 8;
-	}
+        idres = 0;
+        for(i=0;i<*veclength;i++){ /* for one input vector */
+            byteToBinInt(vecbytes[i+ k* *veclength], temp); /* byte -> 8 int (0/1)*/
+            for(j=0;j<=7;j++){ /* fill in the result*/
+                if (j+idres >= *reslength) break; // do not decode padding bytes
+                vecres[j+idres] += temp[j];
+            }
+            idres = idres + 8;
+        }
     }
     free(temp);
 } /* end bytesToInt */
@@ -214,18 +215,19 @@ void bytesToDouble(unsigned char *vecbytes, int *veclength, int *nbvec, double *
 
     /* initialize result vector to 0 */
     for(i=0; i < *reslength; i++){
-	vecres[i]=0.0;
+      vecres[i]=0.0;
     }
 
     for(k=0;k<*nbvec;k++){ /* for all input vector */
-	idres = 0;
-	for(i=0;i<*veclength;i++){ /* for one input vector */
-	    byteToBinDouble(vecbytes[i+ k* *veclength], temp); /* byte -> 8 double (0/1)*/
-	    for(j=0;j<=7;j++){ /* fill in the result*/
-		vecres[j+idres] += temp[j];
-	    }
-	    idres = idres + 8;
-	}
+        idres = 0;
+        for(i=0;i<*veclength;i++){ /* for one input vector */
+            byteToBinDouble(vecbytes[i+ k* *veclength], temp); /* byte -> 8 double (0/1)*/
+            for(j=0;j<=7;j++){ /* fill in the result*/
+                if (j+idres >= *reslength) break; // do not decode padding bytes
+                vecres[j+idres] += temp[j];
+            }
+            idres = idres + 8;
+        }
     }
     free(temp);
 } /* end bytesToInt */

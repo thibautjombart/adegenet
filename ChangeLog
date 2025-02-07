@@ -4,6 +4,16 @@ BUG FIX
 
 - genlight objects subset without any arguments to loci no longer gain an
   extra byte. (reported: @maxecoulter, #363)
+- internal C functions `bytesToInt()` and `bytesToDouble()` have a new
+  condition to prevent overflows (thanks for the suggested fix by Ivan Krylov)
+
+MISC
+
+- `spca_randtest()` has been updated with a new p argument to include a
+  Bonferroni correction (fixed in #368, but initially implemented by @valemon
+  in #247)
+- `find.clust()` data frame method now sets `scale = FALSE` to align with the
+  other methods. (reported: @cassondranewman, #362; fixed: @tiagomaie, #366)
 
 			CHANGES IN ADEGENET VERSION 2.1.10
 
