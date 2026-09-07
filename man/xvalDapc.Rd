@@ -36,7 +36,10 @@ xvalDapc(x, \dots)
 \method{xvalDapc}{genind}(x, \dots)
 }
 \arguments{
-  \item{x}{\code{a data.frame} or a \code{matrix} used as input of DAPC.}
+  \item{x}{A numeric \code{data.frame} or \code{matrix}, or a
+    \linkS4class{genind} or \linkS4class{genlight} object. Values must be
+    finite and complete; missing values are not imputed. The genetic-object
+    methods convert to allele counts or SNP dosages, respectively.}
   \item{grp}{a \code{factor} indicating the group membership of
     individuals.}
   \item{n.pca.max}{maximum number of PCA components to retain.}
@@ -50,7 +53,8 @@ xvalDapc(x, \dots)
   \item{result}{a character string; "groupMean" for group-wise assignment
     sucess, or  "overall" for an overall mean assignment success; see details.}
   \item{center}{a \code{logical} indicating whether variables should be centred to
-    mean 0 (TRUE, default) or not (FALSE). Always TRUE for \linkS4class{genind} objects.}
+    mean 0 (TRUE, default) or not (FALSE). Centring is fitted separately
+    within each training split.}
   \item{scale}{a \code{logical} indicating whether variables should be scaled
     (TRUE) or not (FALSE, default). Scaling consists in dividing variables by their
     (estimated) standard deviation to account for trivial differences in
@@ -76,6 +80,42 @@ xvalDapc(x, \dots)
   (result="groupMean"), or the overall prediction success (result="overall").
   The number of PCs associated with the lowest Mean Squared Error is then
   retained in the DAPC.
+  \subsection{Training-only preprocessing}{
+    Each replicate fits PCA, including centring and scaling, using only
+    the training individuals. Validation individuals are projected using
+    that training transformation before their memberships are predicted.
+    No PCA fitted to the full dataset is used to score validation samples.
+    The final returned DAPC is then fitted to all input individuals, using
+    the selected PC count and the requested \code{center}, \code{scale},
+    and \code{n.da} settings.
+
+    A PC count unsupported by the PCA rank or the pooled within-group
+    LDA rank of any training split is excluded from selection, with a
+    warning. The latter is at most \eqn{N-K}, for \eqn{N} training
+    individuals in \eqn{K} represented groups. Such replicates have
+    \code{NA} success, and the candidate's mean success and RMSE are
+    \code{NA}; they are not silently evaluated using fewer PCs.
+    If no candidate remains, reduce the requested PC counts.
+    Singleton groups remain in training and cannot be evaluated in
+    validation. Every other group contributes at least one individual to
+    each set.
+  }
+  \subsection{Missing data and interpretation}{
+    Missing values cause an explicit error. Unlike \code{dapc.genind},
+    this function does not automatically replace them with allele means.
+    Imputing the full dataset before cross-validation can allow validation
+    individuals to influence training preprocessing. To evaluate an
+    imputation-plus-DAPC workflow, imputation must also be fitted within
+    each training split; this function does not currently implement that
+    workflow. Mean replacement does not propagate genotype uncertainty.
+
+    These cross-validation results select the PC count; they are not an
+    independent performance estimate for that selected model. Independent
+    test data or an outer validation loop are needed for that purpose.
+    Splits are stratified by group, not blocked by sequencing batch,
+    family, or collection site. Strong assignment alone therefore does
+    not rule out technical or sampling confounding.
+  }
   \subsection{Parallel Computing}{
     The permutation of the data for cross-validation is performed in part by the
     function\code{\link[boot]{boot}}. If you have a modern computer, it is
