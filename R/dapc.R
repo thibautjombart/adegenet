@@ -956,11 +956,12 @@ predict.dapc <- function(object, newdata, prior = object$prior, dimen,
         ## make a few checks
         if(is.null(object$pca.loadings)) stop("DAPC object does not contain loadings of original variables. \nPlease re-run DAPC using 'pca.loadings=TRUE'.")
         ## We need to convert the data as they were converted during the analysis. Behaviour is:
-        ## - genind: allele frequencies, missing data = mean
-        ## - genlight: allele frequencies, missing data = mean
+        ## - genind/genlight: allele frequencies, retaining missing values
+        ## Missing values are set to zero AFTER training centring/scaling,
+        ## not replaced using means from the new prediction batch.
 
         if (is.genind(newdata)) { # genind object
-            newdata <- tab(newdata, freq = TRUE, NA.method = "mean")
+            newdata <- tab(newdata, freq = TRUE, NA.method = "asis")
         } else if (inherits(newdata, "genlight")) { # genlight object
                newdata <- as.matrix(newdata) / ploidy(newdata)
            } else { # any other type of object

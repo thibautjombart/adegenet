@@ -151,6 +151,17 @@
 
   DAPC does not infer genetic clusters ex nihilo; for this, see the
   \code{\link{find.clusters}} function.
+
+  When predicting membership for new \linkS4class{genind} individuals,
+  missing allele frequencies are replaced by the corresponding training
+  centres (zero after training centring and scaling), not by allele
+  frequencies estimated from the new prediction batch. Thus, the
+  prediction for an individual does not depend on which other individuals
+  accompany it. Variables must still match the training data, including
+  their order. This replacement does not model uncertainty in the missing
+  genotypes; membership probabilities should not be interpreted as
+  accounting for that uncertainty. Inspect missingness and assess the
+  sensitivity of assignments to genotype quality and missing-data filters.
 }
 \value{
   === dapc objects ===\cr
