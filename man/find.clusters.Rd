@@ -95,7 +95,9 @@ from adegenet.
     indicates the statistic to be computed for each model (i.e., for each value
     of \code{k}). BIC: Bayesian Information Criterion. AIC: Aikaike's
     Information Criterion. WSS: within-groups sum of squares, that is, residual
-    variance.}
+    variance. The quantities labelled BIC and AIC are the historical
+    k-means score approximations described in Details; they are not
+    likelihood information criteria from a fitted population-genetic model.}
 
 \item{choose.n.clust}{ a \code{logical} indicating whether the number of
     clusters should be chosen by the user (TRUE, default), or automatically,
@@ -164,6 +166,30 @@ from adegenet.
     
 }
 \details{
+  \strong{Preprocessing and interpretation.} For \linkS4class{genind}
+  input, missing allele frequencies are replaced by the corresponding
+  locus means before PCA. \linkS4class{genlight} PCA uses the same
+  locus-mean replacement when centring. This deterministic replacement
+  does not model genotype uncertainty and can pull incomplete individuals
+  toward the multivariate centre. Inspect missingness and technical or
+  sampling covariates before interpreting clusters as biological
+  populations. Numeric matrix and data-frame input must be complete.
+
+  K-means uses random starting centroids. Use \code{set.seed} for
+  reproducible runs and increase \code{n.start} when appropriate. Stable
+  numerical labels such as 1 and 2 do not identify the same biological
+  cluster across independent runs; compare memberships rather than label
+  numbers.
+
+  The scores reported as BIC and AIC are historical k-means heuristics:
+  \deqn{N\log(WSS_K/N) + p_K,}
+  where the penalty \eqn{p_K} is \eqn{K\log(N)} for "BIC" and
+  \eqn{2K} for "AIC". They do not count all centroid, mixing, or
+  covariance parameters and should not be interpreted as likelihood
+  information criteria or formal evidence for discrete populations.
+  They are descriptive aids for inspecting changes in within-cluster
+  dispersion across \eqn{K}.
+
   === ON THE SELECTION OF K ===\cr
   (where K is the 'optimal' number of clusters)
 
@@ -186,6 +212,12 @@ from adegenet.
   during the interactive cluster selection.
   To use automated selection, set \code{choose.n.clust} to FALSE and specify
   the \code{criterion} you want to use, from the following values:
+
+  If an automatic rule requiring an upward turn finds none, the minimum
+  observed score is used with a warning. Automated selection does not
+  replace biological assessment or sensitivity analyses across retained
+  PCA axes, random starts, missing-data filters, and plausible values of
+  \eqn{K}.
 
   - "diffNgroup": differences between successive values of the summary
   statistics (by default, BIC) are splitted into two groups using a

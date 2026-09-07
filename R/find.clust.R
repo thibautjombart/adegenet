@@ -3,6 +3,39 @@
 #############
 find.clusters <- function (x, ...) UseMethod("find.clusters")
 
+
+.choose_n_clusters <- function(statistic, criterion) {
+    fallback <- function(label) {
+        warning("The '", label, "' criterion found no stopping point; ",
+                "using the minimum observed score instead.")
+        which.min(statistic)
+    }
+    if (criterion == "min") return(which.min(statistic))
+    if (criterion == "goesup") {
+        up <- which(diff(statistic) > 0)
+        return(if (length(up)) min(up) else fallback(criterion))
+    }
+    if (criterion == "goodfit") {
+        target <- min(statistic) + 0.1 * diff(range(statistic))
+        return(min(which(statistic <= target)))
+    }
+    if (criterion == "smoothNgoesup") {
+        if (length(statistic) < 3L) return(fallback(criterion))
+        smoothed <- statistic
+        smoothed[2:(length(statistic) - 1L)] <-
+            vapply(seq_len(length(statistic) - 2L), function(i) {
+                mean(statistic[c(i, i + 1L, i + 2L)])
+            }, numeric(1))
+        up <- which(diff(smoothed) > 0)
+        return(if (length(up)) min(up) else fallback(criterion))
+    }
+    differences <- diff(statistic)
+    if (length(differences) < 2L) return(fallback(criterion))
+    partition <- cutree(hclust(dist(differences), method = "ward.D"), k = 2)
+    steep <- which.min(tapply(differences, partition, mean))
+    max(which(partition == steep)) + 1L
+}
+
 ############################
 #' @method find.clusters data.frame
 #' @export
@@ -21,8 +54,14 @@ find.clusters.data.frame <- function(x, clust = NULL, n.pca = NULL, n.clust = NU
     pca.select <- match.arg(pca.select)
     criterion <- match.arg(criterion)
     min.n.clust <- 2
-    max.n.clust <- max(max.n.clust, 2)
     method <- match.arg(method)
+    if (!is.data.frame(x) || !nrow(x) || !ncol(x) ||
+        !all(vapply(x, is.numeric, logical(1))))
+        stop("x must be a non-empty numeric data frame or matrix.")
+    if (anyNA(x) || any(!is.finite(as.matrix(x))))
+        stop("x must contain complete, finite values.")
+    if (!is.null(clust) && length(clust) != nrow(x))
+        stop("clust must contain one group label per individual.")
     
     ## KEEP TRACK OF SOME ORIGINAL PARAMETERS
     ## n.pca.ori <- n.pca
@@ -79,11 +118,14 @@ find.clusters.data.frame <- function(x, clust = NULL, n.pca = NULL, n.clust = NU
              main = "Variance explained by PCA",
              col = myCol)
         cat("Choose the percentage of variance to retain (0-100): ")
-        nperc.pca <- as.numeric(readLines(con = getOption('adegenet.testcon'), n = 1))
+        perc.pca <- as.numeric(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     ## get n.pca from the % of variance to conserve
     if(!is.null(perc.pca)){
+        if (length(perc.pca) != 1L || !is.finite(perc.pca) ||
+            perc.pca <= 0 || perc.pca > 100)
+            stop("perc.pca must be greater than 0 and at most 100.")
         n.pca <- min(which(cumVar >= perc.pca))
         if(perc.pca > 99.999) n.pca <- length(pcaX$eig)
         if(n.pca<1) n.pca <- 1
@@ -91,12 +133,40 @@ find.clusters.data.frame <- function(x, clust = NULL, n.pca = NULL, n.clust = NU
 
 
      ## keep relevant PCs - stored in XU
-    X.rank <- length(pcaX$eig)
+    if (length(n.pca) != 1L || !is.finite(n.pca) ||
+        n.pca < 1 || n.pca != floor(n.pca))
+        stop("n.pca must be a positive integer.")
+    X.rank <- sum(pcaX$eig > 1e-14)
     n.pca <- min(X.rank, n.pca)
+    if (n.pca < 1L) stop("PCA found no positive-rank axis.")
     if(n.pca >= N) warning("number of retained PCs of PCA is greater than N")
     ##if(n.pca > N/3) warning("number of retained PCs of PCA may be too large (> N /3)")
 
     XU <- pcaX$li[, 1:n.pca, drop=FALSE] # principal components
+
+    max.allowed <- if (method == "kmeans") {
+        min(N - 1L, nrow(unique(as.data.frame(XU))))
+    } else {
+        N
+    }
+    if (max.allowed < 2L && is.null(n.clust))
+        stop("Fewer than two clusters can be evaluated for these data.")
+    if (!is.null(n.clust)) {
+        if (length(n.clust) != 1L || !is.finite(n.clust) ||
+            n.clust < 1 || n.clust != floor(n.clust) ||
+            n.clust > max.allowed)
+            stop("n.clust must be an integer between 1 and ", max.allowed,
+                 " for these data and clustering method.")
+    } else {
+        if (length(max.n.clust) != 1L || !is.finite(max.n.clust) ||
+            max.n.clust < 2 || max.n.clust != floor(max.n.clust))
+            stop("max.n.clust must be an integer of at least 2.")
+        if (max.n.clust > max.allowed) {
+            warning("Reducing max.n.clust from ", max.n.clust, " to ",
+                    max.allowed, " for these data and clustering method.")
+            max.n.clust <- max.allowed
+        }
+    }
 
     ## PERFORM K-MEANS
     if(is.null(n.clust)){
@@ -159,29 +229,7 @@ find.clusters.data.frame <- function(x, clust = NULL, n.pca = NULL, n.clust = NU
                 n.clust <- max(1, as.integer(readLines(con = getOption('adegenet.testcon'), n = 1)))
             }
         } else {
-            if(criterion=="min") {
-                n.clust <- which.min(myStat)
-            }
-            if(criterion=="goesup") {
-                ## temp <- diff(myStat)
-                ## n.clust <- which.max( which( (temp-min(temp))<max(temp)/1e4))
-                n.clust <- min(which(diff(myStat)>0))
-            }
-            if(criterion=="goodfit") {
-                temp <- min(myStat) + 0.1*(max(myStat) - min(myStat))
-                n.clust <- min( which(myStat < temp))-1
-            }
-            if(criterion=="diffNgroup") {
-                temp <- cutree(hclust(dist(diff(myStat)), method="ward.D"), k=2)
-                goodgrp <- which.min(tapply(diff(myStat), temp, mean))
-                n.clust <- max(which(temp==goodgrp))+1
-            }
-            if(criterion=="smoothNgoesup") {
-                temp <- myStat
-                temp[2:(length(myStat)-1)] <- sapply(1:(length(myStat)-2),
-                                                     function(i) mean(myStat[c(i,i+1,i+2)]))
-                n.clust <- min(which(diff(temp)>0))
-            }
+            n.clust <- .choose_n_clusters(myStat, criterion)
 
         }
     } else { # if n.clust provided
