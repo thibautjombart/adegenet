@@ -820,27 +820,43 @@ a.score <- function(x, n.sim=10, ...){
 ## optim.a.score
 ##############
 optim.a.score <- function(x, n.pca=1:ncol(x$tab), smart=TRUE, n=10, plot=TRUE,
-                         n.sim=10, n.da=length(levels(x$grp)), ...){
+                         n.sim=10, n.da=x$n.da, ...){
     ## A FEW CHECKS ##
     if(!inherits(x,"dapc")) stop("x is not a dapc object")
-    if(max(n.pca)>ncol(x$tab)) {
-        n.pca <- min(n.pca):ncol(x$tab)
-    }
-    if(n.da>length(levels(x$grp))){
-        n.da <- min(n.da):length(levels(x$grp))
-    }
+    if (!is.numeric(n.pca) || !length(n.pca) || anyNA(n.pca) ||
+        any(!is.finite(n.pca)) || any(n.pca < 1) ||
+        any(n.pca != floor(n.pca)))
+        stop("n.pca must contain positive integers.")
+    if (length(n.pca) == 1L) n.pca <- seq_len(n.pca)
+    n.pca <- sort(unique(as.integer(n.pca)))
+    if (max(n.pca) > ncol(x$tab))
+        stop("n.pca cannot exceed the ", ncol(x$tab),
+             " PCA axes stored in x$tab.")
+    max.da <- length(levels(droplevels(x$grp))) - 1L
+    if (length(n.da) != 1L || !is.numeric(n.da) || is.na(n.da) ||
+        !is.finite(n.da) || n.da < 1 || n.da != floor(n.da) ||
+        n.da > max.da)
+        stop("n.da must be one positive integer no greater than ", max.da,
+             " for these groups and retained PCs.")
+    n.da <- as.integer(n.da)
+    if (!is.logical(smart) || length(smart) != 1L || is.na(smart))
+        stop("smart must be TRUE or FALSE.")
+    if (!is.logical(plot) || length(plot) != 1L || is.na(plot))
+        stop("plot must be TRUE or FALSE.")
+    if (length(n.sim) != 1L || !is.numeric(n.sim) || is.na(n.sim) ||
+        !is.finite(n.sim) || n.sim < 1 || n.sim != floor(n.sim))
+        stop("n.sim must be a positive integer.")
+    if (length(n) != 1L || !is.numeric(n) || is.na(n) ||
+        !is.finite(n) || n < 2 || n != floor(n))
+        stop("n must be an integer of at least 2.")
     pred <- NULL
-    if(length(n.pca)==1){
-        n.pca <- 1:n.pca
-    }
-    if(length(n.da)==1){
-        n.da <- 1:n.da
-    }
 
 
     ## AUXILIARY FUNCTION ##
     f1 <- function(ndim){
-        temp <- dapc(x$tab[,1:ndim,drop=FALSE], x$grp, n.pca=ndim, n.da=x$n.da)
+        retained.da <- min(n.da, ndim)
+        temp <- dapc(x$tab[,1:ndim,drop=FALSE], x$grp,
+                     n.pca=ndim, n.da=retained.da)
         a.score(temp, n.sim=n.sim)$pop.score
     }
 
@@ -850,21 +866,25 @@ optim.a.score <- function(x, n.pca=1:ncol(x$tab), smart=TRUE, n=10, plot=TRUE,
         ## if(!require(stats)) stop("the package stats is required for 'smart' option")
         o.min <- min(n.pca)
         o.max <- max(n.pca)
-        n.pca <- pretty(n.pca, n) # get evenly spaced nb of retained PCs
-        n.pca <- n.pca[n.pca>0 & n.pca<=ncol(x$tab)]
+        n.pca <- pretty(range(n.pca), n) # evenly spaced retained PC counts
+        n.pca <- unique(as.integer(n.pca[n.pca>0 &
+                                         n.pca<=ncol(x$tab)]))
         if(!any(o.min==n.pca)) n.pca <- c(o.min, n.pca) # make sure range is OK
         if(!any(o.max==n.pca)) n.pca <- c(o.max, n.pca) # make sure range is OK
+        n.pca <- sort(unique(n.pca))
         lres <- lapply(n.pca, f1)
         names(lres) <- n.pca
         means <- sapply(lres, mean)
         sp1 <- smooth.spline(n.pca, means) # spline smoothing
         pred <- predict(sp1, x=1:max(n.pca))
-        best <- pred$x[which.max(pred$y)]
+        best.index <- which.max(pred$y)
+        best <- pred$x[best.index]
     } else { ## DO NOT TRY TO BE SMART ##
         lres <- lapply(n.pca, f1)
         names(lres) <- n.pca
-        best <- which.max(sapply(lres, mean))
         means <- sapply(lres, mean)
+        best.index <- which.max(means)
+        best <- n.pca[best.index]
     }
 
 
@@ -880,16 +900,16 @@ optim.a.score <- function(x, n.pca=1:ncol(x$tab), smart=TRUE, n=10, plot=TRUE,
         if(smart){
             boxplot(lres, at=n.pca, col="gold", xlab="Number of retained PCs", ylab="a-score", xlim=range(n.pca)+c(-1,1), ylim=c(-.1,1.1))
             lines(pred, lwd=3)
-            points(pred$x[best], pred$y[best], col="red", lwd=3)
+            points(pred$x[best.index], pred$y[best.index], col="red", lwd=3)
             title("a-score optimisation - spline interpolation")
             mtext(paste("Optimal number of PCs:", res$best), side=3)
         } else {
             myCol <- rep("gold", length(lres))
-            myCol[best] <- "red"
+            myCol[best.index] <- "red"
             boxplot(lres, at=n.pca, col=myCol, xlab="Number of retained PCs", ylab="a-score", xlim=range(n.pca)+c(-1,1), ylim=c(-.1,1.1))
             lines(n.pca, sapply(lres, mean), lwd=3, type="b")
             myCol <- rep("black", length(lres))
-            myCol[best] <- "red"
+            myCol[best.index] <- "red"
             points(n.pca, res$mean, lwd=3, col=myCol)
             title("a-score optimisation - basic search")
             mtext(paste("Optimal number of PCs:", res$best), side=3)

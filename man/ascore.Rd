@@ -11,7 +11,7 @@
 a.score(x, n.sim=10, \ldots)
 
 optim.a.score(x, n.pca=1:ncol(x$tab), smart=TRUE, n=10, plot=TRUE,
-              n.sim=10, n.da=length(levels(x$grp)), \ldots)
+              n.sim=10, n.da=x$n.da, \ldots)
 }
 \arguments{
 \item{x}{a \code{dapc} object.}
@@ -28,8 +28,12 @@ optim.a.score(x, n.pca=1:ncol(x$tab), smart=TRUE, n=10, plot=TRUE,
   displayed graphically (TRUE, default) or not (FALSE).}
 \item{n.sim}{an \code{integer} indicating the number of simulations to
   be performed for each number of retained PC.}
-\item{n.da}{an \code{integer} indicating the number of axes retained in the
-  Discriminant Analysis step.}
+\item{n.da}{one positive \code{integer} indicating the maximum number of axes
+  retained in each Discriminant Analysis step. It cannot exceed the number of
+  groups minus one. When fewer PCA axes are being evaluated, the number of
+  discriminant axes is limited to the number of retained PCA axes. The default
+  uses the number retained in the supplied DAPC object, preserving the
+  historical behaviour when this argument is omitted.}
 \item{\ldots}{further arguments passed to other methods; currently unused..}
 }
 \details{
@@ -50,6 +54,14 @@ optim.a.score(x, n.pca=1:ncol(x$tab), smart=TRUE, n=10, plot=TRUE,
   discriminating and stable, while low values (toward 0 or lower)
   indicate either weak discrimination or instability of the results.
 
+  The a-score is based on reassignment of the observations used to fit the
+  DAPC, corrected by repeating that procedure after permuting group labels. It
+  is not an estimate of predictive performance on held-out individuals and is
+  not a substitute for cross-validation when out-of-sample classification is
+  the scientific objective. Because the permutations and k-means-related
+  computations use random numbers, call \code{set.seed} before
+  \code{optim.a.score} when reproducibility is required.
+
   The a-score can serve as a criterion for choosing the optimal number of
   PCs in the PCA step of DAPC, i.e. the number of PC maximizing the
   a-score. Two procedures are implemented in \code{optim.a.score}. The
@@ -57,9 +69,12 @@ optim.a.score(x, n.pca=1:ncol(x$tab), smart=TRUE, n=10, plot=TRUE,
   pre-defined range, compute the a-score for each, and then interpolate
   the results using splines, predicting an approximate optimal number of
   PCs. The other procedure (when \code{smart} is FALSE) performs the
-  computations for all number of PCs request by the user. The 'optimal'
+  computations for all numbers of PCs requested by the user. The 'optimal'
   number is then the one giving the highest mean a-score (computed over
-  the groups).
+  the groups). For the exhaustive procedure, \code{best} is one of the actual
+  values supplied in \code{n.pca}, including when the candidate values are not
+  consecutive. The requested \code{n.da} is applied to every candidate fit,
+  subject to the dimensional limit described above.
 }
 \value{
   === a.score ===\cr
@@ -69,7 +84,7 @@ optim.a.score(x, n.pca=1:ncol(x$tab), smart=TRUE, n=10, plot=TRUE,
   \item{mean}{the overall mean a-score.}\cr
   
   === optim.a.score ===\cr
-  \code{optima.score} returns a list with the following components:\cr
+  \code{optim.a.score} returns a list with the following components:\cr
    \item{pop.score}{a list giving the mean a-score of the populations
    for each number of retained PC (each element of the list corresponds
    to a number of retained PCs).}
