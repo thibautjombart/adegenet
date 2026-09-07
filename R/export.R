@@ -73,6 +73,14 @@
 #' into columns (defaults to \code{FALSE}). This will only work with data with
 #' consistent ploidies.
 #'
+#' @details With \code{oneColPerAll = TRUE}, observed allele copies are
+#' retained and unobserved copies are padded with real \code{NA} values.
+#' Zero-copy genotypes or genotypes containing missing allele counts produce
+#' missing values in all allele columns. Allele order does not imply phase.
+#' Genotypes with more copies than the declared ploidy are rejected.
+#' This handling of incomplete genotypes follows the problem and approach
+#' described by \code{ntakebay} in GitHub issue 320.
+#'
 #' @return a data.frame of raw allelic data, with individuals in rows and loci in column
 #'
 #' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
@@ -111,7 +119,7 @@ genind2df <- function(x, pop=NULL, sep="", usepop=TRUE, oneColPerAll = FALSE){
   ## PA case ##
   if(x@type=="PA"){
       res <- tab(x)
-      if(usepop && !is.null(pop)) res <- cbind.data.frame(pop=pop(x),res)
+      if(usepop && !is.null(pop)) res <- cbind.data.frame(pop=pop,res)
       return(res) # exit here
   }
 
@@ -137,14 +145,21 @@ genind2df <- function(x, pop=NULL, sep="", usepop=TRUE, oneColPerAll = FALSE){
   ## if use one column per allele
   if(oneColPerAll){
     if (all(x@ploidy == x@ploidy[1])){
-      f1 <- function(vec){ # to repeat NA with seperators
-          vec[is.na(vec)] <- paste(rep("NA", x@ploidy[1]), collapse=sep)
-          return(vec)
-      }
-      temp <- lapply(kGen, f1)
-      temp <- lapply(temp, strsplit,sep)
-
-      res <- lapply(temp, function(e) matrix(unlist(e), ncol=x@ploidy[1], byrow=TRUE))
+      ## Build each row from allele counts: do not join and re-split labels.
+      res <- lapply(seq_along(kX), function(i) {
+          counts <- kX[[i]]
+          out <- matrix(NA_character_, nrow=nrow(counts), ncol=x@ploidy[1])
+          for (j in seq_len(nrow(counts))) {
+              copies <- counts[j, ]
+              if (anyNA(copies)) next
+              if (sum(copies) > x@ploidy[1])
+                  stop("Allele counts exceed ploidy for individual ",
+                       indNames(x)[j], " at locus ", locNames(x)[i])
+              observed <- rep(x@all.names[[i]], copies)
+              out[j, seq_along(observed)] <- observed
+          }
+          out
+      })
       res <- data.frame(res,stringsAsFactors=FALSE)
       names(res) <- paste(rep(locNames(x),each=x@ploidy[1]), 1:x@ploidy[1], sep=".")
 
