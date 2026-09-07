@@ -151,6 +151,27 @@
 
   DAPC does not infer genetic clusters ex nihilo; for this, see the
   \code{\link{find.clusters}} function.
+
+  The discriminant step requires a nonsingular pooled within-group
+  covariance matrix. For \eqn{N} individuals in \eqn{K} represented
+  groups, its rank is at most \eqn{N-K}. Accordingly, \code{dapc}
+  reduces \code{n.pca} when it exceeds this bound or when the leading
+  PCA scores are numerically rank deficient within groups, and reports
+  the reduction with a warning. If even the first PCA score is
+  numerically constant within groups, no discriminant model is defined
+  and the function stops. Unused levels in \code{grp} or \code{pop}
+  are dropped before fitting and do not count as represented groups.
+
+  A high in-sample assignment rate, particularly when many PCA axes are
+  retained relative to the number of individuals, is not evidence of
+  out-of-sample predictive performance. Use \code{\link{xvalDapc}} to
+  select the number of retained axes and independent data or an outer
+  validation loop when estimating predictive performance.
+
+  For \linkS4class{genlight} input, PCA loadings are computed whenever
+  \code{pca.info}, \code{var.contrib}, or \code{var.loadings} requires
+  them. Thus, disabling variable contributions does not remove the
+  loadings needed by \code{predict.dapc} when \code{pca.info=TRUE}.
 }
 \value{
   === dapc objects ===\cr

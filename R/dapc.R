@@ -3,6 +3,30 @@
 ########
 dapc <- function (x, ...) UseMethod("dapc")
 
+
+# Return the largest leading set of PCA scores whose pooled within-group
+# residual matrix is numerically full rank. LDA requires this covariance
+# structure to be invertible.
+.dapc_full_rank_prefix <- function(scores, grp,
+                                   tol = sqrt(.Machine$double.eps)) {
+    grp <- droplevels(as.factor(grp))
+    residuals <- scores
+    for (group in levels(grp)) {
+        rows <- which(grp == group)
+        residuals[rows, ] <- sweep(scores[rows, , drop = FALSE], 2,
+                                   colMeans(scores[rows, , drop = FALSE]),
+                                   "-")
+    }
+    for (k in rev(seq_len(ncol(residuals)))) {
+        singular <- svd(residuals[, seq_len(k), drop = FALSE],
+                        nu = 0, nv = 0)$d
+        rank <- if (!length(singular) || singular[1] == 0) 0L else
+            sum(singular > singular[1] * tol)
+        if (rank == k) return(k)
+    }
+    0L
+}
+
 ###################
 ## dapc.data.frame
 ###################
@@ -13,7 +37,7 @@ dapc.data.frame <- function(x, grp, n.pca=NULL, n.da=NULL,
                             pca.info=TRUE, pca.select=c("nbEig","percVar"), perc.pca=NULL, ..., dudi=NULL){
 
     ## FIRST CHECKS
-    grp <- as.factor(grp)
+    grp <- droplevels(as.factor(grp))
     if(length(grp) != nrow(x)) stop("Inconsistent length for grp")
     pca.select <- match.arg(pca.select)
     if(!is.null(perc.pca) & is.null(n.pca)) pca.select <- "percVar"
@@ -64,19 +88,35 @@ dapc.data.frame <- function(x, grp, n.pca=NULL, n.da=NULL,
     ## keep relevant PCs - stored in XU
     X.rank <- sum(pcaX$eig > 1e-14)
     n.pca <- min(X.rank, n.pca)
-    if(n.pca >= N) n.pca <- N-1
+    requested.n.pca <- n.pca
+    n.pca <- min(n.pca, N - nlevels(grp))
+    if (n.pca < requested.n.pca)
+        warning("Reducing n.pca from ", requested.n.pca, " to ", n.pca,
+                " because pooled within-group covariance rank is at most N - K.")
+    if (n.pca < 1L)
+        stop("Too few within-group residual degrees of freedom for DAPC.")
     n.pca <- round(n.pca)
 
-    U <- pcaX$c1[, 1:n.pca, drop=FALSE] # principal axes
-    rownames(U) <- colnames(x) # force to restore names
     XU <- pcaX$li[, 1:n.pca, drop=FALSE] # principal components
+    full.rank <- .dapc_full_rank_prefix(XU, grp)
+    if (full.rank < 1L)
+        stop("PCA scores are numerically constant within groups; ",
+             "a discriminant model cannot be fitted.")
+    if (full.rank < n.pca) {
+        warning("Reducing n.pca from ", n.pca, " to ", full.rank,
+                " because the pooled within-group covariance is rank deficient.")
+        n.pca <- full.rank
+        XU <- XU[, seq_len(n.pca), drop = FALSE]
+    }
+    U <- pcaX$c1[, seq_len(n.pca), drop=FALSE] # principal axes
+    rownames(U) <- colnames(x) # force to restore names
     XU.lambda <- sum(pcaX$eig[1:n.pca])/sum(pcaX$eig) # sum of retained eigenvalues
     names(U) <- paste("PCA-pa", 1:ncol(U), sep=".")
     names(XU) <- paste("PCA-pc", 1:ncol(XU), sep=".")
 
 
     ## PERFORM DA ##
-    ldaX <- lda(XU, grp, tol=1e-30) # tol=1e-30 is a kludge, but a safe (?) one to avoid fancy rescaling by lda.default
+    ldaX <- lda(XU, grp, tol=sqrt(.Machine$double.eps))
     lda.dim <- sum(ldaX$svd^2 > 1e-10)
     ldaX$svd <- ldaX$svd[1:lda.dim]
     ldaX$scaling <- ldaX$scaling[,1:lda.dim,drop=FALSE]
@@ -88,7 +128,7 @@ dapc.data.frame <- function(x, grp, n.pca=NULL, n.da=NULL,
     }
 
     ##n.da <- min(n.da, length(levels(grp))-1, n.pca) # can't be more than K-1 disc. func., or more than n.pca
-    n.da <- round(min(n.da, lda.dim)) # can't be more than K-1 disc. func., or more than n.pca
+    n.da <- round(min(n.da, nlevels(grp) - 1L, n.pca, lda.dim))
     predX <- predict(ldaX, dimen=n.da)
 
 
@@ -172,6 +212,7 @@ dapc.genind <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
     }
 
     if(is.null(pop.fac)) stop("x does not include pre-defined populations, and `pop' is not provided")
+    pop.fac <- droplevels(as.factor(pop.fac))
 
 
     ## SOME GENERAL VARIABLES
@@ -243,6 +284,7 @@ dapc.genlight <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
 
     ## PERFORM PCA ##
     REDUCEDIM <- is.null(glPca)
+    need.loadings <- var.contrib || var.loadings || pca.info
 
     if(REDUCEDIM){ # if no glPca provided
         maxRank <- min(c(nInd(x), nLoc(x)))
@@ -250,10 +292,6 @@ dapc.genlight <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
     }
 
     if(!REDUCEDIM){ # else use the provided glPca object
-        if(is.null(glPca$loadings) & var.contrib) {
-            warning("Contribution of variables requested but glPca object provided without loadings.")
-            var.contrib <- FALSE
-        }
         pcaX <- glPca
     }
 
@@ -296,8 +334,9 @@ dapc.genlight <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
 
 
     ## recompute PCA with loadings if needed
-    if(REDUCEDIM){
-        pcaX <- glPca(x, center = TRUE, scale = scale, nf=n.pca, loadings=var.contrib, matDotProd = pcaX$dotProd)
+    if(REDUCEDIM || (need.loadings && is.null(pcaX$loadings))){
+        pcaX <- glPca(x, center = TRUE, scale = scale, nf=n.pca,
+                      loadings=need.loadings, matDotProd = pcaX$dotProd)
     }
 
 
@@ -305,17 +344,34 @@ dapc.genlight <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
     N <- nInd(x)
     X.rank <- sum(pcaX$eig > 1e-14)
     n.pca <- min(X.rank, n.pca)
-    if(n.pca >= N) n.pca <- N-1
+    requested.n.pca <- n.pca
+    n.pca <- min(n.pca, N - nlevels(pop.fac))
+    if (n.pca < requested.n.pca)
+        warning("Reducing n.pca from ", requested.n.pca, " to ", n.pca,
+                " because pooled within-group covariance rank is at most N - K.")
+    if (n.pca < 1L)
+        stop("Too few within-group residual degrees of freedom for DAPC.")
 
-    U <- pcaX$loadings[, 1:n.pca, drop=FALSE] # principal axes
     XU <- pcaX$scores[, 1:n.pca, drop=FALSE] # principal components
+    full.rank <- .dapc_full_rank_prefix(XU, pop.fac)
+    if (full.rank < 1L)
+        stop("PCA scores are numerically constant within groups; ",
+             "a discriminant model cannot be fitted.")
+    if (full.rank < n.pca) {
+        warning("Reducing n.pca from ", n.pca, " to ", full.rank,
+                " because the pooled within-group covariance is rank deficient.")
+        n.pca <- full.rank
+        XU <- XU[, seq_len(n.pca), drop = FALSE]
+    }
+    U <- if (need.loadings)
+        pcaX$loadings[, seq_len(n.pca), drop=FALSE] else NULL
     XU.lambda <- sum(pcaX$eig[1:n.pca])/sum(pcaX$eig) # sum of retained eigenvalues
-    names(U) <- paste("PCA-pa", 1:ncol(U), sep=".")
+    if (!is.null(U)) names(U) <- paste("PCA-pa", seq_len(ncol(U)), sep=".")
     names(XU) <- paste("PCA-pc", 1:ncol(XU), sep=".")
 
 
     ## PERFORM DA ##
-    ldaX <- lda(XU, pop.fac, tol=1e-30) # tol=1e-30 is a kludge, but a safe (?) one to avoid fancy rescaling by lda.default
+    ldaX <- lda(XU, pop.fac, tol=sqrt(.Machine$double.eps))
     lda.dim <- sum(ldaX$svd^2 > 1e-10)
     ldaX$svd <- ldaX$svd[1:lda.dim]
     ldaX$scaling <- ldaX$scaling[,1:lda.dim,drop=FALSE]
