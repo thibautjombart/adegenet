@@ -753,9 +753,9 @@ read.genepop <- function(file, ncode=2L, quiet=FALSE){
 #' created object.
 #' @param row.marknames an integer giving the index of the row containing the
 #' names of the markers. '0' if absent.
-#' @param NA.char the character string coding missing data. "-9" by default.
-#' Note that in any case, series of zero (like "000") are interpreted as NA
-#' too.
+#' @param NA.char the character string coding a missing allele. "-9" by default.
+#' Matching is literal against complete allele tokens, so "0" does not match
+#' "120". If either allele is missing, the whole diploid genotype is missing.
 #' @param pop an optional factor giving the population of each individual.
 #' @param sep a character string used as separator between alleles.
 #' @param ask a logical specifying if the function should ask for optional
@@ -870,7 +870,9 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL,
     mat <- txt[(lastline-n+1):lastline]
     mat <- t(as.data.frame(strsplit(mat,"[[:blank:]]+")))
     rownames(mat) <- 1:n
-    gen <- mat[, (ncol(mat)-p+1):ncol(mat)]
+    gen <- mat[, (ncol(mat)-p+1):ncol(mat), drop=FALSE]
+    ## Match whole allele tokens before padding or joining genotypes.
+    missing.alleles <- matrix(gen %in% NA.char, nrow=nrow(gen), ncol=ncol(gen))
 
 
     ## markers names
@@ -920,17 +922,22 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL,
         }
 
         ## reorder matrix of genotypes
-        X <- t(sapply(temp, function(i) paste(gen[i,],gen[i+1,],sep="") ))
+        X <- matrix(unlist(lapply(temp, function(i)
+            paste(gen[i,],gen[i+1,],sep=""))), nrow=n.ind, byrow=TRUE)
+        missing.genotypes <- missing.alleles[temp, , drop=FALSE] |
+            missing.alleles[temp+1, , drop=FALSE]
 
     } else { # if onerowperind
         temp <- seq(1,p-1,by=2)
         X <- paste(gen[,temp] , gen[,temp+1], sep="/")
         X <- matrix(X, nrow=n.ind)
         sep <- "/"
+        missing.genotypes <- missing.alleles[,temp,drop=FALSE] |
+            missing.alleles[,temp+1,drop=FALSE]
     }
 
     ## replace missing values by NAs
-    X <- gsub(NA.char,NA,X)
+    X[missing.genotypes] <- NA
     rownames(X) <- ind.names
     colnames(X) <- loc.names
 

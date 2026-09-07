@@ -23,40 +23,28 @@ read.structure(
 \arguments{
 \item{file}{a character string giving the path to the file to convert, with
 the appropriate extension.}
-
 \item{n.ind}{an integer giving the number of genotypes (or 'individuals') in
 the dataset}
-
 \item{n.loc}{an integer giving the number of markers in the dataset}
-
 \item{onerowperind}{a STRUCTURE coding option: are genotypes coded on a
 single row (TRUE), or on two rows (FALSE, default)}
-
 \item{col.lab}{an integer giving the index of the column containing labels
 of genotypes. '0' if absent.}
-
 \item{col.pop}{an integer giving the index of the column containing
 population to which genotypes belong. '0' if absent.}
-
 \item{col.others}{an vector of integers giving the indexes of the columns
 containing other informations to be read. Will be available in @other of the
 created object.}
-
 \item{row.marknames}{an integer giving the index of the row containing the
 names of the markers. '0' if absent.}
-
-\item{NA.char}{the character string coding missing data. "-9" by default.
-Note that in any case, series of zero (like "000") are interpreted as NA
-too.}
-
+\item{NA.char}{the character string coding a missing allele. "-9" by default.
+Matching is literal against complete allele tokens, so "0" does not match
+"120". If either allele is missing, the whole diploid genotype is missing.}
 \item{pop}{an optional factor giving the population of each individual.}
-
 \item{sep}{a character string used as separator between alleles.}
-
 \item{ask}{a logical specifying if the function should ask for optional
 informations about the dataset (TRUE, default), or try to be as quiet as
 possible (FALSE).}
-
 \item{quiet}{logical stating whether a conversion message must be printed
 (TRUE,default) or not (FALSE).}
 }
@@ -77,12 +65,9 @@ with the STRUCTURE format can easily be read into R using \code{read.table}
 or \code{read.csv} and then converted using \code{\link{df2genind}}.
 }
 \examples{
-
 obj <- read.structure(system.file("files/nancycats.str",package="adegenet"),
   onerowperind=FALSE, n.ind=237, n.loc=9, col.lab=1, col.pop=2, ask=FALSE)
-
 obj
-
 }
 \references{
 Pritchard, J.; Stephens, M. & Donnelly, P. (2000) Inference of
