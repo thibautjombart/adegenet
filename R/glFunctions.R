@@ -290,6 +290,12 @@ glPca <- function(x, center=TRUE, scale=FALSE, nf=NULL, loadings=TRUE, alleleAsU
     if(scale){
         vecVar <- glVar(x, alleleAsUnit=alleleAsUnit)
         if(any(is.na(vecVar))) stop("NAs detected in the vector of variances")
+        nullVar <- vecVar < 1e-10
+        if(any(nullVar)) {
+            warning("Null variances have been detected; corresponding alleles won't be standardized.")
+        }
+        vecVarSafe <- vecVar
+        vecVarSafe[nullVar] <- 1
     }
 
 
@@ -339,7 +345,7 @@ glPca <- function(x, center=TRUE, scale=FALSE, nf=NULL, loadings=TRUE, alleleAsU
                     a[is.na(a)] <- 0
                     b <- as.integer(b) / ploid.b
                     b[is.na(b)] <- 0
-                    return(sum( (a*b)/vecVar, na.rm=TRUE))
+                    return(sum( (a*b)/vecVarSafe, na.rm=TRUE))
                 }
             }
 
@@ -351,7 +357,7 @@ glPca <- function(x, center=TRUE, scale=FALSE, nf=NULL, loadings=TRUE, alleleAsU
                     a[is.na(a)] <- vecMeans[is.na(a)]
                     b <- as.integer(b) / ploid.b
                     b[is.na(b)] <- vecMeans[is.na(b)]
-                    return( sum( ((a-vecMeans)*(b-vecMeans))/vecVar, na.rm=TRUE ) )
+                    return( sum( ((a-vecMeans)*(b-vecMeans))/vecVarSafe, na.rm=TRUE ) )
                 }
             }
 
@@ -419,7 +425,7 @@ glPca <- function(x, center=TRUE, scale=FALSE, nf=NULL, loadings=TRUE, alleleAsU
     ## but only two such matrices are represented at a time
     if(loadings){
         if(scale) {
-            vecSd <- sqrt(vecVar)
+            vecSd <- sqrt(vecVarSafe)
         }
         res$loadings <- matrix(0, nrow=nLoc(x), ncol=nf) # create empty matrix
         ## use: c1 = X^TDV

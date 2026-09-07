@@ -125,6 +125,21 @@ glPca(x, center = TRUE, scale = FALSE, nf = NULL, loadings = TRUE,
   Lastly, note that using compiled C code (\code{useC=TRUE})is an
   alternative for speeding up computations, but cannot be used together
   with the parallel option.
+
+  === Missing genotypes and invariant loci ===
+
+  Missing genotypes are replaced internally by the mean allele frequency
+  at their locus. After centring, these entries therefore contribute zero
+  to the PCA. This permits the analysis to run with incomplete SNP data,
+  but it is a mean-imputation rule rather than an estimate of the missing
+  genotype. Missingness should be inspected before analysis because
+  differences among individuals or groups can affect distances, scores,
+  and downstream analyses based on this PCA.
+
+  When \code{scale=TRUE}, loci with null variance cannot be standardized.
+  They are retained without division by zero and have no contribution to a
+  centred PCA. Filtering invariant loci before PCA is nevertheless
+  recommended.
 }
 \value{
   === glPca objects ===
